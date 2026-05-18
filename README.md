@@ -132,4 +132,6 @@ the commit log is the change record.
 
 ## License
 
-MIT.
+Apache-2.0 (`LICENSE.txt`). Code-class repo — Lean axioms,
+predicate stubs, and framework code are reused under the standard
+Apache patent grant.
