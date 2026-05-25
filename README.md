@@ -20,8 +20,8 @@ curated alongside.
 ## Why this repo
 
 The 2026 bet: what is worth publishing is no longer the implementation
-code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory
-+ recall** that lets a sole developer collaborate with an AI
+code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
+that lets a sole developer collaborate with an AI
 assistant across nineteen non-overlapping subprojects without
 contradicting itself. Eight themes carry that bet; a founding case
 study closes the section.
@@ -325,27 +325,27 @@ drift, even redacted.
 
 ## Sibling subprojects (nineteen, one venv, one workspace)
 
-| Subproject | Role |
-|---|---|
-| `analyzing/` | VSCode extension (TypeScript) for market inspection — DuckDB + Parquet, lightweight-charts v5, ingest from public OHLCV sources. |
-| `trading/` | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines. |
-| `monitoring/` | VSCode extension sibling of `analyzing/` — LW-Charts + Three.js surface; shared SQLite schema. |
-| `appealing/` | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub. |
-| `pleading/` | Sibling of `appealing/` — trial-court / status-affidavit / addendum drafting. |
-| `proving/` | Lean4 axiomatic theorem-proving with LLM-backed predicate functions for the legal domain. Backs Qnarre. |
-| `accounting/` | Lean4 + LLM-predicates for the financial domain (five frameworks: TREND / MOMENTUM / OPTIONS-RISK / SECTOR / DRAWDOWN). Backs Qresev. |
-| `verifying/` | Astro + React shell + FastAPI server for **Qnarre**, the legal-complaint verifier UI. Streams events from `proving/` over SSE. |
-| `evaluating/` | Sibling of `verifying/` for **Qresev**, the stock/portfolio evaluator UI. Streams events from `accounting/` over SSE. |
-| `designing/` | Astro + React islands site for quantapix.com. Hosts the `/status` page that aggregates per-subproject status emits. |
-| `documenting/` | Sibling of `designing/`; femfas.net. |
-| `studying/` | Lean4 expert-track study + OSS contribution roadmap. |
-| `explaining/` | 50-script video-explainer arc narrated by an AI presenter. |
-| `resolving/` | DaVinci Resolve production-assistance — typed Python wrapper + Fusion authoring skills. Stage 5 of `explaining/`. |
-| `blending/` | Blender + Geometry Nodes production-assistance — typed Python wrapper. Background plates consumed by `resolving/`. |
-| `serving/` | AWS cloud-base. Single source of truth for every AWS resource. |
-| `managing/` | Daily watcher over the constellation. Observe-only — no commits, no deploys, no mutations. |
-| `shorting/` | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher. |
-| `donating/` | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01). |
+| Subproject     | Role                                                                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `analyzing/`   | VSCode extension (TypeScript) for market inspection — DuckDB + Parquet, lightweight-charts v5, ingest from public OHLCV sources.                       |
+| `trading/`     | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines. |
+| `monitoring/`  | VSCode extension sibling of `analyzing/` — LW-Charts + Three.js surface; shared SQLite schema.                                                         |
+| `appealing/`   | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub.                                                        |
+| `pleading/`    | Sibling of `appealing/` — trial-court / status-affidavit / addendum drafting.                                                                          |
+| `proving/`     | Lean4 axiomatic theorem-proving with LLM-backed predicate functions for the legal domain. Backs Qnarre.                                                |
+| `accounting/`  | Lean4 + LLM-predicates for the financial domain (five frameworks: TREND / MOMENTUM / OPTIONS-RISK / SECTOR / DRAWDOWN). Backs Qresev.                  |
+| `verifying/`   | Astro + React shell + FastAPI server for **Qnarre**, the legal-complaint verifier UI. Streams events from `proving/` over SSE.                         |
+| `evaluating/`  | Sibling of `verifying/` for **Qresev**, the stock/portfolio evaluator UI. Streams events from `accounting/` over SSE.                                  |
+| `designing/`   | Astro + React islands site for quantapix.com. Hosts the `/status` page that aggregates per-subproject status emits.                                    |
+| `documenting/` | Sibling of `designing/`; femfas.net.                                                                                                                   |
+| `studying/`    | Lean4 expert-track study + OSS contribution roadmap.                                                                                                   |
+| `explaining/`  | 50-script video-explainer arc narrated by an AI presenter.                                                                                             |
+| `resolving/`   | DaVinci Resolve production-assistance — typed Python wrapper + Fusion authoring skills. Stage 5 of `explaining/`.                                      |
+| `blending/`    | Blender + Geometry Nodes production-assistance — typed Python wrapper. Background plates consumed by `resolving/`.                                     |
+| `serving/`     | AWS cloud-base. Single source of truth for every AWS resource.                                                                                         |
+| `managing/`    | Daily watcher over the constellation. Observe-only — no commits, no deploys, no mutations.                                                             |
+| `shorting/`    | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher.                   |
+| `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish
