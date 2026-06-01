@@ -20,12 +20,12 @@ Subprojects under this repo:
 - `serving/` — AWS cloud-base. Single source of truth for every AWS resource. CDK in TypeScript; ~$20–25/mo run-rate at v0.1. Plan + locked decisions at `serving/PLAN.md`. Hosts the `@qagents/diagram-kit` workspace package (sibling-of-subprojects, not member-of-serving).
 - `managing/` — daily watcher over the constellation. Cron-fired at 06:00 with Opus; three subagents (checker / planner / reporter) emit dated `.md` under `checks/`, `tasks/`, `reports/`. **Observe-only** — no git push/commit/deploys/mutations.
 - `shorting/` — adversarial sibling of `managing/`. On-demand `/open shorting`; one Opus subagent per target produces 10 numbered "shorting positions" under `shorting/positions/<target>/<date>.md`. **Observe-only**; findings route to `managing/`.
-- `donating/` — 6-month public donation drive (2026-06-01 → 2026-12-01). Source `donating/drive.md`; monthly ledger at `donating/ledger/YYYY-MM.md`; render to `data/donating/drive.json` consumed by `designing/web` + `documenting/web`. Four exclusive-use buckets (Claude Max 20× / Midpage MCP / AWS / SCOTUS). Content-only.
+- `donating/` — 6-month public donation drive (2026-06-01 → 2026-12-01). Source `donating/drive.md`; monthly ledger at `donating/ledger/YYYY-MM.md`; render to `data/donating/drive.json` consumed by `designing/web` + `documenting/web`. Four exclusive-use buckets (AI-assistant subscription / legal-research MCP / AWS / federal docketing). Content-only.
+- `publishing/` — open-source release subproject. Owns the public-org staging tree `publishing/quantapix/` and the `/publish` pipeline (sweep → redact → compile → push to the public GitHub org). Owns the drive's open-sourcing promise; no other subproject carries open-sourcing duty. Content-in / external-out (the public org); not observe-only.
 
 Shared-data hubs (no code, read-only unless regenerating):
 
-- `data/` — cross-project datasets (`data/parquet/`, `data/portfolios/`, `data/reports/`, `data/status/<sub>.json` status-emit slots). Charter + audit table: `data/CLAUDE.md` (closed-set kinds, three-question gate, single-owner rule); load-bearing spec at `data/specs/data-charter-2026-05-17.md`.
-- `data/quantapix/` — staging mirror of the public GitHub `quantapix` organisation; public-facing READMEs derived from `studying/` + `explaining/`. **Not a git surface** inside qagents; manual copy-out. See `data/quantapix/CLAUDE.md`.
+- `data/` — cross-project datasets (`financial/parquet/`, `financial/portfolios/`, `financial/reports/`, `data/status/<sub>.json` status-emit slots). Charter + audit table: `data/CLAUDE.md` (closed-set kinds, three-question gate, single-owner rule); load-bearing spec at `data/specs/data-charter-2026-05-17.md`.
 - `data/schedules/` — canonical macOS-launchd cron for **all** qagents subprojects. Single `ROUTINES` array in `data/schedules/launchd/install.sh`; `run_routine.sh <sub> <routine>` is the per-fire wrapper; logs at `launchd/logs/`. **Never** use cloud `/schedule` or `RemoteTrigger` — cowork sandbox can't mount the repo.
 - `data/renders/` — wholesale-regenerated Claude Design handoff bundles (HTML/CSS/JS), one per subproject at `data/renders/<sub>-design/`. Read-only; replaced wholesale on regen. See `data/renders/MANIFEST.md`.
 - `legal/` — private filing hub; authoritative source for `appealing/`, `pleading/`, `documenting/`. Layout not mirrored. CLAUDE.md content not published.
@@ -101,24 +101,29 @@ No `t` instead of `ts`, no missing `adj_c`, no renames. Adapters translate at th
 
 ## GICS sector / industry classification
 
-Both projects use the GICS hierarchy. Mapping is *shared data, not shared code*: parquet at `./data/parquet/gics-symbols.parquet` keyed by `symbol`, columns `gics_sector`, `gics_industry_group`, `gics_industry`, `gics_sub_industry`, `gics_code` (plus `name`, `source`, `as_of`). Sector strings are the 11 canonical GICS long-form names. Producer + schema doc stay at `data/gics/` (`build.py` + `mapping.md`); output path moved per `data/specs/data-charter-2026-05-17.md` § 5.
+Both projects use the GICS hierarchy. Mapping is *shared data, not shared code*: parquet at `./financial/parquet/gics-symbols.parquet` keyed by `symbol`, columns `gics_sector`, `gics_industry_group`, `gics_industry`, `gics_sub_industry`, `gics_code` (plus `name`, `source`, `as_of`). Sector strings are the 11 canonical GICS long-form names. Producer + schema doc stay at `financial/gics/` (`build.py` + `mapping.md`); output path moved per `data/specs/data-charter-2026-05-17.md` § 5.
 
-- Seed / refresh: `./.venv/bin/python data/gics/build.py --default|--symbols|--symbols-file`. yfinance is the seed source.
+- Seed / refresh: `./.venv/bin/python financial/gics/build.py --default|--symbols|--symbols-file`. yfinance is the seed source.
 - Analyzing reads via `analyzing/src/data/gics.ts` (registers DuckDB view `gics`).
 - Trading reads via `python -m shared.lib.gics {lookup|sectors|concentration}`.
-- Neither side writes to the parquet — updates go through `build.py`. Full schema and caveats in `data/gics/mapping.md`.
+- Neither side writes to the parquet — updates go through `build.py`. Full schema and caveats in `financial/gics/mapping.md`.
 
 ## Session lifecycle — `/open`, `/close`, `/do-claude-updates`
 
 Sessions start with `/open <project>` and end with `/close [--to-main]`. `/do-claude-updates` flushes queued cross-subproject CLAUDE.md hints.
 
-- **Spec:** `data/specs/open-close-dcu-2026-05-19.md` (consolidated; supersedes the 2026-05-05 base + 2026-05-09 amendments). Mechanics in `scripts/{open,close,dcu}.sh` + shared footer at `scripts/lib/footer.sh`; skills at `.claude/skills/{open,close,do-claude-updates}/SKILL.md` are thin orchestrators. Logs at `pending/logs/`.
+- **Spec:** `data/specs/open-close-dcu-2026-05-26.md` (consolidated triad — supersedes five retired predecessor specs; covers zero-prompt noop close, the canonical-edit lock hook, per-hop cascade summaries, and forward-only per-project `data/next-steps/<sub>.md` + a close-time gate + open briefing-read). Mechanics in `scripts/{open,close,dcu}.sh` + shared footer at `scripts/lib/footer.sh`; skills at `.claude/skills/{open,close,do-claude-updates}/SKILL.md` are thin orchestrators. Logs at `pending/logs/`.
 - **Lock model:** branch-presence IS the write-lock. `<project>` (or stacked `<project>-N`) blocks parallel `/open`s of conflicting scope. `/open qagents` blocks all subproject opens.
+- **Worktree path discipline:** inside any `/open <project>` session every Edit/Write `file_path` MUST begin with the worktree root — editing a canonical path lands the change on `main`, silently bypassing the lock. A PreToolUse hook enforces this.
 - **Stack:** strict — `<project>-N` parents on `<project>-(N-1)`. Closes cascade up; `--to-main` walks the stack to `main`.
 - **Sentinels:** `.dot-claude-write-lock` and `.data-write-lock` (root-anchored, gitignored), held only inside `/close` and `/do-claude-updates`.
 - **CLAUDE.md updates:** *immediate* (project's own CLAUDE.md on session branch) + *deferred hints* (cross-subproject prose in `data/claude-updates/<branch>.md`; `/do-claude-updates` judges later).
-- **Adopted-spec convention:** in-flight at `data/tmp/<slug>-<date>{/SPEC.md,.md}`; once cited by skills/docs, relocate to `data/specs/<slug>-<date>.md`. Spec file + tests dir shape pinned in `data/specs/CLAUDE.md`; proposal lifecycle in `data/tmp/CLAUDE.md`. `serving/history/` is for completed plans no longer load-bearing.
+- **Adopted-spec convention:** in-flight at `data/tmp/<slug>-<date>{/SPEC.md,.md}`; once cited by skills/docs, relocate to `data/specs/<slug>-<date>.md`. Spec file + tests dir shape pinned in `data/specs/CLAUDE.md`; proposal lifecycle in `data/tmp/CLAUDE.md`.
 - **Session summaries:** `/close` writes `data/summaries/<YYYY-MM-DD>T<HHMM>-<branch>.md` — versioned, never overwritten.
+- **Per-project next-steps:** `data/next-steps/<project>.md` is a forward-only "what's left" surface; items are deleted on resolution; a close-time gate fires on commits that cite a next-steps item.
+
+The `open` / `close` / `do-claude-updates` / `do-claude-optimizations` skill
+bodies + their adopted specs are published in this repo's `skills/` subtree.
 
 ## Programmatic Claude — Agent SDK lane
 
@@ -129,7 +134,7 @@ Cron-fired and library-callable Claude work goes through the typed Python wrappe
 Each subproject writes (a) its own subdir freely (branch-as-write-lock) and (b) `data/` only while holding `<root>/.data-write-lock`.
 
 - Cron-fired writes never touch `data/` directly — they stage into `pending/` (gitignored buffer mirroring canonical paths); `managing/`'s daily verifier does the lock-protected rsync.
-- Manual writers (fixed-path producers — `data/gics/build.py`, `<sub>/scripts/status_emit.*`) acquire the lock unconditionally with atomic create (`set -C` + redirect), write holder identifier, release with `rm` on EXIT trap.
+- Manual writers (fixed-path producers — `financial/gics/build.py`, `<sub>/scripts/status_emit.*`) acquire the lock unconditionally with atomic create (`set -C` + redirect), write holder identifier, release with `rm` on EXIT trap.
 - Configurable-output-path scripts (`--out-dir`/`--out`, e.g. `analyzing/scripts/{ingest.py,ta_reference.py}`) resolve the target to an absolute path and acquire the lock **iff** it falls under `<canonical_repo_root>/data/`. Worktree-local `data/` writes skip the lock — they don't race canonical writers. The canonical-root walker handles both worktree (`.git` file → parse `gitdir:` → walk up three parents) and canonical (`.git` dir → parent).
 - Producers branch on `QAGENTS_PENDING_ROOT`: set (cron lane) → write to `pending/<rel>`, no lock; unset (manual) → acquire lock, write canonical.
 
@@ -161,7 +166,7 @@ Vendored at `lib/memsearch/` as a Claude Code plugin. Install: `/plugin marketpl
 
 - **Per-subproject scope (qagents patch).** Patched `common.sh` prefers `CLAUDE_PROJECT_DIR` over `git rev-parse --show-toplevel` — each subproject gets its own Milvus collection and `<sub>/.memsearch/memory/` daily-log tree. Search `qagents patch` to find the block; preserve across upstream re-syncs.
 - **Backend.** ONNX `bge-m3` local. Milvus Lite is single-writer; switch `milvus.uri` in `~/.memsearch/config.toml` for concurrent sessions.
-- **Markdown is source of truth.** `<sub>/.memsearch/memory/YYYY-MM-DD.md` checked in; only state files (`milvus.db`, `*.pid`, `cache/`) gitignored.
+- **Markdown is source of truth.** `<sub>/.memsearch/memory/YYYY-MM-DD.md` is the durable record (the vector index re-indexes from it); the whole `**/.memsearch/memory/` tree is gitignored local state. Interactive sessions write logs in the worktree's gitignored tree, which `git worktree remove` would wipe; `/close` copies them back to canonical first.
 - **Recall is fork-isolated** — `context: fork` keeps the curated digest out of the main context.
 
 ## MCP servers — scoped to subproject via `<sub>/.mcp.json`
@@ -184,7 +189,7 @@ All federal statutory citations (predicate specs, Lean axioms/theorems, motion d
 
 Every subproject writes a `data/status/<sub>.json` slot matching `StatusEmit` in `@qagents/diagram-kit` (`serving/diagrams/kit/src/types.ts`). `designing/web/` reads every slot at build time and renders `/status`. No cross-subproject TS or Python imports — the JSON hub is the only seam.
 
-- **Schema owner:** `@qagents/diagram-kit` v0.4.1 (v0.4.1 additively widens `SubprojectId` 11 → 19; emit shape unchanged from v0.4.0). 6-kind `PanelRef` union closed-set pinned in `data/specs/display-modes-2026-05-07.md`.
+- **Schema owner:** `@qagents/diagram-kit` v0.4.2 (additively widens `SubprojectId` to cover every subproject incl. `publishing`; emit shape unchanged from v0.4.0). 6-kind `PanelRef` union closed-set pinned in `data/specs/display-modes-2026-05-07.md`.
 - **Producers:** `<sub>/scripts/status_emit.{ts,py,mjs}`; atomic write (`.tmp` → `mv`/`os.replace`). Each producer pins a `KIT_VERSION` constant; sweep in lockstep on kit `package.json` bumps. The close-time validator only checks `kitVersion` is a non-empty string, so drift is silent — `designing/web/src/lib/status-loader.ts` carries the live `ACCEPTED_KIT_VERSIONS` set as the safety net during transitions.
 - **Orchestrator:** `pnpm build:status` → `scripts/build-status-all.mjs` (producer failure non-fatal; placeholder fallback keeps build green).
 - **Bootstrap empty slots:** `pnpm build:status:placeholders`.

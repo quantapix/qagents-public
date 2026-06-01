@@ -5,7 +5,9 @@ AI-assistant session inside the qagents working tree. One file per
 published `CLAUDE.md`, refreshed weekly from the private source.
 
 See the [umbrella README](../README.md) for the broader thesis.
-Sibling subtrees: [`memory/`](../memory/), [`memsearch/`](../memsearch/).
+Sibling subtrees: [`skills/`](../skills/) (the session-lifecycle + optimization
+skill bodies + their adopted specs), [`memory/`](../memory/),
+[`memsearch/`](../memsearch/).
 
 ## What a `CLAUDE.md` is
 
@@ -14,8 +16,8 @@ pins the project-specific rules, invariants, and caveats the assistant
 needs to act safely inside that scope. Each subproject has one. The
 root has one (cross-boundary conventions only — language split,
 canonical bar shape, GICS mapping, status hub, session lifecycle).
-The shared-hub directories (`data/`, `data/specs/`, `data/tmp/`,
-`data/quantapix/`) each have one too.
+The shared-hub directories (`data/`, `data/specs/`, `data/tmp/`)
+each have one too.
 
 Together, the graph defines the *operating envelope* the assistant
 moves inside. Edit one file, you change one session's behaviour next
@@ -32,35 +34,41 @@ claude-md/
     data.md               redacted data/CLAUDE.md         (kind: data-hub charter)
     specs.md              redacted data/specs/CLAUDE.md   (kind: convention-anchor)
     tmp.md                redacted data/tmp/CLAUDE.md     (kind: convention-anchor)
-    quantapix.md          redacted data/quantapix/CLAUDE.md (kind: render-cache)
 ```
 
 `<sub>.md` files are named after the private subproject they mirror.
-Seventeen subprojects publish here today; two more exist privately
-but are deliberately excluded (see below).
 
 ## Which subprojects publish
 
-Published:
+This first cut is **product-focused** — the subprojects behind the two
+shipping products plus the core infrastructure they ride on. The rest of
+the publishable graph lands in later weekly refreshes.
 
-- `root.md`
-- `analyzing`, `trading`, `monitoring` — engineering surface
-- `proving`, `accounting`, `studying` — Lean kernel surface
-- `verifying`, `evaluating` — app shell surface (Qnarre / Qresev)
-- `designing`, `documenting` — site surface (quantapix.com / femfas.net)
-- `explaining`, `resolving`, `blending` — video surface
+Published this round:
+
+- `root.md` — cross-subproject conventions
+- `proving`, `accounting` — the two Lean kernels (Qnarre / Qresev)
+- `analyzing`, `trading` — the market-inspection + portfolio-management
+  surfaces that feed the Qresev financial slice
+- `verifying`, `evaluating` — the app shells (Qnarre / Qresev)
 - `serving` — infrastructure surface
-- `managing`, `shorting` — meta-observer surface
-- `donating` — the donation drive
+- `managing` — the constellation watcher
+- `publishing` — the open-source release subproject (the one that
+  produces these repos)
+- `data/` — the shared-hub conventions (`data.md` / `specs.md` / `tmp.md`)
 
-Excluded:
+Publishable but deferred to a later refresh: `monitoring`, `studying`,
+`designing`, `documenting`, `explaining`, `resolving`, `blending`,
+`shorting`, `donating`.
+
+Excluded (never published):
 
 - `appealing/`, `pleading/` — pro se litigation surface. Their
-  `CLAUDE.md`s name docket structure and filing conventions that
-  aren't safe to mirror even redacted. Public-facing legal material
-  routes through `documenting/` instead.
-- `legal/CLAUDE.md` — the filing-hub layout (per-court archives,
-  letters-vs-hub split). Same reasoning.
+  `CLAUDE.md`s name docket structure and filing conventions that aren't
+  safe to mirror even redacted. Public-facing legal material routes
+  through `documenting/` instead.
+- the filing-hub layout (per-court archives, letters-vs-hub split). Same
+  reasoning.
 
 ## Infrastructure files (`claude-md/data/`)
 
@@ -74,7 +82,7 @@ charter:
 |---|---|
 | `data-hub` | `data/data.md` |
 | `convention-anchor` | `data/specs.md`, `data/tmp.md` |
-| `render-cache` | `data/quantapix.md` |
+| `render-cache` | (none here — render-cache hubs not mirrored) |
 | `status-emit` | (none here — per-subproject status emitters) |
 | `letter-binding` | (none here — reserved kind) |
 

@@ -6,7 +6,7 @@
 > the private working tree.
 
 A weekly-refreshed window into how a sole developer plus an expert AI
-assistant collaborate inside a single monorepo across nineteen
+assistant collaborate inside a single monorepo across twenty
 sibling subprojects. The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
 It is the **rule set** the assistant reads at every session start,
@@ -22,7 +22,7 @@ curated alongside.
 The 2026 bet: what is worth publishing is no longer the implementation
 code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
 that lets a sole developer collaborate with an AI
-assistant across nineteen non-overlapping subprojects without
+assistant across twenty non-overlapping subprojects without
 contradicting itself. Eight themes carry that bet; a founding case
 study closes the section.
 
@@ -51,7 +51,7 @@ this repo publishes.
 
 ### 2. Core competencies + inter-project tension resolution
 
-The private repo runs **nineteen** sibling subprojects under a single
+The private repo runs **twenty** sibling subprojects under a single
 root. They share a venv, a pnpm workspace, a Lean toolchain, and a
 Git tree — but they explicitly do *not* share code. The boundary rule
 ("No cross-subproject imports — ever") is load-bearing.
@@ -304,7 +304,10 @@ qagents-public/
     root.md                       redacted root CLAUDE.md
     <sub>.md                      one per included subproject (see table below)
     data/                         shared-hub conventions (not subprojects)
-      data.md / specs.md / tmp.md / quantapix.md
+      data.md / specs.md / tmp.md
+  skills/                         session-lifecycle + optimization skills
+    open/close/do-claude-updates/do-claude-optimizations/SKILL.md
+    specs/                        the adopted specs those skills cite
   memory/                         redacted topic-file mirror
     MEMORY.md                     redacted index
     feedback_*.md                 engineering / authorship discipline
@@ -314,16 +317,21 @@ qagents-public/
     <sub>/YYYY-MM-DD.md           one per opt-in publishable day
 ```
 
-Total at steady state: ~270–320 files. Subproject `CLAUDE.md`s:
-seventeen. Infrastructure `CLAUDE.md`s: four. Memory topic files:
-~200–250. memsearch daily memos: ~50, aggressively pruned (most
-days are too thin to publish).
+This first cut is **product-focused**: the `CLAUDE.md` mirrors and
+session-lifecycle skills behind the two shipping products plus the core
+infrastructure, not yet the full graph. The `claude-md/` and `skills/`
+subtrees are live; `memory/` and `memsearch/` are scaffolded and fill in on
+later weekly refreshes. At steady state the graph runs to a few hundred
+files (the full subproject + infrastructure `CLAUDE.md` set, ~200–250 memory
+topic files, and ~50 aggressively-pruned memsearch daily memos). See
+[`claude-md/README.md`](./claude-md/README.md) for exactly which
+subprojects publish this round and which are deferred.
 
 Litigation-domain `CLAUDE.md`s (the appeals / pleading / legal-hub
 surface) are deliberately excluded — too easy for federal-record
 drift, even redacted.
 
-## Sibling subprojects (nineteen, one venv, one workspace)
+## Sibling subprojects (twenty, one venv, one workspace)
 
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -346,6 +354,7 @@ drift, even redacted.
 | `managing/`    | Daily watcher over the constellation. Observe-only — no commits, no deploys, no mutations.                                                             |
 | `shorting/`    | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher.                   |
 | `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
+| `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish
@@ -424,7 +433,7 @@ hub is the only seam. This is the canonical example of
 
 ## What you will not find here
 
-- The private working tree itself (nineteen subprojects, the filing
+- The private working tree itself (twenty subprojects, the filing
   hub, the redacted legal drafts).
 - Per-subproject implementation code — that lives in the
   per-subproject public repos (`qnarre-public`, `qresev-public`,
@@ -436,9 +445,13 @@ hub is the only seam. This is the canonical example of
 
 ## Cadence
 
-Refreshed weekly from three private sources:
+Refreshed weekly from four private sources:
 
 - The root + per-subproject `CLAUDE.md` graph → `claude-md/`.
+- The `open` / `close` / `do-claude-updates` / `do-claude-optimizations`
+  skill bodies + their adopted specs → `skills/`. These are the
+  executable shape of the session-lifecycle (theme 4) and
+  context-optimisation (theme 5) disciplines this README describes.
 - The auto-memory topic-file tree → `memory/`.
 - Selected daily memsearch memos opted in by the operator →
   `memsearch/` (quarterly batch sweep).
