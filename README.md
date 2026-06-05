@@ -370,7 +370,11 @@ the assistant has to remember without re-reading the whole codebase.
 
 - TypeScript for the VSCode extensions and the Astro sites.
 - Python for the trading agents and the kernel drivers.
-- Lean4 for the formal kernels (`proving/`, `accounting/`).
+- Lean4 for the formal kernels (`proving/`, `accounting/`). Both
+  kernels pin the **same** Lean toolchain version in lockstep — a single
+  current-stable release across the legal and financial kernel — so a
+  shared cloud build image serves both with no per-build toolchain
+  switch.
 - A Python microservice is allowed as an escape hatch for heavy
   numerics. Never reach across: trading Python does not import from
   analyzing TypeScript; analyzing TS does not import from trading.
@@ -464,11 +468,24 @@ the public-repo roster, or the contact channel changes.
 ## Donation drive
 
 The framework's six-month public donation drive runs 2026-06-01 →
-2026-12-01 through Open Source Collective as fiscal sponsor. Four
-exclusive-use buckets: the AI-assistant subscription, a third-party
+2026-12-01, with Open Source Collective as the intended fiscal sponsor.
+Four exclusive-use buckets: the AI-assistant subscription, a third-party
 MCP service line, AWS, and a SCOTUS petition-fee bucket. Public
-ledger at <https://opencollective.com/qagents>. Details, monthly
+ledger at <https://opencollective.com/qagents>. The first
+fiscal-sponsorship application (submitted 2026-05-23) was declined
+2026-06-03 on community-involvement grounds; the drive is holding the
+channel float and re-applying ~end of June 2026. Details, monthly
 ledgers, and weekly digests in the sibling repo `qdonating-public`.
+
+**Open to outside contributors.** The U.S. Code axiomatization program
+— Lean4 theorems backed by LLM-evaluated predicates over the full Code
+(~65,700 sections, all 54 titles) — is open to collaborators. It works
+over public federal statutes only, so it carries no privacy-floor
+surface; it is the natural place to build the project in the open. The
+project today is a single developer working with AI assistance, now
+opening this effort to contributors. Start at
+[`qnarre-public`](https://github.com/quantapix/qnarre-public)
+(CONTRIBUTING + good-first-issues) and the Discussions here.
 
 ## Contact
 
