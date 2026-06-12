@@ -8,7 +8,7 @@ every entry must have a documented **producer-of-record**; every entry
 must carry a `data/<X>/CLAUDE.md` declaring producer + consumers +
 schema + refresh cadence + write-lock posture.
 
-Load-bearing charter: `data/specs/data-charter-2026-05-17.md`.
+Load-bearing charter: `data/specs/data-charter-2026-05-17/SPEC.md`.
 
 ## 1. Closed-set kinds
 
@@ -67,10 +67,15 @@ entry lands or an existing one's verdict flips.
 
 | Entry | Kind | Producer | CLAUDE.md |
 |---|---|---|---|
+| `agent-sdk-ledger/` | data-hub | `code/agent_sdk/qagents/agent_sdk/ledger.py` (append-only, per SDK call) | `data/agent-sdk-ledger/CLAUDE.md` |
+| `claude-settings/` | convention-anchor | manual `sources/*` → `scripts/claude-settings/build.py` | `data/claude-settings/CLAUDE.md` |
 | `claude-updates/` | convention-anchor | `scripts/close.sh` | `data/claude-updates/CLAUDE.md` |
+| `debates/` | convention-anchor | sessions — debate convener at `/close` (spec `debate-framework-2026-06-09.md` § 4/§ 6); `managing/` cron for persisting debates (§ 6.2, deferred) | `data/debates/CLAUDE.md` |
 | `donating/` | data-hub | `donating/scripts/build_drive_json.py` (or successor) | `data/donating/CLAUDE.md` |
+| `messaging-rulings/` | convention-anchor | `pleading/` gate pass — CLEARED subset of each `data/debates/messaging-hardening-<date>.md` round record, promoted at `/close` (spec `messaging-hardening-debate-2026-06-06.md` § 6/§ 11; framework `debate-framework-2026-06-09.md`) | `data/messaging-rulings/CLAUDE.md` |
 | `next-steps/` | convention-anchor | sessions (`scripts/close.sh --next-steps` gate, spec `open-close-dcu-2026-05-26.md` § 6) | `data/next-steps/CLAUDE.md` |
-| `renders/` | render-cache | designer handoff (wholesale regen) | `data/renders/CLAUDE.md` |
+| `publishing/` | data-hub | `publishing/scripts/videos_emit.mjs` (videos roster → `/videos`) | `data/publishing/CLAUDE.md` |
+| `renders/` | render-cache (per-consumer flip to render-OUTPUT in progress — `publishing/` migrated 2026-06-10, rendering P4 covers the rest) | `rendering/` engines (migrated consumers) / designer handoff wholesale-regen (legacy bundles) | `data/renders/CLAUDE.md` |
 | `schedules/` | convention-anchor | manual (`launchd/install.sh` ROUTINES) | `data/schedules/CLAUDE.md` |
 | `specs/` | convention-anchor | manual (session-promoted from `data/tmp/`) | `data/specs/CLAUDE.md` |
 | `status/` | status-emit | per-sub `scripts/status_emit.*` | `data/status/CLAUDE.md` |
@@ -83,14 +88,14 @@ entry lands or an existing one's verdict flips.
 `financial/` hub — a domain peer of `legal/`, governed by its own
 `financial/CLAUDE.md` + per-dir `financial/<dir>/CLAUDE.md`. They share the
 root `.data-write-lock` with `data/`. See root `CLAUDE.md` § "Shared-data
-hubs" and `data/specs/financial-hub-migration-2026-05-29.md`.
+hubs" and `data/specs/data-charter-2026-05-17/financial-hub-migration-2026-05-29/SPEC.md`.
 
 The former render-cache entry that staged the public org (the `quantapix/`
 mirror) moved to the `publishing/` subproject at `publishing/quantapix/` — it
 was a working tree, not a multi-consumer dataset, so it leaves `data/` entirely. `publishing/`
 owns the render-redact-compile-push pipeline (`/publish`). See root `CLAUDE.md`
 § "Subprojects under this repo" (`publishing/` bullet) and
-`data/specs/publishing-2026-05-31.md`.
+`data/specs/publishing-2026-05-31/SPEC.md`.
 
 ## 5. Stub template
 

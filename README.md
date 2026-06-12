@@ -6,7 +6,7 @@
 > the private working tree.
 
 A weekly-refreshed window into how a sole developer plus an expert AI
-assistant collaborate inside a single monorepo across twenty
+assistant collaborate inside a single monorepo across twenty-two
 sibling subprojects. The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
 It is the **rule set** the assistant reads at every session start,
@@ -22,7 +22,7 @@ curated alongside.
 The 2026 bet: what is worth publishing is no longer the implementation
 code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
 that lets a sole developer collaborate with an AI
-assistant across twenty non-overlapping subprojects without
+assistant across twenty-two non-overlapping subprojects without
 contradicting itself. Eight themes carry that bet; a founding case
 study closes the section.
 
@@ -51,7 +51,7 @@ this repo publishes.
 
 ### 2. Core competencies + inter-project tension resolution
 
-The private repo runs **twenty** sibling subprojects under a single
+The private repo runs **twenty-two** sibling subprojects under a single
 root. They share a venv, a pnpm workspace, a Lean toolchain, and a
 Git tree — but they explicitly do *not* share code. The boundary rule
 ("No cross-subproject imports — ever") is load-bearing.
@@ -279,7 +279,13 @@ predicate has to be backed by a quoted source; every theorem is
 checked by a kernel that does no I/O. Lean4 enforces this for the
 legal-domain kernel; the same pattern enforces it for the
 financial-domain kernel (five frameworks: TREND / MOMENTUM /
-OPTIONS-RISK / SECTOR / DRAWDOWN).
+OPTIONS-RISK / SECTOR / DRAWDOWN). A third kernel now applies the same
+pattern to the *operational* domain — axiomatizing the version-control
+conventions the constellation itself runs on (the branch-as-write-lock
+rule of theme 4 is its first proved theorem). The kernels never share
+domain, ground truth, or consumer; the charter pins six invariants,
+including "no manual proof driving, ever" — every proof is driven by AI
+assistants debating in parallel, with the kernel as the only judge.
 
 The two products ship the same kernel against different statutes and
 different OHLCV. The public verifier endpoints accept **redacted
@@ -331,7 +337,7 @@ Litigation-domain `CLAUDE.md`s (the appeals / pleading / legal-hub
 surface) are deliberately excluded — too easy for federal-record
 drift, even redacted.
 
-## Sibling subprojects (twenty, one venv, one workspace)
+## Sibling subprojects (twenty-two, one venv, one workspace)
 
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -344,9 +350,10 @@ drift, even redacted.
 | `accounting/`  | Lean4 + LLM-predicates for the financial domain (five frameworks: TREND / MOMENTUM / OPTIONS-RISK / SECTOR / DRAWDOWN). Backs Qresev.                  |
 | `verifying/`   | Astro + React shell + FastAPI server for **Qnarre**, the legal-complaint verifier UI. Streams events from `proving/` over SSE.                         |
 | `evaluating/`  | Sibling of `verifying/` for **Qresev**, the stock/portfolio evaluator UI. Streams events from `accounting/` over SSE.                                  |
+| `visualizing/` | Graphing surface for the formal kernels — renders the cross-domain lattice + a proof-DAG; mounted into both product UIs via the kit-mount pattern.     |
 | `designing/`   | Astro + React islands site for quantapix.com. Hosts the `/status` page that aggregates per-subproject status emits.                                    |
 | `documenting/` | Sibling of `designing/`; femfas.net.                                                                                                                   |
-| `studying/`    | Lean4 expert-track study + OSS contribution roadmap.                                                                                                   |
+| `studying/`    | The third Lean4 kernel — the **operational** axis (git as the first axiomatized system; consumed by `monitoring/`). Also owns the cross-axis representation research. |
 | `explaining/`  | 50-script video-explainer arc narrated by an AI presenter.                                                                                             |
 | `resolving/`   | DaVinci Resolve production-assistance — typed Python wrapper + Fusion authoring skills. Stage 5 of `explaining/`.                                      |
 | `blending/`    | Blender + Geometry Nodes production-assistance — typed Python wrapper. Background plates consumed by `resolving/`.                                     |
@@ -355,6 +362,7 @@ drift, even redacted.
 | `shorting/`    | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher.                   |
 | `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
 | `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
+| `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images, later video) consumed across the constellation. |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish
@@ -370,10 +378,11 @@ the assistant has to remember without re-reading the whole codebase.
 
 - TypeScript for the VSCode extensions and the Astro sites.
 - Python for the trading agents and the kernel drivers.
-- Lean4 for the formal kernels (`proving/`, `accounting/`). Both
-  kernels pin the **same** Lean toolchain version in lockstep — a single
-  current-stable release across the legal and financial kernel — so a
-  shared cloud build image serves both with no per-build toolchain
+- Lean4 for the formal kernels (`proving/`, `accounting/`, `studying/`)
+  — three orthogonal axes: textual (federal statutes), numerical (market
+  data), operational (version-control state). All three pin the **same**
+  Lean toolchain version in lockstep — a single current-stable release —
+  so a shared cloud build image serves them with no per-build toolchain
   switch.
 - A Python microservice is allowed as an escape hatch for heavy
   numerics. Never reach across: trading Python does not import from
@@ -406,12 +415,14 @@ analyzer-side tooling too.
 When two subprojects need the same data, the data lives at a
 canonical path under the shared-data hub (Parquet or JSON), with each
 subproject reading via a thin per-side loader. Subprojects do not
-import each other's code. Three examples currently:
+import each other's code. Four examples currently:
 
 - A status-hub JSON slot per subproject, aggregated by `designing/`
   at build time.
 - The donation-drive JSON consumed by both Astro sites.
 - The GICS symbol parquet read by analyzers and traders.
+- The video-roster JSON produced by the release subproject and consumed
+  by the quantapix.com `/videos` page.
 
 The shared-data hub is governed by a five-kind closed-set charter
 (`data-hub` / `convention-anchor` / `render-cache` / `status-emit` /
@@ -437,7 +448,7 @@ hub is the only seam. This is the canonical example of
 
 ## What you will not find here
 
-- The private working tree itself (twenty subprojects, the filing
+- The private working tree itself (twenty-two subprojects, the filing
   hub, the redacted legal drafts).
 - Per-subproject implementation code — that lives in the
   per-subproject public repos (`qnarre-public`, `qresev-public`,

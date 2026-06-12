@@ -1,8 +1,8 @@
 # CLAUDE.md — evaluating/ (Qresev)
 
 Project-specific rules for the Qresev app at `qresev.quantapix.com`. Sibling
-of `verifying/` (Qnarre). Wraps the (forthcoming) `accounting/` Lean4 +
-LLM-predicate kernel — the financial-domain parallel of `proving/`. Assumes
+of `verifying/` (Qnarre). Wraps the `accounting/` Lean4 + LLM-predicate
+kernel — the financial-domain parallel of `proving/`. Assumes
 Claude Code's default guidance and the repo-root `qagents/CLAUDE.md`.
 
 ## 1. Layering — strict, like proving/
@@ -11,14 +11,13 @@ Claude Code's default guidance and the repo-root `qagents/CLAUDE.md`.
 |---|---|---|---|
 | **Web shell** | `web/` (Astro + React island) | HTTP + SSE | rendered UI |
 | **App server** | `server/` (FastAPI in qagents root .venv) | portfolio JSON, manifest | spawns accounting driver as subprocess |
-| **Kernel** | `../accounting/` (forthcoming) | manifest + portfolio | `Facts.lean` + audit JSON |
+| **Kernel** | `../accounting/` | manifest + portfolio | `Facts.lean` + audit JSON |
 
 The web shell never imports from `../accounting/` or `../analyzing/`. The
 server adapter calls the accounting driver as a subprocess and reads its
-outputs. Per the qagents/CLAUDE.md "two open choices" answer, accounting/
-reads its OHLCV via the shared `data/` parquet hub (not analyzing's DuckDB
-directly) — so this subproject too only ever sees `data/` parquet and the
-adapter's subprocess outputs.
+outputs. accounting/ reads its OHLCV via the shared `financial/parquet/`
+hub (not analyzing's DuckDB directly) — so this subproject too only ever
+sees `financial/` parquet and the adapter's subprocess outputs.
 
 ## 2. Design bundle is read-only; regen workflow
 
@@ -30,31 +29,51 @@ source of truth.
 When re-syncing tokens.css from the bundle (run from the repo root):
 
 1. `cp data/renders/evaluating-design/project/colors_and_type.css evaluating/web/public/tokens.css`
-2. `pnpm -C evaluating/web verify`
+2. **Two-drift sweep (mandatory — the bundle ships raw):** rewrite the
+   header comment to the normalized shape (no retired brand names, evaluating-design
+   provenance) and delete every Google-Fonts CDN `@import` (live + the
+   commented usage line). Fonts are self-hosted via `@fontsource` in
+   `Layout.astro` (superset of the CDN set), so the sweep is
+   zero-regression. Acceptance: a case-insensitive grep for the retired brand name + the fonts CDN returns 0.
+   Mirrors designing/CLAUDE.md § 2; retired when rendering/'s
+   normalize-at-intake lands (rendering-spec debate EV2/DS1,
+   `data/debates/rendering-spec-2026-06-09.md`).
+3. `pnpm -C evaluating/web verify`
 
-Tokens are byte-identical to `designing/`. Qresev's brand-mark color
+Tokens are identical to `designing/`'s normalized
+`web/src/styles/tokens.css` below the header comment (provenance lines
+differ — diff from `:root {` to verify). Qresev's brand-mark color
 (amber-only BracketedQ) lives in SVG props, not in tokens.
 
-**Bundle-mounting pattern — strategy-chart kit.**
-The kit at `evaluating/web/public/strategy-chart/` (kit.js + kit.css +
-tokens-chart.css verbatim from `data/renders/evaluating-design/`) plus
-the consumer-owned `loader.js` side-car is the first instance of the
-verifying/web/ template here. Layout.astro carries the `<slot
-name="head" />`; per-run pages live at
-`evaluating/web/src/pages/strategy-chart/run/[id]/`. See
-`verifying/CLAUDE.md` § 8 for the canonical reference and the bundle
-re-sync workflow. A TS-module port to
-`evaluating/web/src/lib/strategy-chart/` is deferred until either
-(a) a second consumer needs the kit, or (b) SSE wiring needs to call
-into the kit reactively.
+**Bundle-mounting pattern — RECOMPOSED strategy mount (2026-06-11).**
+The fused designer strategy-chart kit is retired (git history preserves
+it). The kit at `evaluating/web/public/graphs2/` is the **composed
+visualizing bundle**: `kit.js` = graphs-2 DAG + `@qagents/charts`
+overlays/side-view + the `@qagents/compose` router under one `QViz`
+global, regen-wholesale from `visualizing/graphs-2/dist/kit-strategy.js`
+— never hand-edit. Beside it: `kit.css` + `tokens-proof.css` (kit-owned,
+from `visualizing/graphs-2/kit/`), `tokens-chart.css` (from
+`visualizing/charts/kit/`), `pages.css` (app-owned page chrome) and the
+**app-owned never-fold `loader.js` side-car**
+(`StrategyKit.mountRun({host, overlayLayer, sideHost, graph, report,
+runId})`): lazy-injects kit.js, mounts the DAG, backs the router's
+opaque `RegionSource` with the `KitMount` (regions/onLayout/onTapLeaf),
+adapts report.json → the charts `QReport` (only predicates carrying
+`extras` yield overlay tiles — they light up as the accounting run-emit
+grows extras), injects `resolveBars` = `GET /api/runs/<id>/bars` (§ 7),
+preserves the `postMessage({type:'sc:predicate-selected', sel})`
+contract for the `/app` REPORT zone, and sets `body[data-ready]`.
+Layout.astro carries the `<slot name="head" />`; per-run pages live at
+`evaluating/web/src/pages/strategy-chart/run/[id]/`. Re-sync mirrors
+`verifying/CLAUDE.md` § 8 (build graphs-2 → cp `kit-strategy.js` →
+`pnpm verify` + e2e). Parity gate vs the fused render is structural —
+the e2e suite asserts the full report predicate set on the DAG + the
+selection round-trip.
 
-**lint-tokens caveat.** strategy-chart's `kit.css` ships literal
-`font-family` strings deliberately so SVG screenshot rasterizers
-resolve them (HANDOFF.md § "Caveats" item 1; `var(--font-mono)` doesn't
-work as an SVG presentation attribute). `evaluating/web/scripts/lint-tokens.sh`
-excludes `--exclude-dir=strategy-chart` from both passes. Future
-regen-wholesale kits with the same constraint follow the same
-exclusion pattern; never hand-edit the kit's CSS to placate the lint.
+**lint-tokens caveat.** `public/graphs2/` is excluded from
+`evaluating/web/scripts/lint-tokens.sh` (both passes) — the kit bundle +
+the kit-owned token-overlay DEFINITIONS legitimately carry raw values.
+Never hand-edit kit files to placate the lint.
 
 ## 3. Tokens / copy — same as Qnarre
 
@@ -69,12 +88,13 @@ No raw values outside `web/public/tokens.css`. Copy in `web/src/copy.ts`.
 **Three patterns inherited from `verifying/`** (side-car `loader.js`,
 per-run static pages via `getStaticPaths`, three-tab REPORT zone with
 `?id=<runId>` showing Predicates / Structure / Strategy-graph). The
-contracts come from `data/specs/proving-results-propagation-2026-05-09.md`;
+contracts come from `data/specs/proving-results-propagation-2026-05-09/SPEC.md`;
 the worked references live at `verifying/CLAUDE.md` §§ 5, 7, 8 and the
-evaluating-instance detail (loader.js schema adapter, `proves_options_clean`/
-`hawk_legs_clean` → `t_clean`/`t_legs` id-remap for `SC.layoutHawk`,
-`postMessage({type: 'sc:predicate-selected', sel})` selection forwarding)
-is pinned in memory `project_proof_graph_kit_mount_pattern` Instance 2.
+evaluating-instance detail (`loader.js` schema adapter + the
+`postMessage({type: 'sc:predicate-selected', sel})` selection forwarding;
+the fused-kit `t_clean`/`t_legs` id-remap retired with the 2026-06-11
+recompose — § 2) is pinned in memory
+`project_proof_graph_kit_mount_pattern` Instance 2.
 Structure-tab failure-loci block falls back to `kernel.errors[].raw`
 when `termHasType` is empty.
 
@@ -117,18 +137,29 @@ canned Bools against the committed manifest. Driver also honors a per-call `inpu
 override that forces stub on a single predicate even when global
 `--stub` is off — additive. The driver then invokes **real** `lake build
 examples.<id>.proof` (not `lake env lean`) so the kernel verdict is
-genuine. Stub predicate values are designed to match the canonical
-ACCEPTED trace; if the kernel rejects, the report exposes the Lean
-error verbatim. Read endpoints keep the hybrid `_resolve_run_dir` shape
+genuine. Since accounting `8960465a` (the `--stub` value-faithfulness
+fix evaluating/ surfaced 2026-06-05) stub values are seeded from the
+example's committed `facts.json`, keyed on `(spec, lean_call)`, whenever
+the adapter passes `--example-id` (it does) — so a replay is value-faithful
+to the real Opus run that produced the golden, not the old hawk-tuned table
+(now only the fresh-example fallback, which was polarity-blind and flipped
+`balance_sample`'s `time_under_water` breach to REJECTED). If the kernel
+rejects, the report exposes the Lean error verbatim. Read endpoints keep
+the hybrid `_resolve_run_dir` shape
 (`server/jobs/` first, then `accounting/examples/`) so any historical
 live-job artefacts remain readable.
 
 Endpoints: `POST /api/runs` · `GET /api/runs` (lists jobs + examples
 with current verdicts) · `GET /api/runs/<id>/stream` (SSE, typed
 events per propagation spec § 5.4) · `GET /api/runs/<id>/report` ·
-`GET /api/runs/<id>/graph` · `GET /api/runs/<id>/loci`. The server
-makes no financial judgments and does not place orders. Qresev
-evaluates; it does not execute.
+`GET /api/runs/<id>/graph` · `GET /api/runs/<id>/loci` ·
+`GET /api/runs/<id>/bars?ticker=&range=` (the recomposed strategy
+mount's `resolveBars` seam — pyarrow over
+`financial/parquet/ohlcv-equities/`, emits the charts-kit OHLCV wire
+shape `{ts(ms),o,h,l,c,v}`; `pyarrow` rides the `[evaluating]` extra —
+the EC2 venv needs a redeploy to pick it up). The server makes no
+financial judgments and does not place orders. Qresev evaluates; it
+does not execute.
 
 CORS: `https://qresev.quantapix.com` + `http://localhost:4322`.
 
@@ -143,7 +174,7 @@ redaction code. Revisit if admin-gated freeform POST lands.
 
 Local dev: `astro dev` on `:4322` + `uvicorn` on `:8788`. Prod: static shell
 on S3+CloudFront at `qresev.quantapix.com`, server on EC2 behind Caddy at
-`api.qresev.quantapix.com` (per `data/specs/serving-2026-05-26.md` § 2 decision 3).
+`api.qresev.quantapix.com` (per `data/specs/serving-2026-05-26/SPEC.md` § 2 decision 3).
 
 **Static-shell deploy** — bucket `qresev.quantapix.com`, CloudFront
 `E2PFH4Z95BT169`, wildcard `*.quantapix.com` cert. Invocation:
@@ -174,9 +205,12 @@ Spec partitioning:
   contract. `EXPECTED_FRAMEWORKS` mirrors `FRAMEWORK_META` in
   `web/src/lib/frameworks.ts` — edit both in lockstep when a framework
   lands. Predicate counts use a floor (`minPreds`).
-- `strategy-chart.spec.ts` — kit-mount canvas (`svg.sc-svg`) on three
-  spot-check runs (`balance_sample`/`hawk_sample`/`single_ticker_sample`)
-  + `<head>` linkage of tokens-chart.css + kit.css + kit.js + loader.js.
+- `strategy-chart.spec.ts` — recomposed kit-mount (`data-ready` +
+  cytoscape canvas) on three spot-check runs
+  (`balance_sample`/`hawk_sample`/`single_ticker_sample`) + the
+  structural parity gate (report predicate set ↔ DAG nodes) + the
+  `sc:predicate-selected` round-trip + `<head>` linkage of the
+  graphs2 CSS set.
 - `app.spec.ts` — `client:only` island hydration, 5-chip set + click +
   the OPTIONS-RISK lock panel.
 - `api.spec.ts` — live-only; `ALLOWED_IDS` mirrors `ALLOWED_EXAMPLE_IDS`
@@ -210,8 +244,8 @@ so this is the only kernel dependency. Memory:
 
 This subproject does not import from `analyzing/`, `trading/`, `verifying/`,
 or `designing/`. The only allowed reach is the server adapter calling
-`../accounting/scripts/...` as a subprocess (and reading `data/`-namespaced
-parquet via the kernel, not the web shell).
+`../accounting/scripts/...` as a subprocess (and reading
+`financial/`-namespaced parquet via the kernel, not the web shell).
 
 ## Status emit (`data/status/evaluating.json`)
 

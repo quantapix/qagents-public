@@ -16,7 +16,7 @@ session writes during draft; promotion is a separate `git mv` inside
 `/close`
 
 Replaced the legacy root-level `tmp/` directory when the tmp+summaries
-reorg landed (`data/specs/data-conventions-2026-05-06.md` § 14).
+reorg landed (`data/specs/data-conventions-2026-05-06/SPEC.md` § 14).
 
 ---
 
@@ -38,11 +38,13 @@ file gestured at — quantified now so the audit can act on it.
 
 ### Adopted-orphan detection
 
-When a spec is promoted to `data/specs/<slug>-<date>.md`, the
-corresponding `data/tmp/<slug>-<date>.md` (or `data/tmp/<slug>-<date>/`)
-MUST be removed in the same commit. The audit looks for the inverse:
-a `tmp/` entry whose **basename** (stripping `.md` and any `/SPEC.md`
-suffix) matches a `data/specs/*.md` filename. Any match is an
+When a spec is promoted to `data/specs/<slug>-<date>/SPEC.md` (family
+form — `specs-family-layout-2026-06-10/SPEC.md` § 4), the corresponding
+`data/tmp/<slug>-<date>.md` (or `data/tmp/<slug>-<date>/`) MUST be
+removed in the same commit. The audit looks for the inverse: a `tmp/`
+entry whose **basename** (stripping `.md` and any `/SPEC.md` suffix)
+matches a family directory name, a subspec directory basename, or a
+legacy flat `data/specs/*.md` filename. Any match is an
 `adopted-orphan` — the promotion was incomplete; cleanup pending.
 
 ### Authoring scratch (subdirectory form)
@@ -64,14 +66,24 @@ session-scoped scratch.
 
 ### Promotion checklist (for the human running `/close`)
 
-1. `git mv data/tmp/<slug>-<date>.md data/specs/<slug>-<date>.md`
-   (or the directory equivalent if subdir form).
-2. Edit the promoted spec's `**Status:**` line to `adopted` and add
-   the `**Tests:**` line per `data/specs/CLAUDE.md`.
-3. If tests exist, `git mv` (or `mkdir -p`) the
-   `<slug>-<date>-tests/` directory under `data/specs/`.
+Both draft forms stay valid here; conformance is enforced **at
+promotion** — the promoted spec must arrive in `data/specs/` in full
+family form (`specs-family-layout-2026-06-10/SPEC.md` § 4).
+
+1. Dir-form draft: `git mv data/tmp/<slug>-<date>
+   data/specs/<slug>-<date>` (tests + TODO travel with it; fix any
+   non-conforming pieces in the same commit). Flat-form draft:
+   `mkdir data/specs/<slug>-<date>` + `git mv` the file to `SPEC.md`
+   inside. Amendment/subspec: `git mv` **into** the family directory
+   under the de-prefixed name and add the `**Parent:** ../SPEC.md`
+   line.
+2. Edit the promoted SPEC.md's `**Status:**` line to `adopted` and
+   set the `**Tests:**` line (`tests/` or `none — design-only`) per
+   `data/specs/CLAUDE.md`; SPEC.md must be ≤ 1,000 lines.
+3. If tests exist, land them as `data/specs/<slug>-<date>/tests/`
+   (suite files under `cases/`).
 4. Update consumers (skills, sibling specs, subproject CLAUDE.mds)
-   to cite the new `data/specs/<slug>-<date>.md` relpath.
+   to cite the new `data/specs/<slug>-<date>/SPEC.md` relpath.
 5. Verify `data/tmp/<slug>-<date>{.md,/}` no longer exists — the
    audit will flag it otherwise.
 

@@ -7,7 +7,7 @@ re-litigate those.
 ## 1. Purpose
 
 `managing/` is a meta-observer over the entire qagents constellation. It runs
-once a day (06:00 local, Opus, cron-fired) and produces three dated artifacts:
+once a day (06:00 local, top-tier model, cron-fired) and produces three dated artifacts:
 
 - `checks/YYYY-MM-DD.md` — top **5** issues across consistency / correctness /
   functionality. **Functionality is always highest priority.** A failed live
@@ -25,7 +25,7 @@ making progress.
 
 ### 1.1 Pinned commitments — what "the ball" actually is
 
-These are the load-bearing objectives the three Opus subagents weight above
+These are the load-bearing objectives the three top-tier-model subagents weight above
 generic drift detection (the verifier subagent runs structural checks only,
 not pinned-commitment scoring). A miss against any of them is a **functionality**
 finding (highest priority).
@@ -54,23 +54,33 @@ finding (highest priority).
    finding (drive's whole pitch is *trivially verifiable*). Probe wiring
    goes in `probes.md` once endpoints + the first dated ledger exist; the
    ledger-existence check can land sooner.
-6. **Spec hygiene + phase tally.** Every `data/specs/<slug>-<date>.md` is
-   tracked for **uncompleted phases**; every `data/tmp/<slug>-<date>{.md,/}`
-   for proposal age + adopted-orphan cleanup. The audit script
-   `scripts/specs-audit.sh` is the single source of truth (sections: SPECS
-   phase tally / TESTS conformance / TMP proposal status / LEDGER
-   manual-check reminders). Findings:
+6. **Spec hygiene + phase tally.** Every spec document — family-form
+   `data/specs/<slug>-<date>/SPEC.md` (+ subspec `<fam>/<sub>/SPEC.md`;
+   the only layout since the `specs-family-layout-2026-06-10` Phase 4
+   retirement) — is tracked for **uncompleted phases**; every
+   `data/tmp/<slug>-<date>{.md,/}` for proposal age + adopted-orphan
+   cleanup. The audit script `scripts/specs-audit.sh` is the single
+   source of truth (sections: SPECS phase tally / TESTS conformance /
+   LAYOUT lint / TMP proposal status / LEDGER manual-check reminders).
+   Findings:
    - A `[in-flight]` phase touched > 14 days ago is a **correctness**
      finding (stall risk).
+   - A SPEC.md over 1,000 lines (`OVER-CAP` flag in the SPECS section)
+     is a **correctness** finding.
+   - Any LAYOUT-section finding (root entry that is neither `CLAUDE.md`
+     nor a family dir; family subdir that is neither `tests/` nor a
+     `SPEC.md`-bearing subspec; subspec missing `**Parent:** ../SPEC.md`
+     or root carrying one; nesting deeper than 2) is a **correctness**
+     finding.
    - A `tmp/` entry with slug-date > 7d AND no successor in `data/specs/`
      is a **correctness** finding (stale proposal — adopt or delete).
-   - A `tmp/` entry whose slug matches an adopted spec in `data/specs/` is
-     a **correctness** finding (adopted-orphan — promotion cleanup missed).
-   - A `data/specs/*-tests/` directory missing `README.md` / `run.sh` /
-     `tests/` is a **correctness** finding, but ONLY for test dirs whose
-     slug-date ≥ 2026-05-19 (the day the uniform shape landed). Earlier
-     dirs are grandfathered per the forward-looking rule in
-     `data/specs/CLAUDE.md`.
+   - A `tmp/` entry whose slug matches an adopted spec in `data/specs/`
+     (family dir name or subspec basename) is a **correctness** finding
+     (adopted-orphan — promotion cleanup missed).
+   - A tests dir (`<fam>[/<sub>]/tests/`) missing `README.md` / `run.sh`
+     / `cases/` is a **correctness** finding, but ONLY for slug-date
+     ≥ 2026-05-19 (the day the uniform shape landed). Earlier dirs are
+     grandfathered per the forward-looking rule in `data/specs/CLAUDE.md`.
    - A LEDGER row with `due_in_days=PAST(Nd)` or `DUE` is a **correctness**
      finding — manual-check reminder derived from spec text (no live AWS
      calls). The note column carries the exact check; surface verbatim.
@@ -91,9 +101,9 @@ threshold + adopted-orphan detection). When those rules change, the
 thresholds in `scripts/specs-audit.sh` and the bullets above move in
 lockstep.
 
-## 2. Three Opus subagents, clean contexts each
+## 2. Three top-tier-model subagents, clean contexts each
 
-The 06:00 cron fires a single coordinator that spawns three Opus subagents +
+The 06:00 cron fires a single coordinator that spawns three top-tier-model subagents +
 one Haiku subagent in parallel, each with a clean context. Each subagent owns
 exactly one output file (verifier owns two — see below) and writes them
 directly to disk. The coordinator only sees their one-line completion
@@ -103,10 +113,10 @@ four concerns.
 
 | Subagent | Model | Output | Inputs | Notes |
 |---|---|---|---|---|
-| `checker` | Opus | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
-| `planner` | Opus | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
-| `reporter` | Opus | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
-| `verifier` | Haiku 4.5 | `checks/<date>.pending.json` + appended `## Pending verification` section in `checks/<date>.md` | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the lock-protected rsync in `data/schedules/launchd/verify-pending.sh` (Layer 2 guards exit 8/9/10 as defense-in-depth). Spec: `data/specs/pending-promotion-scope-2026-05-28.md`. Cheap & fast — runs in parallel. |
+| `checker` | fable (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
+| `planner` | fable (top tier) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
+| `reporter` | fable (top tier) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
+| `verifier` | Haiku 4.5 | `checks/<date>.pending.json` + appended `## Pending verification` section in `checks/<date>.md` | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the lock-protected rsync in `data/schedules/launchd/verify-pending.sh` (Layer 2 guards exit 8/9/10 as defense-in-depth). Spec: `data/specs/pending-promotion-scope-2026-05-28/SPEC.md`. Cheap & fast — runs in parallel. |
 
 Subagent definitions live under `.claude/agents/` (created in the new
 session). Each one's prompt lists exact inputs to read and the exact output
@@ -135,9 +145,10 @@ path to write — they do not negotiate scope with the coordinator at runtime.
   `lake build` / `pyright` exit codes (don't run them; just check whether
   they were green in the most recent CI / commit log).
 - Spec hygiene (per § 1.1 commitment 6 + `data/specs/CLAUDE.md`):
-  `[in-flight]` phase > 14d, `tmp/` proposal > 7d without successor,
-  adopted-orphan `tmp/` entry, post-2026-05-19 `*-tests/` dir missing
-  required `README.md` / `run.sh` / `tests/`.
+  `[in-flight]` phase > 14d, SPEC.md over 1,000 lines (OVER-CAP), any
+  LAYOUT-section lint finding, `tmp/` proposal > 7d without successor,
+  adopted-orphan `tmp/` entry, post-2026-05-19 tests dir missing
+  required `README.md` / `run.sh` / `cases/`.
 
 **Functionality** (live system state, *highest priority*):
 - Live HTTP 200 + non-empty body on a random route from femfas.net or
@@ -214,7 +225,7 @@ managing MAY commit ONLY (a) paths listed in
 pass-list), (b) clean-exit RUN_DIR contents under
 `pending/cron-ec2/<basename>/<sub>/<routine>/<run_id>/pending/<canonical>`
 promoted via `verify-pending.sh`'s `promote_cron_ec2` lane (spec
-`data/specs/cron-ec2-migration-2026-05-19.md` § 3.6 + § 3.9 step 10),
+`data/specs/cron-ec2-migration-2026-05-19/infra-2026-05-19/SPEC.md` § 3.6 + § 3.9 step 10),
 plus its own dated outputs
 (`managing/{checks,reports,tasks}/<DATE>.md`, including the
 `.pending.json` sidecar), ONLY with the message prefix
@@ -233,7 +244,7 @@ Manual ad-hoc invocations follow the same path: operators run
 `data/schedules/launchd/verify-pending.sh` (or `--force <pending-relpath>`
 to bypass verifier rules for a single file with audit-prefixed
 `force-accept <path>` in the message). Both modes acquire the lock the
-same way. Spec: `data/specs/data-conventions-2026-05-06.md` § 7.4 + § 7.6.
+same way. Spec: `data/specs/data-conventions-2026-05-06/SPEC.md` § 7.4 + § 7.6.
 
 Same script also owns `prune_stale_fails` — at the end of every fire it
 `rm`s any `pending/**` file that is **(a)** >7 days old AND **(b)**
@@ -251,7 +262,7 @@ managing/
 ├── CLAUDE.md                 # this file
 ├── README.md                 # quickstart + cron command
 ├── probes.md                 # weighted random-probe pool (P1..P6)
-├── scripts/                  # mechanical helpers (9× bash-3.2 portable)
+├── scripts/                  # mechanical helpers (bash-3.2 portable) + status_emit.mjs
 ├── .claude/
 │   ├── settings.json         # observe-only allow-list
 │   ├── settings.local.json   # gitignored, user-local overrides
@@ -284,7 +295,7 @@ The fired routine is the coordinator prompt at
 reads the sidecar and either pipes it to `claude --print` (legacy lane) or
 invokes `python -m qagents.agent_sdk.cron` (SDK lane, when
 `QAGENTS_DISPATCH=sdk_task` is baked into the plist). The coordinator runs
-the four subagents (three Opus + one Haiku verifier) in parallel and exits.
+the four subagents (three top-tier + one Haiku verifier) in parallel and exits.
 Estimated runtime budget: ≤ 10 min total (subagents wrap independently).
 Per-run cost cap is **$9 USD** (`MAX_BUDGET_USD` defaults to `9.00` for
 `daily`; `3.00` for trading routines).
@@ -294,10 +305,10 @@ the cowork sandbox VM cannot mount the qagents tree, and that path was
 abandoned 2026-04-25 (see `data/schedules/Notes.md` § "Why not RemoteTrigger
 / `/schedule`?").
 
-**Cron-EC2 lane** (`data/specs/cron-ec2-migration-2026-05-19.md`) is jointly
+**Cron-EC2 lane** (`data/specs/cron-ec2-migration-2026-05-19/SPEC.md`) is jointly
 implemented: `serving/` owns the AWS-facing infrastructure (Phase 0a — CDK
 deltas, `serving/scripts/ec2-cron/`, deploy script; tracked as
-`data/specs/serving-2026-05-26.md § 10 Phase 7`); `managing/` owns the laptop-side coordination
+`data/specs/serving-2026-05-26/SPEC.md § 10 Phase 7`); `managing/` owns the laptop-side coordination
 (`data/schedules/launchd/cron-pull.sh` + `enable-laptop-cron.sh`, the
 `install.sh --target=ec2` switch, the `managing/.claude/agents/checker.md`
 ledger scan), plus Phase 1's daily+status-emit shadow week. Don't touch AWS state from a `managing/`

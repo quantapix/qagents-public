@@ -15,9 +15,9 @@ Cross-project conventions (shared with `analyzing/`) live in the repo root `qage
 
 ## Model assignment
 
-- PM-level reasoning (strategy, trade selection, retros): **Opus 4.7**.
+- PM-level reasoning (strategy, trade selection, retros): the **latest top-tier model** (`fable`).
 - Sub-agents (tactical data pulls, order placement, risk math, journaling, news triage): **Haiku 4.5** or **Sonnet 4.6** per their agent definition in `.claude/agents/`.
-- Never promote a sub-agent to Opus without updating its agent definition and documenting the reason.
+- Never promote a sub-agent to the top tier without updating its agent definition and documenting the reason.
 
 ## Data sources
 
@@ -95,7 +95,7 @@ Typecheck edits with `pyright <file>` before declaring them done — config is i
 
 ### Agent SDK wrapper — `qagents.agent_sdk`
 
-`qagents.agent_sdk` (at `code/agent_sdk/qagents/agent_sdk/`) is the typed wrapper around `claude-agent-sdk` for cron-fired and library-callable Claude work; the SDK lane is **cron-only** today and routines opt in by suffixing `:sdk` in `data/schedules/launchd/install.sh` ROUTINES. Full contract — install, public-API stability surface, billing — in root `CLAUDE.md` § "Programmatic Claude — Agent SDK lane" and `data/specs/agent-sdk-adoption-2026-05-17.md`.
+`qagents.agent_sdk` (at `code/agent_sdk/qagents/agent_sdk/`) is the typed wrapper around `claude-agent-sdk` for cron-fired and library-callable Claude work; the SDK lane is **cron-only** today and routines opt in by suffixing `:sdk` in `data/schedules/launchd/install.sh` ROUTINES. Full contract — install, public-API stability surface, billing — in root `CLAUDE.md` § "Programmatic Claude — Agent SDK lane" and `data/specs/agent-sdk-adoption-2026-05-17/SPEC.md`.
 
 ## Position schema (portfolio.json)
 
@@ -135,7 +135,7 @@ runbook at `data/schedules/Notes.md`.
 ### Cron-lane vs manual-lane producer contract (`pending/` migration)
 
 Trading producers haven't migrated yet — opportunistic per
-`data/specs/data-conventions-2026-05-06.md` § 10.8 (pick up when next
+`data/specs/data-conventions-2026-05-06/SPEC.md` § 10.8 (pick up when next
 touching a PM prompt, the per-PM close-journal / overnight-research
 skills under `agents/<pm>/.claude/skills/`, the `journal-writer` /
 `performance-reporter` sub-agents under `.claude/agents/`, or the
@@ -160,7 +160,7 @@ and MUST NOT be applied here: there is no session branch, so prefixing a
 orphaned and never promoted (caused the 2026-06-02 moderate miss — files
 landed in `qagents-wt/trading-13/`, absent from the daily-promotion commit).
 
-### Cron-EC2 lane (`data/specs/cron-ec2-migration-2026-05-19.md`)
+### Cron-EC2 lane (`data/specs/cron-ec2-migration-2026-05-19/SPEC.md`)
 
 Moves the 16 trading routines (5 × 3 PMs + leaderboard) off the operator's
 laptop onto `qagents-app-1`. The trading session owns the per-PM
@@ -195,14 +195,15 @@ enabling PM timers before vs after 2026-06-15. Same cost cascade gates
 
 Each `summaries/YYYY-MM-DD.md` ends with a cost line:
 ```
-Cost: Claude $X.XX (Opus $A / Sonnet $B / Haiku $C), Perplexity $Y.YY, total $Z.ZZ
+Cost: Claude $X.XX (top-tier $A / Sonnet $B / Haiku $C), Perplexity $Y.YY, total $Z.ZZ
 ```
 Claude Code emits per-run token usage; Perplexity returns usage in its response body. The `performance-reporter` sums these.
 
 ## Status emit (`data/status/trading.json`)
 
-Producer: `trading/scripts/status_emit.py` (system `python3`, no venv).
-Live as of 2026-05-18 (`KIT_VERSION = "0.4.0"`): per-PM NAV +
+Producer: `trading/scripts/status_emit.py` (system `python3`, no venv;
+`KIT_VERSION` pinned in-script — sweep with all pins on kit bumps,
+never restate the literal in prose): per-PM NAV +
 snapshot count + portfolio.json age + total NAV + leaderboard age,
 with a `pm-cohort` diagram (3 PMs → risk-analyzer / options-risk-analyzer
 → trade-executor → Alpaca paper). `live.status` flips OK / DEGRADED /

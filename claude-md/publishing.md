@@ -12,7 +12,7 @@ pushes the public `github.com/quantapix/*` repos. After this subproject, **no
 other subproject carries any open-sourcing responsibility** — each keeps only
 its own internal `data/status/<sub>.json` emit.
 
-Authoritative contract: `data/specs/publishing-2026-05-31.md`.
+Authoritative contract: `data/specs/publishing-2026-05-31/SPEC.md`.
 
 ## 2. What it owns / what it does not
 
@@ -21,13 +21,18 @@ Authoritative contract: `data/specs/publishing-2026-05-31.md`.
 push); the external push surface `git push-quantapix`; drive Promise 1; the
 redaction-clean gate before any push; the **@Quantapix YouTube channel**
 material (`publishing/youtube/` — channel-page copy, brand/thumbnail/motion
-prompts, upload specs — plus the rendered channel-art bundle at
-`data/renders/publishing-design/`), migrated out of `explaining/videos/`
-2026-06-02. The split is **channel vs. content**: the channel face (handle,
-banner, About, thumbnail system, brand kit, upload specs) is publishing's; the
-50-video 5×10 arc itself stays in `explaining/`. The Janet identity master +
-voice config stay in `explaining/voice/` (HeyGen narration is `explaining/`'s
-job); `youtube/` cites them, does not own them.
+prompts, upload specs), migrated out of `explaining/videos/` 2026-06-02. The
+split is **channel vs. content**: the channel face (handle, banner, About,
+thumbnail system, brand kit, upload specs) is publishing's; the 50-video 5×10
+arc itself stays in `explaining/`. The Janet identity master + voice config
+stay in `explaining/avatar/` + `explaining/voice/` (HeyGen narration is
+`explaining/`'s job); `youtube/` cites them, does not own them. The channel
+*design sources* (JSX harnesses + canvas bundles) live at
+`rendering/designs/publishing-youtube/` and the rendered deliverables at
+`data/renders/publishing/` since rendering/ P1 (2026-06-10,
+`data/specs/rendering-2026-06-09/SPEC.md`) — publishing is rendering's first
+consumer; request re-renders via `rendering/scripts/render.sh
+publishing-youtube`, never a hand-rolled capture script.
 
 **Does not own:** drive content (`donating/drive.md` is the source of truth —
 publishing reads it, never edits it); the hosted verification service (Promise
@@ -51,8 +56,8 @@ and **never** mutates any sibling subproject's tree.
 ## 4. The `/publish` pipeline
 
 Triggered by the `/publish` skill (`.claude/skills/publish/SKILL.md`, a thin
-orchestrator over `scripts/publish.sh` + the Opus collector fan-out). Five
-phases: preflight → sweep (Opus fan-out, one `publish-collector` per source
+orchestrator over `scripts/publish.sh` + the top-tier-model collector fan-out). Five
+phases: preflight → sweep (top-tier-model fan-out, one `publish-collector` per source
 subproject, Max-20x interactive billing) → verify/redact (HARD gate) → compile
 → push (operator-confirmed). Full mechanics: spec § 5; staging-tree layout +
 source mapping: `publishing/quantapix/CLAUDE.md`.
@@ -70,7 +75,7 @@ the compile/push. `publishing/` inherits `documenting/`'s redaction rules
 `documenting/scripts/check_redactions.py`); it invents none and relaxes none —
 the same load-bearing privacy floor `donating/` § 7 names. The gate is wired
 before the push and pinned by the companion test
-(`data/specs/publishing-2026-05-31-tests/tests/t_10_publish_gate.sh`).
+(`data/specs/publishing-2026-05-31/tests/cases/t_10_publish_gate.sh`).
 
 **The candidate tree is markdown, so the gate must scan markdown.**
 `publishing/scripts/sync_mirror.py` Stage 3 applies the blocklist patterns as
@@ -92,7 +97,7 @@ pinned by `t_10_publish_gate.sh`.
 - **Branch-as-lock.** `/open publishing` creates branch `publishing` + worktree
   `<root>-wt/publishing/`. Every Edit/Write `file_path` begins
   with that worktree root (canonical-edit hook,
-  `data/specs/canonical-edit-hook-tightening-2026-05-28.md`).
+  `data/specs/open-close-dcu-2026-05-26/canonical-edit-hook-tightening-2026-05-28/SPEC.md`).
 - **`data/status/publishing.json`** is written by `scripts/status_emit.mjs`, a
   fixed-path producer under `data/` — it acquires `.data-write-lock` per the
   universal manual-writer rule (root CLAUDE.md § "Shared-data write-lock") when
@@ -107,7 +112,9 @@ pinned by `t_10_publish_gate.sh`.
 ## 7. Status emit (`data/status/publishing.json`)
 
 `scripts/status_emit.mjs` participates in the status contract (root CLAUDE.md
-§ "Status hub"). Pins `KIT_VERSION = '0.4.2'`. Four-state pill machine: `OK`
+§ "Status hub"). Pins a `KIT_VERSION` constant (the producer's pin is the
+source of truth — 0.5.0 since the 2026-06-10 rendering widening; swept in
+lockstep on kit bumps). Four-state pill machine: `OK`
 (last `/publish` clean) / `BUILDING` (run in flight) / `DEGRADED` (last run
 aborted on the redaction/drift gate — privacy floor held, release stale) /
 `NOT_YET_LIVE` (pre-first-publish). Summary diagram = the five-stage pipeline;
@@ -128,12 +135,15 @@ publishing/
 │   ├── CHANNEL-INFO.md       # paste-into-YouTube-Studio copy
 │   ├── YOUTUBE-SPECS.md      # format / dimensions / safe-area / file-naming
 │   ├── STUDIO-FILL-IN.md     # operator walkthrough mapping copy onto the Studio form
+│   ├── RESPEC-LIGHT-LIVE-2026-06-07.md      # system-wide re-prompt: light palette + real-Janet skin tone + master-res export
+│   ├── RESPEC-THUMBS-DEPTH-2026-06-08.md    # thumbnail-only: depth/dynamism toolkit + 6 launch thumbs light (fixes "too flat")
 │   ├── LAUNCH-COHORT-RESPEC-2026-06-04.md   # Claude Design rerun hand-off (delivered)
 │   ├── LAUNCH-COHORT-UPLOAD-2026-06-06.md   # paste-ready Studio payloads for 1.1/1.5/1.7/2.1
 │   └── prompts/01..06.md     # brand kit / themes / thumbs / motion / priority-10 / Escher bed
 ├── scripts/
 │   ├── publish.sh            # /publish mechanics (gate + diff + push)
 │   ├── status_emit.mjs       # writes data/status/publishing.json
+│   ├── videos_emit.mjs       # writes data/publishing/videos.json (drives designing/web /videos — see § 10)
 │   ├── sync-mirror.sh        # redact one source file into qagents-public/ (thin wrapper)
 │   └── sync_mirror.py        # the redaction engine behind sync-mirror.sh
 └── .claude/
@@ -141,5 +151,63 @@ publishing/
     ├── settings.local.json   # gitignored
     ├── skills -> ../../.claude/skills
     └── agents/
-        └── publish-collector.md   # per-source Opus collector subagent
+        └── publish-collector.md   # per-source top-tier-model collector subagent
 ```
+
+## 9. Messaging-hardening debate (publishing/ convenes)
+
+`publishing/` convenes the recurring **messaging-hardening debate** — a
+structured multi-agent pass that makes the public surfaces (quantapix.com,
+femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
+adversarial read. It is **instance one** of the generic debate framework
+(`data/specs/debate-framework-2026-06-09/SPEC.md`); its own contract:
+`data/specs/messaging-hardening-debate-2026-06-06/SPEC.md` (adopted 2026-06-06).
+
+- **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model subagent
+  per vector); vector-owner subprojects defend; `managing/` judges; **`pleading/`
+  holds a binding litigation-safety veto on every ruling** (spec § 4, § 7 Q1).
+- **Lane:** Max-20x interactive, operator-run inside `/open publishing` (mirrors
+  `/dco-manual`); the convener starts each round at v0.1. If the debate persists
+  past round 1, `managing/`'s daily cron stewards the recurring rounds (framework
+  § 6.2 — deferred, details TBD).
+- **Round records** land in the shared hub
+  `data/debates/messaging-hardening-<date>.md` (tracked; framework § 4, spec-like
+  `<slug>-<date>` naming — migrated 2026-06-09 out of the former
+  `publishing/debates/<date>/round-NN-rulings.md`). These are **pre-gate triage**
+  — per spec § 6 a ruling reaches the promoted digest
+  `data/messaging-rulings/<date>.md` **only after `pleading/` returns CLEARED**.
+- **Advisory model (§ 7 Q2):** the debate emits rulings; each owning subproject
+  applies the public-surface edit in its **own** `/open <sub>` session.
+  `publishing/` never mutates a sibling tree (§ 3 boundary posture).
+- **Wiring state:** the `data/messaging-rulings/` data-charter registration is
+  done (first CLEARED digest 2026-06-08). The `pending/*-debate/**` buffer
+  registration (in `managing/.claude/agents/verifier.md` + `verify-pending.sh`)
+  is **now due** — the first subagent fan-out round ran 2026-06-11; applied
+  from a `managing/` session.
+
+## 10. Drives the designing /videos page (data-hub, not shared code)
+
+`publishing/` is the producer-of-record for the @Quantapix video roster, so it
+**drives** the `designing/web` `/videos` page the same way `donating/` drives
+`/donate` — via a JSON hub, the only seam (no cross-subproject imports, root
+CLAUDE.md language split). Third instance of the data-hub-not-shared-code pattern
+(after `data/status/` and `data/donating/`).
+
+- **Producer:** `publishing/scripts/videos_emit.mjs` → `data/publishing/videos.json`
+  (schema + governance: `data/publishing/CLAUDE.md`). The 5×10 roster (titles +
+  profile tags) tracks `explaining/outline.md`; the per-video **release state**
+  (status `live`/`upcoming`, `cdnUrl`, `youtubeUrl`, `thumb`) is publishing's own
+  state, edited in the emitter. Atomic write; the `.data-write-lock` is held by
+  `/close` (matching `status_emit.mjs` / donating's emitter).
+- **Consumer:** `designing/web/src/lib/videos-loader.ts` → `src/pages/videos.astro`
+  (collapsible chapters + @Quantapix channel hint + featured preview/latest).
+  Thumbnails live at `designing/web/public/video-thumbs/<id>.png`.
+- **Boundary (§ 3):** the consumer files are `designing/`-owned. publishing
+  authors them but **lifts-across** to the `designing` worktree
+  (`data/specs/open-close-dcu-2026-05-26/lift-encapsulated-fixes-2026-06-08/SPEC.md` § 6, Mode A) for the
+  designing session to verify + commit — publishing never closes carrying a
+  sibling tree's hunks. The `data/publishing/*` hub + the emitter stay on the
+  publishing branch (allowlisted shared hub, not foreign).
+- **Release flow:** a cut goes live → upload to S3 (`serving/scripts/upload-video.sh
+  <cut> T<n>/<slug>.mp4`) + YouTube, then flip `status: 'live'` + fill
+  `cdnUrl`/`youtubeUrl` in the emitter and re-run it.

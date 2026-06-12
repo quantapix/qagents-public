@@ -30,11 +30,20 @@ source of truth; `web/` is the production port.
 When re-syncing tokens.css from the bundle (run from the repo root):
 
 1. `cp data/renders/verifying-design/project/colors_and_type.css verifying/web/public/tokens.css`
-2. `pnpm -C verifying/web verify`
+2. Normalize — the designing § 2 two-drift sweep, **mandatory**: replace the
+   raw retired-brand-name header with the provenance header already in the deployed
+   file, and delete the Google-Fonts CDN `@import` block (fonts are
+   self-hosted via `@fontsource` in `Layout.astro`). Shipping the raw copy
+   re-imports the banned brand string + the CDN-timing flake (rendering-spec
+   debate, ruling V2: `data/debates/rendering-spec-2026-06-09.md`).
+3. `pnpm -C verifying/web verify`
 
-Tokens are byte-identical to `designing/` — Qnarre does not get its own
-palette. The brand-mark color difference (teal-only Qnarre BracketedQ vs. the
-umbrella's teal-left/amber-right) lives in the SVG props, not in tokens.
+Token *values* are identical to `designing/`'s normalized
+`web/src/styles/tokens.css` (the two bundles' raw masters are byte-identical;
+only the provenance header differs) — Qnarre does not get its own palette.
+This per-consumer sweep retires when `rendering/`'s normalize-at-intake lands
+(P2, DS1). The brand-mark color difference (teal-only Qnarre BracketedQ vs.
+the umbrella's teal-left/amber-right) lives in the SVG props, not in tokens.
 
 ## 3. Tokens are the only boundary for raw values
 
@@ -90,7 +99,7 @@ canonical `examples/<id>/` only — no per-job staging.
 
 Endpoints: `POST /api/runs` · `GET /api/runs` (allow-list with current
 verdicts + predicate counts) · `GET /api/runs/<id>/stream` (SSE events
-typed per `data/specs/proving-results-propagation-2026-05-09.md` (adopted)
+typed per `data/specs/proving-results-propagation-2026-05-09/SPEC.md` (adopted)
 § 5.4: `predicateResult` / `factsWritten` /
 `lakeBuildStarted` / `lakeBuildResult`) · `GET /api/runs/<id>/report` ·
 `GET /api/runs/<id>/graph` (consumed by the kit loader at
@@ -109,96 +118,79 @@ freeform requires the rule set from `legal/public/` staging (already in
 use for `documenting/`).
 
 Plan + decisions for the live deploy:
-`data/specs/verifying-go-live-2026-05-15.md`.
+`data/specs/verifying-go-live-2026-05-15/SPEC.md`.
 
-## 8. Proof-graph kit (Lean4 DAG visualisation)
+## 8. Proof-graph kit (Lean4 DAG visualisation) — graphs-2 mount (G6)
 
-The proof-graph rendering kit — predicate-pill / axiom-rectangle /
-theorem-hexagon visual contract over a deterministic seeded force layout
-— ships with the verifying/web/ static build at:
+Since 2026-06-11 the proof-graph surface renders via the domain-neutral
+**graphs-2 kit** from `visualizing/` (the unified kit-mount that also
+backs Qresev's strategy mount — visualizing spec
+`data/specs/visualizing-2026-06-03/graphs2-2026-06-07/SPEC.md` G6). The
+designer POC kit (`ProofGraph` namespace + `fixture-rico.js`) is
+retired; git history preserves it. Routes:
 
 - `/proof-graph/` — lobby + cards linking to the two demos and any live
   runs discovered under `proving/examples/*/report.json`.
-- `/proof-graph/01-rico/` — Doe v. Acme § 1962(c) happy path. 17 predicate
-  applications, 5 derived theorems, top-level inductive
-  `ValidCivilRicoComplaint` reached via § 1962(c) constructor; `lake
-  build ✓`. Walk the DAG, pin a node, replay the proof.
-- `/proof-graph/02-debug/` — synthetic-failure variant. Same layout (seed
-  is invariant); the overlay restyles into the three failure modes —
-  predicate-False, predicate-Undecided, kernel-error.
+- `/proof-graph/01-rico/` — Doe v. Acme § 1962(c) happy path over the
+  committed `proving/examples/sample/graph.json`.
+- `/proof-graph/02-debug/` — same DAG, three injected failure modes
+  (predicate-False, predicate-Undecided, kernel-error) synthesized by
+  `ProofGraphKit.makeSynthetic`; the value lens + failure borders
+  restyle the same layout.
 - `/proof-graph/run/<id>/` + `/<id>/debug/` — per-run views over real
-  `proving/examples/<id>/graph.json` fixtures. `getStaticPaths` scans
-  the example archive at build time so each known run becomes a static
-  page with its `graph.json` inlined; the loader (see below) adapts
-  the producer schema into the kit's `renderGraph` contract. REJECTED
-  runs surface a debug-overlay link in the header.
+  `proving/examples/<id>/graph.json` fixtures via `getStaticPaths`;
+  REJECTED runs surface a debug-overlay link in the header.
+- `/lattice/` — the axiomatization catalog (coverage × agreement × tier)
+  over `data/visualizing/legal-catalog.json`, same kit in catalog mode
+  (cells collapsed, agreement lens, `tokens-lattice.css`).
 
-Kit code lives at `verifying/web/public/proof-graph/`:
+Kit files live at `verifying/web/public/graphs2/`:
 
-- `tokens-proof.css` — diagram-overlay tokens (referenced verbatim from
-  the bundle).
-- `kit.css` — primitive styles (synced from
-  `data/renders/verifying-design/project/shared.css`; the two head
-  `@import`s were stripped, page Astro files link `/tokens.css` +
-  `/proof-graph/tokens-proof.css` explicitly).
-- `kit.js` — global `ProofGraph` namespace
-  (`PredicateApplication`, `Axiom`, `Theorem`, `Edge`, `DiagnosticChip`,
-  `CompoundRegion`, `renderGraph`, `renderInspector`,
-  `bindInteractions`, `replay`, `topoOrder`, `descendants`,
-  `descendantsBelow`).
-- `fixture-rico.js` — global `RicoFixture` namespace; `happyGraph` +
-  `makeFailureGraph()` + `failures[]`. The canonical Doe v. Acme
-  fixture against `proving/examples/sample_proof.lean`.
-- `loader.js` — **side-car extension**, not part of the bundle. Exposes
-  `ProofGraph.loadFixture(graphJson)` that adapts a proving-emitted
-  `graph.json` (full-word `kind`, no positions, evidence arrays,
-  string uncertainty) into kit-compatible nodes (kind shorthand,
-  computed 3-column deterministic positions, evidence string, numeric
-  uncertainty). Lives separately from `kit.js` because the bundle is
-  regen-wholesale per the re-sync workflow below; in-place edits to
-  `kit.js` would be lost on next sync. **Never fold loader.js into
-  kit.js.**
+- `kit.js` — the graphs-2 IIFE bundle (global `QViz`: `mountProof` /
+  `mountCatalog` → a `KitMount` with lenses, collapse gestures, regions,
+  `exportSVG`). **Regen-wholesale** from
+  `visualizing/graphs-2/dist/kit-proof.js` — never hand-edit.
+- `kit.css` + `tokens-proof.css` + `tokens-lattice.css` — kit-owned
+  host styles + the per-app token overlays, copied verbatim from
+  `visualizing/graphs-2/kit/`.
+- `pages.css` — **app-owned** page-shell styles (zones, pills,
+  inspector; the `--proof-*` vars absorbed from the retired designer
+  kit). Not part of the kit re-sync.
+- `loader.js` — **app-owned never-fold side-car**. Exposes
+  `ProofGraphKit.mountRun({host, graph, inspector, debug, synthetic,
+  lattice})`: lazy-injects `kit.js` when the host enters the viewport
+  (the visualizing § 10 payload rule), mounts `QViz`, wires the
+  tap-a-leaf inspector, sets `body[data-ready]` (the e2e anchor), and
+  publishes `window.__G2M__`. Schema seams live HERE — never in kit.js.
 
-Loaded as classic `<script is:inline>` global-namespace tags, not ESM
-modules. Rationale + future TS-port target:
-`[[project_proof_graph_kit_mount_pattern]]`.
-
-**Layout head slot.** Proof-graph pages inject `tokens-proof.css` +
-`kit.css` via `Layout.astro`'s `<slot name="head" />`. General rule:
+**Layout head slot.** Pages inject the three CSS files via
+`Layout.astro`'s `<slot name="head" />`. General rule:
 `[[feedback_layout_head_slot_for_per_page_links]]`.
 
-**Re-sync from a regenerated bundle**:
+**Re-sync from a rebuilt kit** (run from the repo root):
 
-1. Re-extract the bundle at `data/renders/verifying-design/` (per
-   § 2's regen workflow).
-2. `cp data/renders/verifying-design/project/{tokens-proof.css,fixture-rico.js} verifying/web/public/proof-graph/`
-3. `cp data/renders/verifying-design/project/shared.css verifying/web/public/proof-graph/kit.css`
-   then strip the two `@import` lines at the head of `kit.css`.
-4. `cp data/renders/verifying-design/project/shared.js verifying/web/public/proof-graph/kit.js`
-5. `pnpm -C verifying/web verify`.
+1. `pnpm -C visualizing/graphs-2 typecheck && pnpm -C visualizing/graphs-2 gates`
+2. `node visualizing/graphs-2/kit/build.mjs`
+3. `cp visualizing/graphs-2/dist/kit-proof.js verifying/web/public/graphs2/kit.js`
+4. `cp visualizing/graphs-2/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs2/`
+5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
 
-The two `data/renders/verifying-design/project/0[1-2]-*.html` design
-files are the bundle's reference renderings; the live Astro pages mirror
-their body markup. If a re-rendered bundle changes the body shape,
-update `verifying/web/src/pages/proof-graph/0[1-2]-*.astro` to match —
-`pnpm verify` is the gate.
-
-**lint-tokens caveat.** Proof-graph's CSS resolves `var(--font-*)` in
-stylesheet context, so lint passes without a per-kit exclusion.
-SVG-rasterizer-target sibling kits (e.g. strategy-chart) need one — see
-`[[project_proof_graph_kit_mount_pattern]]` "lint-tokens gotcha".
+**lint-tokens caveat.** `public/graphs2/` is excluded from
+`scripts/lint-tokens.sh` (both passes) — the kit bundle + the kit-owned
+token-overlay DEFINITIONS legitimately carry raw values, same exclusion
+class as Qresev's kit dir. Never hand-edit kit files to placate lint.
 
 ## 9. Hosting target
 
 Local dev: `astro dev` on `:4321` + `uvicorn` on `:8787` with a Vite proxy.
 Prod: static shell on S3+CloudFront at `qnarre.quantapix.com`, server on EC2
-behind Caddy at `api.qnarre.quantapix.com` (per `data/specs/serving-2026-05-26.md` § 2
+behind Caddy at `api.qnarre.quantapix.com` (per `data/specs/serving-2026-05-26/SPEC.md` § 2
 decision 3). Same code in both modes; only the API origin in
 `astro.config.mjs` env changes.
 
 **Static-shell deploy** (live since 2026-05-16):
 
-- Bucket: `qnarre.quantapix.com` (hostname convention from `data/specs/serving-2026-05-26.md` § 3).
+- Bucket: `qnarre.quantapix.com` (hostname convention from `data/specs/serving-2026-05-26/SPEC.md` § 3).
 - CloudFront Function: `qagents-rewrite-index-qnarre` (per-host suffix; CF Function names are account-global).
 - Wildcard cert: shares `*.quantapix.com` ACM cert from `QagentsCertsStack`
   (exported as `QagentsQuantapixWildcardCertArn`).
@@ -235,8 +227,9 @@ Spec partitioning:
   `web/src/lib/frameworks.ts` — edit both in lockstep when a statute lands.
   Predicate counts use a floor (`minPreds`) so adding a predicate file
   doesn't break the spec.
-- `proof-graph.spec.ts` — lobby cardinality + kit-mount canvas/inspector
-  on `01-rico`, `02-debug`, and three spot-check runs.
+- `proof-graph.spec.ts` — lobby cardinality + graphs-2 kit-mount
+  (`data-ready` + cytoscape canvas) on `01-rico`, `02-debug`, three
+  spot-check runs, and `/lattice/` (catalog mode + lattice tokens).
 - `app.spec.ts` — `client:only` island hydration, chip set + click behaviour.
 - `api.spec.ts` — live-only; `ALLOWED_IDS` here mirrors
   `ALLOWED_EXAMPLE_IDS` in `server/main.py` — both are exhaustive by
