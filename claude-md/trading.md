@@ -15,7 +15,7 @@ Cross-project conventions (shared with `analyzing/`) live in the repo root `qage
 
 ## Model assignment
 
-- PM-level reasoning (strategy, trade selection, retros): the **latest top-tier model** (`fable`).
+- PM-level reasoning (strategy, trade selection, retros): the **latest top-tier model** (`opus`).
 - Sub-agents (tactical data pulls, order placement, risk math, journaling, news triage): **Haiku 4.5** or **Sonnet 4.6** per their agent definition in `.claude/agents/`.
 - Never promote a sub-agent to the top tier without updating its agent definition and documenting the reason.
 
@@ -177,14 +177,6 @@ operationally live as of 2026-05-23 Stage 2; per-PM SSM kill-switches
 is conservative → moderate → aggressive with one-week parity observation
 between PMs. Full operational steps (state-cache rsync, SSM flip,
 install/deploy/systemctl-enable sequence) in `serving/CLAUDE.md § 8.6`.
-
-**Cost window — pre-2026-06-15.** Until the Anthropic SDK credit-claim
-flow opens, each scheduled SDK-lane fire bills the operator's Console
-payment method at API per-token rates: ~5 routines/PM × ~$2–3 ≈
-$10–15/day per PM (~$150–225/week for all three weekdays). Weigh
-enabling PM timers before vs after 2026-06-15. Same cost cascade gates
-`managing:daily:sdk` (smoke 4a deferred for this reason;
-`serving/INVENTORY.md` § 8 drift item 26).
 
 ## Monthly retro + leaderboard
 

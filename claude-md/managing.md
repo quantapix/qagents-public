@@ -51,7 +51,7 @@ finding (highest priority).
    outranks any non-functionality finding for the day. (b) **Ledger
    cadence** — `donating/ledger/YYYY-MM.md` must land within 5 calendar
    days of each month-end; missing/late ledger past day 5 is a functionality
-   finding (drive's whole pitch is *trivially verifiable*). Probe wiring
+   finding (drive's whole pitch is *trivially auditable*). Probe wiring
    goes in `probes.md` once endpoints + the first dated ledger exist; the
    ledger-existence check can land sooner.
 6. **Spec hygiene + phase tally.** Every spec document — family-form
@@ -113,9 +113,9 @@ four concerns.
 
 | Subagent | Model | Output | Inputs | Notes |
 |---|---|---|---|---|
-| `checker` | fable (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
-| `planner` | fable (top tier) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
-| `reporter` | fable (top tier) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
+| `checker` | opus (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
+| `planner` | opus (top tier) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
+| `reporter` | opus (top tier) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
 | `verifier` | Haiku 4.5 | `checks/<date>.pending.json` + appended `## Pending verification` section in `checks/<date>.md` | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the lock-protected rsync in `data/schedules/launchd/verify-pending.sh` (Layer 2 guards exit 8/9/10 as defense-in-depth). Spec: `data/specs/pending-promotion-scope-2026-05-28/SPEC.md`. Cheap & fast — runs in parallel. |
 
 Subagent definitions live under `.claude/agents/` (created in the new
@@ -144,11 +144,9 @@ path to write — they do not negotiate scope with the coordinator at runtime.
 - TS / Lean / Python typecheck regressions visible from `pnpm verify` /
   `lake build` / `pyright` exit codes (don't run them; just check whether
   they were green in the most recent CI / commit log).
-- Spec hygiene (per § 1.1 commitment 6 + `data/specs/CLAUDE.md`):
-  `[in-flight]` phase > 14d, SPEC.md over 1,000 lines (OVER-CAP), any
-  LAYOUT-section lint finding, `tmp/` proposal > 7d without successor,
-  adopted-orphan `tmp/` entry, post-2026-05-19 tests dir missing
-  required `README.md` / `run.sh` / `cases/`.
+- Spec hygiene — see § 1.1 commitment 6 + `data/specs/CLAUDE.md` for the
+  full finding list (`[in-flight]` > 14d, OVER-CAP, LAYOUT lint, stale /
+  adopted-orphan `tmp/`, post-2026-05-19 tests-dir shape).
 
 **Functionality** (live system state, *highest priority*):
 - Live HTTP 200 + non-empty body on a random route from femfas.net or

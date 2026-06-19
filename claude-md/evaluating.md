@@ -52,7 +52,10 @@ visualizing bundle**: `kit.js` = graphs-2 DAG + `@qagents/charts`
 overlays/side-view + the `@qagents/compose` router under one `QViz`
 global, regen-wholesale from `visualizing/graphs-2/dist/kit-strategy.js`
 — never hand-edit. Beside it: `kit.css` + `tokens-proof.css` (kit-owned,
-from `visualizing/graphs-2/kit/`), `tokens-chart.css` (from
+from `visualizing/graphs-2/kit/`; the kit overlay itself byte-mirrors the
+brand SoT `rendering/brand/tokens/quantapix/overlay/proof-dark.css` — this
+app consumes the **dark** slice, edits originate at the rendering SoT),
+`tokens-chart.css` (from
 `visualizing/charts/kit/`), `pages.css` (app-owned page chrome) and the
 **app-owned never-fold `loader.js` side-car**
 (`StrategyKit.mountRun({host, overlayLayer, sideHost, graph, report,
@@ -128,7 +131,8 @@ lands. Mirrors verifying/CLAUDE.md §6.
 v0.1 is **replay-only for POST** (sibling parity with verifying/). POST
 `/api/runs` body is `{example_id}` from a closed allow-list
 `{hawk_sample, single_ticker_sample, balance_sample}`
-(`balance_sample` is the 5-framework brand-anchor); the adapter shells
+(`balance_sample` is the brand-anchor — 4 frameworks since the
+2026-06-03 MOMENTUM drop; see its manifest comment); the adapter shells
 `extract_facts.py --stub` against `accounting/examples/<id>/`,
 overwriting `{report,graph,loci}.json` in place. accounting/'s driver
 now carries `--reuse-facts` + `--build` (proving parity, since ffa30e46),
@@ -141,9 +145,7 @@ genuine. Since accounting `8960465a` (the `--stub` value-faithfulness
 fix evaluating/ surfaced 2026-06-05) stub values are seeded from the
 example's committed `facts.json`, keyed on `(spec, lean_call)`, whenever
 the adapter passes `--example-id` (it does) — so a replay is value-faithful
-to the real Opus run that produced the golden, not the old hawk-tuned table
-(now only the fresh-example fallback, which was polarity-blind and flipped
-`balance_sample`'s `time_under_water` breach to REJECTED). If the kernel
+to the real Opus run that produced the golden. If the kernel
 rejects, the report exposes the Lean error verbatim. Read endpoints keep
 the hybrid `_resolve_run_dir` shape
 (`server/jobs/` first, then `accounting/examples/`) so any historical
@@ -156,10 +158,16 @@ events per propagation spec § 5.4) · `GET /api/runs/<id>/report` ·
 `GET /api/runs/<id>/bars?ticker=&range=` (the recomposed strategy
 mount's `resolveBars` seam — pyarrow over
 `financial/parquet/ohlcv-equities/`, emits the charts-kit OHLCV wire
-shape `{ts(ms),o,h,l,c,v}`; `pyarrow` rides the `[evaluating]` extra —
-the EC2 venv needs a redeploy to pick it up). The server makes no
-financial judgments and does not place orders. Qresev evaluates; it
-does not execute.
+shape `{ts(ms),o,h,l,c,v}`; ranges `1m/3m/6m/1y/2y` only. `pyarrow`
+rides `evaluating/requirements.txt` — the rotation's pip step is the
+ONLY venv-extension path, the `[evaluating]` extra never reaches EC2.
+The parquet itself is shipped out-of-band: tar
+`financial/parquet/ohlcv-equities/` →
+`s3://qagents-artifacts/releases/qresev/ohlcv-equities.tar.gz` →
+SSM-extract to `/srv/qagents/financial/parquet/` — re-run on data
+refresh, the deploy tarball never carries it. Done 2026-06-12). The
+server makes no financial judgments and does not place orders. Qresev
+evaluates; it does not execute.
 
 CORS: `https://qresev.quantapix.com` + `http://localhost:4322`.
 
@@ -229,11 +237,9 @@ incremental build cache survives redeploys. systemd unit must have
 `ReadWritePaths` covering `accounting/{examples,Accounting,.lake}` **and
 `/srv/qagents/.elan`** — NAMESPACE preflight hard-fails (status=226) on
 any missing path. The `.elan` entry is load-bearing: the elan shim
-rewrites `settings.toml` on toolchain activation (both kernels unified to
-`leanprover/lean4:v4.30.0` on 2026-06-05 — formerly a per-build switch
-between qresev's v4.30.0-rc2 and qnarre's v4.29.1), so without it lake dies
+rewrites `settings.toml` on toolchain activation, so without it lake dies
 ~0.04s in on a read-only-fs write and every live run returns a spurious
-REJECTED with empty `kernel.errors` (fixed 2026-06-01).
+REJECTED with empty `kernel.errors`.
 
 The Lean toolchain (`leanprover/lean4:v4.30.0`, 2.5 GB) installs
 once at EC2 boot via `bootstrap-ec2.sh`. accounting/ is mathlib-free

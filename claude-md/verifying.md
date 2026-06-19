@@ -152,7 +152,10 @@ Kit files live at `verifying/web/public/graphs2/`:
   `visualizing/graphs-2/dist/kit-proof.js` — never hand-edit.
 - `kit.css` + `tokens-proof.css` + `tokens-lattice.css` — kit-owned
   host styles + the per-app token overlays, copied verbatim from
-  `visualizing/graphs-2/kit/`.
+  `visualizing/graphs-2/kit/`. The kit overlays are themselves
+  byte-mirrors of the brand SoT at `rendering/brand/tokens/quantapix/
+  overlay/{lattice,proof}-dark.css` (this app consumes the **dark**
+  slice) — edits originate at the rendering SoT, never these copies.
 - `pages.css` — **app-owned** page-shell styles (zones, pills,
   inspector; the `--proof-*` vars absorbed from the retired designer
   kit). Not part of the kit re-sync.

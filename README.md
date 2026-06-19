@@ -210,6 +210,12 @@ load-bearing — data hubs, sentinel write-locks, scoped MCP servers —
 get the full treatment in the "Cross-subproject conventions" section
 below. The asymmetry is: code is per-subproject; data hubs cross.
 
+A third primitive crosses the same way a data hub does: the **kit-mount**
+pattern. One domain-neutral graphing kit ships as vanilla JS into three
+product surfaces — the two verifier UIs build-inline it; the local-only
+monitoring app mounts it at request time over private live data. The kit is
+the shared seam; none of the three imports another's code.
+
 ### 7. AI-checking-AI patterns
 
 Beyond theme 3's spec debate, six runtime checks rely on AI
@@ -282,7 +288,9 @@ financial-domain kernel (five frameworks: TREND / MOMENTUM /
 OPTIONS-RISK / SECTOR / DRAWDOWN). A third kernel now applies the same
 pattern to the *operational* domain — axiomatizing the version-control
 conventions the constellation itself runs on (the branch-as-write-lock
-rule of theme 4 is its first proved theorem). The kernels never share
+rule of theme 4 is its first proved theorem). Its consumer is the
+local-only monitoring web app, fed over the same files/SSE seam the other
+two kernels use. The kernels never share
 domain, ground truth, or consumer; the charter pins six invariants,
 including "no manual proof driving, ever" — every proof is driven by AI
 assistants debating in parallel, with the kernel as the only judge.
@@ -343,7 +351,7 @@ drift, even redacted.
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `analyzing/`   | VSCode extension (TypeScript) for market inspection — DuckDB + Parquet, lightweight-charts v5, ingest from public OHLCV sources.                       |
 | `trading/`     | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines. |
-| `monitoring/`  | VSCode extension sibling of `analyzing/` — LW-Charts + Three.js surface; shared SQLite schema.                                                         |
+| `monitoring/`  | Local-only Astro Node-SSR web app for AI-assistant token analytics (was a VSCode extension, retired). 100% TypeScript; SQLite store. Consumes the operational Lean4 axis. |
 | `appealing/`   | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub.                                                        |
 | `pleading/`    | Sibling of `appealing/` — trial-court / status-affidavit / addendum drafting.                                                                          |
 | `proving/`     | Lean4 axiomatic theorem-proving with LLM-backed predicate functions for the legal domain. Backs Qnarre.                                                |
@@ -362,7 +370,7 @@ drift, even redacted.
 | `shorting/`    | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher.                   |
 | `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
 | `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
-| `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images, later video) consumed across the constellation. |
+| `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images live, video next) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish

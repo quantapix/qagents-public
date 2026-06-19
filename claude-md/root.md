@@ -8,18 +8,18 @@ Subprojects under this repo:
 - `pleading/` — pro se trial-court + status-affidavit + addendum drafting. Sibling of `appealing/`. Markdown drafts; rendered PDFs flow to the private filing hub. CLAUDE.md content not mirrored.
 - `designing/` — Astro + React islands site for quantapix.com (S3 + CloudFront). Hosts `/status` aggregating per-subproject `data/status/<sub>.json`.
 - `documenting/` — sibling of `designing/`; femfas.net v2 (Astro/S3/CloudFront).
-- `monitoring/` — VSCode extension sibling of `analyzing/`; LW-Charts + Three.js surface. Chartered consumer app of the **operational** Lean4 axis; local-only, never deployed.
+- `monitoring/` — local-only **Astro Node-SSR web app** for Claude Code token analytics (was a VSCode extension, retired 2026-06-17); SQLite store via `better-sqlite3`, sibling of `analyzing/`'s DuckDB inspection tooling. Chartered consumer app of the **operational** Lean4 axis; never deployed.
 - `proving/` — Lean4 axiomatic theorem-proving with LLM-backed predicate functions for the **legal** domain (civil RICO, Title VI, §§ 1981/1983/1985(3)). Backs `verifying/`.
 - `accounting/` — financial-domain parallel of `proving/`: Lean4 + LLM-predicates for TREND / MOMENTUM / OPTIONS-RISK / SECTOR / DRAWDOWN frameworks. Reads OHLCV from `./data/<name>/` parquet. Backs `evaluating/`.
 - `verifying/` — Astro+React shell + FastAPI server for **Qnarre**, the legal-complaint verifier UI. Three-zone `/app` island streams events from `proving/` via SSE.
-- `evaluating/` — sibling of `verifying/` for **Qresev**, the stock/portfolio evaluator UI. Streams events from `accounting/` via SSE; UI hard-refuses any options leg outside the six-strategy defined-risk allow-list.
+- `evaluating/` — sibling of `verifying/` for **Qresev**, the stock/portfolio evaluator UI. Streams events from `accounting/` via SSE; UI hard-refuses any options leg outside the defined-risk allow-list (§ Defined-risk options).
 - `visualizing/` — graphing surface for the `proving/` + `accounting/` Lean4 axiomatizations; an animated page in Qnarre + Qresev via the kit-mount pattern; renders the **lattice** + a secondary proof-DAG. Spec: `data/specs/visualizing-2026-06-03/SPEC.md`.
 - `studying/` — **operational-axis** Lean4 kernel (third of the three axes — § Lean4 axes) + owner of the cross-axis representation research and the `hub/` guide-rails (`studying/guide-rails.md`). First target: git axiomatization (consumer `monitoring/`). Index: `studying/focus-areas.md`. Spec: `data/specs/lean4-charter-2026-06-10/SPEC.md`.
 - `explaining/` — video-explainer arc for Quantapix outreach. 50 scripts (5 topics × 10 subjects) narrated by an **AI presenter**; 10–15 min each. Master plan: `explaining/outline.md`. Output is scripts; stage 5 (composition / render) consumes `resolving/`.
 - `resolving/` — DaVinci Resolve production-assistance. Skills + diagrams + Fusion authoring + typed Python wrapper at `resolving/davinci/`. Stage 5 of `explaining/`. Spec: `data/specs/resolving-2026-05-26/SPEC.md`.
-- `blending/` — Blender 5.1.1 + Geometry Nodes production-assistance; Escher-inspired background plates for `explaining/` → `resolving/`. Typed `bpy` wrapper at `blending/blendr/`; motifs at `blending/motifs/`. Plan: `blending/PLAN.md`.
+- `blending/` — Blender 5.1 + Geometry Nodes production-assistance; Escher-inspired background plates for `explaining/` → `resolving/`. Typed `bpy` wrapper at `blending/blendr/`; motifs at `blending/motifs/`. Plan: `blending/PLAN.md`.
 - `serving/` — AWS cloud-base; single source of truth for every AWS resource. CDK in TypeScript. Hosts the `@qagents/diagram-kit` workspace package (sibling-of-subprojects, not member-of-serving). Spec: `data/specs/serving-2026-05-26/SPEC.md`.
-- `managing/` — daily watcher over the constellation. Cron-fired at 06:00 with the top-tier model (fable); three subagents (checker / planner / reporter) emit dated `.md` under `checks/`, `tasks/`, `reports/`. **Observe-only** — no push/commit/deploys/mutations.
+- `managing/` — daily watcher over the constellation. Cron-fired at 06:00 with the top-tier model; three subagents (checker / planner / reporter) emit dated `.md` under `checks/`, `tasks/`, `reports/`. **Observe-only** — no push/commit/deploys/mutations.
 - `shorting/` — adversarial sibling of `managing/`. On-demand `/open shorting`; one top-tier-model subagent per target produces 10 numbered "shorting positions" under `shorting/positions/<target>/<date>.md`. **Observe-only**; routes findings to `managing/`.
 - `donating/` — 6-month public donation drive (2026-06-01 → 2026-12-01). Source `donating/drive.md`; renders `data/donating/drive.json` (consumed by `designing/web` + `documenting/web`). Four exclusive-use buckets. Content-only.
 - `publishing/` — open-source release subproject. Owns the public-org staging tree `publishing/quantapix/` and the `/publish` pipeline (sweep → redact → compile → push to `github.com/quantapix/*`). Owns drive Promise 1. Content-in / external-out (GitHub org via `git push-quantapix`); not observe-only. Spec: `data/specs/publishing-2026-05-31/SPEC.md`.
@@ -35,7 +35,7 @@ Shared-data hubs (no code, read-only unless regenerating):
 
 Shared-code hubs (cross-subproject code, sibling-of-subprojects):
 
-- `code/` — repo-wide shared code, owned by no single subproject. Today: `code/playwright/` (shared `@playwright/test` helpers), `code/remotion/` (`@qagents/remotion`; `explaining/` B-roll), `code/agent_sdk/` (`qagents.agent_sdk` — typed `claude-agent-sdk` wrapper; § Agent SDK lane), `code/qreel/` (`/reel <bundle>` bake pipeline; spec `data/specs/qreel-2026-05-28/SPEC.md`). Subproject-owned workspace packages stay in their subproject.
+- `code/` — repo-wide shared code, owned by no single subproject. Today: `code/playwright/` (shared `@playwright/test` helpers), `code/remotion/` (`@qagents/remotion`; `explaining/` B-roll), `code/agent_sdk/` (`qagents.agent_sdk` — typed `claude-agent-sdk` wrapper; § Agent SDK lane), `code/qreel/` (`/reel <bundle>` bake pipeline; spec `data/specs/qreel-2026-05-28/SPEC.md`), `code/lean_graph/` (`qagents.lean_graph` — cross-axis Lean4-aware K-graph extractor for quantify-progress; spec `data/specs/lean4-charter-2026-06-10/quantify-progress-2026-06-14/SPEC.md`). Subproject-owned workspace packages stay in their subproject.
 - `lib/` — vendored upstream code; sibling of `code/`. Today: `lib/memsearch/` (vendored+patched; see § memsearch for the qagents patch detail); `lib/heygen-skills/` (vendored-pristine, MIT). Governance classes: vendored-pristine / vendored+patched / reference-only. See per-package `UPSTREAM.md`.
 - `hub/` — read-only upstream clones, regularly refreshed, **gitignored wholesale** (canonical-only, absent from worktrees); reference ground truth, never committed or imported as code. The five Lean4 guide-rail rows are chartered (`studying/guide-rails.md`; `data/specs/lean4-charter-2026-06-10/SPEC.md` § 6); other clones are ungoverned consumer conveniences.
 
@@ -43,7 +43,7 @@ Subprojects share a domain only when stated (trading+analyzing: equities + defin
 
 ## Python venv (single, root-level)
 
-One venv: **`<root>/.venv`** (Python 3.13). All cross-subproject deps in root `pyproject.toml` under extras `[trading]`, `[analyzing]`, `[dev]`, `[verifying]`, `[evaluating]`. Bootstrap from a fresh checkout:
+One venv: **`<root>/.venv`** (Python 3.13); all cross-subproject deps in root `pyproject.toml` extras (`[trading]`/`[analyzing]`/`[dev]`/`[verifying]`/`[evaluating]`). Bootstrap from a fresh checkout:
 
 ```bash
 /opt/homebrew/bin/python3.13 -m venv .venv
@@ -52,7 +52,7 @@ One venv: **`<root>/.venv`** (Python 3.13). All cross-subproject deps in root `p
 ./.venv/bin/pip install -e ./code/agent_sdk --no-deps  # registers `qagents.agent_sdk`
 ```
 
-From repo root → `./.venv/bin/python …`. From a subproject → `../.venv/bin/python …`. `monitoring/` is stdlib-only; `proving/` and `accounting/` use system `python3` — none of them need the venv.
+From repo root → `./.venv/bin/python …`. From a subproject → `../.venv/bin/python …`. `proving/` and `accounting/` use system `python3` — neither needs the venv. (`monitoring/` is TypeScript-only — no Python.)
 
 ## Shell scripts — homebrew tool versions
 
@@ -74,7 +74,7 @@ Three root tsconfigs carry cross-target invariants. Subprojects extend one and a
 
 ### pnpm workspace + catalog
 
-Single workspace at root: `pnpm-workspace.yaml` declares `analyzing`, `monitoring`, `designing/web`, `documenting/web`; shared dev tools via catalog (`"typescript": "catalog:"`). `onlyBuiltDependencies` at workspace level (`better-sqlite3`, `esbuild`). Root scripts: `pnpm {typecheck,build,verify}` → `pnpm -r --if-present <name>`.
+Single workspace at root: `pnpm-workspace.yaml` declares `analyzing`, `monitoring/web`, `designing/web`, `documenting/web`; shared dev tools via catalog (`"typescript": "catalog:"`). `onlyBuiltDependencies` at workspace level (`better-sqlite3`, `esbuild`). Root scripts: `pnpm {typecheck,build,verify}` → `pnpm -r --if-present <name>`.
 
 ### Playwright e2e (Astro sites)
 
@@ -82,7 +82,7 @@ Suites at `<sub>/web/tests/e2e/`; shared helpers at `code/playwright/`. Each `pl
 
 ### IDE: stable VSCode
 
-Canonical IDE is stable VSCode. After switching variants, `monitoring/`'s `better-sqlite3` throws `NODE_MODULE_VERSION` mismatch on first F5 — fix `cd monitoring && pnpm run rebuild:native`. `analyzing/` is unaffected (N-API).
+Canonical IDE is stable VSCode. `analyzing/`'s VSCode extension uses N-API bindings — unaffected by Electron ABI switches. (monitoring is no longer an extension; its web app runs under plain Node — `pnpm rebuild better-sqlite3` if a Node-ABI mismatch ever appears.)
 
 ## Canonical OHLCV bar shape
 
@@ -124,11 +124,11 @@ Sessions start with `/open <project>` and end with `/close [--to-main]`. `/do-cl
 
 ## Model policy — LLM model selection
 
-Complex, long-running work (subagent fan-outs, axiomatization, watchers, debates, collectors, overnight research) runs the **latest top-tier model** — never a pinned older tier. Today that is Fable 5: alias `fable` (agent frontmatter / Agent tool), `claude-fable-5` (CLI `--model` / SDK pins). When a new top tier ships, sweep the pins; prose should say "top-tier model", not a model name. Lesser models are acceptable only where flagged: `claude-sonnet-4-6` for routine bounded cron routines (intraday trading reviews, journaling, leaderboard), `haiku` for mechanical closed-set classification (`managing` verifier) and throwaway smoke runs. Capability floor: haiku is forbidden for any retained axiomatization artifact (2026-06-03 bake-offs; `feedback_predicate_model_opus_not_haiku`). Cron-lane budget caps (`MAX_BUDGET_USD` in `run_routine.sh`, `routines.toml` `max_budget_usd`) were left at opus-4.7-era sizing through the fable conversion — if top-tier routines start exiting on caps, widen the caps, never downgrade the model.
+Complex, long-running work (subagent fan-outs, axiomatization, watchers, debates, collectors, overnight research) runs the **latest top-tier model** — never a pinned older tier. Today that is Opus 4.8: alias `opus` (agent frontmatter / Agent tool), `claude-opus-4-8` (CLI `--model` / SDK pins). When a new top tier ships, sweep the pins; prose should say "top-tier model", not a model name. Lesser models are acceptable only where flagged: `claude-sonnet-4-6` for routine bounded cron routines (intraday trading reviews, journaling, leaderboard), `haiku` for mechanical closed-set classification (`managing` verifier) and throwaway smoke runs. Capability floor: haiku is forbidden for any retained axiomatization artifact (2026-06-03 bake-offs; `feedback_predicate_model_opus_not_haiku`). Cron-lane budget caps (`MAX_BUDGET_USD`, `routines.toml` `max_budget_usd`) sit at opus-4.7-era sizing — if top-tier routines exit on caps, widen them, never downgrade the model.
 
 ## Programmatic Claude — Agent SDK lane
 
-Cron-fired and library-callable Claude work goes through the typed Python wrapper at `code/agent_sdk/` (`qagents.agent_sdk`; verified against `claude-agent-sdk==0.2.82`). Shared by `trading/` and `managing/`. Routines opt into SDK-mode by suffixing the routine name with `:sdk` in `data/schedules/launchd/install.sh` ROUTINES; the default `claude --print` lane stays as-is otherwise. Adoption spec: `data/specs/agent-sdk-adoption-2026-05-17/SPEC.md`. Billing rides the $200/mo Claude Max-20x SDK credit; ledger at `data/agent-sdk-ledger/`.
+Cron-fired and library-callable Claude work goes through the typed Python wrapper at `code/agent_sdk/` (`qagents.agent_sdk`; verified against `claude-agent-sdk==0.2.82`). Shared by `trading/` and `managing/`. Routines opt into SDK-mode by suffixing the routine name with `:sdk` in `data/schedules/launchd/install.sh` ROUTINES; the default `claude --print` lane stays as-is otherwise. Adoption spec: `data/specs/agent-sdk-adoption-2026-05-17/SPEC.md`. SDK-mode draws the same Max-20x subscription limits as the default `claude --print` lane — the planned dedicated SDK credit was paused indefinitely 2026-06-15 (`reference_agent_sdk_credit_200_mo`; contingent, reverses if a new plan ships). Ledger at `data/agent-sdk-ledger/` still tracks usage.
 
 ## Shared-data write-lock — `.data-write-lock`
 
@@ -210,12 +210,13 @@ Second instance of the data-hub-not-shared-code pattern: `data/donating/drive.js
 
 ## Kit-mount pattern
 
-Sibling-of-Lean-kernel rendering kits ship as vanilla JS into `<sub>/web/public/<kit>/`, get linked via `Layout.astro`'s `<slot name="head" />`, and are mounted per-run by `getStaticPaths` scanning `<sibling>/examples/*/{graph,report}.json`. Two instances:
+Sibling-of-Lean-kernel rendering kits ship as vanilla JS into `<sub>/web/public/<kit>/`, get linked via `Layout.astro`'s `<slot name="head" />`, and are mounted per-run by `getStaticPaths` scanning `<sibling>/examples/*/{graph,report}.json`. Since the graphs-2 G6 unification (2026-06-11), three live instances mount the ONE domain-neutral graphs-2 kit at `<app>/web/public/graphs2/`:
 
-1. `verifying/web/public/proof-graph/` — `proving/`'s framework graphs (`verifying/CLAUDE.md` § 8).
-2. `evaluating/web/public/strategy-chart/` — `accounting/`'s framework graphs (`evaluating/CLAUDE.md` § 4).
+1. `verifying/web/public/graphs2/` — proof-DAG pages + `/lattice`; `proving/`'s framework graphs (`verifying/CLAUDE.md` § 8).
+2. `evaluating/web/public/graphs2/` — recomposed strategy mount, additionally composed with `@qagents/charts` + `@qagents/compose`; `accounting/`'s framework graphs (`evaluating/CLAUDE.md` § 2).
+3. `monitoring/web/public/graphs2/` — operational `/operational` + `/constellation` mounts; `studying/`'s operational K-graph + constellation graph (`monitoring/CLAUDE.md` § Operational-axis consumer). Two departures from 1–2: its `kit.js` is **gitignored + generated fail-soft** (sync hook host-copies the canonical dist; empty-state if absent), and it reads at **request time** via an `/api` twin (private live data), never build-inlined via `getStaticPaths`.
 
-Both regen-wholesale from `data/renders/<sub>-design/`; `loader.js` is the never-fold side-car. Schema + edge-kind detail: memory `project_proof_graph_kit_mount_pattern`.
+All three regen-wholesale from `visualizing/graphs-2/dist/kit-{proof,strategy,graphs}.js` (NOT from `data/renders/<sub>-design/`); `loader.js` is the never-fold side-car. The old designer kits (`proof-graph/`, `strategy-chart/`) + `visualizing/graphs/` engines are removed. Schema + edge-kind detail: memory `project_proof_graph_kit_mount_pattern`.
 
 ## Lean4 axes — three kernels, one architecture
 
@@ -227,7 +228,7 @@ Code that constructs/evaluates/submits options orders is restricted to: `long_ca
 
 ## AWS deploys & multi-remote git push
 
-S3 + CloudFront Astro deploys and the `git push-all` three-remote setup (`github` / `aws` / `qblk`) live in `serving/CLAUDE.md` § 8 + § 9 (deploy script, aws-vault + Keychain, bucket hardening, CodeCommit gotchas). Don't duplicate AWS config here or in subproject CLAUDE.mds.
+S3 + CloudFront Astro deploys and the `git push-all` three-remote setup (`github` / `aws` / `qblk`) live in `serving/CLAUDE.md` § 8 + § 9 (deploy script, aws-vault + Keychain, bucket hardening, CodeCommit gotchas) — single owner; never duplicated here or in subproject CLAUDE.mds.
 
 ## Language split
 

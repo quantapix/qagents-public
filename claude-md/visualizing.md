@@ -109,53 +109,87 @@ Phase-2 routing-layer mount into Qresev SHIPPED 2026-06-11 (§ 5.1). See
 
 **`graphs-2/` — the Phase-4 kit, MOUNTED in both apps** (NOT a modality dir):
 render-neutral core (`qgraph/1` model + `collapse.project()` + layout/style/axes)
-+ adapters (`fromCatalog`/`fromProof`) + two backends (cytoscape/layered) +
-`src/kit/mount.ts` (the G6 mount API: `mountProof`/`mountCatalog`, regions/
-onLayout/onTapLeaf — the compose RegionSource surface) + `sandbox/` browser
-gates. **Superseded `graphs/` engines 2026-06-11** (§ 13 parity gate re-passed:
-49 unit, sandbox 18/18, strict-CSP, scale 1k/5k/10k all-seeds-salient).
-`kit/build.mjs` builds the two IIFE dist bundles (global `QViz`):
-`dist/kit-proof.js` (graphs only → `verifying/web/public/graphs2/kit.js`) +
-`dist/kit-strategy.js` (graphs+charts+compose → `evaluating/web/public/graphs2/
-kit.js`). Re-sync = rebuild + cp into the app dirs + the app's `pnpm verify` /
-e2e. Authoritative detail: `graphs-2/README.md`. See § 4.
++ adapters (`fromCatalog`/`fromProof`/`fromNodeLink`) + two backends (cytoscape/
+layered) + `src/kit/mount.ts` (the G6 mount API: `mountProof`/`mountCatalog`/
+`mountNodeLink`, regions/onLayout/onTapLeaf — the compose RegionSource surface) +
+`sandbox/` browser gates. **Superseded `graphs/` engines 2026-06-11** (§ 13 parity
+gate re-passed: 59 unit, sandbox 18/18, strict-CSP, scale 1k/5k/10k
+all-seeds-salient). `kit/build.mjs` builds **three** IIFE dist bundles (global
+`QViz`): `dist/kit-proof.js` (graphs only → `verifying/web/public/graphs2/kit.js`)
++ `dist/kit-strategy.js` (graphs+charts+compose → `evaluating/web/public/graphs2/
+kit.js`) + `dist/kit-graphs.js` (domain-neutral node-link → `monitoring/web/public/
+graphs2/kit.js`, M0). Re-sync = rebuild + cp into the app dirs + the app's
+`pnpm verify` / e2e. Authoritative detail: `graphs-2/README.md`. See § 4.
+
+**M0 node-link reader (done 2026-06-17).** `fromNodeLink(wire, view)` reads the
+`qgraph-wire/1` networkx envelope (shared `code/lean_graph` + `uscode_graph`
+serializer): mandatory `KIND_MAP`/`REL_MAP` normalizers (`validate()` does NOT
+enforce kind enums), a `cl:`-prefixed cluster→Component forest derived from
+`cluster`/`cluster_kind` (node-id ↔ cluster-path collide by design), and
+dangling-`anchors` tolerance (the cross-axis anchor points out of the K-graph).
+`axesFor('operational')` → `OPERATIONAL_AXES` (the 7 git axes; was the M0 blocker).
+NO `model.ts` widening (type-decls fold onto `axiom`; `Section`→existing kind).
+Drives the monitoring/ operational mount (next M0 item) + later the uscode mount
+in verifying/ (M2). Report: `data/tmp/uscode-graph-monitoring-pipeline-2026-06-16/
+REPORT.md` § 3; debate `data/debates/uscode-graph-monitoring-pipeline-2026-06-16.md`.
+
+**Constellation modality (M) + cluster-lens (done 2026-06-17).** studying's
+SECOND operational input — the qagents monorepo + `~/.claude` memory as one
+non-hierarchical graph (`graph.kind="constellation"`; producer
+`studying/scripts/extract_constellation.py`, golden
+`studying/Operating/emits/constellation/golden.json`). `fromConstellation` +
+`mountConstellation` implement **Option B** of
+`data/tmp/uscode-graph-monitoring-pipeline-2026-06-16/constellation-amendment-2026-06-17.md`
+§ 2 (RESOLVED): M's scoped node/edge kinds ride the open attrs bag
+(`attrs.kindClass`/`relKind`) folded onto distinct `qgraph/1` carriers — **NO
+`NodeKind`/`EdgeKind` union widening** (that is Option C; re-opens R2's held-open
+veto). The general **M1 cluster-lens** (`colorLens:'cluster'` + `clusterTokens`
+`--cluster-*` ring) is M's headline (communities are its visual; no `--axis-*`).
+The `--rel-*` edge palette is a HOST-overlay token class (monitoring's operational
+overlay, like the 7 `--axis-*`; NOT the rendering-SoT lattice/proof mirrors). The
+`--cluster-*` ring, **as of 2026-06-18, IS in the lattice brand overlay SoT** —
+Claude Design's Variant A "Spectral arc" (teal→amber sweep, re-indexed 0..11) was
+adopted into `rendering/brand/tokens/quantapix/overlay/lattice-{dark,light}.css` +
+the kit mirrors so the cluster lens reads the same palette everywhere; monitoring's
+`tokens-constellation.css` keeps the DARK SoT (constellation is dark-only, no light
+twin). It rode in with three cluster-lens styling knobs — `--halo-alpha` (community
+compound tint), `--edge-trust-{lo,mid,hi}` (bridge opacity ramp), `--hub-glow` (hub
+underlay bloom) — wired into the cytoscape backend (`elements.ts`; `parseGlow` +
+`numTok` with graceful fallbacks so proof, which omits them, is unaffected). Design
+provenance + the render slice live in rendering's `designs/` (the visualizing-lattice
+slice; see its README + manifest). The
+**M1 picture floor** (REPORT § 4) shipped 2026-06-17 alongside: four
+opt-in `StyleSpec`/`MountKitOpts` knobs — `sizeBy:'degree'|'centrality'`
+(normalized `degN`/`cenN` ramp on leaves; compounds auto-size), `labelMinDegree`
+(declutter: hide low-degree labels, `.lbl` hover-reveal), `edgeRouting` (from the
+`LayeredGraph.render?.edges` hint), and `overviewDepth` (`collapseToDepth`
+wiring). Lattice/proof defaults are untouched (no regression); `mountConstellation`
+defaults to `sizeBy:'degree'`+`labelMinDegree:3`. Halos + a kit-side inspector are
+explicitly OUT (community compounds already box-and-tint; inspector is host
+chrome). monitoring owns the `/constellation` view (landed 2026-06-17) + the
+mechanical kit-dist re-host-copy (next-steps § C item 8). Spec:
+`data/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md` § 8.
 
 ## 4. Phased roadmap (spec § 12)
 
 Phase 0 ✅ registration. Phase 1 ✅ catalog extractor for T18
 (`extractor/usc_to_catalog.py` → `qcatalog/1`; financial deferred until
 axiomatize-trading builds `Universe/S<code>/<Axis>/`). **Phase 2 ✅ cytoscape
-web-port** — the contract-native contender stood up in `graphs/cytoscape.js/
-sandbox/` (a self-contained ESM island, not yet the Astro fold-in): both render
-modes (lattice via `catalog-to-cy.mjs` + proof-DAG via `graph-to-cy.mjs`, § 5),
-three lenses (§ 8), leaf-tier LOD (vendored `expand-collapse`), and the shared
-provenance inspector (§ 6.3 R7). Four headless verifies (`npm run test:catalog`
-+ `sandbox:verify{,:lenses,:proof}`) gate it; tf-graph stays in its harness (no
-Astro port). **Phase 3 ✅ scale bake-off** (`graphs/bakeoff/`): `scale_catalog.py`
-(deterministic T18→N synthetic catalogs + seeded diverge cells),
-`cytoscape.js/sandbox/scale-screen.mjs` (1k/5k/10k: full-expand fcose 25/87/191 ms,
-heap 38/83/323 MB, all seeds salient), and a **strict-CSP gate** (`verify-csp.mjs`,
-`sandbox:verify:csp`) that cytoscape **passes** via one carried vendor patch
-(UPSTREAM.md § Phase 4 — drops the unconditional `position:relative` `<style>`).
-**Verdict (amended 2026-06-04, `graphs/bakeoff/VERDICT.md`):** cytoscape wins as
-the **contract-faithful / public-mount** renderer (scale + strict-CSP pass);
-tf-graph CSP-disqualified for the public mount but carried in git as the
-layered-collapse companion (detail in the `graphs/tensorboard/` bullet, § 3).
+web-port** + **Phase 3 ✅ scale bake-off** — POC engines superseded + removed
+2026-06-11 (§ 3); the cytoscape CSP patch lives on as the graphs-2 `pnpm patch`
+(Phase 4). Bake-off detail preserved in git history + `project_visualizing_subproject`.
 **Phase 4 RE-SCOPED → built from scratch as `graphs-2/`**
 (spec `data/specs/visualizing-2026-06-03/graphs2-2026-06-07/SPEC.md`, promoted
 2026-06-10): a render-neutral TS kit (one
 `qgraph/1` model + one `collapse.project()` algorithm + two backends behind one
 `Backend` interface — cytoscape public/CSP-clean + clean-room layered companion;
-both adapters + both collapse impls subsumed into the core). **G0–G6 DONE +
-gated** (49 unit tests; `sandbox:verify` 18/18 render+gesture; strict-CSP pass;
-scale 1k/5k/10k pass) — see `graphs-2/README.md`. cytoscape ships as npm deps +
-a `pnpm patch` (CSP fix), NOT vendored-source. **G6 SHIPPED 2026-06-11** (Mode-A
-parallel sessions, not `/open qagents`): `dist/kit-{proof,strategy}.js` mounted
-at `verifying/web/public/graphs2/` (proof-DAG pages + new `/lattice`) +
-`evaluating/web/public/graphs2/` (recomposed strategy mount via `@qagents/
-compose`); both app e2e suites green; `graphs/` engines removed on the re-passed
-parity gate. Phase 5: replay animation + `explaining/` deterministic SVG export
-(layered backend's exportSVG is already byte-stable).
+both adapters + both collapse impls subsumed into the core). **G0–G6 DONE + gated +
+MOUNTED** in both apps (the three `dist/kit-{proof,strategy,graphs}.js` bundles,
+§ 3); cytoscape ships as npm deps + a `pnpm patch` (CSP fix), NOT vendored-source.
+G0–G6 implementation/gate detail (test counts, per-app mount provenance) lives in
+`graphs-2/README.md` + `project_visualizing_subproject`. **Phase 5** (next): replay
+animation + `explaining/` deterministic SVG export (layered backend's exportSVG is
+already byte-stable).
 
 ## 5. Seam discipline — JSON only
 
@@ -213,7 +247,15 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
   numerics).
 - Tokens: the kit reads tokens, never literals — add a `tokens-lattice.css`
   overlay per app (axis palette / tier ramp / agreement green-amber-red); never
-  redefine base tokens.
+  redefine base tokens. **Overlay SoT = `rendering/` since 2026-06-16**
+  (brand-polishing § 3b, variant A): `graphs-2/kit/tokens-{lattice,proof}{,-light}.css`
+  are byte-identical mirrors of `rendering/brand/tokens/quantapix/overlay/
+  {lattice,proof}-{dark,light}.css` — DO NOT edit in-kit; edit the SoT then
+  re-copy (graphs-2/README.md "Brand token overlays"). graphs-2 is the only dual
+  `core+dark+light` consumer (C-VZ2); theme selection is at the app's committed
+  `<app>/web/public/graphs2/` copy. Tier ramp is frozen at `{a-full,a,b,modulo,
+  unknown}` — **no `--tier-uncovered`**; an uncovered cell is `tier:unknown` +
+  `coverage:false` (studying emit is SoT-aligned; adding the value is a non-goal).
 
 ## 7. rendering/ seam (rendering-spec debate, Round 01 — 2026-06-09)
 
@@ -227,8 +269,9 @@ digest `data/debates/cleared/rendering-spec-2026-06-09.md`; reconciled spec
   production; rasterization/composition ride rendering/'s engines downstream.
 - **Brand reaches the kits only via the host shells' build-time token copies**
   (VZ1/T4); no kit-side token file, no fetch — runtime `rendering/brand/` fetch
-  forbidden. `designs/visualizing-lattice/` is net-new (no `visualizing-design`
-  bundle exists); zero P4 migration cost.
+  forbidden. The visualizing-lattice slice under rendering's `designs/` is net-new
+  (landed 2026-06-18; no `visualizing-design` bundle ever existed); zero P4
+  migration cost.
 - **Acceptance split** (VZ3/T5): vector from resolve-at-emit sources →
   byte-stable golden (gated: graphs-2 `layered.test.ts`, charts
   `sandbox:export`); raster → SSIM/pixel-diff, never byte-equality.

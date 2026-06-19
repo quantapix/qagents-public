@@ -117,7 +117,10 @@ source of truth — 0.5.0 since the 2026-06-10 rendering widening; swept in
 lockstep on kit bumps). Four-state pill machine: `OK`
 (last `/publish` clean) / `BUILDING` (run in flight) / `DEGRADED` (last run
 aborted on the redaction/drift gate — privacy floor held, release stale) /
-`NOT_YET_LIVE` (pre-first-publish). Summary diagram = the five-stage pipeline;
+`NOT_YET_LIVE` (pre-first-publish; first live push 2026-06-12). The pill
+resolves from the tracked one-line state file `publishing/.publish-state`
+(`<PILL> [reason]`, written by the `/publish` lane — emitter defaults to
+`NOT_YET_LIVE` without it). Summary diagram = the five-stage pipeline;
 `TableEmit` = the repo roster. Close-time emit is mandatory
 (`/close --status-emit publishing` resolves the producer via `close.sh`).
 
@@ -179,11 +182,10 @@ adversarial read. It is **instance one** of the generic debate framework
 - **Advisory model (§ 7 Q2):** the debate emits rulings; each owning subproject
   applies the public-surface edit in its **own** `/open <sub>` session.
   `publishing/` never mutates a sibling tree (§ 3 boundary posture).
-- **Wiring state:** the `data/messaging-rulings/` data-charter registration is
-  done (first CLEARED digest 2026-06-08). The `pending/*-debate/**` buffer
-  registration (in `managing/.claude/agents/verifier.md` + `verify-pending.sh`)
-  is **now due** — the first subagent fan-out round ran 2026-06-11; applied
-  from a `managing/` session.
+- **Wiring state:** the `data/messaging-rulings/` data-charter registration
+  (first CLEARED digest 2026-06-08) and the `pending/*-debate/**` buffer
+  registration (`managing/.claude/agents/verifier.md` internal-set +
+  `verify-pending.sh`) are both done; rulings apply from a `managing/` session.
 
 ## 10. Drives the designing /videos page (data-hub, not shared code)
 
@@ -208,6 +210,28 @@ CLAUDE.md language split). Third instance of the data-hub-not-shared-code patter
   designing session to verify + commit — publishing never closes carrying a
   sibling tree's hunks. The `data/publishing/*` hub + the emitter stay on the
   publishing branch (allowlisted shared hub, not foreign).
+- **Public-key derivation (publishing owns).** The public key publishing
+  emits/uploads — `T<topic>/<NN>-<title-slug>.mp4` (long) /
+  `T<topic>/<NN>-<short-title-slug>-short.mp4` (short; the `-short` suffix keeps
+  long/short collision-free even when titles diverge — debate R-S4) — is
+  **derived at publish time from the debate-locked title** (`meta.json` /
+  `outline.md`), NOT from `explaining/`'s neutral subject-slug dir path (which
+  never appears publicly). Title is metadata, the path slug is an opaque id, so a
+  title change never triggers a rename cascade. publishing gates the **derived**
+  key, not just the title metadata — the redaction + verb-blocklist sweep scans
+  the `cdnUrl` slug too. Mirror + worked example: `explaining/CLAUDE.md`
+  § "Publish-key shape".
 - **Release flow:** a cut goes live → upload to S3 (`serving/scripts/upload-video.sh
   <cut> T<n>/<slug>.mp4`) + YouTube, then flip `status: 'live'` + fill
-  `cdnUrl`/`youtubeUrl` in the emitter and re-run it.
+  `cdnUrl`/`youtubeUrl` in the emitter and re-run it. A litigation-framed video
+  rides the **messaging gate**: the full payload (title + description + tags +
+  chapters + thumbnail + the public CDN slug — `cdnUrl` renders on /videos, so a
+  blocked verb can't hide in the URL) must `pleading/`-CLEAR as one piece before
+  upload. **Site-thumb gotcha:** `designing/web/public/video-thumbs/<id>.png` is a
+  SECOND, independently-deployed copy of the `rendering` `priority-10` render —
+  clearing the YouTube payload does NOT clear it; it can serve stale/blocked art
+  live on `quantapix.com/video-thumbs/<id>.png` (CloudFront-cached) on its own. On
+  any framing change refresh BOTH, lift the site thumb across to the designing
+  worktree (§ 10 above; it's designing-owned), and **CloudFront-invalidate** the
+  thumb path. Close publishing first (videos.json live-flip → main) before
+  designing syncs + builds, else /videos shows the new thumb but stale `upcoming`.
