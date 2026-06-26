@@ -92,6 +92,39 @@ stays wired after it as defense-in-depth (stray `*.pdf`). The resume tree
 (`publishing/resume/`) is gated by the same sweep. Gate-before-push ordering is
 pinned by `t_10_publish_gate.sh`.
 
+**`gh` does all GitHub work (2026-06-23).** `scripts/github_meta.py` is the single
+gh-centric arm: `sync` (content — `gh repo clone` → `rsync -aL` → commit →
+`git push` over gh's HTTPS credential helper; `SYNC_ROSTER` source map incl.
+`resume`; excludes `.git`/`CLAUDE.md`/`github-metadata.json`; org-profile
+top-level-only), `ensure` (existence), `apply` (metadata `gh repo edit`), `verify`.
+Repo description/homepage/topics are thesis-governed in `quantapix/github-metadata.json`
+— a `description` IS the GitHub OG card (strips its disclaimer), so it rides the
+SAME gate as README prose (`github_meta.py scan` = `sync_mirror` blocklist +
+`THESIS_LINT`, wired into `publish.sh` Phase 2c). `apply` mutates a public surface
+→ operator-confirmed + pleading-gated (manifest `_status`). The first metadata
+`apply` FIRED 2026-06-24 — all 3 external gates cleared (pleading FINAL litigation
+gate + studying op-axis intended-public + evaluating § 11.6 financial sign-off on
+the `qresev-public` cure); all 7 repos populated (were empty), `verify` clean,
+`_status` flipped DRAFT→CLEARED. NB `cmd_apply` never reads `_status` (procedural/
+bookkeeping gate only — a real apply carries the flip same-session); metadata
+`apply` is cleanly separable from content `sync` (the Friday `/publish` push). The
+gate persists for future string changes — re-clear, flip `_status` back to DRAFT.
+The legacy SSH+rsync
+`git push-quantapix` bridge is superseded for the `/publish` path (still exists for
+manual use). Program: the Quantapix-Thesis-on-GitHub spec
+(`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/SPEC.md` once
+promoted; Round-04 ADOPT-AMEND-BOUND; the `PLEADING-REVIEW-PACKET` is the one-session
+go-live gate).
+
+**FINANCIALLY-CLEARED (financial sign-off, 2026-06-24).** `evaluating/` is the
+sole grantor (advised by `accounting/`) of the financial-advice/securities gate —
+the financial-domain analog of `pleading/`'s litigation gate, **orthogonal** to it
+(where both apply, both clears are required). It is the blocking condition for
+`qresev-public` (content push **and** `gh repo edit` metadata `apply`) and any
+Qresev YouTube payload. `github_meta.py`'s `description`-strip thesis-floor lint is
+the cross-repo half of the § 4 byte-equality check. Spec:
+`data/specs/evaluating-financial-signoff-2026-06-24/SPEC.md`.
+
 ## 6. Write-lock & session model
 
 - **Branch-as-lock.** `/open publishing` creates branch `publishing` + worktree
@@ -141,14 +174,20 @@ publishing/
 │   ├── RESPEC-LIGHT-LIVE-2026-06-07.md      # system-wide re-prompt: light palette + real-Janet skin tone + master-res export
 │   ├── RESPEC-THUMBS-DEPTH-2026-06-08.md    # thumbnail-only: depth/dynamism toolkit + 6 launch thumbs light (fixes "too flat")
 │   ├── LAUNCH-COHORT-RESPEC-2026-06-04.md   # Claude Design rerun hand-off (delivered)
-│   ├── LAUNCH-COHORT-UPLOAD-2026-06-06.md   # paste-ready Studio payloads for 1.1/1.5/1.7/2.1
+│   ├── LAUNCH-COHORT-UPLOAD-2026-06-06.md   # paste-ready Studio payloads for 1.1/1.5/1.7/2.1 (longs)
+│   ├── SHORTS-UPLOAD-2026-06-20.md          # paste-ready Studio payloads for the 4 launch shorts
+│   ├── API-UPLOAD-SETUP.md   # one-time YouTube Data API v3 OAuth setup (operator)
+│   ├── descriptions/<key>.txt # per-video description bodies (SoT for youtube_sync; gate-scanned)
 │   └── prompts/01..06.md     # brand kit / themes / thumbs / motion / priority-10 / Escher bed
 ├── scripts/
 │   ├── publish.sh            # /publish mechanics (gate + diff + push)
 │   ├── status_emit.mjs       # writes data/status/publishing.json
 │   ├── videos_emit.mjs       # writes data/publishing/videos.json (drives designing/web /videos — see § 10)
 │   ├── sync-mirror.sh        # redact one source file into qagents-public/ (thin wrapper)
-│   └── sync_mirror.py        # the redaction engine behind sync-mirror.sh
+│   ├── sync_mirror.py        # the redaction engine behind sync-mirror.sh
+│   ├── youtube_auth.py       # shared @Quantapix OAuth (upload + force-ssl scopes)
+│   ├── youtube_upload.py     # /youtube-sync: create a video (videos.insert + thumb + playlist)
+│   └── youtube_sync.py       # /youtube-sync: diff/adopt/push metadata + stats vs youtube-manifest.json
 └── .claude/
     ├── settings.json         # allow-list (writes-self + git push-quantapix + read-all)
     ├── settings.local.json   # gitignored
@@ -235,3 +274,25 @@ CLAUDE.md language split). Third instance of the data-hub-not-shared-code patter
   worktree (§ 10 above; it's designing-owned), and **CloudFront-invalidate** the
   thumb path. Close publishing first (videos.json live-flip → main) before
   designing syncs + builds, else /videos shows the new thumb but stale `upcoming`.
+
+## 11. The `/youtube-sync` pipeline (channel ↔ repo)
+
+Sibling of `/publish`: `/publish` pushes the GitHub org, `/youtube-sync` pushes the
+@Quantapix channel. SoT is `data/publishing/youtube-manifest.json` + per-video
+`publishing/youtube/descriptions/<key>.txt` — metadata is edited in the repo, never
+in Studio; `youtube_sync.py` diffs and `videos.update`s drift. Skill:
+`.claude/skills/youtube-sync/SKILL.md`; engine + uploader + shared auth:
+`publishing/scripts/youtube_{sync,upload,auth}.py`; deps in the root `[publishing]`
+extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
+
+- **Two hard gates.** (1) `litigationFramed` entries (2.1 long+short) refuse to
+  push/adopt-over until `clearedBy` names a promoted `data/messaging-rulings/<date>.md`
+  — the same § 11.2 floor the upload sheets ride. (2) The synthetic-content
+  **altered-content disclosure has no API field** — it stays a manual Studio toggle
+  per upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete on
+  its own. A redaction/verb scan over `descriptions/` runs before any push.
+- **Banner ↔ channel-info land together.** The live @Quantapix banner is a rendering deliverable (`render.sh publishing-youtube/channel-art-v2`); when its baked copy changes (e.g. a thesis cure), the live re-upload AND the matching `youtube/CHANNEL-INFO.md` (E1) wording are both publishing-owned and must land same-PR so banner + channel-info agree character-for-character.
+- **First run = `--mode adopt`** (baselines the SoT from live so the diff is real),
+  then `check` → resolve → `push`; `--mode stats` writes
+  `data/publishing/youtube-stats.json`. `youtube_sync` does NOT touch `videos.json`
+  — the /videos live-flip stays the `videos_emit.mjs` edit (§ 10).

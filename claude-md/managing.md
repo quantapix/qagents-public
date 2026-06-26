@@ -43,7 +43,14 @@ finding (highest priority).
 4. **`quantapix.com/status` refresh every 3 days.** Any `data/status/<sub>.json`
    slot older than 3 days is a finding. A live `Last-Modified` on
    `https://quantapix.com/status/` older than 3 days is a separate finding
-   (deploy stale, not just emit stale).
+   (deploy stale, not just emit stale). **Live-deploy-age is now the
+   load-bearing signal** (`data/specs/status-emit-cron-fleet-2026-06-22/SPEC.md`
+   § 7): the `qagents:status-emit-all` cron keeps every canonical slot fresh
+   daily, so the slot-age finding will essentially never fire — a live site
+   that stops being deployed would otherwise go unnoticed. Surface the live
+   `Last-Modified` deploy-age line in **every** daily report, not only when
+   it crosses 3 days. Report-only — managing stays observe-only; no
+   autonomous deploy.
 5. **Donation-drive credibility (active 2026-06-01 → 2026-12-01).** Two
    probes anchored to `donating/drive.md`'s public promises. (a) **Promise-3
    liveness** — once `qnarre.quantapix.com` and `qresev.quantapix.com` are
@@ -85,7 +92,16 @@ finding (highest priority).
      finding — manual-check reminder derived from spec text (no live AWS
      calls). The note column carries the exact check; surface verbatim.
      Future `Nd` rows are tally-only. New rows are append-only entries in
-     the script's `SPEC_LEDGER` TSV.
+     the script's `SPEC_LEDGER` TSV (5 columns:
+     `slug TAB check TAB owner TAB offset TAB note`). Beyond date-offset
+     rows, the section also carries **computed** value-comparison rows
+     (e.g. `legal/uscode archive-pin-freshness`, owner `serving`: flags
+     `DUE` when `release_point.txt` advanced past the newest archived
+     `uscode/<pin>/` recorded offline in `serving/inventory/`). The
+     `owner` column powers `specs-audit.sh --owner <sub>` — the filter
+     that collapses each `data/next-steps/<sub>.md` section C to
+     `See LEDGER --owner <sub>` (`open-close-dcu-2026-05-26` § 10
+     Phase 2). Filter + column pinned by `scripts/tests/`.
    The daily tally rides in `checks/<date>.md` as a `## Uncompleted spec
    phases` section + a `## tmp/ proposal status` section + a `## Spec
    ledger reminders` section (see § 8).
@@ -167,8 +183,7 @@ files > shipped websites > internal docs > backlog).
 
 Each run picks 2–3 probes from a weighted pool. **Random selection is
 load-bearing** — it prevents the watcher from drifting into a fixed pattern
-and missing intermittent failures elsewhere. Pool documented in
-`managing/probes.md`.
+and missing intermittent failures elsewhere.
 
 Probe families + weights + pass/fail predicates live in `managing/probes.md`
 (P1..P6 + weight-summary table); checker reads from there. Random seed:
@@ -259,8 +274,9 @@ is gitignored — no commit, no lock contention.
 managing/
 ├── CLAUDE.md                 # this file
 ├── README.md                 # quickstart + cron command
-├── probes.md                 # weighted random-probe pool (P1..P6)
+├── probes.md                 # weighted random-probe pool (P1..P7)
 ├── scripts/                  # mechanical helpers (bash-3.2 portable) + status_emit.mjs
+│   └── tests/                # bash harness (run.sh + cases/) — specs-audit owner column + --owner
 ├── .claude/
 │   ├── settings.json         # observe-only allow-list
 │   ├── settings.local.json   # gitignored, user-local overrides

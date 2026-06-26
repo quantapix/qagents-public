@@ -69,7 +69,10 @@ contract for the `/app` REPORT zone, and sets `body[data-ready]`.
 Layout.astro carries the `<slot name="head" />`; per-run pages live at
 `evaluating/web/src/pages/strategy-chart/run/[id]/`. Re-sync mirrors
 `verifying/CLAUDE.md` § 8 (build graphs-2 → cp `kit-strategy.js` →
-`pnpm verify` + e2e). Parity gate vs the fused render is structural —
+`pnpm verify` + e2e). The dist is gitignored canonical-only and lags after a
+visualizing `/close`, so **rebuild it at canonical first**, then cp; verify the
+re-sync **behaviorally** (`window.__G2M__.counts()` / `expandAll()`), not by
+grep — a `derived:` marker false-positives on a pre-nesting bundle. Parity gate vs the fused render is structural —
 the e2e suite asserts the full report predicate set on the DAG + the
 selection round-trip.
 
@@ -77,6 +80,14 @@ selection round-trip.
 `evaluating/web/scripts/lint-tokens.sh` (both passes) — the kit bundle +
 the kit-owned token-overlay DEFINITIONS legitimately carry raw values.
 Never hand-edit kit files to placate the lint.
+
+**Empty-state overlay pointer-trap (check on any mount edit).** An absolute/inset
+empty-state overlay must scope its visibility to `.empty:not([hidden])` — a bare
+`.empty{display:flex}` author rule silently defeats the UA `[hidden]{display:none}`,
+leaving the overlay visible with `pointer-events:auto` over the live cytoscape
+canvas so the graph is uninteractive (monitoring hit + fixed this 2026-06-19).
+e2e that drives the kit via its JS API won't catch it — add an overlay
+`toBeHidden()` guard on live mount. Detail: `[[reference_hidden_attr_overlay_pointer_trap]]`.
 
 ## 3. Tokens / copy — same as Qnarre
 
@@ -100,6 +111,18 @@ recompose — § 2) is pinned in memory
 `project_proof_graph_kit_mount_pattern` Instance 2.
 Structure-tab failure-loci block falls back to `kernel.errors[].raw`
 when `termHasType` is empty.
+
+**Quantapix Thesis disclaimer (T3).** `copy.ts` exports `disclaimer`
+(`canon` + `financialRider`) — byte-identical to designing/web's `copy.ts`
+SoT (distilled from `studying/thesis.md`). `QresevApp.tsx`'s internal
+`DisclaimerCallout` (React mirror of designing/web's Astro component; amber
+accent) renders it ADJACENT to the verdict token in BOTH `LiveReportZone`
+and the static `ReportZone`, so the concession travels with the verdict.
+Preserve this on any REPORT-zone edit (`app.spec.ts` asserts it). § 11.6:
+the `financialRider` is the operator/evaluating+accounting track, NOT
+pleading's gate — and as of 2026-06-24 `evaluating/` **owns** that track
+(§ 10, the FINANCIALLY-CLEARED gate). Cure: Round 03 T3 + cure 5,
+`data/debates/quantapix-thesis-public-pages-2026-06-23.md`.
 
 ## 5. Defined-risk options — non-negotiable
 
@@ -252,6 +275,41 @@ This subproject does not import from `analyzing/`, `trading/`, `verifying/`,
 or `designing/`. The only allowed reach is the server adapter calling
 `../accounting/scripts/...` as a subprocess (and reading
 `financial/`-namespaced parquet via the kernel, not the web shell).
+
+## 10. Financial sign-off — `evaluating/` is the constellation grantor
+
+`evaluating/` owns the **financial sign-off** (the FINANCIALLY-CLEARED gate) —
+the financial-domain analog of `pleading/`'s litigation-safety gate. Adopted
+2026-06-24 from a lifted publishing charter; spec
+`data/specs/evaluating-financial-signoff-2026-06-24/SPEC.md`. It is the single
+gate that clears (or blocks), on financial-advice / securities-liability
+grounds, any **public** surface that evaluates, recommends, or implies a
+financial decision. `evaluating/` is the **sole grantor**; `accounting/`
+**advises** (frameworks/kernel truth), it does not grant.
+
+**Scope (§ 3 of the spec):** Qresev surfaces (live app, `qresev-public` README +
+STATUS + metadata `description`, the `/qresev` product page + OG card) and any
+other public surface evaluating stocks/portfolios/options with actionable
+framing (public `trading/`/`analyzing/` artifacts; a Qresev-framed
+`explaining/` video). `/donate` is out unless it implies returns; internal
+artifacts are out.
+
+**FINANCIALLY-CLEARED iff (§ 4 of the spec):** the `financialRider` is present +
+adjacent to **every** TREND/MOMENTUM/OPTIONS-RISK/SECTOR/DRAWDOWN verdict token
+(not just an intro); no actionable-counsel language ("advice"/"recommendation"/
+"buy"/"sell"/"should"/return-promise/"guarantee" — the rider's own *negated*
+uses are exempt); the allow-list is framed "a kernel refusal, not a safety
+guarantee" (never "safe"); `disclaimer.canon` is verbatim; the rider is
+**byte-equal** to the `disclaimer.financialRider` export across all faces, and
+the `description`-strip face is concession-safe standalone. Intra-app faces are
+asserted by `app.spec.ts`; cross-repo faces by the publishing `github_meta.py`
+lint.
+
+**Orthogonal to `pleading/` (load-bearing):** never a substitute for the
+litigation gate. Where both apply, a surface needs **both** clears; a green
+`pleading/` line is not a financial sign-off and vice-versa (messaging-debate
+§ 11.6). `evaluating/` is the **V8 owner/gate** in the messaging-hardening
+debate (`shorting/` prosecutes; `pleading/` retains the litigation vectors).
 
 ## Status emit (`data/status/evaluating.json`)
 

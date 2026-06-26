@@ -88,9 +88,15 @@ through `loadFrameworks()`. Adding a federal statute = one entry in
 ## 7. Server scope
 
 v0.1 is **replay-only**. POST `/api/runs` body is `{example_id}` from a
-closed allow-list `{sample, rico, rico_d, titlevi_sample,
-civilrights, titlevi, civilrights_amended, rico_amended}` (the last three reuse an amended class-action complaint body, one per
-framework-encodable count — proving/ a14f67f).
+closed allow-list, narrowed to **synthetic examples only** under the F1
+thesis floor: `{sample, titlevi_sample}`. No `<live-matter>_*` example is
+replayable — those are the operator's actual dockets ("worked examples
+... not drawn from any live matter", `disclaimer.legalRider`; Round 04
+debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2). The
+static public build is stricter still — RICO-synthetic only
+(`web/src/lib/public-runs.ts`); the replay API also serves the synthetic
+Title VI sample. Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`) and
+`ALLOWED_IDS` (`api.spec.ts`) in lockstep (§ 9.5).
 The adapter shells `extract_facts.py --reuse-facts --build` against
 `proving/examples/<id>/`, overwriting `{report,graph,loci}.json` in
 place. No predicate sub-agent calls (committed `facts.json` is the
@@ -129,8 +135,8 @@ backs Qresev's strategy mount — visualizing spec
 designer POC kit (`ProofGraph` namespace + `fixture-rico.js`) is
 retired; git history preserves it. Routes:
 
-- `/proof-graph/` — lobby + cards linking to the two demos and any live
-  runs discovered under `proving/examples/*/report.json`.
+- `/proof-graph/` — lobby + cards linking to the two demos and the F1-gated
+  live runs (see below).
 - `/proof-graph/01-rico/` — Doe v. Acme § 1962(c) happy path over the
   committed `proving/examples/sample/graph.json`.
 - `/proof-graph/02-debug/` — same DAG, three injected failure modes
@@ -138,8 +144,25 @@ retired; git history preserves it. Routes:
   `ProofGraphKit.makeSynthetic`; the value lens + failure borders
   restyle the same layout.
 - `/proof-graph/run/<id>/` + `/<id>/debug/` — per-run views over real
-  `proving/examples/<id>/graph.json` fixtures via `getStaticPaths`;
-  REJECTED runs surface a debug-overlay link in the header.
+  `proving/examples/<id>/graph.json` fixtures via `getStaticPaths`,
+  **F1-gated** (see below); REJECTED runs surface a debug-overlay link
+  in the header.
+
+**F1 thesis-floor gate (named-never-worked).** The textual axis is *named,
+never worked* in any public material, and no public worked example is drawn
+from a live matter (`disclaimer.legalRider`; SoT `studying/thesis.md`). So the
+public build's only worked proof-DAG run page is the **synthetic civil-RICO
+sample** (`sample`). `web/src/lib/public-runs.ts` (`isPublicWorkedRun`) is the
+single gate: it drops every non-RICO example (only `rico` is in
+`frameworks.ts` `PUBLIC_DEMOED`) and every `<live-matter>_*` example (live matter,
+incl. `rico-hier`). Both run pages' `getStaticPaths` AND the lobby's live-run
+scan call it; the same gate backs the `/app` island chips (non-demoed →
+"encoded · not demoed", no verdict/Boolean) and `LiveReportZone`. Round 04
+debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2; pleading/
+binding; do not deploy until the PLEADING-REVIEW-PACKET clears. The replay
+API (`server/main.py` `ALLOWED_EXAMPLE_IDS`) is also gated — synthetic-only,
+no `<live-matter>_*` (§ 7). Residual (intentional, narrower than the static floor):
+the replay API still serves the synthetic non-RICO `titlevi_sample`.
 - `/lattice/` — the axiomatization catalog (coverage × agreement × tier)
   over `data/visualizing/legal-catalog.json`, same kit in catalog mode
   (cells collapsed, agreement lens, `tokens-lattice.css`).
@@ -183,6 +206,14 @@ Kit files live at `verifying/web/public/graphs2/`:
 token-overlay DEFINITIONS legitimately carry raw values, same exclusion
 class as Qresev's kit dir. Never hand-edit kit files to placate lint.
 
+**Empty-state overlay pointer-trap (check on any mount edit).** An absolute/inset
+empty-state overlay must scope its visibility to `.empty:not([hidden])` — a bare
+`.empty{display:flex}` author rule silently defeats the UA `[hidden]{display:none}`,
+leaving the overlay visible with `pointer-events:auto` over the live cytoscape
+canvas so the graph is uninteractive (monitoring hit + fixed this 2026-06-19).
+e2e that drives the kit via its JS API won't catch it — add an overlay
+`toBeHidden()` guard on live mount. Detail: `[[reference_hidden_attr_overlay_pointer_trap]]`.
+
 ## 9. Hosting target
 
 Local dev: `astro dev` on `:4321` + `uvicorn` on `:8787` with a Vite proxy.
@@ -211,7 +242,8 @@ in `qagents/CLAUDE.md` § "AWS deploys" and `serving/CLAUDE.md` § 8.
 Suite at `verifying/web/tests/e2e/`; shared helpers at
 `code/playwright/shared.ts`. Three projects (chromium-desktop / -mobile /
 -reduced-motion); `webServer = pnpm build && pnpm preview` on **port
-4323** (4321 = documenting, 4322 = designing). Run from `verifying/web/`:
+4326** (4321 + 4323 are in active use by designing/web-next; 4322 = designing).
+Run from `verifying/web/`:
 
 - `pnpm test:e2e` — offline against built+previewed Astro shell.
 - `pnpm test:e2e:install` — one-time chromium download.
@@ -231,9 +263,15 @@ Spec partitioning:
   Predicate counts use a floor (`minPreds`) so adding a predicate file
   doesn't break the spec.
 - `proof-graph.spec.ts` — lobby cardinality + graphs-2 kit-mount
-  (`data-ready` + cytoscape canvas) on `01-rico`, `02-debug`, three
-  spot-check runs, and `/lattice/` (catalog mode + lattice tokens).
-- `app.spec.ts` — `client:only` island hydration, chip set + click behaviour.
+  (`data-ready` + cytoscape canvas) on `01-rico`, `02-debug`, the single
+  F1-gated `sample` run (+ its `/debug/`), and `/lattice/`. Carries the F1
+  leak-guard: `FORBIDDEN_RUNS` (`<live-matter>_*`, `titlevi_sample`) must 404 and
+  never appear on the lobby (mirrors `isPublicWorkedRun` in `web/src/lib/
+  public-runs.ts`).
+- `app.spec.ts` — `client:only` island hydration, chip set + click behaviour,
+  plus the F1 floor: RICO-only demoed (default chip), non-demoed chips render
+  "encoded · not demoed" with no verdict/Boolean, the synthetic demo ends
+  REJECT, and the disclaimer is a sibling of every verdict.
 - `api.spec.ts` — live-only; `ALLOWED_IDS` here mirrors
   `ALLOWED_EXAMPLE_IDS` in `server/main.py` — both are exhaustive by
   design, edit in lockstep.

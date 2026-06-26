@@ -22,7 +22,29 @@ Two render modes, one kit:
   `catalog.json`. Headline is **agreement**, not a proof trace.
 - **Proof-DAG** (secondary) — the existing single-complaint render (`graph.json`
   v1, the locked 3-class / 4-edge contract = the leaf tier). Must not regress the
-  Qnarre `/app` verifier debug overlay.
+  Qnarre `/app` verifier debug overlay. **Additive H3 layer (R10, 2026-06-20):**
+  hierarchical-predicate runs also carry a `derived` node + `decomposes` edge
+  (propagation spec § 2.3); the kit folds `derived`→`predicate` (NO `model.ts`
+  kind-union widening) so it renders "computed" (no `value`), and keeps
+  `decomposes` in the elaboration view. Present only on decomposed runs — a v1
+  graph without them renders byte-identically. A `derived-underivable` failure
+  carries `derivedNode` + an **empty `axiomName`**, so the kit attributes it via
+  a `failByNode` map (keyed on node id), not `failByAxiom` (`proof.ts`; spec
+  § 2.3). **Composite NESTING (handoff 2026-06-21):** in the elaboration view each
+  `derived` composite gets its own collapsible **container** (a `derived`
+  *ComponentKind* — a CONTAINER kind, not a NodeKind widening; never crosses the
+  wire seam) built from its decomposition subtree (the composite node + its
+  `decomposes`-target axioms + the predicates that `inhabit` them), parented on the
+  Predicates kind-plate. Containers start **collapsed** (`mount.ts` seeds the
+  default `CollapseState`) so the proof opens showing composites; a composite's
+  leaves appear only on expand — the hierarchy is structural, not just
+  `decomposes` lines through one flat plate. Still byte-compat: a graph with no
+  `derived` nodes builds zero containers. The `dist/` bundles are **gitignored canonical-only build state** —
+  never committed; rebuild at canonical so the apps re-sync a current build
+  (`node graphs-2/kit/build.mjs`). **Close discipline:** rebuild the canonical
+  dist BEFORE `/close` — worktree removal does NOT regenerate it, so it lags the
+  merged source and bit the consumer side twice on 2026-06-21
+  (`reference_graphs2_dist_stale_after_visualizing_close`).
 
 ## 2. The one hard contract — `catalog.json` (domain-neutral)
 
@@ -133,6 +155,52 @@ Drives the monitoring/ operational mount (next M0 item) + later the uscode mount
 in verifying/ (M2). Report: `data/tmp/uscode-graph-monitoring-pipeline-2026-06-16/
 REPORT.md` § 3; debate `data/debates/uscode-graph-monitoring-pipeline-2026-06-16.md`.
 
+**Method-DAG hero — three general node-link capabilities (done 2026-06-25).**
+Built for the designing/ homepage+thesis hero (an authored, interactive INDUCTIVE
+method DAG), all general + byte-compat for wires that omit them — full encoding
+reference in **`data/specs/visualizing-2026-06-03/SPEC.md` § 15**: (1) **cluster-as-
+node edges** (`nodelink.ts` `source_kind`/`target_kind:"cluster"` → the `cl:`
+Component; model/collapse/backend already permitted compound endpoints); (2)
+**expansion-state merge** (`graph.merge`, `core/merge.ts`; LEAF + INDUCTIVE modes;
+`mount.ts` tracks a `merged` flag); (3) **inductive clusters** (`graph.inductive`
+seeds 2 normal + 1 generator; `core/inductive.ts` `addInductiveChild`/
+`realizeInductive`; per-role `PARTS`/`MIN` grammar scoped to host subtree) + role→
+shape (circle/star/triangle/hexagon) + `MountKitOpts.showLabels`/`nodeScale`/
+`legend()`. The hero FIXTURE (`hero-graph.json`) + `loader.js` are designing-owned
+(lifted there 2026-06-25); the kit is visualizing's.
+
+**Predicate-calculus encoding refinement (2026-06-26).** The LLMs' predicate
+dependency is now explicit: each `Input`-fed LLM (A/R/P, never C) is a non-terminal
+compound holding an inductive **`Predicates +`** cluster (new role `predicate`, ◇
+diamond — added to `inductive.ts` PARTS/MIN, `mount.ts` ROLE_SHAPE+legend,
+`elements.ts`); the per-pillar `Predicates → destination` edge is **cluster→cluster**
+onto PROMOTED single-leaf destination sub-clusters (A:Axioms / R:Concepts+Propositions /
+P:Theorems). Two kit generalizations rode in: `realizeInductive` is now
+**generator-SCOPED** (won't wire the non-inductive destinations), and `applyMerge` folds
+each trigger's **WHOLE subtree** (descendant-fold + `cl:`-keyed rewire) — both
+byte-compat for flat/non-method wires (112 tests green incl. `test/hero-method.test.ts`;
+sandbox 23/23 + CSP). Spec § 15 carries the full reference. The designing-side
+`hero-graph.json` rewrite + canonical dist re-host-copy land at close/merge (dist is
+gitignored canonical-only — `reference_graphs2_dist_stale_after_visualizing_close`).
+
+**Dual-render hero (planned).** The first-page hero is a **silent Remotion** walk of the
+7 Quantapix-Thesis steps built from the **layered backend** (the tensorboard-derivative:
+fixed routing → deterministic `exportSVG` per expand/merge state, ideal fixed-frame
+snapshots); the **thesis page** hosts the **cytoscape** interactive mount. Same
+`hero-graph.json`, two backends (`MountKitOpts.backend:'layered'|'cytoscape'`).
+
+**tf-graph compound LAYOUT — WIP, port resurrection next (2026-06-26).** The encoding +
+graph definition are DONE + verified (above). The layered backend's tf-graph layout
+(`backends/layered/compound.ts` — recursive scope boxes + edge routing, opt-in
+`MountKitOpts.compound`) reads cleanly in the Assumptions pillar but **tangles in Rules**
+(feedback node mis-placed, hand-rolled routing unrecoverable with >1 cross-edge).
+Operator decision: stop hand-rolling — **resurrect the original tf-graph port** (deleted
+in `7a466014`; recover from `7a466014^:visualizing/graphs/tensorboard/`; upstream
+`hub/tensorboard`) and run it against the now-verified graph for proven routing. STUDY
+the algorithm, never ship Polymer (`feedback_no_third_party_license_entanglement`).
+Detail: next-steps item 10. Designing fixture landing + dist re-host-copy BLOCKED on
+layout lock.
+
 **Constellation modality (M) + cluster-lens (done 2026-06-17).** studying's
 SECOND operational input — the qagents monorepo + `~/.claude` memory as one
 non-hierarchical graph (`graph.kind="constellation"`; producer
@@ -176,8 +244,8 @@ Phase 0 ✅ registration. Phase 1 ✅ catalog extractor for T18
 (`extractor/usc_to_catalog.py` → `qcatalog/1`; financial deferred until
 axiomatize-trading builds `Universe/S<code>/<Axis>/`). **Phase 2 ✅ cytoscape
 web-port** + **Phase 3 ✅ scale bake-off** — POC engines superseded + removed
-2026-06-11 (§ 3); the cytoscape CSP patch lives on as the graphs-2 `pnpm patch`
-(Phase 4). Bake-off detail preserved in git history + `project_visualizing_subproject`.
+2026-06-11 (§ 3, which carries the bake-off-preservation detail); the cytoscape
+CSP patch lives on as the graphs-2 `pnpm patch` (Phase 4).
 **Phase 4 RE-SCOPED → built from scratch as `graphs-2/`**
 (spec `data/specs/visualizing-2026-06-03/graphs2-2026-06-07/SPEC.md`, promoted
 2026-06-10): a render-neutral TS kit (one
