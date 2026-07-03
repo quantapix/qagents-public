@@ -2,6 +2,55 @@
 
 VSCode extension (TS) for market inspection: DuckDB + Parquet, lightweight-charts v5, yfinance/Stooq ingest, Alpaca IEX live feed. Cross-project conventions (TS strict + shared tsconfigs, canonical OHLCV bar shape, GICS hub, defined-risk options rule, status hub, language split) live in repo-root `CLAUDE.md` — not duplicated here.
 
+## Charter — two roles (spec: `data/specs/analyzing-charter-2026-07-01/SPEC.md`)
+
+analyzing behind the Quantapix thesis has **two roles**, ratified by a
+7-delegate cross-qagent debate (2026-07-01):
+
+- **(a) Market-data supplier.** analyzing is the named owner/producer of the
+  historical aggregate **tape** — `financial/parquet/ohlcv-equities/` (via
+  `ingest.py --flat`) + `ta-reference/` (via `ta_reference.py --flat`) — over
+  the ~526–527-symbol S&P-500 ∪ anchor-ETF universe, on **locked** schemas
+  (OHLCV `ts,o,h,l,c,v,adj_c`; the 14-col TA canon). It is the ground truth
+  `accounting/`'s numerical Lean4 kernel runs against (read file-only via
+  `accounting/scripts/data_view.py` — never imports analyzing) and that
+  `trading/` consults for **decision-support only** (bull-vs-bear TA gate,
+  backtests; the live/order path stays on `alpaca_client.py`, never the tape).
+- **(b) Local-only viewing surface.** analyzing re-homes its inspection surface
+  as a **browser TS surface** (per charts-migration L2; **local-only**, never
+  publicly deployed — the `monitoring/` posture) that mounts `visualizing/`'s
+  vanilla-JS kits (charts first; graphs-2/mixed3d later), driven by the built
+  `AggregateSelection` drill-down (GICS sector ▸ industry ▸ symbol; portfolio ▸
+  holdings). Run-independent, **ground-truth-only** browsing — the complement to
+  `evaluating/`'s run-keyed Qresev.
+
+**Load-bearing invariants** (audited each close):
+
+- **Files-only seam, no served API — unconditional.** Consumers read parquet
+  files; never an HTTP/RPC/localhost API (would breach Lean4-charter inv-5 +
+  accounting Hard rule #6). "Fast" = files well-formed/complete/fresh/
+  content-pinned, not a service. The numerical pipeline is batch; nothing needs
+  sub-file-read latency.
+- **Viewer renders ground-truth tape only, never kernel emissions.** No
+  predicate `Bool`, framework verdict, proof-DAG node, or FINANCIALLY-CLEARED
+  signal in an analyzing panel — that would make analyzing a second consumer of
+  the numerical axis (inv-5 breach). Kernel emissions are `evaluating/`'s alone.
+- **GICS is read-only here.** `gics-symbols.parquet` stays a
+  `financial/gics/build.py` artifact (single-owner); analyzing reads + drills
+  down, never produces.
+- **Portfolios are read-only here.** The drill-down renders
+  `financial/portfolios/*.md` (cost-basis snapshot) as **separate** per-PM
+  books; never writes/regenerates a managed form, never an order surface, never
+  a pooled cross-PM NAV (trading separation-of-capital).
+- **Freshness manifest (planned P2).** A content-addressed
+  `financial/parquet/manifest.json` sidecar (`as_of` / `content_sha` /
+  lockstep assertions / `UNKNOWN` fail-soft) is the machine-readable freshness
+  pin. STALE (>14d) enforcement is **tiered**: kernel never gates; interactive
+  reads warn; `dat.sh --pre` hard-aborts; gated public surfaces hard-refuse
+  (an `evaluating/` FINANCIALLY-CLEARED input). Any published/exported analyzing
+  chart is a FINANCIALLY-CLEARED subject — `evaluating/` grants, `accounting/`
+  advises.
+
 ## Batch ingest + ta_reference
 
 `scripts/ingest.py` and `scripts/ta_reference.py` both have an additive

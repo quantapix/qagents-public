@@ -264,9 +264,12 @@ rewrites `settings.toml` on toolchain activation, so without it lake dies
 ~0.04s in on a read-only-fs write and every live run returns a spurious
 REJECTED with empty `kernel.errors`.
 
-The Lean toolchain (`leanprover/lean4:v4.30.0`, 2.5 GB) installs
+The Lean toolchain (`leanprover/lean4:v4.31.0`, 2.5 GB) installs
 once at EC2 boot via `bootstrap-ec2.sh`. accounting/ is mathlib-free
-so this is the only kernel dependency. Memory:
+so this is the only kernel dependency. (Documented bootstrap target —
+the three-kernel lockstep moved to v4.31.0 on the studying close; the
+**live `qagents-app-1` instance keeps v4.30.0** until a serving deploy
+re-installs the toolchain, a separate deploy action.) Memory:
 [[project_ec2_lean_kernel_install]] + [[feedback_kernel_rotation_cache_hazard]].
 
 ## 9. Scope boundary
@@ -286,6 +289,19 @@ gate that clears (or blocks), on financial-advice / securities-liability
 grounds, any **public** surface that evaluates, recommends, or implies a
 financial decision. `evaluating/` is the **sole grantor**; `accounting/`
 **advises** (frameworks/kernel truth), it does not grant.
+
+**Recording a grant.** Each granted/blocked sign-off lands as a dated record in the
+spec's **§ 9 sign-off ledger** (`data/specs/evaluating-financial-signoff-2026-06-24/signoffs/<date>-<subject>.md`),
+kept in evaluating's own family — never in `pleading/`'s `messaging-rulings/` (the
+§ 5 orthogonality). First entry: `signoffs/2026-06-30-4.1-ta-bestiary.md`. A consumer
+cites it (manifest + release commit) before any public push. The generic version of
+this machinery is **ADOPTED**: the `/do-signoff <gate> <subject>` skill
+(`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing instance,
+resolver refuses unless the session IS the grantor) over the governance-layer spec
+`data/specs/signoff-framework-2026-06-30/SPEC.md`, with provable `lake build`
+verification (studying S-T10 `SignoffCoverage`). Grant a FINANCIALLY surface with
+`/do-signoff FINANCIALLY <subject>` from this session; the 4.1 record carries the
+§ 5 structured core as the worked example. See `[[project_signoff_framework]]`.
 
 **Scope (§ 3 of the spec):** Qresev surfaces (live app, `qresev-public` README +
 STATUS + metadata `description`, the `/qresev` product page + OG card) and any

@@ -264,10 +264,10 @@ the loop:
   subscription line:
   - **Tier A** — interactive assistant sessions. Operator at the
     keyboard.
-  - **Tier B** — programmatic SDK credit pool ($200/month allowance
-    bundled into bucket 1's Claude Max 20× subscription at no
-    separate charge, live 2026-06-15). Cron-fired routines ride
-    this.
+  - **Tier B** — programmatic SDK routines. These currently draw the
+    same Claude Max 20× subscription limits as the interactive lane; a
+    separately funded SDK credit pool was planned but is paused (it
+    reverses only if a new plan ships). Cron-fired routines ride this.
   - **Tier C** — optional API-rate overage. Default off; stays
     inside the AI-assistant bucket if enabled. Cross-bucket use is
     forbidden — the donation drive's JSON manifest pins the
@@ -291,9 +291,11 @@ conventions the constellation itself runs on (the branch-as-write-lock
 rule of theme 4 is its first proved theorem). Its consumer is the
 local-only monitoring web app, fed over the same files/SSE seam the other
 two kernels use. The kernels never share
-domain, ground truth, or consumer; the charter pins six invariants,
+domain, ground truth, or consumer; the charter pins **seven** invariants,
 including "no manual proof driving, ever" — every proof is driven by AI
-assistants debating in parallel, with the kernel as the only judge.
+assistants debating in parallel, with the kernel as the only judge — and, most
+recently, gate uniformity: every kernel must pass the same fixed set of
+cross-kernel coherency checks with a hard exit code, not an advisory log.
 
 The two products ship the same kernel against different statutes and
 different OHLCV. The public verifier endpoints accept **redacted

@@ -179,6 +179,23 @@ A functionality failure is the day's top issue, full stop. Consistency and
 correctness fill the remaining 4 slots, ranked by blast radius (legal-record
 files > shipped websites > internal docs > backlog).
 
+### 3.1 Suppressed-finding class — Agent SDK (operator directive 2026-06-30)
+
+Anthropic dropped the SDK credits from the Max-20x subscription, so the SDK
+lane is unusable for now. **All four subagents must NOT surface any
+SDK-related finding** until the subscription regains SDK access. Concretely,
+suppress: `data/agent-sdk-ledger/` failure-stage findings (checker
+commitment 6 bullet 1), SDK-lane fire failures, `agent-sdk-adoption-2026-05-17`
+spec-phase stalls / OVER-CAP, SDK-credit references, and the
+`pending/data/agent-sdk-ledger/**` unclassified surfacing (now classified
+DORMANT in the verifier internal-set + `verify-pending.sh`). This is a
+reversible, dated directive — drop the suppression and re-enable the scans
+when a new subscription/SDK plan ships. See memory
+`reference-agent-sdk-credit-200-mo`. Note: `managing:daily` itself is still
+configured `:sdk` in `data/schedules/launchd/install.sh` ROUTINES — reverting
+that to the `claude --print` lane is the root-cause fix (operator decision;
+not auto-applied here).
+
 ## 4. Functionality probes — random, weighted
 
 Each run picks 2–3 probes from a weighted pool. **Random selection is
@@ -186,7 +203,7 @@ load-bearing** — it prevents the watcher from drifting into a fixed pattern
 and missing intermittent failures elsewhere.
 
 Probe families + weights + pass/fail predicates live in `managing/probes.md`
-(P1..P6 + weight-summary table); checker reads from there. Random seed:
+(P1..P7 + weight-summary table); checker reads from there. Random seed:
 `date +%j` (day-of-year) — deterministic per day, varied across days.
 `managing/scripts/probe-pick.sh --k 2` is the picker (pure-awk Fisher-Yates,
 no GNU shuf dep).
@@ -300,10 +317,14 @@ three subdirs each carry a `.gitkeep` until the first dated file lands.
 Cron-fired daily at 06:00 local via the qagents launchd scheduler at
 `data/schedules/`. Registered as `com.qagents.managing-daily`; spec row in
 `data/schedules/cron_triggers.md`; ROUTINES entry
-`managing:daily:06:00:0,1,2,3,4,5,6:sdk` in `data/schedules/launchd/install.sh`
-(the trailing `:sdk` opts the route into the Agent SDK lane per
-`agent-sdk-adoption-2026-05-17.md` Phase 3; migrate routine-by-routine and
-don't flip the daily coordinator until the SDK lane demonstrates parity).
+`managing:daily:06:00:0,1,2,3,4,5,6` in `data/schedules/launchd/install.sh`.
+**The `:sdk` token was removed 2026-06-30** — Anthropic dropped SDK credits
+from the Max-20x subscription, so the routine runs the `claude --print` lane
+(the original default) until SDK access returns; restore the trailing `:sdk`
+and re-run `install.sh --enable` from canonical when it does. (Background: the
+`:sdk` token opted the route into the Agent SDK lane per
+`agent-sdk-adoption-2026-05-17.md` Phase 3.) See § 3.1 + memory
+`feedback-managing-suppress-sdk-findings`.
 The fired routine is the coordinator prompt at
 `managing/.claude/coordinator-prompt.txt` — `data/schedules/launchd/run_routine.sh`
 reads the sidecar and either pipes it to `claude --print` (legacy lane) or

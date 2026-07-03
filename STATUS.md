@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-06-26. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-07-03. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -31,39 +31,29 @@ refreshes.
   the worktree-as-lock discipline (theme 4) and the context-window-optimization
   discipline (theme 5) the README describes.
 
-## What changed since the last refresh (2026-06-19)
+## What changed since the last refresh (2026-06-26)
 
-- **A seventh charter invariant was added to the three-kernel architecture —
-  gate uniformity.** The cross-kernel coherency gate (a fixed set of structural
-  checks every framework must pass) is now charter law across all three Lean4
-  kernels — textual, numerical, and operational — not just a per-kernel
-  convenience. Both product kernels landed their coherency gate-parity slices
-  this window; the gate is now uniform, which is the same "one rule, swept
-  across every surface in lockstep" property the conventions in this repo
-  exist to publish.
-- **A second clearance gate was charted — a financial sign-off, orthogonal to
-  the litigation-safety gate.** Any public surface that evaluates or implies a
-  financial decision now requires an explicit financially-cleared sign-off from
-  the evaluator subproject (advised by the financial kernel), in addition to —
-  not instead of — the existing litigation-safety clearance. Where both apply,
-  both must clear. This is the AI-checking-AI gate pattern (theme 7) widened to
-  a second domain.
-- **Both product kernels deepened their hierarchical-predicate decomposition.**
-  The legal kernel ran a decompose-by-default scale wave with a load-bearing
-  oracle guard (search automation may never discharge an agreement lemma) and
-  added an eighth golden framework; the financial kernel reached sibling-parity
-  on depth, added a third hierarchical framework, and promoted further
-  per-sector slices. Detail lives in the legal-domain and financial-domain
-  public repos.
-- **The verifier's replay surface narrowed to synthetic examples only.** Under
-  the thesis floor, the public verifier app now replays only synthetic fixtures
-  — no run drawn from any live matter is reachable, and the static public build
-  is stricter still (one synthetic worked example). A leak-guard test forces the
-  excluded ids to 404.
-- **The release pipeline moved all GitHub work behind a single tool.** Repo
-  content, metadata (description/homepage/topics), existence, and verification
-  now go through one gh-centric arm; a repo description is treated as public OG
-  copy and rides the same redaction + thesis gate as README prose.
+- **The three formal kernels bumped their shared toolchain in lockstep.** All
+  three Lean kernels moved to the same next toolchain point-release in one
+  coordinated change, with every example proof replayed green — the concrete
+  payoff of pinning one toolchain across three axes so a single cloud build
+  image serves them with no per-build switch.
+- **The clearance sign-off generalized into a registry-backed framework, and a
+  third gate was added.** What was a single financial sign-off last round is
+  now a generic, machine-checked clearance machinery: each gate has one
+  sole-grantor subproject and writes a dated, re-verifiable attestation, and a
+  push whose in-scope gate lacks a record is refused. A third gate —
+  operational-privacy — joined the litigation-safety and financial gates.
+- **The release pipeline made the CDN upload a gated public push.** Uploading a
+  video cut to the content-delivery bucket is now treated as the first public
+  push, gated identically to the channel upload — closing a gap where an object
+  could be world-reachable by URL before its payload cleared sign-off.
+- **Both product kernels continued hierarchical-predicate decomposition.**
+  Depth increased across several frameworks on both the legal and financial
+  sides, with new per-sector slices promoted; detail lives in the two
+  product public repos.
+- **One watcher subproject retired its programmatic (SDK) routines**, folding
+  back to the interactive lane — consistent with the paused SDK credit pool.
 
 ## What's scaffolded (fills in on later refreshes)
 

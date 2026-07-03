@@ -77,6 +77,7 @@ entry lands or an existing one's verdict flips.
 | `publishing/` | data-hub | `publishing/scripts/videos_emit.mjs` (videos roster → `/videos`) | `data/publishing/CLAUDE.md` |
 | `renders/` | render-cache (per-consumer flip to render-OUTPUT in progress — `publishing/` migrated 2026-06-10, rendering P4 covers the rest) | `rendering/` engines (migrated consumers) / designer handoff wholesale-regen (legacy bundles) | `data/renders/CLAUDE.md` |
 | `schedules/` | convention-anchor | manual (`launchd/install.sh` ROUTINES) | `data/schedules/CLAUDE.md` |
+| `signoffs/` | convention-anchor (**slot hub** — single-owner per `<gate-id>/` slot, the `status/` pattern) | sessions via `/do-signoff` at `/close` — each gate's sole grantor writes its own slot (spec `signoff-framework-2026-06-30.md` § 2/§ 5; verification `…/signoff-verification-2026-06-30.md`) | `data/signoffs/CLAUDE.md` |
 | `specs/` | convention-anchor | manual (session-promoted from `data/tmp/`) | `data/specs/CLAUDE.md` |
 | `status/` | status-emit | per-sub `scripts/status_emit.*` | `data/status/CLAUDE.md` |
 | `summaries/` | convention-anchor | `scripts/close.sh` | `data/summaries/CLAUDE.md` |

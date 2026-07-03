@@ -102,10 +102,9 @@ Repo description/homepage/topics are thesis-governed in `quantapix/github-metada
 SAME gate as README prose (`github_meta.py scan` = `sync_mirror` blocklist +
 `THESIS_LINT`, wired into `publish.sh` Phase 2c). `apply` mutates a public surface
 → operator-confirmed + pleading-gated (manifest `_status`). The first metadata
-`apply` FIRED 2026-06-24 — all 3 external gates cleared (pleading FINAL litigation
-gate + studying op-axis intended-public + evaluating § 11.6 financial sign-off on
-the `qresev-public` cure); all 7 repos populated (were empty), `verify` clean,
-`_status` flipped DRAFT→CLEARED. NB `cmd_apply` never reads `_status` (procedural/
+`apply` FIRED 2026-06-24 — all 3 external gates cleared, all 7 repos populated
+(were empty), `_status` flipped DRAFT→CLEARED (per-gate event detail in close
+summaries + `project_publishing_subproject`). NB `cmd_apply` never reads `_status` (procedural/
 bookkeeping gate only — a real apply carries the flip same-session); metadata
 `apply` is cleanly separable from content `sync` (the Friday `/publish` push). The
 gate persists for future string changes — re-clear, flip `_status` back to DRAFT.
@@ -260,13 +259,38 @@ CLAUDE.md language split). Third instance of the data-hub-not-shared-code patter
   key, not just the title metadata — the redaction + verb-blocklist sweep scans
   the `cdnUrl` slug too. Mirror + worked example: `explaining/CLAUDE.md`
   § "Publish-key shape".
-- **Release flow:** a cut goes live → upload to S3 (`serving/scripts/upload-video.sh
-  <cut> T<n>/<slug>.mp4`) + YouTube, then flip `status: 'live'` + fill
-  `cdnUrl`/`youtubeUrl` in the emitter and re-run it. A litigation-framed video
-  rides the **messaging gate**: the full payload (title + description + tags +
-  chapters + thumbnail + the public CDN slug — `cdnUrl` renders on /videos, so a
-  blocked verb can't hide in the URL) must `pleading/`-CLEAR as one piece before
-  upload. **Site-thumb gotcha:** `designing/web/public/video-thumbs/<id>.png` is a
+- **Release flow (gate-first; no step until the prior clears).** The **CDN upload
+  is the FIRST public push** — the S3 object is fetchable at
+  `videos.quantapix.com/<key>` the instant it lands (immutable cache), reachable by
+  URL even before it is linked from /videos. So it is gated **identically to the
+  YouTube upload**, NOT a pre-gate "build" step. The mistake to never repeat:
+  uploading the cut to S3 before the payload clears (4.1, 2026-06-30 — the chain
+  pushed the CDN object ahead of `evaluating/`'s sign-off). Order:
+  1. **Master finalized** (explaining) + thumbnail rendered.
+  2. **Applicable gate(s) CLEAR on the full payload** — title + description + tags +
+     chapters + thumbnail + the **derived public CDN slug** (the slug renders on
+     /videos *and* is publicly reachable, so a blocked verb can't hide in the URL) —
+     as ONE piece, **before any public push** (CDN upload included):
+     a **financial-domain** video (Topic 3 / Topic 4 / any Qresev payload) needs
+     `evaluating/` **FINANCIALLY-CLEARED** (sole grantor, `accounting/` advises — § 5);
+     a **litigation-framed** video needs `pleading/` messaging CLEAR; where both
+     apply, **both** are required. Cite each attestation in the manifest entry's
+     `signoffs{}` map (keyed by registry gate-id — `signoffs["FINANCIALLY"]` /
+     `signoffs["MESSAGING"]` → the record-path; signoff-framework § 7) **and** the
+     release commit (`Signed-off-by-gate: <gate>=<record>`). The pre-migration
+     free-text form (4.2's "evaluating-cleared" commit cite) is superseded by the
+     map — `youtube_sync.py`/`youtube_upload.py` `signoff_blocker()` machine-refuses
+     a push whose in-scope gate lacks an on-disk record.
+  3. **Publishing mints the key**, stages `descriptions/<key>.txt` + the manifest
+     entry (`youtubeId: null` = built-not-uploaded); redaction/verb sweep clean.
+  4. **CDN upload** (`serving/scripts/upload-video.sh <cut> T<n>/<slug>.mp4`) — the
+     first public push, gated by step 2.
+  5. **YouTube upload** (unlisted-first) → Studio altered-content toggle → public flip.
+  6. **Live-flip:** `videos_emit.mjs` `status: 'live'` + fill `cdnUrl`/`youtubeUrl`,
+     re-run; `explaining/` records the release in `meta.json` (the § 4 standing rule
+     there — explaining-owned, never publishing).
+
+  **Site-thumb gotcha:** `designing/web/public/video-thumbs/<id>.png` is a
   SECOND, independently-deployed copy of the `rendering` `priority-10` render —
   clearing the YouTube payload does NOT clear it; it can serve stale/blocked art
   live on `quantapix.com/video-thumbs/<id>.png` (CloudFront-cached) on its own. On
@@ -285,9 +309,16 @@ in Studio; `youtube_sync.py` diffs and `videos.update`s drift. Skill:
 `publishing/scripts/youtube_{sync,upload,auth}.py`; deps in the root `[publishing]`
 extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
 
-- **Two hard gates.** (1) `litigationFramed` entries (2.1 long+short) refuse to
-  push/adopt-over until `clearedBy` names a promoted `data/messaging-rulings/<date>.md`
-  — the same § 11.2 floor the upload sheets ride. (2) The synthetic-content
+- **Two hard gates.** (1) **Signoff gates** (signoff-framework § 7): each entry's
+  scope flags (`litigationFramed` → MESSAGING, `financialDomain` → FINANCIALLY) put
+  it in a gate's scope, and `signoff_blocker()` refuses push/adopt-over/upload unless
+  every in-scope gate's `signoffs[<gate-id>]` names a record on disk — a promoted
+  `data/messaging-rulings/<date>.md` (pleading grants) or an
+  `evaluating-financial-signoff/signoffs/` record (evaluating grants, accounting
+  advises). publishing never self-grants; **4.2 is blocked-pending** (financial scope,
+  no evaluating record yet). The MESSAGING half is the same § 11.2 floor the upload
+  sheets ride. The old single `clearedBy`/inert `financiallyCleared` fields are
+  retired (R17 atomic-lockstep migration, 2026-06-30). (2) The synthetic-content
   **altered-content disclosure has no API field** — it stays a manual Studio toggle
   per upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete on
   its own. A redaction/verb scan over `descriptions/` runs before any push.
