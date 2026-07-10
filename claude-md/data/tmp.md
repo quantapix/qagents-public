@@ -15,11 +15,6 @@ to `data/specs/` once adopted)
 session writes during draft; promotion is a separate `git mv` inside
 `/close`
 
-Replaced the legacy root-level `tmp/` directory when the tmp+summaries
-reorg landed (`data/specs/data-conventions-2026-05-06/SPEC.md` § 14).
-
----
-
 ## Proposal lifecycle
 
 A `data/tmp/<slug>-<date>.md` entry is in one of three states; the
@@ -30,11 +25,7 @@ daily `specs-audit.sh` pass classifies each entry and surfaces it in
 |---------------------|-------------------------------------------------------------------------------------------|--------------------------------------|
 | **in-flight**       | file mtime ≤ **7 days**                                                                   | listed; no finding                   |
 | **stale**           | file mtime > **7 days** AND **no successor** in `data/specs/`                             | listed as **orphan candidate**       |
-| **adopted-orphan**  | the slug appears as a section header or status line in any `data/specs/*.md`              | listed as **adopted-orphan** — MUST be deleted |
-
-The 7-day threshold matches the "long-running entries with no
-promotion path are a code smell" rule that the prior version of this
-file gestured at — quantified now so the audit can act on it.
+| **adopted-orphan**  | the slug appears as a family directory name or subspec basename under `data/specs/`       | listed as **adopted-orphan** — MUST be deleted |
 
 ### Adopted-orphan detection
 
@@ -43,9 +34,8 @@ form — `specs-family-layout-2026-06-10/SPEC.md` § 4), the corresponding
 `data/tmp/<slug>-<date>.md` (or `data/tmp/<slug>-<date>/`) MUST be
 removed in the same commit. The audit looks for the inverse: a `tmp/`
 entry whose **basename** (stripping `.md` and any `/SPEC.md` suffix)
-matches a family directory name, a subspec directory basename, or a
-legacy flat `data/specs/*.md` filename. Any match is an
-`adopted-orphan` — the promotion was incomplete; cleanup pending.
+matches a family directory name or a subspec directory basename. Any
+match is an `adopted-orphan` — the promotion was incomplete; cleanup pending.
 
 ### Authoring scratch (subdirectory form)
 

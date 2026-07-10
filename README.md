@@ -6,7 +6,7 @@
 > the private working tree.
 
 A weekly-refreshed window into how a sole developer plus an expert AI
-assistant collaborate inside a single monorepo across twenty-two
+assistant collaborate inside a single monorepo across twenty-four
 sibling subprojects. The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
 It is the **rule set** the assistant reads at every session start,
@@ -22,7 +22,7 @@ curated alongside.
 The 2026 bet: what is worth publishing is no longer the implementation
 code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
 that lets a sole developer collaborate with an AI
-assistant across twenty-two non-overlapping subprojects without
+assistant across twenty-four non-overlapping subprojects without
 contradicting itself. Eight themes carry that bet; a founding case
 study closes the section.
 
@@ -51,7 +51,7 @@ this repo publishes.
 
 ### 2. Core competencies + inter-project tension resolution
 
-The private repo runs **twenty-two** sibling subprojects under a single
+The private repo runs **twenty-four** sibling subprojects under a single
 root. They share a venv, a pnpm workspace, a Lean toolchain, and a
 Git tree — but they explicitly do *not* share code. The boundary rule
 ("No cross-subproject imports — ever") is load-bearing.
@@ -347,7 +347,7 @@ Litigation-domain `CLAUDE.md`s (the appeals / pleading / legal-hub
 surface) are deliberately excluded — too easy for federal-record
 drift, even redacted.
 
-## Sibling subprojects (twenty-two, one venv, one workspace)
+## Sibling subprojects (twenty-four, one venv, one workspace)
 
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -373,6 +373,8 @@ drift, even redacted.
 | `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
 | `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
 | `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images live, video next) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
+| `extending/`   | Desktop-assistant extensions + adoption enablement. Ships thin stdio MCP servers that proxy the two product surfaces (allow-listed replay, kernel refusal rules mirrored, never an additional kernel consumer), packaged through the release lane. |
+| `developing/`  | Native macOS (and next iOS) SwiftUI clients for the two products. A generated-project + package-manager monorepo; never an additional kernel consumer — future live wiring rides the existing product seams. |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish
@@ -458,7 +460,7 @@ hub is the only seam. This is the canonical example of
 
 ## What you will not find here
 
-- The private working tree itself (twenty-two subprojects, the filing
+- The private working tree itself (twenty-four subprojects, the filing
   hub, the redacted legal drafts).
 - Per-subproject implementation code — that lives in the
   per-subproject public repos (`qnarre-public`, `qresev-public`,

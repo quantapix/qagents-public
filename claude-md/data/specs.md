@@ -237,9 +237,7 @@ Four required sections; everything else is optional prose.
   install. No `pytest-asyncio` unless the suite genuinely needs it.
 
 Pick one harness per spec — do not mix. The exemplar is
-`specs-family-layout-2026-06-10/tests/` (bash). Legacy
-`<slug>-<date>-tests/` dirs (inner suite dir named `tests/` instead of
-`cases/`) remain valid until their family migrates.
+`specs-family-layout-2026-06-10/tests/` (bash).
 
 ---
 

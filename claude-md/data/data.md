@@ -8,7 +8,9 @@ every entry must have a documented **producer-of-record**; every entry
 must carry a `data/<X>/CLAUDE.md` declaring producer + consumers +
 schema + refresh cadence + write-lock posture.
 
-Load-bearing charter: `data/specs/data-charter-2026-05-17/SPEC.md`.
+Design rationale: `data/specs/data-charter-2026-05-17/SPEC.md` (this file
+owns the live rules — the closed-set kinds, three-question gate,
+single-owner rule, audit table, and stub template below).
 
 ## 1. Closed-set kinds
 
@@ -16,7 +18,7 @@ Every top-level `data/<X>/` is exactly one of:
 
 | Kind | Purpose | Examples |
 |---|---|---|
-| **data-hub** | Producer-emitted dataset consumed by ≥ 2 subprojects | `data/donating/` (market/trading datasets — parquet/portfolios/reports/gics — were promoted to the top-level `financial/` hub; see note below) |
+| **data-hub** | Producer-emitted dataset consumed by ≥ 2 subprojects | `data/donating/`, `data/publishing/`, `data/visualizing/`, `data/agent-sdk-ledger/` |
 | **convention-anchor** | Cross-cutting machinery shared by every subproject | `data/schedules/`, `data/specs/`, `data/claude-updates/`, `data/summaries/`, `data/tmp/` |
 | **render-cache** | Wholesale-regenerated handoff bundles or staging mirrors of an external destination | `data/renders/` |
 | **status-emit** | Per-subproject status snapshots aggregated by `designing/web` | `data/status/` |
@@ -60,7 +62,7 @@ Every top-level entry's `CLAUDE.md` states:
 
 When ownership is ambiguous, the entry doesn't ship.
 
-## 4. Audit table (2026-05-17 snapshot)
+## 4. Audit table
 
 Authoritative status of every top-level entry. Update whenever a new
 entry lands or an existing one's verdict flips.
@@ -70,33 +72,23 @@ entry lands or an existing one's verdict flips.
 | `agent-sdk-ledger/` | data-hub | `code/agent_sdk/qagents/agent_sdk/ledger.py` (append-only, per SDK call) | `data/agent-sdk-ledger/CLAUDE.md` |
 | `claude-settings/` | convention-anchor | manual `sources/*` → `scripts/claude-settings/build.py` | `data/claude-settings/CLAUDE.md` |
 | `claude-updates/` | convention-anchor | `scripts/close.sh` | `data/claude-updates/CLAUDE.md` |
-| `debates/` | convention-anchor | sessions — debate convener at `/close` (spec `debate-framework-2026-06-09.md` § 4/§ 6); `managing/` cron for persisting debates (§ 6.2, deferred) | `data/debates/CLAUDE.md` |
-| `donating/` | data-hub | `donating/scripts/build_drive_json.py` (or successor) | `data/donating/CLAUDE.md` |
-| `messaging-rulings/` | convention-anchor | `pleading/` gate pass — CLEARED subset of each `data/debates/messaging-hardening-<date>.md` round record, promoted at `/close` (spec `messaging-hardening-debate-2026-06-06.md` § 6/§ 11; framework `debate-framework-2026-06-09.md`) | `data/messaging-rulings/CLAUDE.md` |
+| `debates/` | convention-anchor | sessions (debate convener at `/close`); `managing/` cron once persistence lands | `data/debates/CLAUDE.md` |
+| `donating/` | data-hub | `donating/scripts/emit.mjs` | `data/donating/CLAUDE.md` |
+| `messaging-rulings/` | convention-anchor | `pleading/` gate pass (CLEARED digest promoted at `/close`) | `data/messaging-rulings/CLAUDE.md` |
 | `next-steps/` | convention-anchor | sessions (`scripts/close.sh --next-steps` gate, spec `open-close-dcu-2026-05-26.md` § 6) | `data/next-steps/CLAUDE.md` |
 | `publishing/` | data-hub | `publishing/scripts/videos_emit.mjs` (videos roster → `/videos`) | `data/publishing/CLAUDE.md` |
-| `renders/` | render-cache (per-consumer flip to render-OUTPUT in progress — `publishing/` migrated 2026-06-10, rendering P4 covers the rest) | `rendering/` engines (migrated consumers) / designer handoff wholesale-regen (legacy bundles) | `data/renders/CLAUDE.md` |
+| `renders/` | render-cache (render-cache → render-output transition; see `data/renders/CLAUDE.md`) | `rendering/` engines (migrated consumers) / designer handoff wholesale-regen (legacy bundles) | `data/renders/CLAUDE.md` |
 | `schedules/` | convention-anchor | manual (`launchd/install.sh` ROUTINES) | `data/schedules/CLAUDE.md` |
-| `signoffs/` | convention-anchor (**slot hub** — single-owner per `<gate-id>/` slot, the `status/` pattern) | sessions via `/do-signoff` at `/close` — each gate's sole grantor writes its own slot (spec `signoff-framework-2026-06-30.md` § 2/§ 5; verification `…/signoff-verification-2026-06-30.md`) | `data/signoffs/CLAUDE.md` |
+| `signoffs/` | convention-anchor (**slot hub** — single-owner per `<gate-id>/` slot, the `status/` pattern) | sessions via `/do-signoff` — each gate's sole grantor writes its own slot | `data/signoffs/CLAUDE.md` |
 | `specs/` | convention-anchor | manual (session-promoted from `data/tmp/`) | `data/specs/CLAUDE.md` |
 | `status/` | status-emit | per-sub `scripts/status_emit.*` | `data/status/CLAUDE.md` |
 | `summaries/` | convention-anchor | `scripts/close.sh` | `data/summaries/CLAUDE.md` |
 | `tmp/` | convention-anchor | sessions (in-flight specs) | `data/tmp/CLAUDE.md` |
 | `visualizing/` | data-hub | `visualizing/extractor/*.py` (Phase 1) → `dau`/`dat` driver-emit (Phase ≥3) | `data/visualizing/CLAUDE.md` |
 
-**Promoted out (no longer under `data/`):** the market/trading datasets
-`parquet/`, `portfolios/`, `reports/`, `gics/` moved to the top-level
-`financial/` hub — a domain peer of `legal/`, governed by its own
-`financial/CLAUDE.md` + per-dir `financial/<dir>/CLAUDE.md`. They share the
-root `.data-write-lock` with `data/`. See root `CLAUDE.md` § "Shared-data
-hubs" and `data/specs/data-charter-2026-05-17/financial-hub-migration-2026-05-29/SPEC.md`.
-
-The former render-cache entry that staged the public org (the `quantapix/`
-mirror) moved to the `publishing/` subproject at `publishing/quantapix/` — it
-was a working tree, not a multi-consumer dataset, so it leaves `data/` entirely. `publishing/`
-owns the render-redact-compile-push pipeline (`/publish`). See root `CLAUDE.md`
-§ "Subprojects under this repo" (`publishing/` bullet) and
-`data/specs/publishing-2026-05-31/SPEC.md`.
+**Promoted out:** market/trading datasets (parquet/portfolios/reports/gics)
+moved to the top-level `financial/` hub — see root `CLAUDE.md` § "Shared-data
+hubs".
 
 ## 5. Stub template
 

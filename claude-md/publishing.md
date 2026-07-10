@@ -21,7 +21,7 @@ Authoritative contract: `data/specs/publishing-2026-05-31/SPEC.md`.
 push); the external push surface `git push-quantapix`; drive Promise 1; the
 redaction-clean gate before any push; the **@Quantapix YouTube channel**
 material (`publishing/youtube/` — channel-page copy, brand/thumbnail/motion
-prompts, upload specs), migrated out of `explaining/videos/` 2026-06-02. The
+prompts, upload specs). The
 split is **channel vs. content**: the channel face (handle, banner, About,
 thumbnail system, brand kit, upload specs) is publishing's; the 50-video 5×10
 arc itself stays in `explaining/`. The Janet identity master + voice config
@@ -29,10 +29,9 @@ stay in `explaining/avatar/` + `explaining/voice/` (HeyGen narration is
 `explaining/`'s job); `youtube/` cites them, does not own them. The channel
 *design sources* (JSX harnesses + canvas bundles) live at
 `rendering/designs/publishing-youtube/` and the rendered deliverables at
-`data/renders/publishing/` since rendering/ P1 (2026-06-10,
-`data/specs/rendering-2026-06-09/SPEC.md`) — publishing is rendering's first
-consumer; request re-renders via `rendering/scripts/render.sh
-publishing-youtube`, never a hand-rolled capture script.
+`data/renders/publishing/` (`data/specs/rendering-2026-06-09/SPEC.md`); request
+re-renders via `rendering/scripts/render.sh publishing-youtube`, never a
+hand-rolled capture script.
 
 **Does not own:** drive content (`donating/drive.md` is the source of truth —
 publishing reads it, never edits it); the hosted verification service (Promise
@@ -73,14 +72,49 @@ counsel / docket / agency-PII set) anywhere in the candidate tree **aborts**
 the compile/push. `publishing/` inherits `documenting/`'s redaction rules
 (`documenting/letters/REDACTION.md` + the `HARD_PATTERNS`/`SOFT_PATTERNS` in
 `documenting/scripts/check_redactions.py`); it invents none and relaxes none —
-the same load-bearing privacy floor `donating/` § 7 names. The gate is wired
-before the push and pinned by the companion test
+the same load-bearing privacy floor `donating/` § 7 names. **Blind spot
+(source-scrubbing still required):** the inherited redactor strips STATE
+dockets/judges/PII but KEEPS federal dockets (federal *merits* dockets are
+publishable), so a surface-specific bar on one collateral federal-docket
+family — enumerated in a private ruling, never on a public surface — was NOT
+caught by the primary gate; a 2026-07-05 leak into a public weekly/ledger
+surface was the proof. `publish.sh` gate **(1b)** now backstops that class
+with a targeted content grep, pinned by a companion regression test.
+Gate (1b) is token-scoped, not semantic — **still scrub the SOURCE artifact
+before `/publish`**; `/publish` is not a safety net for federal-collateral
+material a new wording could evade.
+
+**Gate (1b) greps CONTENT; a barred token in a FILENAME evaded it (2026-07-10).**
+A path renders publicly (repo tree + blob URL) without appearing in any file's
+bytes. The live instance is the auto-memory tree, whose topic files are *named*
+after their subject. Closed at the one seat that already walks every path:
+`sync_mirror.py` `path_blocklist_hit` **rule (D)**, which back-stops both the
+staging tree and `publishing/resume/` via `--scan-tree`, and fails **closed**
+(abort, not silent drop). Regression pinned by a companion test. NB a `\b`
+word boundary does **not** separate on `_`, so rule (D) uses explicit
+alphanumeric boundaries; the `publish.sh` content twin must be swept in
+lockstep if a `_`-delimited body token ever matters.
+
+**Memory-slice ruling (2026-07-10).** Drive Promise 1 advertises a weekly
+redacted mirror of `~/.claude/.../memory/`. It has **never been populated** —
+`qagents-public/memory/` holds only its README, and `sync_mirror.py` has no
+memory roster (the sweep is documented, never wired). So the 2026-07-10
+donating hint's dichotomy ("gate 1b is blocking, or these are live leak
+candidates") resolves to **neither**. 27 private memory files carry the barred
+family; 4 carry it in the filename. Ruling: **exclusion, not redaction** — an
+entry whose *subject* is the bar cannot be scrubbed of it and stay useful. When
+the roster is authored it MUST be a curated **allow-list** (opt-in), never a
+deny-sweep; rule (D) + gate (1b) make the pipeline fail-closed either way. The
+public README no longer claims a mirror that does not exist. And `sync` only *masks* an already-published
+leak (a superseding commit); the barred blobs survive in public git history until
+a **history rewrite + force-push** (orphan-reset when 0 forks/PRs) purges them —
+the GitHub analog of the S3-wipe. The gate is wired before the push and pinned by
+the companion test
 (`data/specs/publishing-2026-05-31/tests/cases/t_10_publish_gate.sh`).
 
-**The candidate tree is markdown, so the gate must scan markdown.**
+**The candidate tree is markdown, so the gate scans markdown.**
 `publishing/scripts/sync_mirror.py` Stage 3 applies the blocklist patterns as
-it renders each CLAUDE.md / memory mirror. **The markdown gate is live
-(2026-06-05; the prior vacuous-pass gap is closed):** `publish.sh` runs
+it renders each CLAUDE.md / memory mirror. `publish.sh` runs
 `sync_mirror.py --scan-tree <tree>` as the PRIMARY gate — a HARD+SOFT sweep
 over **every `*.md`** under the candidate tree (the hand-authored READMEs,
 `STATUS.md` files, and the `skills/` subtree included), and it *refuses to pass
@@ -101,19 +135,14 @@ Repo description/homepage/topics are thesis-governed in `quantapix/github-metada
 — a `description` IS the GitHub OG card (strips its disclaimer), so it rides the
 SAME gate as README prose (`github_meta.py scan` = `sync_mirror` blocklist +
 `THESIS_LINT`, wired into `publish.sh` Phase 2c). `apply` mutates a public surface
-→ operator-confirmed + pleading-gated (manifest `_status`). The first metadata
-`apply` FIRED 2026-06-24 — all 3 external gates cleared, all 7 repos populated
-(were empty), `_status` flipped DRAFT→CLEARED (per-gate event detail in close
-summaries + `project_publishing_subproject`). NB `cmd_apply` never reads `_status` (procedural/
-bookkeeping gate only — a real apply carries the flip same-session); metadata
-`apply` is cleanly separable from content `sync` (the Friday `/publish` push). The
-gate persists for future string changes — re-clear, flip `_status` back to DRAFT.
-The legacy SSH+rsync
-`git push-quantapix` bridge is superseded for the `/publish` path (still exists for
-manual use). Program: the Quantapix-Thesis-on-GitHub spec
-(`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/SPEC.md` once
-promoted; Round-04 ADOPT-AMEND-BOUND; the `PLEADING-REVIEW-PACKET` is the one-session
-go-live gate).
+→ operator-confirmed + pleading-gated (manifest `_status`). NB `cmd_apply` never
+reads `_status` (procedural/bookkeeping gate only — a real apply carries the flip
+same-session); metadata `apply` is cleanly separable from content `sync` (the
+Friday `/publish` push). The gate persists for future string changes — re-clear,
+flip `_status` back to DRAFT. The legacy `git push-quantapix` bridge is superseded
+for the `/publish` path (still exists for manual use — `serving/CLAUDE.md` § 9).
+Program: the Quantapix-Thesis-on-GitHub spec
+(`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/SPEC.md`).
 
 **FINANCIALLY-CLEARED (financial sign-off, 2026-06-24).** `evaluating/` is the
 sole grantor (advised by `accounting/`) of the financial-advice/securities gate —
@@ -160,39 +189,18 @@ resolves from the tracked one-line state file `publishing/.publish-state`
 
 ```
 publishing/
-├── CLAUDE.md                 # this file
-├── README.md                 # quickstart: what /publish does, the repo roster
-├── PLAN.md                   # rollout phases (spec § 10 as a checklist)
-├── quantapix/                # the public-org staging tree (see quantapix/CLAUDE.md)
-├── youtube/                  # @Quantapix channel material (see youtube/README.md)
-│   ├── README.md             # scope + provenance + index
-│   ├── DESIGN-SYSTEM.md      # channel design-system index (was explaining/videos/README.md)
-│   ├── CHANNEL-INFO.md       # paste-into-YouTube-Studio copy
-│   ├── YOUTUBE-SPECS.md      # format / dimensions / safe-area / file-naming
-│   ├── STUDIO-FILL-IN.md     # operator walkthrough mapping copy onto the Studio form
-│   ├── RESPEC-LIGHT-LIVE-2026-06-07.md      # system-wide re-prompt: light palette + real-Janet skin tone + master-res export
-│   ├── RESPEC-THUMBS-DEPTH-2026-06-08.md    # thumbnail-only: depth/dynamism toolkit + 6 launch thumbs light (fixes "too flat")
-│   ├── LAUNCH-COHORT-RESPEC-2026-06-04.md   # Claude Design rerun hand-off (delivered)
-│   ├── LAUNCH-COHORT-UPLOAD-2026-06-06.md   # paste-ready Studio payloads for 1.1/1.5/1.7/2.1 (longs)
-│   ├── SHORTS-UPLOAD-2026-06-20.md          # paste-ready Studio payloads for the 4 launch shorts
-│   ├── API-UPLOAD-SETUP.md   # one-time YouTube Data API v3 OAuth setup (operator)
-│   ├── descriptions/<key>.txt # per-video description bodies (SoT for youtube_sync; gate-scanned)
-│   └── prompts/01..06.md     # brand kit / themes / thumbs / motion / priority-10 / Escher bed
-├── scripts/
-│   ├── publish.sh            # /publish mechanics (gate + diff + push)
-│   ├── status_emit.mjs       # writes data/status/publishing.json
-│   ├── videos_emit.mjs       # writes data/publishing/videos.json (drives designing/web /videos — see § 10)
-│   ├── sync-mirror.sh        # redact one source file into qagents-public/ (thin wrapper)
-│   ├── sync_mirror.py        # the redaction engine behind sync-mirror.sh
-│   ├── youtube_auth.py       # shared @Quantapix OAuth (upload + force-ssl scopes)
-│   ├── youtube_upload.py     # /youtube-sync: create a video (videos.insert + thumb + playlist)
-│   └── youtube_sync.py       # /youtube-sync: diff/adopt/push metadata + stats vs youtube-manifest.json
-└── .claude/
-    ├── settings.json         # allow-list (writes-self + git push-quantapix + read-all)
-    ├── settings.local.json   # gitignored
-    ├── skills -> ../../.claude/skills
-    └── agents/
-        └── publish-collector.md   # per-source top-tier-model collector subagent
+├── CLAUDE.md / README.md / PLAN.md
+├── .publish-state            # tracked one-line pill state (§ 7)
+├── .worktree-links           # inbox + resume/*.pdf (canonical-backed, gitignored)
+├── quantapix/                # public-org staging tree (see quantapix/CLAUDE.md)
+├── youtube/                  # @Quantapix channel material — index: youtube/README.md
+├── resume/                   # github.com/quantapix/resume source (README.md + resume.html)
+├── inbox/                    # gitignored private receipt/usage PDFs (never published)
+├── pending/messaging-debate/ # pre-gate debate staging (§ 9)
+├── scripts/                  # publish.sh · github_meta.py · iga_verify.py
+│                             # sync_mirror.py/sync-mirror.sh · status_emit.mjs · videos_emit.mjs
+│                             # youtube_{auth,upload,sync,manifest}.py
+└── .claude/                  # settings + skills symlink + publish-collector agent
 ```
 
 ## 9. Messaging-hardening debate (publishing/ convenes)
@@ -220,10 +228,6 @@ adversarial read. It is **instance one** of the generic debate framework
 - **Advisory model (§ 7 Q2):** the debate emits rulings; each owning subproject
   applies the public-surface edit in its **own** `/open <sub>` session.
   `publishing/` never mutates a sibling tree (§ 3 boundary posture).
-- **Wiring state:** the `data/messaging-rulings/` data-charter registration
-  (first CLEARED digest 2026-06-08) and the `pending/*-debate/**` buffer
-  registration (`managing/.claude/agents/verifier.md` internal-set +
-  `verify-pending.sh`) are both done; rulings apply from a `managing/` session.
 
 ## 10. Drives the designing /videos page (data-hub, not shared code)
 
@@ -315,10 +319,20 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   every in-scope gate's `signoffs[<gate-id>]` names a record on disk — a promoted
   `data/messaging-rulings/<date>.md` (pleading grants) or an
   `evaluating-financial-signoff/signoffs/` record (evaluating grants, accounting
-  advises). publishing never self-grants; **4.2 is blocked-pending** (financial scope,
-  no evaluating record yet). The MESSAGING half is the same § 11.2 floor the upload
+  advises). publishing never self-grants. (4.2's FINANCIALLY record landed
+  2026-07-04 and it is live; the currently blocked slot is **3.6** — financial
+  scope, first-grant owed.) The MESSAGING half is the same § 11.2 floor the upload
   sheets ride. The old single `clearedBy`/inert `financiallyCleared` fields are
-  retired (R17 atomic-lockstep migration, 2026-06-30). (2) The synthetic-content
+  retired (R17 atomic-lockstep migration, 2026-06-30). **IGA enforcement (R7, landed
+  2026-07-03):** when a cited record is an inline-operator grant (`granted_via:
+  inline-operator`, publishing SPEC § 5.5), `signoff_blocker()` additionally runs
+  `iga_verify.py` — committed-blob re-verify against the push commit (`git rev-parse
+  <push-commit>:<path>`, never the worktree), `grantor == registry sole-grantor`, and a
+  cron/SDK-lane refuse. Ceremony records (all shipped to date) + MESSAGING are a strict
+  no-op. Also swept in `publish.sh` over each prose-lifted gate's `LEDGER.md`. Test
+  `t_16_iga_enforcement.sh` (15). Owed: `github_meta.py` repo-content binding (needs the
+  evaluating-owned FINANCIALLY `LEDGER.md`, R1) + serving `upload-video.sh` sha emit.
+  (2) The synthetic-content
   **altered-content disclosure has no API field** — it stays a manual Studio toggle
   per upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete on
   its own. A redaction/verb scan over `descriptions/` runs before any push.

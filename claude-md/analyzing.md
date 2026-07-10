@@ -4,52 +4,34 @@ VSCode extension (TS) for market inspection: DuckDB + Parquet, lightweight-chart
 
 ## Charter — two roles (spec: `data/specs/analyzing-charter-2026-07-01/SPEC.md`)
 
-analyzing behind the Quantapix thesis has **two roles**, ratified by a
-7-delegate cross-qagent debate (2026-07-01):
+Ratified by a 7-delegate cross-qagent debate (2026-07-01):
 
-- **(a) Market-data supplier.** analyzing is the named owner/producer of the
-  historical aggregate **tape** — `financial/parquet/ohlcv-equities/` (via
-  `ingest.py --flat`) + `ta-reference/` (via `ta_reference.py --flat`) — over
-  the ~526–527-symbol S&P-500 ∪ anchor-ETF universe, on **locked** schemas
-  (OHLCV `ts,o,h,l,c,v,adj_c`; the 14-col TA canon). It is the ground truth
-  `accounting/`'s numerical Lean4 kernel runs against (read file-only via
-  `accounting/scripts/data_view.py` — never imports analyzing) and that
-  `trading/` consults for **decision-support only** (bull-vs-bear TA gate,
-  backtests; the live/order path stays on `alpaca_client.py`, never the tape).
-- **(b) Local-only viewing surface.** analyzing re-homes its inspection surface
-  as a **browser TS surface** (per charts-migration L2; **local-only**, never
-  publicly deployed — the `monitoring/` posture) that mounts `visualizing/`'s
-  vanilla-JS kits (charts first; graphs-2/mixed3d later), driven by the built
-  `AggregateSelection` drill-down (GICS sector ▸ industry ▸ symbol; portfolio ▸
-  holdings). Run-independent, **ground-truth-only** browsing — the complement to
-  `evaluating/`'s run-keyed Qresev.
+- **(a) Market-data supplier.** Named owner/producer of the historical
+  aggregate tape — `financial/parquet/ohlcv-equities/` (`ingest.py --flat`) +
+  `ta-reference/` (`ta_reference.py --flat`) — over the ~527-symbol
+  S&P-500 ∪ anchor-ETF universe on locked schemas (OHLCV `ts,o,h,l,c,v,adj_c`;
+  the 14-col TA canon). Ground truth for `accounting/`'s kernel (file reads
+  via `data_view.py`, never imports) and `trading/`'s decision-support reads
+  (the live/order path stays on `alpaca_client.py`, never the tape).
+- **(b) Local-only viewing surface.** Re-homes as a browser TS surface
+  (charts-migration L2; local-only, never publicly deployed) mounting
+  `visualizing/`'s vanilla-JS kits, driven by the `AggregateSelection`
+  drill-down (GICS sector ▸ industry ▸ symbol; portfolio ▸ holdings).
+  Run-independent, ground-truth-only — the complement to `evaluating/`'s
+  run-keyed Qresev.
 
-**Load-bearing invariants** (audited each close):
+**Invariants audited each close** (detail: spec §§ 1.1, 2.3, 3.5):
 
-- **Files-only seam, no served API — unconditional.** Consumers read parquet
-  files; never an HTTP/RPC/localhost API (would breach Lean4-charter inv-5 +
-  accounting Hard rule #6). "Fast" = files well-formed/complete/fresh/
-  content-pinned, not a service. The numerical pipeline is batch; nothing needs
-  sub-file-read latency.
-- **Viewer renders ground-truth tape only, never kernel emissions.** No
-  predicate `Bool`, framework verdict, proof-DAG node, or FINANCIALLY-CLEARED
-  signal in an analyzing panel — that would make analyzing a second consumer of
-  the numerical axis (inv-5 breach). Kernel emissions are `evaluating/`'s alone.
-- **GICS is read-only here.** `gics-symbols.parquet` stays a
-  `financial/gics/build.py` artifact (single-owner); analyzing reads + drills
-  down, never produces.
-- **Portfolios are read-only here.** The drill-down renders
-  `financial/portfolios/*.md` (cost-basis snapshot) as **separate** per-PM
-  books; never writes/regenerates a managed form, never an order surface, never
-  a pooled cross-PM NAV (trading separation-of-capital).
-- **Freshness manifest (planned P2).** A content-addressed
-  `financial/parquet/manifest.json` sidecar (`as_of` / `content_sha` /
-  lockstep assertions / `UNKNOWN` fail-soft) is the machine-readable freshness
-  pin. STALE (>14d) enforcement is **tiered**: kernel never gates; interactive
-  reads warn; `dat.sh --pre` hard-aborts; gated public surfaces hard-refuse
-  (an `evaluating/` FINANCIALLY-CLEARED input). Any published/exported analyzing
-  chart is a FINANCIALLY-CLEARED subject — `evaluating/` grants, `accounting/`
-  advises.
+- Files-only seam, no served API — unconditional (Lean4 inv-5; accounting
+  Hard rule #6).
+- Viewer renders tape only, never kernel emissions (predicate `Bool`s,
+  verdicts, proof-DAG, FINANCIALLY-CLEARED signal) — those are
+  `evaluating/`'s alone.
+- GICS + portfolios read-only here; separate per-PM books, never a pooled
+  cross-PM NAV, never an order surface.
+- Freshness manifest `financial/parquet/manifest.json` (P2) with tiered
+  STALE teeth — spec § 2.3. Any published/exported analyzing chart is a
+  FINANCIALLY-CLEARED subject (`evaluating/` grants, `accounting/` advises).
 
 ## Batch ingest + ta_reference
 
@@ -73,11 +55,9 @@ into the canonical `financial/parquet/` hub:
   — reads `<in-dir>/<SYM>.parquet`, writes `<out-dir>/<SYM>.parquet`.
   `--flat` requires explicit `--out-dir`.
 
-The parquet hub is **gitignored ground truth** living in the canonical
-checkout (worktrees symlink to it; see `financial/parquet/CLAUDE.md`
-§ "Gitignored ground truth"). Run a full refresh from canonical so the
-writes land in the real store, not a worktree-local copy; it is S3-backed
-via the `parquet` archive class (`data/specs/serving-2026-05-26/artifact-archive-s3-2026-05-29/SPEC.md`).
+The parquet hub is gitignored ground truth in the canonical checkout —
+worktrees symlink to it, S3-backed (see `financial/parquet/CLAUDE.md`).
+Run full refreshes from canonical so writes land in the real store.
 
 Both batch scripts also accept `--symbols-file FILE` (one symbol per
 line; `#` comments + blank lines skipped; deduped) in place of the
@@ -100,23 +80,17 @@ Batch mode prints one summary JSON on stdout (`{tf,start,end,written,failed}`
 for ingest; `{in_dir,written,failed}` for ta_reference) and ndjson per-symbol
 on stderr. Exit code is 0 if any symbol succeeded; non-zero only if all failed.
 
-Both scripts honor the `.data-write-lock` convention from
-`data/specs/data-conventions-2026-05-06/SPEC.md` § 5.3 conditionally: the lock
-is acquired only when the resolved output path falls under **canonical**
-repo's `data/` **or** `financial/` (the single root `.data-write-lock`
-serializes both hubs; the market parquet hub moved to top-level
-`financial/` per `data/specs/data-charter-2026-05-17/financial-hub-migration-2026-05-29/SPEC.md`).
-Worktree-local writes (the common case — e.g. running this from
-`qagents-wt/analyzing/`) skip the lock since they don't race with
-canonical writers. Cron-lane (`QAGENTS_PENDING_ROOT`) routing is
-intentionally **not** wired today; add it when a launchd routine
-actually fires either script.
+Both scripts follow the configurable-output-path lock rule (root `CLAUDE.md`
+§ "Shared-data write-lock"): `.data-write-lock` iff the resolved output falls
+under canonical `data/`/`financial/`; worktree-local writes skip it. The
+planned P3 cron writes direct-to-canonical under the lock — never through
+`pending/` (charter spec § 2.5).
 
 ## Status emit (`data/status/analyzing.json`)
 
 `analyzing/scripts/status_emit.mjs` is the live producer for analyzing's
 slot in the qagents-wide `/status` hub. Pins `KIT_VERSION` in-script
-(0.5.0 today; sweep in lockstep on kit bumps — cross-subproject
+(0.7.0 today; sweep in lockstep on kit bumps — cross-subproject
 contract: `qagents/CLAUDE.md` § "Status hub"). Self-contained — no
 sibling-subproject imports; the only inputs are filesystem scans of
 `financial/parquet/` plus `git rev-parse --short HEAD`. Today's emit
@@ -129,29 +103,17 @@ carries:
   newest-bar mtime), a `FilterChipGroupEmit` (`coverage-filter` —
   symbol search + TA-ref state chips, `bindsTo: symbol-coverage`), and a
   per-symbol `TableEmit` (`symbol-coverage`) with one row per
-  `financial/parquet/ohlcv-equities/<SYM>.parquet`. The filter-chip
-  header is the `display-modes-2026-05-07.md` Phase 4 outcome (resolved
-  2026-05-30 — the ~526-symbol universe crossed the `serving/CLAUDE.md`
-  § 7 search+state-filter threshold); `extension-architecture` stays a
-  genuine node-edge `DiagramEmit` (not tabular);
-- `LiveState` pill driven by parquet-store presence + freshness:
-  `NOT_YET_LIVE` when ohlcv dir is empty, `DEGRADED` when newest bar
-  > 7 days old, otherwise `BUILDING` (data layer live; activity-bar
-  Symbols/Sectors/Portfolios → ChartPanel + AggregatePanel still
-  Phase 2.x). Promote to `OK` once the activity-bar views land; the
-  consumer (`designing/web/src/lib/status-loader.ts`) is unchanged.
+  `financial/parquet/ohlcv-equities/<SYM>.parquet`;
+  `extension-architecture` stays a genuine node-edge `DiagramEmit`
+  (not tabular);
+- `LiveState` pill from parquet presence + freshness: `NOT_YET_LIVE` (empty
+  ohlcv dir), `DEGRADED` (newest bar > 7 days), else `BUILDING`. Promote to
+  `OK` when role (b) — the re-homed browser viewing surface — ships (spec § 3.4).
 
-Manual invocation (today, only path) writes `data/status/analyzing.json`
-directly. If/when this script becomes cron-fired (under
-`data/schedules/launchd/run_routine.sh`), `QAGENTS_PENDING_ROOT` will be
-set in the env and the writer should route through `pending/data/status/
-analyzing.json` per `data/specs/data-conventions-2026-05-06/SPEC.md` § 5.3
-(verifier validates JSON shape + `kitVersion`/`subproject` keys).
-Manual-lane writers acquire `.data-write-lock` before mutating
-canonical `data/`.
+Pending-aware (`QAGENTS_PENDING_ROOT || REPO`, status-emit-cron-fleet
+convention — root `CLAUDE.md` § "Status hub"); fired daily by the 05:25
+`qagents:status-emit-all` fleet and at each `/close --status-emit`. Manual
+canonical writes acquire `.data-write-lock`.
 
-Full closed-set contract + display-mode catalog at
-`data/specs/display-modes-2026-05-07/SPEC.md`. The next natural extension
-(per § 7.4) is a backtest-summary `DashboardEmit` — KpiStrip of last-N
-PnL + FilterChipGroup on strategy + Table of trades — once a backtest
-runner ships under `analyzing/`.
+Full closed-set contract + display-mode catalog:
+`data/specs/display-modes-2026-05-07/SPEC.md`.

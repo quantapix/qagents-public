@@ -30,10 +30,10 @@ generic drift detection (the verifier subagent runs structural checks only,
 not pinned-commitment scoring). A miss against any of them is a **functionality**
 finding (highest priority).
 
-1. **Firm 6/1/2026 deliverables.** Subagents discover them dynamically via
-   `grep -rn -E "2026-06-01|6/1/2026|June 1, 2026" --include="*.md" .` from
-   repo root; every match is a deadline anchor. Slip-risk = owning subproject
-   has zero commits in the trailing 3 days with `days_remaining ≤ 30`.
+Commitment 1 (firm 6/1/2026 deliverables) is retired post-deadline; slots 2–8
+keep their numbers because `probes.md` cites commitment 4, `README.md` cites
+commitment 6, and `dco-manual` cites the checker's #7.
+
 2. **Weekly summaries on the public `quantapix` GitHub org.** Any public repo
    under `quantapix/` with `pushedAt` older than 7 days is a finding. The
    org-level profile README is included.
@@ -61,61 +61,30 @@ finding (highest priority).
    finding (drive's whole pitch is *trivially auditable*). Probe wiring
    goes in `probes.md` once endpoints + the first dated ledger exist; the
    ledger-existence check can land sooner.
-6. **Spec hygiene + phase tally.** Every spec document — family-form
-   `data/specs/<slug>-<date>/SPEC.md` (+ subspec `<fam>/<sub>/SPEC.md`;
-   the only layout since the `specs-family-layout-2026-06-10` Phase 4
-   retirement) — is tracked for **uncompleted phases**; every
-   `data/tmp/<slug>-<date>{.md,/}` for proposal age + adopted-orphan
-   cleanup. The audit script `scripts/specs-audit.sh` is the single
+6. **Spec hygiene + phase tally.** `scripts/specs-audit.sh` is the single
    source of truth (sections: SPECS phase tally / TESTS conformance /
-   LAYOUT lint / TMP proposal status / LEDGER manual-check reminders).
-   Findings:
-   - A `[in-flight]` phase touched > 14 days ago is a **correctness**
-     finding (stall risk).
-   - A SPEC.md over 1,000 lines (`OVER-CAP` flag in the SPECS section)
-     is a **correctness** finding.
-   - Any LAYOUT-section finding (root entry that is neither `CLAUDE.md`
-     nor a family dir; family subdir that is neither `tests/` nor a
-     `SPEC.md`-bearing subspec; subspec missing `**Parent:** ../SPEC.md`
-     or root carrying one; nesting deeper than 2) is a **correctness**
-     finding.
-   - A `tmp/` entry with slug-date > 7d AND no successor in `data/specs/`
-     is a **correctness** finding (stale proposal — adopt or delete).
-   - A `tmp/` entry whose slug matches an adopted spec in `data/specs/`
-     (family dir name or subspec basename) is a **correctness** finding
-     (adopted-orphan — promotion cleanup missed).
-   - A tests dir (`<fam>[/<sub>]/tests/`) missing `README.md` / `run.sh`
-     / `cases/` is a **correctness** finding, but ONLY for slug-date
-     ≥ 2026-05-19 (the day the uniform shape landed). Earlier dirs are
-     grandfathered per the forward-looking rule in `data/specs/CLAUDE.md`.
-   - A LEDGER row with `due_in_days=PAST(Nd)` or `DUE` is a **correctness**
-     finding — manual-check reminder derived from spec text (no live AWS
-     calls). The note column carries the exact check; surface verbatim.
-     Future `Nd` rows are tally-only. New rows are append-only entries in
-     the script's `SPEC_LEDGER` TSV (5 columns:
-     `slug TAB check TAB owner TAB offset TAB note`). Beyond date-offset
-     rows, the section also carries **computed** value-comparison rows
-     (e.g. `legal/uscode archive-pin-freshness`, owner `serving`: flags
-     `DUE` when `release_point.txt` advanced past the newest archived
-     `uscode/<pin>/` recorded offline in `serving/inventory/`). The
-     `owner` column powers `specs-audit.sh --owner <sub>` — the filter
-     that collapses each `data/next-steps/<sub>.md` section C to
-     `See LEDGER --owner <sub>` (`open-close-dcu-2026-05-26` § 10
-     Phase 2). Filter + column pinned by `scripts/tests/`.
-   The daily tally rides in `checks/<date>.md` as a `## Uncompleted spec
-   phases` section + a `## tmp/ proposal status` section + a `## Spec
-   ledger reminders` section (see § 8).
+   LAYOUT lint / TMP proposal status / LEDGER manual-check reminders); its
+   thresholds and finding rules mirror `data/specs/CLAUDE.md` +
+   `data/tmp/CLAUDE.md` and move in lockstep with them. Every non-tally
+   finding it emits (`[in-flight]` > 14d, OVER-CAP, LAYOUT lint, stale /
+   adopted-orphan `tmp/`, post-2026-05-19 tests-dir shape, LEDGER
+   `PAST`/`DUE` rows — surface the note column verbatim) is a
+   **correctness** finding. New LEDGER rows are append-only entries in the
+   script's `SPEC_LEDGER` TSV; the `owner` column powers
+   `specs-audit.sh --owner <sub>` (pinned by `scripts/tests/`). The daily
+   tally rides in `checks/<date>.md` as `## Uncompleted spec phases` +
+   `## tmp/ proposal status` + `## Spec ledger reminders` (see § 8).
+7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
+   source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
+   (regenerate via `scripts/claude-settings/build.py`). Hand-edit drift only;
+   new allow patterns are the weekly `dco-settings` lane's job.
+8. **Brand / kit-version drift.** `scripts/brand-drift.sh` is the source of
+   truth; `drift=YES` (a `KIT_VERSION` producer pin or the loader off the kit
+   `package.json` version — the silent same-major class) is a **correctness**
+   finding.
 
-These thresholds tighten the generic "14d status hub freshness" guideline in
-§ 4. Subagent prompts under `.claude/agents/` encode them verbatim — keep
-those in sync if the thresholds change.
-
-The **uniform shape** for specs + tests + tmp/ proposals is pinned in
-`data/specs/CLAUDE.md` (spec file shape, tests dir shape, phase markers
-protocol) and `data/tmp/CLAUDE.md` (proposal lifecycle + 7-day stale
-threshold + adopted-orphan detection). When those rules change, the
-thresholds in `scripts/specs-audit.sh` and the bullets above move in
-lockstep.
+Subagent prompts under `.claude/agents/` encode these commitments verbatim —
+keep them in sync when a threshold changes.
 
 ## 2. Three top-tier-model subagents, clean contexts each
 
@@ -129,10 +98,10 @@ four concerns.
 
 | Subagent | Model | Output | Inputs | Notes |
 |---|---|---|---|---|
-| `checker` | opus (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
+| `checker` | opus (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`), `shorting/positions/` (adversarial findings — promote / dismiss-with-reason / ignore, per `shorting/CLAUDE.md` § 5) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
 | `planner` | opus (top tier) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
 | `reporter` | opus (top tier) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
-| `verifier` | Haiku 4.5 | `checks/<date>.pending.json` + appended `## Pending verification` section in `checks/<date>.md` | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the lock-protected rsync in `data/schedules/launchd/verify-pending.sh` (Layer 2 guards exit 8/9/10 as defense-in-depth). Spec: `data/specs/pending-promotion-scope-2026-05-28/SPEC.md`. Cheap & fast — runs in parallel. |
+| `verifier` | `haiku` | `checks/<date>.pending.json` + appended `## Pending verification` section in `checks/<date>.md` | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the lock-protected rsync in `data/schedules/launchd/verify-pending.sh` (Layer 2 guards exit 8/9/10 as defense-in-depth). Spec: `data/specs/pending-promotion-scope-2026-05-28/SPEC.md`. Cheap & fast — runs in parallel. |
 
 Subagent definitions live under `.claude/agents/` (created in the new
 session). Each one's prompt lists exact inputs to read and the exact output
@@ -160,9 +129,7 @@ path to write — they do not negotiate scope with the coordinator at runtime.
 - TS / Lean / Python typecheck regressions visible from `pnpm verify` /
   `lake build` / `pyright` exit codes (don't run them; just check whether
   they were green in the most recent CI / commit log).
-- Spec hygiene — see § 1.1 commitment 6 + `data/specs/CLAUDE.md` for the
-  full finding list (`[in-flight]` > 14d, OVER-CAP, LAYOUT lint, stale /
-  adopted-orphan `tmp/`, post-2026-05-19 tests-dir shape).
+- Spec hygiene — § 1.1 commitment 6 (`scripts/specs-audit.sh` finding set).
 
 **Functionality** (live system state, *highest priority*):
 - Live HTTP 200 + non-empty body on a random route from femfas.net or
@@ -184,17 +151,17 @@ files > shipped websites > internal docs > backlog).
 Anthropic dropped the SDK credits from the Max-20x subscription, so the SDK
 lane is unusable for now. **All four subagents must NOT surface any
 SDK-related finding** until the subscription regains SDK access. Concretely,
-suppress: `data/agent-sdk-ledger/` failure-stage findings (checker
-commitment 6 bullet 1), SDK-lane fire failures, `agent-sdk-adoption-2026-05-17`
+suppress: `data/agent-sdk-ledger/` failure-stage findings (checker.md's
+`data/agent-sdk-ledger/` scan), SDK-lane fire failures, `agent-sdk-adoption-2026-05-17`
 spec-phase stalls / OVER-CAP, SDK-credit references, and the
 `pending/data/agent-sdk-ledger/**` unclassified surfacing (now classified
 DORMANT in the verifier internal-set + `verify-pending.sh`). This is a
 reversible, dated directive — drop the suppression and re-enable the scans
 when a new subscription/SDK plan ships. See memory
-`reference-agent-sdk-credit-200-mo`. Note: `managing:daily` itself is still
-configured `:sdk` in `data/schedules/launchd/install.sh` ROUTINES — reverting
-that to the `claude --print` lane is the root-cause fix (operator decision;
-not auto-applied here).
+`reference_agent_sdk_credit_200_mo`. The root-cause revert — dropping the
+`:sdk` token from `managing:daily` in `install.sh` ROUTINES — was applied
+2026-06-30; the routine now runs the `claude --print` lane (§ 7 owns the
+current lane status + restore path).
 
 ## 4. Functionality probes — random, weighted
 
@@ -276,14 +243,10 @@ to bypass verifier rules for a single file with audit-prefixed
 `force-accept <path>` in the message). Both modes acquire the lock the
 same way. Spec: `data/specs/data-conventions-2026-05-06/SPEC.md` § 7.4 + § 7.6.
 
-Same script also owns `prune_stale_fails` — at the end of every fire it
-`rm`s any `pending/**` file that is **(a)** >7 days old AND **(b)**
-<50 bytes, skipping `pending/logs/` + `pending/tmp/` + `pending/cron-ec2/`
-(the last has its own per-RUN_DIR lifetime managed by
-`promote_cron_ec2`). Thresholds match the verifier's
-`"too small (<50 bytes): stub memory file"` reject rule and give
-memsearch a week's grace before empty-day stubs sweep. pending/
-is gitignored — no commit, no lock contention.
+Same script also owns `prune_stale_fails` — end-of-fire cleanup of stale
+sub-50-byte `pending/**` stubs (thresholds + skip-list live in the script
+and match the verifier's stub-reject rule). pending/ is gitignored — no
+commit, no lock contention.
 
 ## 6. Layout
 
@@ -302,15 +265,14 @@ managing/
 │       ├── checker.md
 │       ├── planner.md
 │       ├── reporter.md
-│       └── verifier.md       # Haiku 4.5; pending/ structural validation
+│       └── verifier.md       # `haiku`; pending/ structural validation
 ├── checks/                   # dated .md, top 5 issues (functionality first)
 ├── tasks/                    # dated .md, 10 ranked items
 └── reports/                  # dated .md, yesterday's % completion
 ```
 
 `checks/`, `tasks/`, `reports/` are committed (markdown is the source of
-truth and lets future sessions reconstruct multi-day trajectories). The
-three subdirs each carry a `.gitkeep` until the first dated file lands.
+truth and lets future sessions reconstruct multi-day trajectories).
 
 ## 7. Schedule
 
@@ -318,13 +280,13 @@ Cron-fired daily at 06:00 local via the qagents launchd scheduler at
 `data/schedules/`. Registered as `com.qagents.managing-daily`; spec row in
 `data/schedules/cron_triggers.md`; ROUTINES entry
 `managing:daily:06:00:0,1,2,3,4,5,6` in `data/schedules/launchd/install.sh`.
-**The `:sdk` token was removed 2026-06-30** — Anthropic dropped SDK credits
-from the Max-20x subscription, so the routine runs the `claude --print` lane
-(the original default) until SDK access returns; restore the trailing `:sdk`
-and re-run `install.sh --enable` from canonical when it does. (Background: the
-`:sdk` token opted the route into the Agent SDK lane per
-`agent-sdk-adoption-2026-05-17.md` Phase 3.) See § 3.1 + memory
-`feedback-managing-suppress-sdk-findings`.
+**The `:sdk` token was removed 2026-06-30** (SDK lane paused indefinitely
+2026-06-15; `:sdk` fleet reverted 2026-06-30; gate on SDK access returning —
+root § Agent SDK lane owns status). The routine runs the `claude --print` lane
+until then; restore the trailing `:sdk` (Agent SDK lane,
+`data/specs/agent-sdk-adoption-2026-05-17/SPEC.md` Phase 3) via
+`install.sh --enable` from canonical when access returns. See § 3.1 + memory
+`feedback_managing_suppress_sdk_findings`.
 The fired routine is the coordinator prompt at
 `managing/.claude/coordinator-prompt.txt` — `data/schedules/launchd/run_routine.sh`
 reads the sidecar and either pipes it to `claude --print` (legacy lane) or

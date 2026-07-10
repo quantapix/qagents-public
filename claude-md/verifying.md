@@ -39,11 +39,11 @@ When re-syncing tokens.css from the bundle (run from the repo root):
 3. `pnpm -C verifying/web verify`
 
 Token *values* are identical to `designing/`'s normalized
-`web/src/styles/tokens.css` (the two bundles' raw masters are byte-identical;
-only the provenance header differs) — Qnarre does not get its own palette.
-This per-consumer sweep retires when `rendering/`'s normalize-at-intake lands
-(P2, DS1). The brand-mark color difference (teal-only Qnarre BracketedQ vs.
-the umbrella's teal-left/amber-right) lives in the SVG props, not in tokens.
+`web/src/styles/tokens.css` — Qnarre does not get its own palette.
+This per-consumer sweep retires when this bundle migrates to `rendering/`
+intake (its P4 slot — root CLAUDE.md § `data/renders/`). The brand-mark
+color difference (teal-only Qnarre BracketedQ vs. the umbrella's
+teal-left/amber-right) lives in the SVG props, not in tokens.
 
 ## 3. Tokens are the only boundary for raw values
 
@@ -52,7 +52,7 @@ outside `web/public/tokens.css`. Refer to `var(--token)` everywhere else.
 
 ## 4. Copy lives in one module
 
-`web/src/copy.ts`. Don't inline copy into pages/components.
+`web/src/content/copy.ts`. Don't inline copy into pages/components.
 
 ## 5. App surface is one big React island
 
@@ -95,8 +95,10 @@ replayable — those are the operator's actual dockets ("worked examples
 debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2). The
 static public build is stricter still — RICO-synthetic only
 (`web/src/lib/public-runs.ts`); the replay API also serves the synthetic
-Title VI sample. Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`) and
-`ALLOWED_IDS` (`api.spec.ts`) in lockstep (§ 9.5).
+Title VI sample. Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`),
+`ALLOWED_IDS` (`api.spec.ts`), AND `extending/servers/qnarre-mcp/src/allowlist.ts`
+in lockstep — a **triple** since extending landed 2026-07-04; the extending
+parity test fails until all three match (§ 9.5).
 The adapter shells `extract_facts.py --reuse-facts --build` against
 `proving/examples/<id>/`, overwriting `{report,graph,loci}.json` in
 place. No predicate sub-agent calls (committed `facts.json` is the
@@ -123,17 +125,12 @@ this layer. Revisit when admin-gated freeform POST lands; admin-gated
 freeform requires the rule set from `legal/public/` staging (already in
 use for `documenting/`).
 
-Plan + decisions for the live deploy:
-`data/specs/verifying-go-live-2026-05-15/SPEC.md`.
-
 ## 8. Proof-graph kit (Lean4 DAG visualisation) — graphs-2 mount (G6)
 
 Since 2026-06-11 the proof-graph surface renders via the domain-neutral
 **graphs-2 kit** from `visualizing/` (the unified kit-mount that also
 backs Qresev's strategy mount — visualizing spec
-`data/specs/visualizing-2026-06-03/graphs2-2026-06-07/SPEC.md` G6). The
-designer POC kit (`ProofGraph` namespace + `fixture-rico.js`) is
-retired; git history preserves it. Routes:
+`data/specs/visualizing-2026-06-03/graphs2-2026-06-07/SPEC.md` G6). Routes:
 
 - `/proof-graph/` — lobby + cards linking to the two demos and the F1-gated
   live runs (see below).
@@ -147,6 +144,9 @@ retired; git history preserves it. Routes:
   `proving/examples/<id>/graph.json` fixtures via `getStaticPaths`,
   **F1-gated** (see below); REJECTED runs surface a debug-overlay link
   in the header.
+- `/lattice/` — the axiomatization catalog (coverage × agreement × tier)
+  over `data/visualizing/legal-catalog.json`, same kit in catalog mode
+  (cells collapsed, agreement lens, `tokens-lattice.css`).
 
 **F1 thesis-floor gate (named-never-worked).** The textual axis is *named,
 never worked* in any public material, and no public worked example is drawn
@@ -159,23 +159,19 @@ incl. `rico-hier`). Both run pages' `getStaticPaths` AND the lobby's live-run
 scan call it; the same gate backs the `/app` island chips (non-demoed →
 "encoded · not demoed", no verdict/Boolean) and `LiveReportZone`. Round 04
 debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2; pleading/
-binding; do not deploy until the PLEADING-REVIEW-PACKET clears. The replay
-API (`server/main.py` `ALLOWED_EXAMPLE_IDS`) is also gated — synthetic-only,
-no `<live-matter>_*` (§ 7). Residual (intentional, narrower than the static floor):
-the replay API still serves the synthetic non-RICO `titlevi_sample`.
-- `/lattice/` — the axiomatization catalog (coverage × agreement × tier)
-  over `data/visualizing/legal-catalog.json`, same kit in catalog mode
-  (cells collapsed, agreement lens, `tokens-lattice.css`).
+binding (cleared 2026-06-24 — `PLEADING-GATE-DECISION-2026-06-23.md` in the
+same spec family). The replay API is gated to the same floor (§ 7); residual
+(intentional): it also serves the synthetic non-RICO `titlevi_sample`.
 
 Kit files live at `verifying/web/public/graphs2/`:
 
 - `kit.js` — the graphs-2 IIFE bundle (global `QViz`: `mountProof` /
   `mountCatalog` → a `KitMount` with lenses, collapse gestures, regions,
   `exportSVG`). **Regen-wholesale** from
-  `visualizing/graphs-2/dist/kit-proof.js` — never hand-edit.
+  `visualizing/graphs/dist/kit-proof.js` — never hand-edit.
 - `kit.css` + `tokens-proof.css` + `tokens-lattice.css` — kit-owned
   host styles + the per-app token overlays, copied verbatim from
-  `visualizing/graphs-2/kit/`. The kit overlays are themselves
+  `visualizing/graphs/kit/`. The kit overlays are themselves
   byte-mirrors of the brand SoT at `rendering/brand/tokens/quantapix/
   overlay/{lattice,proof}-dark.css` (this app consumes the **dark**
   slice) — edits originate at the rendering SoT, never these copies.
@@ -195,10 +191,10 @@ Kit files live at `verifying/web/public/graphs2/`:
 
 **Re-sync from a rebuilt kit** (run from the repo root):
 
-1. `pnpm -C visualizing/graphs-2 typecheck && pnpm -C visualizing/graphs-2 gates`
-2. `node visualizing/graphs-2/kit/build.mjs`
-3. `cp visualizing/graphs-2/dist/kit-proof.js verifying/web/public/graphs2/kit.js`
-4. `cp visualizing/graphs-2/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs2/`
+1. `pnpm -C visualizing/graphs typecheck && pnpm -C visualizing/graphs gates`
+2. `node visualizing/graphs/kit/build.mjs`
+3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs2/kit.js`
+4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs2/`
 5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
 
 **lint-tokens caveat.** `public/graphs2/` is excluded from
@@ -206,13 +202,11 @@ Kit files live at `verifying/web/public/graphs2/`:
 token-overlay DEFINITIONS legitimately carry raw values, same exclusion
 class as Qresev's kit dir. Never hand-edit kit files to placate lint.
 
-**Empty-state overlay pointer-trap (check on any mount edit).** An absolute/inset
-empty-state overlay must scope its visibility to `.empty:not([hidden])` — a bare
-`.empty{display:flex}` author rule silently defeats the UA `[hidden]{display:none}`,
-leaving the overlay visible with `pointer-events:auto` over the live cytoscape
-canvas so the graph is uninteractive (monitoring hit + fixed this 2026-06-19).
-e2e that drives the kit via its JS API won't catch it — add an overlay
-`toBeHidden()` guard on live mount. Detail: `[[reference_hidden_attr_overlay_pointer_trap]]`.
+**Empty-state overlay pointer-trap (check on any mount edit).** Scope the
+overlay to `.empty:not([hidden])` — a bare `.empty{display:flex}` defeats the
+UA `[hidden]` rule and pointer-traps the live cytoscape canvas; add an overlay
+`toBeHidden()` e2e guard on live mount. Detail:
+`[[reference_hidden_attr_overlay_pointer_trap]]`.
 
 ## 9. Hosting target
 
@@ -222,36 +216,21 @@ behind Caddy at `api.qnarre.quantapix.com` (per `data/specs/serving-2026-05-26/S
 decision 3). Same code in both modes; only the API origin in
 `astro.config.mjs` env changes.
 
-**Static-shell deploy** (live since 2026-05-16):
-
-- Bucket: `qnarre.quantapix.com` (hostname convention from `data/specs/serving-2026-05-26/SPEC.md` § 3).
-- CloudFront Function: `qagents-rewrite-index-qnarre` (per-host suffix; CF Function names are account-global).
-- Wildcard cert: shares `*.quantapix.com` ACM cert from `QagentsCertsStack`
-  (exported as `QagentsQuantapixWildcardCertArn`).
-- 404 mapping: `403/404 → /404.html (status 404)` — same shape as the apex sites.
-- Deploy: `aws-vault exec qagents-deploy -- pnpm -C verifying/web deploy`
-  (rides `serving/scripts/deploy-site.sh` + `serving/sites/qnarre.quantapix.com.env`).
-- Single managed IAM policy at `serving/policies/qagents-deploy.json` covers
-  all four sites.
-
-Cross-site deploy contract — credential workflow, full-replace shape — lives
-in `qagents/CLAUDE.md` § "AWS deploys" and `serving/CLAUDE.md` § 8.
+**Static-shell deploy** — bucket `qnarre.quantapix.com`, wildcard
+`*.quantapix.com` cert. Invocation: `aws-vault exec qagents-deploy -- pnpm
+-C verifying/web deploy` (rides `serving/scripts/deploy-site.sh` +
+`serving/sites/qnarre.quantapix.com.env`). Cross-site contract, CF functions,
+404 mapping, IAM: `serving/CLAUDE.md` § 8.
 
 ## 9.5. e2e (Playwright)
 
-Suite at `verifying/web/tests/e2e/`; shared helpers at
-`code/playwright/shared.ts`. Three projects (chromium-desktop / -mobile /
--reduced-motion); `webServer = pnpm build && pnpm preview` on **port
-4326** (4321 + 4323 are in active use by designing/web-next; 4322 = designing).
-Run from `verifying/web/`:
-
-- `pnpm test:e2e` — offline against built+previewed Astro shell.
-- `pnpm test:e2e:install` — one-time chromium download.
-- `PW_BASE_URL=https://qnarre.quantapix.com pnpm test:e2e` — against the
-  deployed shell + `api.qnarre.quantapix.com` FastAPI. `api.spec.ts` is
-  gated on `PW_BASE_URL` (no FastAPI under `astro preview`); the API
-  origin defaults to `base.replace(qnarre. → api.qnarre.)` and can be
-  overridden via `QNARRE_API_ORIGIN=…`.
+Suite at `verifying/web/tests/e2e/` on **port 4326**; stack shape (three
+projects, `webServer`, run commands) is the root-CLAUDE.md § Playwright
+contract. Live mode: `PW_BASE_URL=https://qnarre.quantapix.com pnpm test:e2e`
+— against the deployed shell + `api.qnarre.quantapix.com` FastAPI.
+`api.spec.ts` is gated on `PW_BASE_URL` (no FastAPI under `astro preview`);
+the API origin defaults to `base.replace(qnarre. → api.qnarre.)`, override via
+`QNARRE_API_ORIGIN=…`.
 
 Spec partitioning:
 
@@ -291,6 +270,3 @@ quantapix.com card label to `Qnarre` (teal accent). Status pill `OK` when
 both `https://qnarre.quantapix.com/` and
 `https://api.qnarre.quantapix.com/api/health` return 200 (probe is a 5s
 urllib GET). `WARN` if one is up and the other isn't; `ERROR` if neither.
-Schema lives in `@qagents/diagram-kit`; plan at
-`designing/web/PLAN-status-page.md`. Self-contained — no sibling-subproject
-imports.

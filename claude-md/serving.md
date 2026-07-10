@@ -1,6 +1,6 @@
 # CLAUDE.md — serving/
 
-Project-specific rules for the qagents AWS cloud-base. Assumes Claude Code's default guidance and the repo-root `qagents/CLAUDE.md`.
+Project-specific rules for the qagents AWS cloud-base. Assumes the repo-root `qagents/CLAUDE.md`.
 
 ## 1. Single source of truth for AWS
 
@@ -38,7 +38,7 @@ Every new stack MUST call `applyUniversalTags(this, {component: '<c>'})` from `c
 
 The Quantapix-branded diagram primitives + layouts live here, packaged as the `@qagents/diagram-kit` workspace pnpm package. It is the legitimate shared-code seam for cross-subproject diagram primitives + the kit-owned status-hub schema — sibling-of-subprojects, not `serving/`-internal. Anyone (designing/web, explaining/, future consumers) may import it; see § 6.
 
-The kit's display-mode contract — the closed set of `*Emit` schemas it ships vs. what stays consumer-owned (Chart, Graph, 3D-mix, Video, App-shell) — is fixed by `data/specs/display-modes-2026-05-07/SPEC.md`. Adding a new emit kind requires a kit minor version bump + spec amendment + e2e coverage; v0.4.0 closed the set.
+The kit's display-mode contract — the closed set of `*Emit` schemas it ships vs. what stays consumer-owned (Chart, Graph, 3D-mix, Video, App-shell) — is fixed by `data/specs/display-modes-2026-05-07/SPEC.md`. Adding a new emit kind requires a kit minor version bump + spec amendment + e2e coverage.
 
 The kit's source-of-truth design bundle lives at `data/renders/serving-design/` (read-only, regen-wholesale; moves to `rendering/designs/serving-diagrams/` at the serving P4 slot). Sync procedure: `serving/diagrams/kit/README.md` § "Sync with the design bundle".
 
@@ -72,25 +72,20 @@ The summary diagram surfaced on the index card is `static-sites`. Status-pill fo
 
 ## 8. AWS deploys (S3 + CloudFront sites)
 
-Every Astro site under qagents (`documenting/web/` for femfas.net, `designing/web/` for quantapix.com, any future sibling) follows the same deploy contract. Per-site bucket name + CloudFront distribution differ; the script shape, credential workflow, and verification cadence do not.
+Every Astro site under qagents (four today — see `./sites/*.env`; any future sibling) follows the same deploy contract. Per-site bucket + CloudFront distribution differ; the script shape, credential workflow, and verification cadence do not.
 
 **Credential workflow — aws-vault + macOS Keychain (no plaintext keys on disk):**
 
 - `brew install awscli aws-vault` once per workstation.
-- **Single unified IAM principal `qagents-deploy`** — one IAM user, two virtual MFA devices (`Imres-iPhone` primary + `Xmaos-iPhone` backup), one aws-vault profile, one Keychain entry. Locked at `data/specs/serving-2026-05-26/SPEC.md` § 2 decisions 7 + 8. Blast-radius isolation lives in policy-level MFA-Deny + 1h STS window, not principal multiplication.
+- **Single unified IAM principal `qagents-deploy`** — one IAM user, two virtual MFA devices (primary + backup), one aws-vault profile, one Keychain entry. Locked at `data/specs/serving-2026-05-26/SPEC.md` § 2 decisions 7 + 8. Blast-radius isolation lives in policy-level MFA-Deny + 1h STS window, not principal multiplication.
 
-  | Site | aws-vault profile | MFA device | Bucket | Distribution |
-  |---|---|---|---|---|
-  | femfas.net (`documenting/web/`) | `qagents-deploy` | `Imres-iPhone` | `femfas.net` | `E1HSASY4B6ODER` |
-  | quantapix.com (`designing/web/`) | `qagents-deploy` | `Imres-iPhone` | `quantapix.com` | `E27NQG9Y1ZPLGH` |
-
-  Each site's `<sub>/web/.env` pins `AWS_PROFILE=qagents-deploy`; unified profile block at `./templates/aws-config.snippet`. Same principal pushes to CodeCommit for `qagents` + `dot.claude` (§ 9).
+  Per-site bucket + distribution IDs live in `./sites/<host>.env` only (§ 6 — never inline; `INVENTORY.md` § 2 is the curated mirror). Each site's `<sub>/web/.env` pins `AWS_PROFILE=qagents-deploy`; unified profile block at `./templates/aws-config.snippet`. Same principal pushes to CodeCommit for `qagents` + `dot.claude` (§ 9).
 
 - `aws-vault add <profile>` — long-term IAM keys go to Keychain. `~/.aws/credentials` stays empty.
 - `~/.aws/config` is metadata only: per-site `[profile …]` with `region`, `output`, `mfa_serial`, `duration_seconds=3600`, `cli_pager=`, `cli_history=disabled`, an `s3 =` transfer-tuning block. **No `[default]` block** — forces explicit profile selection.
 - IAM principal carries the scoped customer-managed policy at `./policies/qagents-deploy.json` (`arn:aws:iam::072264701492:policy/qagents-deploy`) — full Sid list, coverage, and rationale at `data/specs/serving-2026-05-26/SPEC.md` § 4.2. **Never** `AmazonS3FullAccess`. Inline-policy form retired — see `reference_iam_user_inline_policy_2kb_cap`.
 
-  **Policy update workflow — self-serve from the laptop** (since v6 / 2026-05-16): runbook at `./runbooks/policy-version-push.md` (covers the `create-policy-version --set-as-default` recipe, 5-version cap + `LimitExceeded` recovery, fresh-account bootstrap). Never `put-user-policy` against this user — that recreates the retired inline-policy shape.
+  **Policy update workflow — self-serve from the laptop:** runbook at `./runbooks/policy-version-push.md` (covers the `create-policy-version --set-as-default` recipe, 5-version cap + `LimitExceeded` recovery, fresh-account bootstrap). Never `put-user-policy` against this user — that recreates the retired inline-policy shape.
 
 **Deploy script shape — `./scripts/deploy-site.sh <host>`** (full contract at `data/specs/serving-2026-05-26/SPEC.md` § 5.3):
 
@@ -104,13 +99,7 @@ The central deploy script is parameterized by per-site config files at `./sites/
 
 Standard invocation: `aws-vault exec qagents-deploy -- pnpm -C <sub>/web deploy`.
 
-**Large binary media — five paths depending on shape:**
-
-- **Published video deliverables** (MP4 from HeyGen/Remotion, `explaining/`-catalog-class) → `qagents-videos` via `./scripts/upload-video.sh <local> <topic>/<file>.<ext>` → `https://videos.quantapix.com/<topic>/<file>.<ext>`. Public CDN; decoupled from site deploy; immutable-keyed (no CF invalidation). **This bucket is world-readable the instant a key lands — every upload IS a public push, not a private build step (the 4.1 gate-jump).** Two contracts ride the chokepoint (signoff-framework § 8 / signoff-verification § 4.2): (1) **push-ledger emit** — every upload appends a `{key, content_sha256, surface:"cdn", commit}` line to the gitignored pending buffer (`${QAGENTS_PENDING_ROOT:-$REPO/pending}/data/publishing/push-ledger.jsonl`) + stdout audit, **never** canonical `data/publishing/` (cross-subproject, no `.data-write-lock`); the managing verifier is the canonical writer-of-record (append-MERGE, dedupe `commit`+`content_sha256`). `commit` = `git rev-parse HEAD` at the PUT instant; `content_sha256` is the sha of the PUT bytes. (2) **release gate** — a `T<n>/` catalog key REFUSES (exit 3) unless `CLEARANCE_COMMIT` (the FINANCIALLY-CLEARED record's `granting_commit`, publishing/CLAUDE.md § 10) is already an ancestor of HEAD — forcing `git merge main` first. The script can't judge prose attestations; this is the mechanical ancestry precondition, not a safety guarantee. One-off keys (no `T<n>/` prefix) are ungated but still ledgered for the inventory-diff completeness check. `UPLOAD_DRY_RUN=1` echoes the `aws`/append steps; pinned by `tests/cases/85-upload-video-ledger.sh`.
-- **One-off small media** (logos, icons, <5 MB clips) ride on `pnpm deploy`: drop at `<sub>/web/public/<topic>/<file>.<ext>` (gitignore the file); existing `max-age=31536000, immutable` header applies. `PROTECTED_PATHS` hazard below applies to this path only.
-- **Interim/scratch binaries (gitignored, temporary)** — HeyGen takes, Remotion ProRes, Resolve cut renders — mirror to `qagents-clips-backup` via `./scripts/backup-clips.sh <sub> <slug> [short|long]... [<class>...]`. Variant-aware: walks `<slug>/{long,short}/` dirs under per-variant S3 prefix `<sub>/<slug>/<variant>/<class>` (legacy flat `<slug>/<class>` still supported); the optional `short`/`long` arg filters. **Default classes = `takes auditions cuts captions`; `cues` are opt-in** (2026-06-30) — Remotion ProRes cues are deterministic + regenerable via `rendering/scripts/render.sh explaining-cards`, so they fail the bucket's expensive-to-regenerate criterion (pass `cues` explicitly to back them up). Private; Standard → IA(30d) → Glacier IR(90d) → expire(365d). Operator-fired only. Spec: `data/specs/serving-2026-05-26/clips-backup-s3-2026-05-24/SPEC.md`.
-- **Durable version-pinned artifacts (gitignored, kept forever)** — regenerable-today-but-not-durably ground truth keyed by a version-pin → `qagents-archive-backup` via `./scripts/archive-artifact.sh <class> <version-pin> {push|verify|restore <dest>}`. Four registered classes (`uscode` / `parquet` / `usc-waves` / `trading-waves`) — registry in the script, class table + lifecycle in the spec. Private, **versioned**, content-addressed (sha256 metadata + per-pin MANIFEST.json), one immutable `<class>/<version-pin>/` prefix per pin. Durable inverse of the clips lane; operator-fired only. Spec: `data/specs/serving-2026-05-26/artifact-archive-s3-2026-05-29/SPEC.md`.
-- **Local-backup mirror of CDN-hosted videos (opt-in per site):** sibling MAY retain gitignored mirror at `<sub>/web/public/videos/*.mp4`; protected from worktree-teardown via `<sub>/.close-protected-paths` (`feedback_close_protected_paths_pattern`); deploy-side `PROTECTED_PATHS` is separate. Embeds reference the absolute CDN URL.
+**Large binary media — five paths depending on shape** (video-CDN / small-media / clips-backup / archive-backup / CDN-mirror). Full path table + per-path operational detail (video-CDN push-ledger + release-gate chokepoint contracts + `UPLOAD_DRY_RUN`/test pin; `backup-clips.sh` variant-awareness + `cues` opt-in; the four `archive-artifact.sh` classes; `.close-protected-paths` mirror) → `data/specs/serving-2026-05-26/SPEC.md` § 5.4. The `PROTECTED_PATHS` hazard below applies to the small-media path.
 
 **Hazard + structural fix — `PROTECTED_PATHS`.** Worktrees don't carry gitignored binaries, so a `pnpm deploy` from a fresh worktree runs the wipe + `s3 sync --delete` without them, 404ing the live asset. Fix: declare a per-site `PROTECTED_PATHS=("videos/*.mp4" ...)` bash array in `./sites/<host>.env`; `deploy-site.sh` threads `--exclude <glob>` through the wipe AND both sync passes. Currently set on `quantapix.com.env`; femfas.net needs none (its `public/*.pdf` filings are committed per `documenting/CLAUDE.md`). Binary updates still go via `aws s3 cp` + targeted invalidation — the protection only stops accidental deletion.
 
@@ -118,7 +107,7 @@ Standard invocation: `aws-vault exec qagents-deploy -- pnpm -C <sub>/web deploy`
 
 **Bucket hardening — once per bucket:** `aws-vault exec qagents-deploy -- bash <sub>/web/scripts/setup-bucket-hardening.sh` enables versioning + 30-day noncurrent-version expiration + 7-day multipart-abort. Reference JSON at `./templates/s3-lifecycle-noncurrent-30d.json`.
 
-**New-CloudFront-distribution checklist (one-time, per distribution).** S3 REST + OAC doesn't serve Astro out of the box — three knobs in order: (1) OAC bucket policy on the S3 bucket (else 403); (2) URI-rewrite Function from `./templates/cloudfront-rewrite-index.js`, **Save → Publish → attach to Viewer request** (Publish is easy to miss); (3) `403→/404.html` AND `404→/404.html` error responses (else missing routes return raw S3 AccessDenied XML). Every new shell must ship `src/pages/404.astro` so `dist/404.html` exists. Memories: `reference_cloudfront_function_redirect_pattern`, `reference_cloudfront_404_needs_dest_page`. After all three: `aws-vault exec qagents-deploy -- aws cloudfront create-invalidation --distribution-id <ID> --paths "/*"` → run live e2e.
+**New-CloudFront-distribution checklist** → `./runbooks/new-cloudfront-distribution.md`. Pins `reference_cloudfront_function_redirect_pattern`, `reference_cloudfront_404_needs_dest_page`.
 
 **Internal links to anchored sections must include the trailing slash before the hash**: `/dockets/#tier-X`, never `/dockets#tier-X`. Astro static builds emit `/<route>/index.html`; S3 returns `302 → /<route>/` for the slashless form, costing a redirect round-trip and breaking Playwright glob matchers.
 
@@ -147,7 +136,7 @@ aws-vault exec qagents-deploy -- bash serving/scripts/deploy-app.sh {qnarre|qres
 - `aws ssm send-command` runs fetch + atomic-swap + `pip install -r requirements.txt` (only when the tarball ships one — neither app does today; the EC2 step echoes a loud skip) + `systemctl reload <app>.service`
 - Rollback = one-line `aws s3 cp` of the prior tarball over `latest.tar.gz` + re-run deploy-app.sh
 
-**Provisioning the qresev deps + data (both now have managed lanes).** Bootstrap installs only fastapi+uvicorn into `/srv/qagents/.venv`. The two extras the bars endpoint needs are each one command now: **(a) deps** — `evaluating/requirements.txt` pins `pyarrow>=17`; `deploy-app.sh qresev` stages it and the SSM step `pip install`s it (so a fresh `deploy-app.sh` after an § 8.2 replacement restores pyarrow). **(b) data** — the OHLCV parquet tree at `/srv/qagents/financial/parquet/ohlcv-equities/` (526 files, 17 MB) ships via `aws-vault exec qagents-deploy -- bash serving/scripts/ship-parquet.sh` (build tarball → `releases/qresev/data/` → SSM atomic-swap extract). Operator-fired; `SHIP_DRY_RUN=1` for the no-AWS path; pinned by `tests/cases/45-ship-parquet.sh`. So an instance replacement is `bootstrap → deploy-app.sh qresev → ship-parquet.sh`, not archaeology.
+**Provisioning the qresev deps + data.** Bootstrap installs only fastapi+uvicorn into `/srv/qagents/.venv`. The two extras the bars endpoint needs are each one command: **(a) deps** — `evaluating/requirements.txt` pins `pyarrow>=17`; `deploy-app.sh qresev` stages it and the SSM step `pip install`s it (so a fresh `deploy-app.sh` after an § 8.2 replacement restores pyarrow). **(b) data** — the OHLCV parquet tree at `/srv/qagents/financial/parquet/ohlcv-equities/` (526 files, 17 MB) ships via `aws-vault exec qagents-deploy -- bash serving/scripts/ship-parquet.sh` (build tarball → `releases/qresev/data/` → SSM atomic-swap extract). Operator-fired; `SHIP_DRY_RUN=1` for the no-AWS path; pinned by `tests/cases/45-ship-parquet.sh`. So an instance replacement is `bootstrap → deploy-app.sh qresev → ship-parquet.sh`, not archaeology.
 
 **Hazard — kernel rotation wipes post-bootstrap state.** Each `deploy-app.sh` rotates `/srv/qagents/<kernel>/` (e.g. `accounting/`, `proving/`) into `<kernel>.previous/` and unpacks the new tarball, which means `.lake/build/lib/` (the incremental kernel cache) is gone unless migrated. `deploy-app.sh` migrates `.lake/` from `<kernel>.previous/` and runs `install -d` post-rotation so the directory exists for the next build. **systemd preflight `status=226/NAMESPACE`** is the failure signature if either step is missing (the `ReadWritePaths=` mount fails). Pinned: `feedback_kernel_rotation_cache_hazard`.
 
@@ -159,6 +148,8 @@ aws-vault exec qagents-deploy -- bash serving/scripts/ssm-shell.sh
 
 Filters on tag `Name=qagents-app-1`. Requires `session-manager-plugin` installed locally (`brew install --cask session-manager-plugin`).
 
+**Shared ledger store (private RDS Postgres + pgvector)** reuses the same jump host: `aws-vault exec qagents-deploy -- bash serving/scripts/ledger-tunnel.sh` port-forwards localhost:5432 → the RDS (only laptop path; 1h STS window). Clients fetch the DSN ephemerally from Secrets Manager (`qagents.ledger`'s `--from-aws` lane) — never materialize it to disk. Schema owner is `code/ledger/qagents/ledger/schema/`; migrator `python -m qagents.ledger.migrate --from-aws`. **Test rule:** the DB-gated suites DROP schemas — run them only against a disposable `qagents_test` database, never the production `qagents` DB. Inventory: `INVENTORY.md` § 2.7; spec `data/specs/shared-ledger-store-2026-07-09/SPEC.md`.
+
 **Smoke** (live HTTPS via Let's Encrypt cert):
 
 ```bash
@@ -166,11 +157,11 @@ curl -fsS https://api.qnarre.quantapix.com/api/health
 curl -fsS https://api.qresev.quantapix.com/api/health
 ```
 
-**Operator-policy gaps** — surviving items tracked in `data/next-steps/serving.md` A.1 + `INVENTORY.md` § 8; bundled into the next policy-version push per `feedback_operator_policy_gap_per_phase`.
+**Operator-policy gaps** — surviving items tracked in `INVENTORY.md` § 8 + `data/next-steps/serving.md` § A; bundled into the next policy-version push per `feedback_operator_policy_gap_per_phase`.
 
 ## 8.6. Cron-EC2 lane
 
-Serving/ owns the AWS-touching artifacts of `data/specs/cron-ec2-migration-2026-05-19/SPEC.md` — CDK deltas, EC2-side scripts + systemd units under `scripts/ec2-cron/`, ship script `scripts/deploy-ec2-cron.sh`, manifest verifier, structural test at `data/specs/serving-2026-05-26/tests/cases/40-ec2-cron.sh`. Operational deploy contract + first-fire smoke: `data/specs/serving-2026-05-26/SPEC.md` § 6.6 + § 8.3 (SDK-lane resume post-2026-06-15). Managing/ + trading/ + `code/agent_sdk/` own the out-of-serving-scope files (per-file owner tags in the spec's Appendix A.1/A.2). Reuses § 8.5's EC2 infra (`qagents-app-1` + `qagents-app-role` + `qagents-artifacts` + `alias/qagents-cmk`) — additive only.
+Serving/ owns the AWS-touching artifacts of `data/specs/cron-ec2-migration-2026-05-19/SPEC.md` — CDK deltas, EC2-side scripts + systemd units under `scripts/ec2-cron/`, ship script `scripts/deploy-ec2-cron.sh`, manifest verifier, structural test at `data/specs/serving-2026-05-26/tests/cases/40-ec2-cron.sh`. Operational deploy contract + first-fire smoke: `data/specs/serving-2026-05-26/SPEC.md` § 6.6 + § 8.3. Managing/ + trading/ + `code/agent_sdk/` own the out-of-serving-scope files (per-file owner tags in the spec's Appendix A.1/A.2). Reuses § 8.5's EC2 infra (`qagents-app-1` + `qagents-app-role` + `qagents-artifacts` + `alias/qagents-cmk`) — additive only.
 
 **Operator deploy path** (mirrors § 8.5, single command):
 
@@ -186,7 +177,7 @@ Same SSM mechanics as `deploy-app.sh`; no SSH. Per-routine timers enabled lane-b
 
 ## 9. Pushing from this laptop (qpur) — three remotes per repo
 
-Two qagents-class repos (`qagents`, `dot.claude` = `~/.claude/`) push to **three** remotes. Public-org GitHub push goes through `git push-quantapix` (see [[reference_quantapix_org_repos]]; source of truth `publishing/quantapix/`). **Superseded for the `/publish` path (2026-06-23, operator: gh does all GitHub work):** content now pushes via `publishing/scripts/github_meta.py sync` (`gh repo clone` → `rsync -aL` → commit → `git push` over gh's HTTPS helper); `git push-quantapix` remains for manual/non-publish pushes but carries the `-a` symlink-clobber hazard the gh arm's `rsync -aL` avoids.
+Two qagents-class repos (`qagents`, `dot.claude` = `~/.claude/`) push to **three** remotes. Public-org GitHub content pushes via `publishing/scripts/github_meta.py sync` (owned by `publishing/CLAUDE.md` § 4–5; [[reference_quantapix_org_repos]]; source of truth `publishing/quantapix/`); `git push-quantapix` remains for manual/non-publish pushes only — symlink-clobber hazard below.
 
 ```
 github  → git@github-qpur:quantapix/<repo>.git           # via ed25519 SSH key
@@ -194,7 +185,7 @@ aws     → codecommit::us-east-1://<repo>                 # via aws-vault qagen
 qblk    → qblk:~/repos/<repo>.git                        # via legacy quantapix RSA key
 ```
 
-`remote.pushDefault = github`, `push.default = current`. `git push-all` sweeps all three in one command — skips unconfigured remotes silently, wraps the `aws` push in `aws-vault exec qagents-deploy --` automatically. Both git-subcommand wrappers live at `serving/scripts/git-push-{all,quantapix}` (public-org source of truth `publishing/quantapix/`), each symlinked onto PATH at `~/.local/bin/`. The repo-wide sweeper `scripts/push-all.sh` (root) loops `git push-all` across every qagents-class checkout.
+`remote.pushDefault = github`, `push.default = current`. `git push-all` sweeps all three in one command — skips unconfigured remotes silently, wraps the `aws` push in `aws-vault exec qagents-deploy --` automatically. Both git-subcommand wrappers live at `serving/scripts/git-push-{all,quantapix}`, each symlinked onto PATH at `~/.local/bin/`. The repo-wide sweeper `scripts/push-all.sh` (root) loops `git push-all` across every qagents-class checkout.
 
 **Key facts that bite if you forget them:**
 
@@ -202,4 +193,4 @@ qblk    → qblk:~/repos/<repo>.git                        # via legacy quantapi
 - **Don't ever delete the only MFA device on `qagents-deploy` without registering its replacement first.** Merged policy carries a `DenyEverythingWithoutMFA` statement; with the only device gone, every `aws-vault exec` call fails until a new device is enrolled.
 - **`~/.ssh/config` is locked-down per host.** No `Host *` IdentityFile, no `ForwardAgent yes`, `IdentitiesOnly yes` everywhere. The new ed25519 key (`~/.ssh/id_ed25519_github_qpur`) is GitHub-only via the `github-qpur` alias; the legacy `quantapix` RSA stays on qblk-class hosts only.
 - **`git filter-repo` strips the `origin` remote** as a safety measure. After history rewrite, re-add remotes manually and force-push (rewritten history has different commit hashes).
-- **The `git push-quantapix` bridge ships symlinks AS symlinks.** Its `rsync -a --exclude=.git` copies the link, not the referent — so a `/publish` run from a worktree, where `.worktree-links`-backed files (e.g. `publishing/resume/26-06-05.pdf`) are 56-byte links into canonical, would replace the real binary on GitHub with a link file (caught in the 2026-06-12 dry-run: `Bin 479128 → 56 bytes`; resume was excluded from that push). Push such slots from **canonical only**, or use `rsync -aL` (copy referents) for the affected paths. Cross-ref `data/next-steps/publishing.md` B.3.
+- **The `git push-quantapix` bridge ships symlinks AS symlinks.** Its `rsync -a --exclude=.git` copies the link, not the referent — a push from a worktree would replace a `.worktree-links`-backed binary on GitHub with a 56-byte link file. Push such slots from **canonical only**. (The `/publish` path is immune — `github_meta.py sync` uses `rsync -aL`.)

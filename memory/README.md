@@ -1,12 +1,30 @@
 # memory/
 
-The redacted mirror of the AI-assistant auto-memory tree — the topic
-files the assistant writes during sessions and loads back across
-sessions to stay coherent. Refreshed weekly from the private source.
+The intended redacted mirror of the AI-assistant auto-memory tree — the
+topic files the assistant writes during sessions and loads back across
+sessions to stay coherent.
 
 See the [umbrella README](../README.md) for the broader thesis.
 Sibling subtrees: [`claude-md/`](../claude-md/),
 [`memsearch/`](../memsearch/).
+
+## Status — placeholder, not yet populated
+
+**No topic files are published here yet.** This subtree currently holds
+only this README. The redaction roster that would select and rewrite
+publishable entries has not been authored, and no sweep runs.
+
+The blocker is a design question, not a scheduling one. A handful of
+private entries exist precisely to record a court-ordered bar on
+publishing a particular collateral docket family. An entry whose whole
+subject is that bar cannot be scrubbed of the bar and remain useful —
+so redaction is the wrong instrument for it. When this subtree ships it
+will be gated by a **curated allow-list** (entries opt in) rather than a
+deny-sweep (entries opt out), and the release pipeline refuses, by
+construction, to publish a file whose name or body carries the barred
+family.
+
+Everything below describes the shape that mirror will take.
 
 ## What auto-memory is
 
@@ -28,7 +46,7 @@ memory.** One line per topic, ≤150 chars, under the 200-line cap that
 silently truncates a too-long index at session load. Detail lives in
 the topic files; the index points to them.
 
-## Layout
+## Planned layout
 
 ```
 memory/
@@ -68,10 +86,11 @@ the assistant looks for it.
   80–100 of the ~122 entries publish (the remainder cite private
   dockets, IAM specifics, per-host paths).
 
-The published set is curated, not exhaustive. An entry that names
+The published set will be curated, not exhaustive. An entry that names
 private participants, private paths, or private infrastructure is
 either redacted to remove those references or dropped from the public
-mirror entirely.
+mirror entirely. The per-namespace counts above describe the private
+tree; how many of each ship is settled when the allow-list is authored.
 
 ## `MEMORY.md` — the index
 
@@ -115,15 +134,17 @@ private content stripped. In addition to the general redaction rules
   namespace is reserved for operator profile entries that are
   inherently personal.
 
-The published set after redaction is roughly 200–250 files out of
-~300 in the private tree.
+On present estimates a majority of the private tree is publishable
+under those rules — but the figure is an estimate, not a count of
+anything shipped, because nothing has shipped.
 
 ## Refresh cadence
 
-Weekly. The private auto-memory tree is the source of truth; this
-subtree mirrors. The sync script runs the redaction sweep + diff
-before each publish; promotion to GitHub happens through a separate
-push wrapper.
+None yet — see [Status](#status--placeholder-not-yet-populated). Once
+the allow-list lands the cadence is weekly: the private auto-memory
+tree stays the source of truth and this subtree mirrors it. The sync
+script runs the redaction sweep + a never-publish path bar before each
+publish; promotion to GitHub happens through a separate push wrapper.
 
 The index changes more often than the topic files — adding a new
 entry typically means writing one new file and adding one line to
