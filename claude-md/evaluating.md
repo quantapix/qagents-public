@@ -19,22 +19,32 @@ outputs. accounting/ reads its OHLCV via the shared `financial/parquet/`
 hub (not analyzing's DuckDB directly) — so this subproject too only ever
 sees `financial/` parquet and the adapter's subprocess outputs.
 
-## 2. Design bundle is read-only; regen workflow
+## 2. Design SoT + brand mechanism (Meridian since M4)
 
-`data/renders/evaluating-design/` (under the qagents shared-data hub
-`data/renders/`) is the handoff bundle slot from Claude Design, regenerated
-wholesale. Never hand-edit. The `Qresev App.html` prototype is the visual
-source of truth.
-
-When re-syncing tokens.css from the bundle (run from the repo root):
-`cp data/renders/evaluating-design/project/colors_and_type.css
-evaluating/web/public/tokens.css`, then run the designing § 2 two-drift
-sweep (**mandatory** — the bundle ships raw; acceptance:
-a case-insensitive grep for the retired brand name + the fonts CDN over `evaluating/web/public/tokens.css` → 0),
-then `pnpm -C evaluating/web verify`. Retires when this bundle migrates to
-`rendering/` intake (its P4 slot — root CLAUDE.md § `data/renders/`). Token
-values are identical to the quantapix token SoT below the header; Qresev's
-brand-mark color (amber-only BracketedQ) lives in SVG props, not in tokens.
+**Since 2026-07-11 (web-unification M4) the web rides the Meridian layer,
+BRAND-VIA-HOST:** design SoT is the adopted CD-B bundle at
+`rendering/designs/evaluating-web/` (Qresev slice + ADOPTION.md floors; the
+old `data/renders/evaluating-design/` bundle + its two-drift sweep are
+RETIRED for this site). Brand values never enter this tree:
+`web/scripts/sync-meridian.mjs` (pre-hooks) host-copies the W5 css layers
+from `code/web/css/meridian/`, the font trio from `rendering/brand/fonts/`,
+and composes the dual-signal `/meridian-tokens.css` from the rendering SoT —
+all gitignored under `public/`. `<body class="m-body m-app-qresev">` binds
+the copper accent; tri-state theme via `@qagents/web/theme` (the
+`color-scheme: dark` meta retired). Shared chrome/island shells come from
+`@qagents/web` (W2 TopNav/BracketedQ/DisclaimerCallout; W4 TraceRail/ConfBar/
+PredicatesTable/StructureView/ReportZone/useRunData) with copy from
+`src/content/copy.ts` (fail-loud); app-owned and non-extractable: the
+verdict⇄disclaimer SIBLING composition, the defined-risk audit, the
+judgments roster, the Sparkline panels. **FINANCIALLY (R-T2):** the
+defined-risk allow-list renders in the **copper accent wash — never
+verdict-green** ("kernel refusal, never a safety guarantee"); refused legs
+keep the fails treatment with ✗; the financialRider's per-leg visibility +
+adjacency is asserted in `tests/e2e/theme.spec.ts`. Token boundary: no raw
+values outside `public/tokens.css` (LAYOUT-ONLY since M4) + the generated
+`public/meridian-tokens.css`; lint = the composed
+`code/web/scripts/lint-tokens.sh` + `web/lint-tokens.conf` (old
+`web/scripts/lint-tokens.sh` retired).
 
 **Bundle-mounting pattern — RECOMPOSED strategy mount.**
 `evaluating/web/public/graphs2/` mirrors `verifying/CLAUDE.md` § 8 (kit-owned
@@ -48,7 +58,7 @@ overlayLayer, sideHost, graph, report, runId})`: mounts the DAG, backs the
 router's opaque `RegionSource` with the `KitMount`
 (regions/onLayout/onTapLeaf), adapts report.json → the charts `QReport` (only
 predicates carrying `extras` yield overlay tiles), injects `resolveBars` =
-`GET /api/runs/<id>/bars` (§ 7), preserves the
+`GET /api/runs/<id>/bars` (§ 6), preserves the
 `postMessage({type:'sc:predicate-selected', sel})` contract for the `/app`
 REPORT zone, and sets `body[data-ready]`. Per-run pages at
 `web/src/pages/strategy-chart/run/[id]/`. The dist is gitignored
@@ -58,18 +68,27 @@ first**, then cp; verify the re-sync **behaviorally**
 fused render is structural — e2e asserts the full report predicate set on the
 DAG + the selection round-trip.
 
-**lint-tokens caveat** — `public/graphs2/` is excluded from
-`web/scripts/lint-tokens.sh` (both passes); same rule + rationale as
-`verifying/CLAUDE.md` § 8. Never hand-edit kit files to placate the lint.
+**`tokens-*.css` and `kit.js` are a LOCKSTEP pair — re-copy both or neither.**
+A lifted token overlay is **inert** if this mount's `kit.js` predates the
+consumer that reads the token: an undefined custom property resolves to `''` and
+the kit falls through to its `||` fallback. Nothing catches this — `pnpm verify`
+(typecheck + lint + build) relates a `public/` CSS file to a `public/` JS blob
+not at all; both are opaque static assets. Bit us 2026-07-14: visualizing lifted
+`--chart-overlay-projected` + `--edge-{feedback,veto}` byte-perfect, and all
+three stayed dead against a stale `kit.js` — the projected ghost rendering in the
+ACTUAL SERIES COLOR on a financial surface. Verify by asking the **live mount**
+what it computed (`getComputedStyle(document.documentElement)` under `pnpm
+preview`), never by asking the build whether it succeeded.
+`[[feedback_two_token_mirrors_ship_two_palettes]]`
+
+**lint-tokens caveat** — `public/graphs2/` is excluded via
+`web/lint-tokens.conf` `EXCLUDE_DIRS` (disjoint kit-token namespace);
+never hand-edit kit files to placate the lint.
 
 **Empty-state overlay pointer-trap** — same check as `verifying/CLAUDE.md`
 § 8 on any mount edit (`[[reference_hidden_attr_overlay_pointer_trap]]`).
 
-## 3. Tokens / copy — same as Qnarre
-
-No raw values outside `web/public/tokens.css`. Copy in `web/src/content/copy.ts`.
-
-## 4. App surface is one big React island
+## 3. App surface is one big React island
 
 `/app` is a single full-height React island
 (`web/src/islands/QresevApp.tsx`) with three persistent zones: PORTFOLIO
@@ -88,17 +107,17 @@ when `termHasType` is empty.
 
 **Quantapix Thesis disclaimer (T3).** `copy.ts` exports `disclaimer`
 (`canon` + `financialRider`) — byte-identical to designing/web's `copy.ts`
-SoT (distilled from `studying/thesis.md`). `QresevApp.tsx`'s internal
-`DisclaimerCallout` (React mirror of designing/web's Astro component; amber
-accent) renders it ADJACENT to the verdict token in BOTH `LiveReportZone`
-and the static `ReportZone`, so the concession travels with the verdict.
+SoT (distilled from `studying/thesis.md`). The shared `@qagents/web` DisclaimerCallout (bound here to
+`disclaimer.financialRider`) renders it ADJACENT to the verdict token in
+BOTH `LiveReportZone` and the static `ReportZone`, so the concession
+travels with the verdict.
 Preserve this on any REPORT-zone edit (`app.spec.ts` asserts it). § 11.6:
 the `financialRider` is the operator/evaluating+accounting track, NOT
 pleading's gate — and as of 2026-06-24 `evaluating/` **owns** that track
-(§ 10, the FINANCIALLY-CLEARED gate). Cure: Round 03 T3 + cure 5,
+(§ 9, the FINANCIALLY-CLEARED gate). Cure: Round 03 T3 + cure 5,
 `data/debates/quantapix-thesis-public-pages-2026-06-23.md`.
 
-## 5. Defined-risk options — non-negotiable
+## 4. Defined-risk options — non-negotiable
 
 The UI itself refuses to construct any options leg outside the allow-list
 (long calls/puts, debit spreads, covered calls, protective puts). This
@@ -106,7 +125,7 @@ matches the qagents brand-level invariant from
 `trading/shared/skills/options-risk/SKILL.md` and is enforced visually on
 `/app` and `/frameworks` (allow-list in teal, refused-list in amber).
 
-## 6. Frameworks scope
+## 5. Frameworks scope
 
 TREND · MOMENTUM · OPTIONS-RISK · SECTOR · DRAWDOWN. Each maps to an
 `Accounting.<Framework>` module in the kernel. Adding a framework is
@@ -119,7 +138,7 @@ predicate roster second, UI chip third.
 `web/src/lib/frameworks.ts`; all consumers go through `loadFrameworks()`.
 Adding a framework = one entry after the matching predicate dir lands.
 
-## 7. Server scope
+## 6. Server scope
 
 v0.1 is **replay-only for POST** (sibling parity with verifying/). POST
 `/api/runs` body is `{example_id}` from a closed allow-list
@@ -150,13 +169,9 @@ events per propagation spec § 5.4) · `GET /api/runs/<id>/report` ·
 `GET /api/runs/<id>/bars?ticker=&range=` (the recomposed strategy
 mount's `resolveBars` seam — pyarrow over
 `financial/parquet/ohlcv-equities/`, emits the charts-kit OHLCV wire
-shape `{ts(ms),o,h,l,c,v}`; ranges `1m/3m/6m/1y/2y` only. `pyarrow`
-rides `evaluating/requirements.txt` — the rotation's pip step is the
-ONLY venv-extension path, the `[evaluating]` extra never reaches EC2.
-The parquet ships out-of-band via `serving/scripts/ship-parquet.sh`
-(`serving/CLAUDE.md` § 8.5) — re-run on data refresh; the deploy tarball
-never carries it.). The
-server makes no financial judgments and does not place orders. Qresev
+shape `{ts(ms),o,h,l,c,v}`; ranges `1m/3m/6m/1y/2y` only; EC2
+provisioning of pyarrow + the parquet tree: `serving/CLAUDE.md` § 8.5).
+The server makes no financial judgments and does not place orders. Qresev
 evaluates; it does not execute.
 
 CORS: `https://qresev.quantapix.com` + `http://localhost:4322`.
@@ -168,7 +183,7 @@ already PII-free (synthetic holdings). Donating drive's POST refusal
 binding (`../donating/drive.md` Promise 3) honored without any
 redaction code. Revisit if admin-gated freeform POST lands.
 
-## 8. Hosting target
+## 7. Hosting target
 
 Local dev: `astro dev` on `:4322` + `uvicorn` on `:8788`. Prod: static shell
 on S3+CloudFront at `qresev.quantapix.com`, server on EC2 behind Caddy at
@@ -211,10 +226,9 @@ Spec partitioning:
 
 **EC2 server deploy** — `aws-vault exec qagents-deploy -- bash
 serving/scripts/deploy-app.sh qresev`. Tarball = `evaluating/server/` +
-sibling kernel (`accounting/{scripts,predicates,examples,Accounting,
-lake-manifest.json,lakefile.toml,lean-toolchain,Accounting.lean,
-examples.lean}`). Rotation mechanics, `.lake` cache migration, systemd
-NAMESPACE preflight, elan/toolchain bootstrap: `serving/CLAUDE.md` § 8.5
+the sibling accounting/ kernel (composition owned by `deploy-app.sh`).
+Rotation mechanics, `.lake` cache migration, systemd NAMESPACE preflight,
+elan/toolchain bootstrap: `serving/CLAUDE.md` § 8.5
 (live-state drift tracked in `data/next-steps/serving.md`). Qresev-facing
 trap: the unit's `ReadWritePaths` must include `/srv/qagents/.elan` — the
 elan shim rewrites `settings.toml` on activation, so without it lake dies
@@ -222,14 +236,14 @@ elan shim rewrites `settings.toml` on activation, so without it lake dies
 `kernel.errors`. [[project_ec2_lean_kernel_install]]
 [[feedback_kernel_rotation_cache_hazard]]
 
-## 9. Scope boundary
+## 8. Scope boundary
 
 This subproject does not import from `analyzing/`, `trading/`, `verifying/`,
 or `designing/`. The only allowed reach is the server adapter calling
 `../accounting/scripts/...` as a subprocess (and reading
 `financial/`-namespaced parquet via the kernel, not the web shell).
 
-## 10. Financial sign-off — `evaluating/` is the constellation grantor
+## 9. Financial sign-off — `evaluating/` is the constellation grantor
 
 `evaluating/` owns the **financial sign-off** (the FINANCIALLY-CLEARED gate) —
 the financial-domain analog of `pleading/`'s litigation-safety gate. Adopted
@@ -253,12 +267,9 @@ verification (studying S-T10 `SignoffCoverage`). Grant a FINANCIALLY surface wit
 `/do-signoff FINANCIALLY <subject>` from this session; the 4.1 record carries the
 § 5 structured core as the worked example. See `[[project_signoff_framework]]`.
 
-**Scope (§ 3 of the spec):** Qresev surfaces (live app, `qresev-public` README +
-STATUS + metadata `description`, the `/qresev` product page + OG card) and any
-other public surface evaluating stocks/portfolios/options with actionable
-framing (public `trading/`/`analyzing/` artifacts; a Qresev-framed
-`explaining/` video). `/donate` is out unless it implies returns; internal
-artifacts are out.
+**Scope:** spec § 3 (FINALIZED) — Qresev surfaces + any public surface
+evaluating stocks/portfolios/options with actionable framing; internal
+artifacts and a returns-free `/donate` are out.
 
 **FINANCIALLY-CLEARED iff (§ 4 of the spec):** the `financialRider` is present +
 adjacent to **every** TREND/MOMENTUM/OPTIONS-RISK/SECTOR/DRAWDOWN verdict token
@@ -269,13 +280,29 @@ guarantee" (never "safe"); `disclaimer.canon` is verbatim; the rider is
 **byte-equal** to the `disclaimer.financialRider` export across all faces, and
 the `description`-strip face is concession-safe standalone. Intra-app faces are
 asserted by `app.spec.ts`; cross-repo faces by the publishing `github_meta.py`
-lint. **Video payloads** with on-screen framework verdict tokens: the **full**
-rider is baked-persistent adjacent to every verdict/report frame (the abbreviated
-`an evaluation, not a recommendation` tag is **below floor**, R2) — and per
-signoff-framework § 3 **inv-7** (token/compute economy) this is checked at the
-**source layer** (`design.md` + verdict components) BEFORE the master render, on
-the **same tree the render reads** (a canonical-vs-worktree preflight mismatch
-wastes a render). See `[[feedback_gate_source_before_expensive_render]]`.
+lint. **Video payloads** with on-screen verdict tokens: full rider baked-persistent
+per the signoff-framework registry row + § 3 inv-7 (source-layer check, before
+the master render — `[[feedback_gate_source_before_expensive_render]]`).
+
+**A green mechanical gate is NOT a grant (load-bearing).** The scanners
+(`lib/scan_financial.sh`) and explaining's `phase0_preflight.py --rider-floor`
+prove rider *presence + byte-equality* only. Neither can see **CLEAR-5 (R10)** —
+binding each framework verdict token to a committed `accounting/` run-emit — which
+is a **judged** clause (skill § 5). `--rider-floor` also reads `_design.tsx` + a
+hand-maintained per-topic `VERDICT_COMPONENTS` list, never `design.md`, though
+`design.md` **is** a reviewed face whose sha enters `content_sha256`. 3.6
+`live-evaluator-walkthrough` is the worked counterexample: mechanically green,
+**BLOCKED** 2026-07-10 (`signoffs/2026-07-10-3.6-live-evaluator-walkthrough.md`).
+Necessary, never sufficient.
+
+**CLEAR-5 run-binding rule (video payloads).** A verdict token on a frame that
+**names an example run** binds to *that run's* emit; a token naming no run (a
+cameo, or a synthetic book) binds to the committed framework. `balance_sample`
+emits **four** frameworks / five judgments — no MOMENTUM (manifest: "not honestly
+provable here"), DRAWDOWN = `discipline_breached` — and **no example emits all
+five**. The correct on-screen grammar for an absent framework is 3.3
+`G6Triad33`'s three-valued cell (`pos` / `neg`+word / `none` = `— not claimed`,
+same weight as a verdict). See `[[project_cohort3_financial_signoff_rider_floor]]`.
 
 **Orthogonal to `pleading/` (load-bearing):** never a substitute for the
 litigation gate. Where both apply, a surface needs **both** clears; a green
@@ -283,7 +310,7 @@ litigation gate. Where both apply, a surface needs **both** clears; a green
 § 11.6). `evaluating/` is the **V8 owner/gate** in the messaging-hardening
 debate (`shorting/` prosecutes; `pleading/` retains the litigation vectors).
 
-## Status emit (`data/status/evaluating.json`)
+## 10. Status emit (`data/status/evaluating.json`)
 
 `evaluating/scripts/status_emit.py` writes the Qresev app-shell diagram +
 live-state to `data/status/evaluating.json` for the qagents-wide Status

@@ -20,35 +20,37 @@ The web shell never imports from `../proving/`. The server adapter
 reads its outputs. This honors the repo-root rule: web TS does not reach into
 Python kernels, and the kernel's layering invariants stay intact.
 
-## 2. Design bundle is read-only; regen workflow
+## 2. Design SoT + brand mechanism (Meridian since M4)
 
-`data/renders/verifying-design/` (under the qagents shared-data hub
-`data/renders/`) is the handoff bundle slot from Claude Design, regenerated
-wholesale. Never hand-edit. The `Qnarre App.html` prototype is the visual
-source of truth; `web/` is the production port.
-
-When re-syncing tokens.css from the bundle (run from the repo root):
-
-1. `cp data/renders/verifying-design/project/colors_and_type.css verifying/web/public/tokens.css`
-2. Normalize — the designing § 2 two-drift sweep, **mandatory**: replace the
-   raw retired-brand-name header with the provenance header already in the deployed
-   file, and delete the Google-Fonts CDN `@import` block (fonts are
-   self-hosted via `@fontsource` in `Layout.astro`). Shipping the raw copy
-   re-imports the banned brand string + the CDN-timing flake (rendering-spec
-   debate, ruling V2: `data/debates/rendering-spec-2026-06-09.md`).
-3. `pnpm -C verifying/web verify`
-
-Token *values* are identical to `designing/`'s normalized
-`web/src/styles/tokens.css` — Qnarre does not get its own palette.
-This per-consumer sweep retires when this bundle migrates to `rendering/`
-intake (its P4 slot — root CLAUDE.md § `data/renders/`). The brand-mark
-color difference (teal-only Qnarre BracketedQ vs. the umbrella's
-teal-left/amber-right) lives in the SVG props, not in tokens.
+**Since 2026-07-11 (web-unification M4) the web rides the Meridian layer,
+BRAND-VIA-HOST:** design SoT is the adopted CD-B bundle at
+`rendering/designs/verifying-web/` (10 sheets + ADOPTION.md floors; the old
+`data/renders/verifying-design/` bundle + its two-drift sweep are RETIRED for
+this site). Brand values never enter this tree: `web/scripts/sync-meridian.mjs`
+(predev/prebuild/prelint hooks) host-copies the W5 css layers from
+`code/web/css/meridian/`, the font trio from `rendering/brand/fonts/`, and
+composes the dual-signal `/meridian-tokens.css` from
+`rendering/brand/tokens/meridian/{light,dark}.css` — all gitignored under
+`public/`. `<body class="m-body m-app-qnarre">` binds the teal accent;
+tri-state theme (System | Light | Dark) via `@qagents/web/theme` +
+the shared TopNav's ThemeSegment (the `color-scheme: dark` meta is retired).
+Shared chrome/island shells come from `@qagents/web` (W2 TopNav/BracketedQ/
+DisclaimerCallout; W4 TraceRail/ConfBar/PredicatesTable/StructureView/
+ReportZone/useRunData) with copy injected from `src/content/copy.ts`
+(fail-loud); the F1/demoed gating + verdict⇄disclaimer SIBLING composition
+stay app-owned in `QnarreApp.tsx`.
 
 ## 3. Tokens are the only boundary for raw values
 
-Same rule as `designing/`. No hex colors / font strings / pixel literals
-outside `web/public/tokens.css`. Refer to `var(--token)` everywhere else.
+No hex colors / font strings outside the token-definition files
+(`public/tokens.css` — LAYOUT-ONLY since M4: spacing/type-size/motion/z —
+and the generated `public/meridian-tokens.css`). Refer to `var(--m-*)` /
+`var(--token)` everywhere else. Lint = the composed
+`code/web/scripts/lint-tokens.sh` + `web/lint-tokens.conf` (hex +
+font-family + derived-alpha ban + undef-var guard + retired-brand-name ban; the old
+`web/scripts/lint-tokens.sh` retired at M4). `public/graphs2/` stays
+excluded (disjoint kit-token namespace, R-T2) — the kit canvas + overlays
+are DARK in both legs; only page chrome flips.
 
 ## 4. Copy lives in one module
 
@@ -90,10 +92,8 @@ through `loadFrameworks()`. Adding a federal statute = one entry in
 v0.1 is **replay-only**. POST `/api/runs` body is `{example_id}` from a
 closed allow-list, narrowed to **synthetic examples only** under the F1
 thesis floor: `{sample, titlevi_sample}`. No `<live-matter>_*` example is
-replayable — those are the operator's actual dockets ("worked examples
-... not drawn from any live matter", `disclaimer.legalRider`; Round 04
-debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2). The
-static public build is stricter still — RICO-synthetic only
+replayable — live matter, per the F1 gate (§ 8).
+The static public build is stricter still — RICO-synthetic only
 (`web/src/lib/public-runs.ts`); the replay API also serves the synthetic
 Title VI sample. Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`),
 `ALLOWED_IDS` (`api.spec.ts`), AND `extending/servers/qnarre-mcp/src/allowlist.ts`
@@ -107,7 +107,7 @@ canonical `examples/<id>/` only — no per-job staging.
 
 Endpoints: `POST /api/runs` · `GET /api/runs` (allow-list with current
 verdicts + predicate counts) · `GET /api/runs/<id>/stream` (SSE events
-typed per `data/specs/proving-results-propagation-2026-05-09/SPEC.md` (adopted)
+typed per `data/specs/proving-results-propagation-2026-05-09/SPEC.md`
 § 5.4: `predicateResult` / `factsWritten` /
 `lakeBuildStarted` / `lakeBuildResult`) · `GET /api/runs/<id>/report` ·
 `GET /api/runs/<id>/graph` (consumed by the kit loader at
@@ -130,7 +130,7 @@ use for `documenting/`).
 Since 2026-06-11 the proof-graph surface renders via the domain-neutral
 **graphs-2 kit** from `visualizing/` (the unified kit-mount that also
 backs Qresev's strategy mount — visualizing spec
-`data/specs/visualizing-2026-06-03/graphs2-2026-06-07/SPEC.md` G6). Routes:
+`data/specs/visualizing-2026-06-03/graphs-2026-07-02/SPEC.md` G6). Routes:
 
 - `/proof-graph/` — lobby + cards linking to the two demos and the F1-gated
   live runs (see below).
@@ -159,7 +159,7 @@ incl. `rico-hier`). Both run pages' `getStaticPaths` AND the lobby's live-run
 scan call it; the same gate backs the `/app` island chips (non-demoed →
 "encoded · not demoed", no verdict/Boolean) and `LiveReportZone`. Round 04
 debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2; pleading/
-binding (cleared 2026-06-24 — `PLEADING-GATE-DECISION-2026-06-23.md` in the
+binding (cleared 2026-06-24 — `PLEADING-FINAL-GATE-2026-06-24.md` in the
 same spec family). The replay API is gated to the same floor (§ 7); residual
 (intentional): it also serves the synthetic non-RICO `titlevi_sample`.
 
@@ -196,11 +196,6 @@ Kit files live at `verifying/web/public/graphs2/`:
 3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs2/kit.js`
 4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs2/`
 5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
-
-**lint-tokens caveat.** `public/graphs2/` is excluded from
-`scripts/lint-tokens.sh` (both passes) — the kit bundle + the kit-owned
-token-overlay DEFINITIONS legitimately carry raw values, same exclusion
-class as Qresev's kit dir. Never hand-edit kit files to placate lint.
 
 **Empty-state overlay pointer-trap (check on any mount edit).** Scope the
 overlay to `.empty:not([hidden])` — a bare `.empty{display:flex}` defeats the
@@ -251,9 +246,11 @@ Spec partitioning:
   plus the F1 floor: RICO-only demoed (default chip), non-demoed chips render
   "encoded · not demoed" with no verdict/Boolean, the synthetic demo ends
   REJECT, and the disclaimer is a sibling of every verdict.
-- `api.spec.ts` — live-only; `ALLOWED_IDS` here mirrors
-  `ALLOWED_EXAMPLE_IDS` in `server/main.py` — both are exhaustive by
-  design, edit in lockstep.
+- `theme.spec.ts` — M4 Meridian tri-state theme (dual-signal flip both ways +
+  persistence, System clears the override, kernel-dark canvas in the light
+  leg per R-T2, Newsreader display ramp).
+- `api.spec.ts` — live-only; `ALLOWED_IDS` here is leg 2 of the § 7
+  allow-list lockstep triple.
 
 ## 10. Scope boundary
 

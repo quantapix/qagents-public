@@ -95,22 +95,30 @@ word boundary does **not** separate on `_`, so rule (D) uses explicit
 alphanumeric boundaries; the `publish.sh` content twin must be swept in
 lockstep if a `_`-delimited body token ever matters.
 
-**Memory-slice ruling (2026-07-10).** Drive Promise 1 advertises a weekly
-redacted mirror of `~/.claude/.../memory/`. It has **never been populated** —
-`qagents-public/memory/` holds only its README, and `sync_mirror.py` has no
-memory roster (the sweep is documented, never wired). So the 2026-07-10
-donating hint's dichotomy ("gate 1b is blocking, or these are live leak
-candidates") resolves to **neither**. 27 private memory files carry the barred
-family; 4 carry it in the filename. Ruling: **exclusion, not redaction** — an
-entry whose *subject* is the bar cannot be scrubbed of it and stay useful. When
-the roster is authored it MUST be a curated **allow-list** (opt-in), never a
-deny-sweep; rule (D) + gate (1b) make the pipeline fail-closed either way. The
-public README no longer claims a mirror that does not exist. And `sync` only *masks* an already-published
-leak (a superseding commit); the barred blobs survive in public git history until
-a **history rewrite + force-push** (orphan-reset when 0 forks/PRs) purges them —
-the GitHub analog of the S3-wipe. The gate is wired before the push and pinned by
-the companion test
-(`data/specs/publishing-2026-05-31/tests/cases/t_10_publish_gate.sh`).
+**cmux local-state bar (gate (1c) + rule (E), 2026-07-12).** Same twin shape as
+(1b)/(D), a different never-publishable class: the cmux session-coordinator lane
+bars machine-private local session-coordinator state (session telemetry —
+branch-bearing workspace names, transcript paths, cleartext prompt previews)
+and private worktree-path literals from every public surface. `publish.sh`
+gate **(1c)** is the fail-closed CONTENT grep; the `sync_mirror.py`
+path-blocklist rule **(E)** is the PATH twin, blocking the coordinator's
+local-state path segments a content grep can't see. Pinned by a companion
+regression test.
+Contract: `data/specs/extending-2026-07-13/cmux-coordinator-2026-07-12/SPEC.md` § 8.4 (publishing
+condition 1) — the lane is `extending/`-owned.
+
+**Memory-slice ruling (2026-07-10).** Drive Promise 1's weekly redacted memory
+mirror was **never populated** (`sync_mirror.py` has no memory roster; only its
+README ever shipped). Ruling: **exclusion, not redaction** — an entry whose
+*subject* is the bar can't be scrubbed of it and stay useful; if the roster is
+ever authored it MUST be a curated **allow-list** (opt-in), never a deny-sweep
+(rule (D) + gate (1b) fail-closed either way). `sync` only *masks* an
+already-published leak (superseding commit) — barred blobs survive in public git
+history until a **history rewrite + force-push** (orphan-reset when 0 forks/PRs)
+purges them (the GitHub analog of the S3-wipe). Forensic detail (file counts,
+README correction): memory `project_publishing_subproject`. Gate wired before
+push, pinned by
+`data/specs/publishing-2026-05-31/tests/cases/t_10_publish_gate.sh`.
 
 **The candidate tree is markdown, so the gate scans markdown.**
 `publishing/scripts/sync_mirror.py` Stage 3 applies the blocklist patterns as
@@ -127,11 +135,10 @@ stays wired after it as defense-in-depth (stray `*.pdf`). The resume tree
 pinned by `t_10_publish_gate.sh`.
 
 **`gh` does all GitHub work (2026-06-23).** `scripts/github_meta.py` is the single
-gh-centric arm: `sync` (content — `gh repo clone` → `rsync -aL` → commit →
-`git push` over gh's HTTPS credential helper; `SYNC_ROSTER` source map incl.
-`resume`; excludes `.git`/`CLAUDE.md`/`github-metadata.json`; org-profile
-top-level-only), `ensure` (existence), `apply` (metadata `gh repo edit`), `verify`.
-Repo description/homepage/topics are thesis-governed in `quantapix/github-metadata.json`
+gh-centric arm — `sync` (content) / `ensure` (existence) / `apply` (metadata
+`gh repo edit`) / `verify`; sync mechanics + `SYNC_ROSTER` source map +
+legacy-bridge supersession: `publishing/quantapix/CLAUDE.md` § 7. Repo
+description/homepage/topics are thesis-governed in `quantapix/github-metadata.json`
 — a `description` IS the GitHub OG card (strips its disclaimer), so it rides the
 SAME gate as README prose (`github_meta.py scan` = `sync_mirror` blocklist +
 `THESIS_LINT`, wired into `publish.sh` Phase 2c). `apply` mutates a public surface
@@ -139,10 +146,8 @@ SAME gate as README prose (`github_meta.py scan` = `sync_mirror` blocklist +
 reads `_status` (procedural/bookkeeping gate only — a real apply carries the flip
 same-session); metadata `apply` is cleanly separable from content `sync` (the
 Friday `/publish` push). The gate persists for future string changes — re-clear,
-flip `_status` back to DRAFT. The legacy `git push-quantapix` bridge is superseded
-for the `/publish` path (still exists for manual use — `serving/CLAUDE.md` § 9).
-Program: the Quantapix-Thesis-on-GitHub spec
-(`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/SPEC.md`).
+flip `_status` back to DRAFT. Program:
+`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/SPEC.md`.
 
 **FINANCIALLY-CLEARED (financial sign-off, 2026-06-24).** `evaluating/` is the
 sole grantor (advised by `accounting/`) of the financial-advice/securities gate —
@@ -158,7 +163,7 @@ the cross-repo half of the § 4 byte-equality check. Spec:
 - **Branch-as-lock.** `/open publishing` creates branch `publishing` + worktree
   `<root>-wt/publishing/`. Every Edit/Write `file_path` begins
   with that worktree root (canonical-edit hook,
-  `data/specs/open-close-dcu-2026-05-26/canonical-edit-hook-tightening-2026-05-28/SPEC.md`).
+  `data/charters/qagents/session-lifecycle/CHARTER.md` § 2.3).
 - **`data/status/publishing.json`** is written by `scripts/status_emit.mjs`, a
   fixed-path producer under `data/` — it acquires `.data-write-lock` per the
   universal manual-writer rule (root CLAUDE.md § "Shared-data write-lock") when
@@ -174,8 +179,8 @@ the cross-repo half of the § 4 byte-equality check. Spec:
 
 `scripts/status_emit.mjs` participates in the status contract (root CLAUDE.md
 § "Status hub"). Pins a `KIT_VERSION` constant (the producer's pin is the
-source of truth — 0.5.0 since the 2026-06-10 rendering widening; swept in
-lockstep on kit bumps). Four-state pill machine: `OK`
+source of truth — 0.7.0 since the kit widened `SubprojectId` to 24 for
+`developing/`; swept in lockstep on kit bumps). Four-state pill machine: `OK`
 (last `/publish` clean) / `BUILDING` (run in flight) / `DEGRADED` (last run
 aborted on the redaction/drift gate — privacy floor held, release stale) /
 `NOT_YET_LIVE` (pre-first-publish; first live push 2026-06-12). The pill
@@ -209,7 +214,8 @@ publishing/
 structured multi-agent pass that makes the public surfaces (quantapix.com,
 femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
 adversarial read. It is **instance one** of the generic debate framework
-(`data/specs/debate-framework-2026-06-09/SPEC.md`); its own contract:
+(`data/charters/qagents/debate/CHARTER.md`; absorbed from the
+`debate-framework-2026-06-09` family); its own contract:
 `data/specs/messaging-hardening-debate-2026-06-06/SPEC.md` (adopted 2026-06-06).
 
 - **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model subagent
@@ -217,10 +223,10 @@ adversarial read. It is **instance one** of the generic debate framework
   holds a binding litigation-safety veto on every ruling** (spec § 4, § 7 Q1).
 - **Lane:** Max-20x interactive, operator-run inside `/open publishing` (mirrors
   `/dco-manual`); the convener starts each round at v0.1. If the debate persists
-  past round 1, `managing/`'s daily cron stewards the recurring rounds (framework
-  § 6.2 — deferred, details TBD).
+  past round 1, `managing/`'s daily cron stewards the recurring rounds (debate
+  charter § 2.7 — deferred with the absorbed spec, details TBD).
 - **Round records** land in the shared hub
-  `data/debates/messaging-hardening-<date>.md` (tracked; framework § 4, spec-like
+  `data/debates/messaging-hardening-<date>.md` (tracked; debate charter § 2.2, spec-like
   `<slug>-<date>` naming — migrated 2026-06-09 out of the former
   `publishing/debates/<date>/round-NN-rulings.md`). These are **pre-gate triage**
   — per spec § 6 a ruling reaches the promoted digest
@@ -234,8 +240,7 @@ adversarial read. It is **instance one** of the generic debate framework
 `publishing/` is the producer-of-record for the @Quantapix video roster, so it
 **drives** the `designing/web` `/videos` page the same way `donating/` drives
 `/donate` — via a JSON hub, the only seam (no cross-subproject imports, root
-CLAUDE.md language split). Third instance of the data-hub-not-shared-code pattern
-(after `data/status/` and `data/donating/`).
+CLAUDE.md language split).
 
 - **Producer:** `publishing/scripts/videos_emit.mjs` → `data/publishing/videos.json`
   (schema + governance: `data/publishing/CLAUDE.md`). The 5×10 roster (titles +
@@ -292,7 +297,9 @@ CLAUDE.md language split). Third instance of the data-hub-not-shared-code patter
   5. **YouTube upload** (unlisted-first) → Studio altered-content toggle → public flip.
   6. **Live-flip:** `videos_emit.mjs` `status: 'live'` + fill `cdnUrl`/`youtubeUrl`,
      re-run; `explaining/` records the release in `meta.json` (the § 4 standing rule
-     there — explaining-owned, never publishing).
+     there — explaining-owned, never publishing). A `stats.live` change drifts
+     `designing/web`'s home stat-strip e2e literal (hub-fed at build time from
+     `data/publishing/videos.json`) — bump it in a `/open designing` session.
 
   **Site-thumb gotcha:** `designing/web/public/video-thumbs/<id>.png` is a
   SECOND, independently-deployed copy of the `rendering` `priority-10` render —
@@ -319,9 +326,7 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   every in-scope gate's `signoffs[<gate-id>]` names a record on disk — a promoted
   `data/messaging-rulings/<date>.md` (pleading grants) or an
   `evaluating-financial-signoff/signoffs/` record (evaluating grants, accounting
-  advises). publishing never self-grants. (4.2's FINANCIALLY record landed
-  2026-07-04 and it is live; the currently blocked slot is **3.6** — financial
-  scope, first-grant owed.) The MESSAGING half is the same § 11.2 floor the upload
+  advises). publishing never self-grants. The MESSAGING half is the same § 11.2 floor the upload
   sheets ride. The old single `clearedBy`/inert `financiallyCleared` fields are
   retired (R17 atomic-lockstep migration, 2026-06-30). **IGA enforcement (R7, landed
   2026-07-03):** when a cited record is an inline-operator grant (`granted_via:
@@ -331,8 +336,7 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   cron/SDK-lane refuse. Ceremony records (all shipped to date) + MESSAGING are a strict
   no-op. Also swept in `publish.sh` over each prose-lifted gate's `LEDGER.md`. Test
   `t_16_iga_enforcement.sh` (15). Owed: `github_meta.py` repo-content binding (needs the
-  evaluating-owned FINANCIALLY `LEDGER.md`, R1) + serving `upload-video.sh` sha emit.
-  (2) The synthetic-content
+  evaluating-owned FINANCIALLY `LEDGER.md`, R1). (2) The synthetic-content
   **altered-content disclosure has no API field** — it stays a manual Studio toggle
   per upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete on
   its own. A redaction/verb scan over `descriptions/` runs before any push.

@@ -43,6 +43,10 @@ least one of:
 If all three are NO → the artifact belongs in the originating
 subproject's own directory tree, not under `data/`.
 
+Ledger-shaped candidates (one shared file, many appenders) never pass
+this gate as files — they start as a shared-ledger-store table + rendered
+git projection (`data/specs/shared-ledger-store-2026-07-09/SPEC.md` § 2/§ 5).
+
 ## 3. Single-owner rule — what every `data/<X>/CLAUDE.md` carries
 
 Every top-level entry's `CLAUDE.md` states:
@@ -56,7 +60,7 @@ Every top-level entry's `CLAUDE.md` states:
    keys for JSON, file-layout convention for markdown bundles).
 5. **Refresh cadence** — manual / cron / per-session / per-commit.
 6. **Write-lock posture** — `.data-write-lock` acquired (manual
-   writers, per `data-conventions-2026-05-06.md` § 5.3) vs
+   writers, per `data/specs/data-conventions-2026-05-06/SPEC.md` § 5.3) vs
    `pending/`-mirrored (cron lane, per § 4) vs neither (read-only
    mirrors).
 
@@ -70,12 +74,13 @@ entry lands or an existing one's verdict flips.
 | Entry | Kind | Producer | CLAUDE.md |
 |---|---|---|---|
 | `agent-sdk-ledger/` | data-hub | `code/agent_sdk/qagents/agent_sdk/ledger.py` (append-only, per SDK call) | `data/agent-sdk-ledger/CLAUDE.md` |
+| `charters/` | convention-anchor | sessions — charters by ratifying debate + spec-lane amendment (`data/specs/data-charters-2026-07-16/SPEC.md` § 3.3/§ 4.4); migrated spec families/debate records by the owner-scope's `/open` session; `todos/` fix-requests by session/operator (charter-scopes-2026-07-16 § 4) | `data/charters/CLAUDE.md` |
 | `claude-settings/` | convention-anchor | manual `sources/*` → `scripts/claude-settings/build.py` | `data/claude-settings/CLAUDE.md` |
 | `claude-updates/` | convention-anchor | `scripts/close.sh` | `data/claude-updates/CLAUDE.md` |
 | `debates/` | convention-anchor | sessions (debate convener at `/close`); `managing/` cron once persistence lands | `data/debates/CLAUDE.md` |
 | `donating/` | data-hub | `donating/scripts/emit.mjs` | `data/donating/CLAUDE.md` |
-| `messaging-rulings/` | convention-anchor | `pleading/` gate pass (CLEARED digest promoted at `/close`) | `data/messaging-rulings/CLAUDE.md` |
-| `next-steps/` | convention-anchor | sessions (`scripts/close.sh --next-steps` gate, spec `open-close-dcu-2026-05-26.md` § 6) | `data/next-steps/CLAUDE.md` |
+| `messaging-rulings/` | convention-anchor | `pleading/` gate pass — CLEARED subset of `data/debates/messaging-hardening-<date>.md`, promoted at `/close` | `data/messaging-rulings/CLAUDE.md` |
+| `next-steps/` | convention-anchor | sessions (`scripts/close.sh --next-steps` gate, `data/charters/qagents/session-lifecycle/CHARTER.md` § 2.8) | `data/next-steps/CLAUDE.md` |
 | `publishing/` | data-hub | `publishing/scripts/videos_emit.mjs` (videos roster → `/videos`) | `data/publishing/CLAUDE.md` |
 | `renders/` | render-cache (render-cache → render-output transition; see `data/renders/CLAUDE.md`) | `rendering/` engines (migrated consumers) / designer handoff wholesale-regen (legacy bundles) | `data/renders/CLAUDE.md` |
 | `schedules/` | convention-anchor | manual (`launchd/install.sh` ROUTINES) | `data/schedules/CLAUDE.md` |

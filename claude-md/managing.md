@@ -41,16 +41,13 @@ commitment 6, and `dco-manual` cites the checker's #7.
    with zero commits in the trailing 3 days is a finding. Each daily plan
    names the next concrete artifact to land.
 4. **`quantapix.com/status` refresh every 3 days.** Any `data/status/<sub>.json`
-   slot older than 3 days is a finding. A live `Last-Modified` on
+   slot older than 3 days is a finding; a live `Last-Modified` on
    `https://quantapix.com/status/` older than 3 days is a separate finding
-   (deploy stale, not just emit stale). **Live-deploy-age is now the
-   load-bearing signal** (`data/specs/status-emit-cron-fleet-2026-06-22/SPEC.md`
-   § 7): the `qagents:status-emit-all` cron keeps every canonical slot fresh
-   daily, so the slot-age finding will essentially never fire — a live site
-   that stops being deployed would otherwise go unnoticed. Surface the live
-   `Last-Modified` deploy-age line in **every** daily report, not only when
-   it crosses 3 days. Report-only — managing stays observe-only; no
-   autonomous deploy.
+   (deploy stale, not just emit stale). **Live-deploy-age is the
+   load-bearing signal** (`data/charters/qagents/specs/status-emit-cron-fleet-2026-06-22/SPEC.md`
+   § 7 — the daily emit cron keeps slot-age nearly always green). Surface
+   the live deploy-age line in **every** daily report. Report-only —
+   managing stays observe-only; no autonomous deploy.
 5. **Donation-drive credibility (active 2026-06-01 → 2026-12-01).** Two
    probes anchored to `donating/drive.md`'s public promises. (a) **Promise-3
    liveness** — once `qnarre.quantapix.com` and `qresev.quantapix.com` are
@@ -63,17 +60,38 @@ commitment 6, and `dco-manual` cites the checker's #7.
    ledger-existence check can land sooner.
 6. **Spec hygiene + phase tally.** `scripts/specs-audit.sh` is the single
    source of truth (sections: SPECS phase tally / TESTS conformance /
-   LAYOUT lint / TMP proposal status / LEDGER manual-check reminders); its
-   thresholds and finding rules mirror `data/specs/CLAUDE.md` +
-   `data/tmp/CLAUDE.md` and move in lockstep with them. Every non-tally
-   finding it emits (`[in-flight]` > 14d, OVER-CAP, LAYOUT lint, stale /
-   adopted-orphan `tmp/`, post-2026-05-19 tests-dir shape, LEDGER
-   `PAST`/`DUE` rows — surface the note column verbatim) is a
-   **correctness** finding. New LEDGER rows are append-only entries in the
+   LAYOUT lint / CHARTERS data/charters/ lint / TMP proposal status /
+   LEDGER manual-check reminders); its thresholds and finding rules mirror
+   `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
+   `data/charters/qagents/spec-lifecycle/CHARTER.md` and move in lockstep
+   with them (script + `checker.md` commitment 5 + this roster land in ONE
+   change — data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16
+   § 6.1 for the multi-root + DEBATES/TODOS arms). Every non-tally
+   finding it emits (`[in-flight]` > 14d, OVER-CAP, LAYOUT lint, CHARTERS
+   lint — header parse failure is P1 — a scope-resident family with an
+   unshipped phase (R4 de-maturity; `owner-living-program`-declared
+   families are exempt unless a marker is un-roadmapped —
+   `residency.txt` + owner-living-program-2026-07-16 § 4), a
+   residency-validator V1–V5 / missing-Residency-header row, a `todos/`
+   header parse failure (P1), an `OPEN P1 charter defect`, a `stale P2
+   charter defect`, stale / adopted-orphan `tmp/`, post-2026-05-19
+   tests-dir shape, LEDGER `PAST`/`DUE` rows — surface the note column
+   verbatim) is a **correctness** finding; `charters-tally` rows
+   (carve-out registry count + globs, `todos (<scope>): N open`,
+   `debates (<scope>): N migrated`, `residency: N declared
+   living-program row(s)`) are tally-only. SPECS/TESTS/LAYOUT walk data/specs/ **and** every
+   `data/charters/<scope>/specs/` (scope rowids root-qualified). Layout
+   exemptions are data: the carve-out registry
+   (`data/charters/qagents/spec-lifecycle/carve-outs.txt`) + signoff dirs
+   derived from `.claude/skills/do-signoff/registry.tsv` — never prose,
+   never a second registry. New LEDGER rows are append-only entries in the
    script's `SPEC_LEDGER` TSV; the `owner` column powers
    `specs-audit.sh --owner <sub>` (pinned by `scripts/tests/`). The daily
    tally rides in `checks/<date>.md` as `## Uncompleted spec phases` +
-   `## tmp/ proposal status` + `## Spec ledger reminders` (see § 8).
+   `## tmp/ proposal status` + `## Spec ledger reminders` + `## Charters`
+   (see § 8). The same linter also fires pre-landing: `/close` runs
+   `specs-audit.sh --lint-paths` on session-touched SPEC.md/CHARTER.md
+   files (close.sh exit 45).
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
    (regenerate via `scripts/claude-settings/build.py`). Hand-edit drift only;
@@ -82,6 +100,44 @@ commitment 6, and `dco-manual` cites the checker's #7.
    truth; `drift=YES` (a `KIT_VERSION` producer pin or the loader off the kit
    `package.json` version — the silent same-major class) is a **correctness**
    finding.
+9. **Cron-seat capability + roster + posture.** `scripts/seat-drift.sh` is the
+   source of truth (wraps `data/schedules/launchd/seat_preflight.sh`; bit-field
+   exit 1=capability, 2=roster). Three facts, ranked differently:
+   - `capability=GAPS` **on the seat holder** → **functionality**, highest
+     severity: the host that is supposed to work cannot, and those fires refuse
+     at fire time with `exit=72`. The seat gate proves *exclusivity* (at most one
+     host fires) and says **nothing** about *capability* — `SEAT` flips from an
+     iPhone by design, and the tape + creds are gitignored, so they never arrive
+     with a `git pull`. Gaps **off** the holder are a readiness report about a
+     future flip: echo, never promote.
+   - `roster=DRIFT` → **correctness**. A routine declared in `ROUTINES` with no
+     plist **never fires and writes no log** — and "no log" is indistinguishable
+     from "not scheduled today", which is exactly why commitment 6 cannot see it.
+     **The checker only sees what FIRES; this is the one check that looks at what
+     didn't.** (`monitoring:archive-scan`: declared 2026-07-11, never installed,
+     never fired, every morning green.) Fix is `install.sh --enable` on the holder.
+   - `posture=OFF-POSTURE-STALE` (≥ 7d off Posture A) → **correctness**; bare
+     `OFF-POSTURE` is tally-only.
+   Spec: `data/specs/node-return-lane-2026-07-14/SPEC.md` § 2, § 6.1, § 10 Q2.
+10. **Node-PR staleness.** `scripts/node-pr-staleness.sh` is the source of
+   truth (observe-only — reads EXISTING `refs/remotes/{qblk,qred}/<node>/*`
+   remote-tracking refs, roster-scoped via `serving/local-network/nodes.txt`,
+   never fetches by default). An unmerged node PR older than 7 days
+   (`stale=YES`) → **consistency** finding — a waiting contributor, not a
+   broken system; everything else is tally-only. Answered via `/pull <subproj>`
+   (or a first-class rejection note back to the node); merged leftovers are
+   `scripts/pull.sh --tidy`'s job post-push-all. Spec:
+   `data/specs/data-charters-2026-07-16/SPEC.md` § 6.2 step 7 (AUDIT-C4).
+
+11. **Flow-clause hygiene (tree-wide safety net).** `scripts/flow-lint.sh` is
+   the source of truth (wraps `python -m qagents.flow_graph lint` at
+   canonical — the SAME engine `close.sh --flow-lint` shells to; grammar
+   owner `data/specs/flow-graph-2026-07-16/SPEC.md` § 3/§ 7 Arm 2). Any HARD
+   line → **correctness** finding; the load-bearing shape is a dangling
+   `ns:` target — slot X resolved a blocker while untouched slot Y still
+   cites it, which the close-time gate cannot see. Advisory lines (near-dup
+   slugs, missing bold leads) + the trailing summary are tally-only.
+   Observe-only: route fixes to the citing slot's owner session.
 
 Subagent prompts under `.claude/agents/` encode these commitments verbatim —
 keep them in sync when a threshold changes.
@@ -92,9 +148,7 @@ The 06:00 cron fires a single coordinator that spawns three top-tier-model subag
 one Haiku subagent in parallel, each with a clean context. Each subagent owns
 exactly one output file (verifier owns two — see below) and writes them
 directly to disk. The coordinator only sees their one-line completion
-confirmations — **no accumulated context bleed from their work**. This is the
-same fork-isolation lever memsearch uses for recall, applied to the watcher's
-four concerns.
+confirmations — **no accumulated context bleed from their work**.
 
 | Subagent | Model | Output | Inputs | Notes |
 |---|---|---|---|---|
@@ -158,10 +212,8 @@ spec-phase stalls / OVER-CAP, SDK-credit references, and the
 DORMANT in the verifier internal-set + `verify-pending.sh`). This is a
 reversible, dated directive — drop the suppression and re-enable the scans
 when a new subscription/SDK plan ships. See memory
-`reference_agent_sdk_credit_200_mo`. The root-cause revert — dropping the
-`:sdk` token from `managing:daily` in `install.sh` ROUTINES — was applied
-2026-06-30; the routine now runs the `claude --print` lane (§ 7 owns the
-current lane status + restore path).
+`reference_agent_sdk_credit_200_mo`. (Revert applied 2026-06-30; § 7 owns
+lane status + restore path.)
 
 ## 4. Functionality probes — random, weighted
 
@@ -200,7 +252,7 @@ inside the relevant subproject — not in the cron output.
 A `/open managing` session is a normal qagents session. It reads
 any file under the tree, edits managing/'s own surface, and may
 contribute to shared-data conventions — `data/tmp/<slug>-<date>{,.md}`
-spec drafts, `data/specs/<slug>-<date>.md` promotions,
+spec drafts, `data/specs/<slug>-<date>/SPEC.md` promotions,
 `data/claude-updates/<branch>.md` cross-subproject hints. Commits
 land through `/close`'s audit gate (close.sh), not via ad-hoc
 Claude-issued `git commit` calls — the deny on `Bash(git commit:*)`
@@ -228,8 +280,7 @@ plus its own dated outputs
 `.pending.json` sidecar), ONLY with the message prefix
 `[managing] verify <DATE>:` (or `[managing] daily <DATE>:` for the
 own-outputs lane), AND ONLY while holding the canonical
-`.data-write-lock` (root-anchored, gitignored — same shape as
-`.dot-claude-write-lock`) for the promotion lanes.
+`.data-write-lock` for the promotion lanes.
 
 The exception lives entirely inside `data/schedules/launchd/verify-pending.sh`
 — that script is the single audit surface. The four-subagent fan-out
@@ -280,20 +331,14 @@ Cron-fired daily at 06:00 local via the qagents launchd scheduler at
 `data/schedules/`. Registered as `com.qagents.managing-daily`; spec row in
 `data/schedules/cron_triggers.md`; ROUTINES entry
 `managing:daily:06:00:0,1,2,3,4,5,6` in `data/schedules/launchd/install.sh`.
-**The `:sdk` token was removed 2026-06-30** (SDK lane paused indefinitely
-2026-06-15; `:sdk` fleet reverted 2026-06-30; gate on SDK access returning —
-root § Agent SDK lane owns status). The routine runs the `claude --print` lane
-until then; restore the trailing `:sdk` (Agent SDK lane,
-`data/specs/agent-sdk-adoption-2026-05-17/SPEC.md` Phase 3) via
-`install.sh --enable` from canonical when access returns. See § 3.1 + memory
-`feedback_managing_suppress_sdk_findings`.
-The fired routine is the coordinator prompt at
-`managing/.claude/coordinator-prompt.txt` — `data/schedules/launchd/run_routine.sh`
-reads the sidecar and either pipes it to `claude --print` (legacy lane) or
-invokes `python -m qagents.agent_sdk.cron` (SDK lane, when
-`QAGENTS_DISPATCH=sdk_task` is baked into the plist). The coordinator runs
-the four subagents (three top-tier + one Haiku verifier) in parallel and exits.
-Estimated runtime budget: ≤ 10 min total (subagents wrap independently).
+**The `:sdk` token was removed 2026-06-30** — SDK lane parked; root
+CLAUDE.md § Agent SDK lane owns status + restore path (re-append `:sdk`,
+then `install.sh --enable` from canonical). § 3.1 owns the
+suppressed-finding class. The fired routine is the coordinator prompt at
+`managing/.claude/coordinator-prompt.txt`, piped to `claude --print` by
+`data/schedules/launchd/run_routine.sh`. The coordinator runs the four
+subagents (three top-tier + one haiku verifier) in parallel and exits;
+runtime budget ≤ 10 min (subagents wrap independently).
 Per-run cost cap is **$9 USD** (`MAX_BUDGET_USD` defaults to `9.00` for
 `daily`; `3.00` for trading routines).
 
@@ -302,14 +347,39 @@ the cowork sandbox VM cannot mount the qagents tree, and that path was
 abandoned 2026-04-25 (see `data/schedules/Notes.md` § "Why not RemoteTrigger
 / `/schedule`?").
 
-**Cron-EC2 lane** (`data/specs/cron-ec2-migration-2026-05-19/SPEC.md`) is jointly
-implemented: `serving/` owns the AWS-facing infrastructure (Phase 0a — CDK
-deltas, `serving/scripts/ec2-cron/`, deploy script; tracked as
-`data/specs/serving-2026-05-26/SPEC.md § 10 Phase 7`); `managing/` owns the laptop-side coordination
-(`data/schedules/launchd/cron-pull.sh` + `enable-laptop-cron.sh`, the
-`install.sh --target=ec2` switch, the `managing/.claude/agents/checker.md`
-ledger scan), plus Phase 1's daily+status-emit shadow week. Don't touch AWS state from a `managing/`
-session — open a `serving/` session if a drift surfaces.
+### 7.1 The cron lane is SEAT-GATED and MOBILE (2026-07-14)
+
+Spec: `data/specs/node-return-lane-2026-07-14/SPEC.md`; memory
+`project_mobile_cron_seat`. The lane runs on **exactly one laptop at a time** —
+`qyel` or `qpur`, the only two hosts with a "head" (headless boxes cannot hold a
+Claude subscription seat). `data/schedules/SEAT` names the holder;
+`run_routine.sh :: assert_seat_holder` **freshly reads it from the `github`
+authority before every fire** and refuses otherwise.
+
+Three consequences that bind `managing/`:
+
+- **A non-holder logs `exit=0 skipped=not-seat-holder`.** That is a no-op, **not a
+  failure** — the checker's non-zero-exit scan must never score it as one.
+- **`.data-write-lock` does not provide the exclusion.** A filesystem sentinel
+  cannot span machines: two laptops each take their own copy and both believe they
+  are exclusive. The SEAT value is the exclusion; the lock only serializes writers
+  *within* the seat holder.
+- **`managing:daily` rides the seat** (it needs the lock + the canonical repo, and
+  those travel). A watcher on the machine that is not firing watches nothing. This
+  is a declared amendment to herdr's M7.
+
+**Bootstrap trap:** the gate reads `SEAT` from `github/main`, never the local file.
+A merge that is not **pushed** leaves the authority without `SEAT` → every routine
+on every host refuses. Order is merge → push → verify
+`git ls-tree github/main data/schedules/SEAT` is non-empty. `/close` does not push.
+
+**Cron-EC2 lane** (`data/specs/cron-ec2-migration-2026-05-19/SPEC.md`) is **dead, not
+deferred.** aws-1 is headless, so it can never run a subscription-billed Claude
+routine, and no `ANTHROPIC_API_KEY` exists. Phases 1–5 (managing shadow → per-PM
+rollout → *laptop retirement*) are superseded by the seat spec: the lane never leaves
+the laptops; it moves between them. The `pending/cron-ec2/` promotion lane in
+`verify-pending.sh` still works and is harmless — leave it. Don't touch AWS state from
+a `managing/` session; open a `serving/` session if drift surfaces.
 
 ## 8. Voice + format for output .md files
 
