@@ -77,17 +77,17 @@ entry lands or an existing one's verdict flips.
 | `charters/` | convention-anchor | sessions — charters by ratifying debate + spec-lane amendment (`data/specs/data-charters-2026-07-16/SPEC.md` § 3.3/§ 4.4); migrated spec families/debate records by the owner-scope's `/open` session; `todos/` fix-requests by session/operator (charter-scopes-2026-07-16 § 4) | `data/charters/CLAUDE.md` |
 | `claude-settings/` | convention-anchor | manual `sources/*` → `scripts/claude-settings/build.py` | `data/claude-settings/CLAUDE.md` |
 | `claude-updates/` | convention-anchor | `scripts/close.sh` | `data/claude-updates/CLAUDE.md` |
-| `debates/` | convention-anchor | sessions (debate convener at `/close`); `managing/` cron once persistence lands | `data/debates/CLAUDE.md` |
+| `debates/` | convention-anchor | sessions (debate convener at `/close`) | `data/debates/CLAUDE.md` |
 | `donating/` | data-hub | `donating/scripts/emit.mjs` | `data/donating/CLAUDE.md` |
 | `messaging-rulings/` | convention-anchor | `pleading/` gate pass — CLEARED subset of `data/debates/messaging-hardening-<date>.md`, promoted at `/close` | `data/messaging-rulings/CLAUDE.md` |
-| `next-steps/` | convention-anchor | sessions (`scripts/close.sh --next-steps` gate, `data/charters/qagents/session-lifecycle/CHARTER.md` § 2.8) | `data/next-steps/CLAUDE.md` |
+| `next-steps/` | convention-anchor | `python -m qagents.ledger render-next-steps` — GENERATED renders of `ledger.ns_item_event`; writes via the `ns-*` verbs, gated by `scripts/close.sh --next-steps` (session-lifecycle charter § 2.8; `templates/` + `terminals/` stay hand-edited) | `data/next-steps/CLAUDE.md` |
 | `publishing/` | data-hub | `publishing/scripts/videos_emit.mjs` (videos roster → `/videos`) | `data/publishing/CLAUDE.md` |
 | `renders/` | render-cache (render-cache → render-output transition; see `data/renders/CLAUDE.md`) | `rendering/` engines (migrated consumers) / designer handoff wholesale-regen (legacy bundles) | `data/renders/CLAUDE.md` |
 | `schedules/` | convention-anchor | manual (`launchd/install.sh` ROUTINES) | `data/schedules/CLAUDE.md` |
 | `signoffs/` | convention-anchor (**slot hub** — single-owner per `<gate-id>/` slot, the `status/` pattern) | sessions via `/do-signoff` — each gate's sole grantor writes its own slot | `data/signoffs/CLAUDE.md` |
 | `specs/` | convention-anchor | manual (session-promoted from `data/tmp/`) | `data/specs/CLAUDE.md` |
 | `status/` | status-emit | per-sub `scripts/status_emit.*` | `data/status/CLAUDE.md` |
-| `summaries/` | convention-anchor | `scripts/close.sh` | `data/summaries/CLAUDE.md` |
+| `summaries/` | convention-anchor | `scripts/{close,dcu,dco}.sh` + axiomatization-lane drivers (full roster in the stub) | `data/summaries/CLAUDE.md` |
 | `tmp/` | convention-anchor | sessions (in-flight specs) | `data/tmp/CLAUDE.md` |
 | `visualizing/` | data-hub | `visualizing/extractor/*.py` (Phase 1) → `dau`/`dat` driver-emit (Phase ≥3) | `data/visualizing/CLAUDE.md` |
 

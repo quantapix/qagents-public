@@ -23,15 +23,14 @@ sees `financial/` parquet and the adapter's subprocess outputs.
 
 **Since 2026-07-11 (web-unification M4) the web rides the Meridian layer,
 BRAND-VIA-HOST:** design SoT is the adopted CD-B bundle at
-`rendering/designs/evaluating-web/` (Qresev slice + ADOPTION.md floors; the
-old `data/renders/evaluating-design/` bundle + its two-drift sweep are
-RETIRED for this site). Brand values never enter this tree:
+`rendering/designs/evaluating-web/` (Qresev slice + ADOPTION.md floors;
+supersedes `data/renders/evaluating-design/`). Brand values never enter this tree:
 `web/scripts/sync-meridian.mjs` (pre-hooks) host-copies the W5 css layers
 from `code/web/css/meridian/`, the font trio from `rendering/brand/fonts/`,
 and composes the dual-signal `/meridian-tokens.css` from the rendering SoT —
 all gitignored under `public/`. `<body class="m-body m-app-qresev">` binds
-the copper accent; tri-state theme via `@qagents/web/theme` (the
-`color-scheme: dark` meta retired). Shared chrome/island shells come from
+the copper accent; tri-state theme via `@qagents/web/theme`. Shared
+chrome/island shells come from
 `@qagents/web` (W2 TopNav/BracketedQ/DisclaimerCallout; W4 TraceRail/ConfBar/
 PredicatesTable/StructureView/ReportZone/useRunData) with copy from
 `src/content/copy.ts` (fail-loud); app-owned and non-extractable: the
@@ -43,45 +42,26 @@ keep the fails treatment with ✗; the financialRider's per-leg visibility +
 adjacency is asserted in `tests/e2e/theme.spec.ts`. Token boundary: no raw
 values outside `public/tokens.css` (LAYOUT-ONLY since M4) + the generated
 `public/meridian-tokens.css`; lint = the composed
-`code/web/scripts/lint-tokens.sh` + `web/lint-tokens.conf` (old
-`web/scripts/lint-tokens.sh` retired).
+`code/web/scripts/lint-tokens.sh` + `web/lint-tokens.conf`.
 
-**Bundle-mounting pattern — RECOMPOSED strategy mount.**
-`evaluating/web/public/graphs2/` mirrors `verifying/CLAUDE.md` § 8 (kit-owned
-files, regen-wholesale, app-owned `pages.css` + never-fold `loader.js`,
-head-slot linkage, re-sync recipe) with these deltas: `kit.js`
-regen-wholesale from `visualizing/graphs/dist/kit-strategy.js` — graphs
-DAG + `@qagents/charts` overlays/side-view + the `@qagents/compose` router
-under one `QViz` global; plus `tokens-chart.css` (from
-`visualizing/charts/kit/`). `loader.js` exposes `StrategyKit.mountRun({host,
-overlayLayer, sideHost, graph, report, runId})`: mounts the DAG, backs the
-router's opaque `RegionSource` with the `KitMount`
-(regions/onLayout/onTapLeaf), adapts report.json → the charts `QReport` (only
-predicates carrying `extras` yield overlay tiles), injects `resolveBars` =
-`GET /api/runs/<id>/bars` (§ 6), preserves the
-`postMessage({type:'sc:predicate-selected', sel})` contract for the `/app`
-REPORT zone, and sets `body[data-ready]`. Per-run pages at
-`web/src/pages/strategy-chart/run/[id]/`. The dist is gitignored
-canonical-only and lags after a visualizing `/close` — **rebuild at canonical
-first**, then cp; verify the re-sync **behaviorally**
-(`window.__G2M__.counts()` / `expandAll()`), not by grep. Parity gate vs the
-fused render is structural — e2e asserts the full report predicate set on the
-DAG + the selection round-trip.
+**Bundle-mounting pattern — RECOMPOSED strategy mount.** Full recipe for
+**re-hosting the strategy mount** — `StrategyKit.mountRun` signature,
+`KitMount`↔compose-router `RegionSource` wiring, `report.json`→charts
+`QReport`, `resolveBars` = `GET /api/runs/<id>/bars` (§ 6), the
+`postMessage` REPORT-zone contract, per-run pages, and the behavioral
+re-sync check + structural parity gate — lives in memory
+`project_proof_graph_kit_mount_pattern` Instance 2. Mirrors
+`verifying/CLAUDE.md` § 8; the dist is gitignored canonical-only and lags a
+visualizing `/close`, so **rebuild at canonical first**, then cp.
 
-**`tokens-*.css` and `kit.js` are a LOCKSTEP pair — re-copy both or neither.**
-A lifted token overlay is **inert** if this mount's `kit.js` predates the
-consumer that reads the token: an undefined custom property resolves to `''` and
-the kit falls through to its `||` fallback. Nothing catches this — `pnpm verify`
-(typecheck + lint + build) relates a `public/` CSS file to a `public/` JS blob
-not at all; both are opaque static assets. Bit us 2026-07-14: visualizing lifted
-`--chart-overlay-projected` + `--edge-{feedback,veto}` byte-perfect, and all
-three stayed dead against a stale `kit.js` — the projected ghost rendering in the
-ACTUAL SERIES COLOR on a financial surface. Verify by asking the **live mount**
-what it computed (`getComputedStyle(document.documentElement)` under `pnpm
-preview`), never by asking the build whether it succeeded.
-`[[feedback_two_token_mirrors_ship_two_palettes]]`
+**`tokens-*.css` and `kit.js` are a LOCKSTEP pair — re-copy both or neither**
+(root § Kit-mount pattern owns the generic inert-overlay mechanism). It bit us
+here 2026-07-14 — a projected ghost in the ACTUAL SERIES COLOR on a financial
+surface. Verify by asking the **live mount** what it computed
+(`getComputedStyle(document.documentElement)` under `pnpm preview`), never the
+build. `[[feedback_two_token_mirrors_ship_two_palettes]]`
 
-**lint-tokens caveat** — `public/graphs2/` is excluded via
+**lint-tokens caveat** — `public/graphs/` is excluded via
 `web/lint-tokens.conf` `EXCLUDE_DIRS` (disjoint kit-token namespace);
 never hand-edit kit files to placate the lint.
 
@@ -99,9 +79,8 @@ per-run static pages via `getStaticPaths`, three-tab REPORT zone with
 `?id=<runId>` showing Predicates / Structure / Strategy-graph). The
 contracts come from `data/specs/proving-results-propagation-2026-05-09/SPEC.md`;
 the worked references live at `verifying/CLAUDE.md` §§ 5, 7, 8 and the
-evaluating-instance detail (`loader.js` schema adapter + the
-`postMessage({type: 'sc:predicate-selected', sel})` selection forwarding)
-is pinned in memory `project_proof_graph_kit_mount_pattern` Instance 2.
+evaluating-instance detail (§ 2's `loader.js` schema adapter + selection
+forwarding) is pinned in memory `project_proof_graph_kit_mount_pattern` Instance 2.
 Structure-tab failure-loci block falls back to `kernel.errors[].raw`
 when `termHasType` is empty.
 
@@ -123,7 +102,9 @@ The UI itself refuses to construct any options leg outside the allow-list
 (long calls/puts, debit spreads, covered calls, protective puts). This
 matches the qagents brand-level invariant from
 `trading/shared/skills/options-risk/SKILL.md` and is enforced visually on
-`/app` and `/frameworks` (allow-list in teal, refused-list in amber).
+`/app` and `/frameworks` — Meridian copper-wash for the allow-list, fails-wash
++ ✗ for refused legs (§ 2 R-T2; the legacy `.teal`/`.amber` class names survive
+only as pinned e2e selector anchors).
 
 ## 5. Frameworks scope
 
@@ -146,14 +127,10 @@ v0.1 is **replay-only for POST** (sibling parity with verifying/). POST
 (`balance_sample` is the brand-anchor — 4 frameworks since the
 2026-06-03 MOMENTUM drop; see its manifest comment); the adapter shells
 `extract_facts.py --stub` against `accounting/examples/<id>/`,
-overwriting `{report,graph,loci}.json` in place. accounting/'s driver
-carries `--reuse-facts` + `--build` (proving parity), but `--stub` stays the
-replay mode — cost-free predicate values, instant canned Bools against the
-committed manifest. Driver also honors a per-call `inputs.stub: true`
-override that forces stub on a single predicate even when global
-`--stub` is off — additive. The driver then invokes **real** `lake build
-examples.<id>.proof` (not `lake env lean`) so the kernel verdict is
-genuine. Stub values are seeded from the example's committed `facts.json`,
+overwriting `{report,graph,loci}.json` in place. `--stub` is the replay
+mode — cost-free predicate values, instant canned Bools against the committed
+manifest. The driver then invokes **real** `lake build examples.<id>.proof`
+(not `lake env lean`) so the kernel verdict is genuine. Stub values are seeded from the example's committed `facts.json`,
 keyed on `(spec, lean_call)`, whenever the adapter passes `--example-id` (it
 does) — so a replay is value-faithful to the real Opus run that produced the
 golden. If the kernel
@@ -189,12 +166,9 @@ Local dev: `astro dev` on `:4322` + `uvicorn` on `:8788`. Prod: static shell
 on S3+CloudFront at `qresev.quantapix.com`, server on EC2 behind Caddy at
 `api.qresev.quantapix.com` (per `data/specs/serving-2026-05-26/SPEC.md` § 2 decision 3).
 
-**Static-shell deploy** — bucket `qresev.quantapix.com`, CloudFront
-`E2PFH4Z95BT169`, wildcard `*.quantapix.com` cert. Invocation:
-`aws-vault exec qagents-deploy -- pnpm -C evaluating/web deploy`
+**Static-shell deploy** — `aws-vault exec qagents-deploy -- pnpm -C evaluating/web deploy`
 (rides `serving/scripts/deploy-site.sh` + `serving/sites/qresev.quantapix.com.env`).
-Single managed IAM policy at `serving/policies/qagents-deploy.json`.
-Cross-site contract in `serving/CLAUDE.md` § 8.
+Bucket/cert, CloudFront, IAM policy, cross-site contract: `serving/CLAUDE.md` § 8.
 
 **e2e (Playwright).** Suite at `evaluating/web/tests/e2e/` on **port 4324**;
 stack shape is the root-CLAUDE.md § Playwright contract. Live mode:
@@ -210,13 +184,17 @@ Spec partitioning:
 - `frameworks.spec.ts` — locks the accounting/-derived 5-row taxonomy
   contract. `EXPECTED_FRAMEWORKS` mirrors `FRAMEWORK_META` in
   `web/src/lib/frameworks.ts` — edit both in lockstep when a framework
-  lands. Predicate counts use a floor (`minPreds`).
+  lands. Predicate counts use a floor (`minPreds`). `FRAMEWORK_META` is
+  also a declared audit-time comparison source for analyzing's
+  vocab-audit lockstep scan (workflow-coverage E-U1) — renames/refactors
+  of that file's shape fail-loud downstream (the scan errors on an empty
+  harvest), so breakage is visible, not silent.
 - `strategy-chart.spec.ts` — recomposed kit-mount (`data-ready` +
   cytoscape canvas) on three spot-check runs
   (`balance_sample`/`hawk_sample`/`single_ticker_sample`) + the
   structural parity gate (report predicate set ↔ DAG nodes) + the
   `sc:predicate-selected` round-trip + `<head>` linkage of the
-  graphs2 CSS set.
+  graphs CSS set.
 - `app.spec.ts` — `client:only` island hydration, 5-chip set + click +
   the OPTIONS-RISK lock panel.
 - `api.spec.ts` — live-only; `ALLOWED_IDS` mirrors `ALLOWED_EXAMPLE_IDS`
@@ -258,7 +236,16 @@ financial decision. `evaluating/` is the **sole grantor**; `accounting/`
 spec's **§ 9 sign-off ledger** (`data/specs/evaluating-financial-signoff-2026-06-24/signoffs/<date>-<subject>.md`),
 kept in evaluating's own family — never in `pleading/`'s `messaging-rulings/` (the
 § 5 orthogonality). First entry: `signoffs/2026-06-30-4.1-ta-bestiary.md`. A consumer
-cites it (manifest + release commit) before any public push. The generic version of
+cites it (manifest + release commit) before any public push. A record's
+`payload.content_sha256` is a **roll-up over the record's `faces[]` table** — one
+level up from `data/publishing/push-ledger.jsonl`'s same-named field (which hashes
+the pushed binary itself); never join the two by field name (studying L-127;
+wording precedent: `studying/scripts/extract_signoff_facts.py` header). **The `serving/scripts/upload-video.sh`
+gate binds EVERY episode, financial or not** — a non-financial (T1/T2) episode is blocked at CDN
+push without a record just the same (1.2 semantic-search-limits was blocked until its record
+landed). So non-financial episodes must file a **verified-N/A** `/do-signoff FINANCIALLY <subject>`
+proactively (record disposition = CLEARED, scope = "out of § 3 financial scope"), rather than
+discovering the block at upload time. The generic version of
 this machinery is **ADOPTED**: the `/do-signoff <gate> <subject>` skill
 (`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing instance,
 resolver refuses unless the session IS the grantor) over the governance-layer spec
@@ -271,38 +258,29 @@ verification (studying S-T10 `SignoffCoverage`). Grant a FINANCIALLY surface wit
 evaluating stocks/portfolios/options with actionable framing; internal
 artifacts and a returns-free `/donate` are out.
 
-**FINANCIALLY-CLEARED iff (§ 4 of the spec):** the `financialRider` is present +
-adjacent to **every** TREND/MOMENTUM/OPTIONS-RISK/SECTOR/DRAWDOWN verdict token
-(not just an intro); no actionable-counsel language ("advice"/"recommendation"/
-"buy"/"sell"/"should"/return-promise/"guarantee" — the rider's own *negated*
-uses are exempt); the allow-list is framed "a kernel refusal, not a safety
-guarantee" (never "safe"); `disclaimer.canon` is verbatim; the rider is
-**byte-equal** to the `disclaimer.financialRider` export across all faces, and
-the `description`-strip face is concession-safe standalone. Intra-app faces are
-asserted by `app.spec.ts`; cross-repo faces by the publishing `github_meta.py`
-lint. **Video payloads** with on-screen verdict tokens: full rider baked-persistent
-per the signoff-framework registry row + § 3 inv-7 (source-layer check, before
-the master render — `[[feedback_gate_source_before_expensive_render]]`).
+**FINANCIALLY-CLEARED iff:** the criteria are spec § 4-owned
+(`data/specs/evaluating-financial-signoff-2026-06-24/SPEC.md`). The two an
+evaluating session must not regress in-app: the `financialRider` is present +
+adjacent to **every** framework verdict token (not just an intro), and the
+allow-list is framed "a kernel refusal, not a safety guarantee" (never "safe").
+Intra-app faces asserted by `app.spec.ts`; cross-repo by the publishing
+`github_meta.py` lint.
 
 **A green mechanical gate is NOT a grant (load-bearing).** The scanners
 (`lib/scan_financial.sh`) and explaining's `phase0_preflight.py --rider-floor`
 prove rider *presence + byte-equality* only. Neither can see **CLEAR-5 (R10)** —
 binding each framework verdict token to a committed `accounting/` run-emit — which
-is a **judged** clause (skill § 5). `--rider-floor` also reads `_design.tsx` + a
-hand-maintained per-topic `VERDICT_COMPONENTS` list, never `design.md`, though
-`design.md` **is** a reviewed face whose sha enters `content_sha256`. 3.6
-`live-evaluator-walkthrough` is the worked counterexample: mechanically green,
-**BLOCKED** 2026-07-10 (`signoffs/2026-07-10-3.6-live-evaluator-walkthrough.md`).
-Necessary, never sufficient.
+is a **judged** clause (skill § 5). 3.6 `live-evaluator-walkthrough` is the
+worked counterexample: mechanically green, **BLOCKED** 2026-07-10
+(`signoffs/2026-07-10-3.6-live-evaluator-walkthrough.md`). Necessary, never
+sufficient.
 
-**CLEAR-5 run-binding rule (video payloads).** A verdict token on a frame that
-**names an example run** binds to *that run's* emit; a token naming no run (a
-cameo, or a synthetic book) binds to the committed framework. `balance_sample`
-emits **four** frameworks / five judgments — no MOMENTUM (manifest: "not honestly
-provable here"), DRAWDOWN = `discipline_breached` — and **no example emits all
-five**. The correct on-screen grammar for an absent framework is 3.3
-`G6Triad33`'s three-valued cell (`pos` / `neg`+word / `none` = `— not claimed`,
-same weight as a verdict). See `[[project_cohort3_financial_signoff_rider_floor]]`.
+**CLEAR-5 run-binding rule (video payloads).** A verdict token that **names an
+example run** binds to *that run's* emit; a token naming no run binds to the
+committed framework; an absent framework uses 3.3 `G6Triad33`'s three-valued cell
+(`none` = `— not claimed`, same weight as a verdict). Run-emit facts (e.g.
+`balance_sample` = four frameworks, no MOMENTUM): server allow-list comment +
+`[[project_cohort3_financial_signoff_rider_floor]]`.
 
 **Orthogonal to `pleading/` (load-bearing):** never a substitute for the
 litigation gate. Where both apply, a surface needs **both** clears; a green

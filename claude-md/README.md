@@ -55,11 +55,31 @@ Published this round:
 - `managing` — the constellation watcher
 - `publishing` — the open-source release subproject (the one that
   produces these repos)
+- `visualizing` — the graphing surface for the three formal kernels (the
+  public window onto the kernel-lattice renderer)
 - `data/` — the shared-hub conventions (`data.md` / `specs.md` / `tmp.md`)
 
-Publishable but deferred to a later refresh: `monitoring`, `studying`,
-`designing`, `documenting`, `explaining`, `resolving`, `blending`,
-`shorting`, `donating`.
+Added 2026-07-20 (the "publishable but deferred" set, now rendered):
+`monitoring`, `studying`, `designing`, `explaining`, `resolving`,
+`blending`, `shorting`. `designing` + `explaining` carry surgical
+`REWRITES` rules that genericize brand-guard / example-id
+meta-references (the same shape `proving` / `verifying` / `evaluating`
+already use).
+
+Still deferred (each needs a litigation/editorial call, not a
+mechanical rewrite):
+
+- `documenting` — its `CLAUDE.md` carries a section naming
+  federal-collateral docket structure (the family barred from every
+  public surface by the 2026-07-05 remediation; caught by the
+  `publish.sh` gate (1b) content bar). Waits on a `pleading/` redaction
+  review.
+- `donating` — its `CLAUDE.md` cross-references the litigation-docket
+  structure (a state-court matter id alongside the federal wrapper).
+  Same gate: waits on a `pleading/` review rather than a generic rewrite.
+- `rendering` — not yet on the publishable roster; whether the brand /
+  render-engine `CLAUDE.md` belongs on a public surface is an open
+  editorial call (a public-surface expansion beyond the settled set).
 
 Excluded (never published):
 

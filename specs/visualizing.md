@@ -91,5 +91,5 @@ artifacts, regardless of renderer, are the **catalog extractor** and the tuned
 ---
 
 *Derived from the private `visualizing/` design spec; see
-[github.com/quantapix](https://github.com/quantapix). Contact:
-quantapix@gmail.com.*
+[github.com/quantapix](https://github.com/quantapix) — the org is the contact
+channel (issues + Discussions), and there is no contact email.*

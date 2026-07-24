@@ -239,12 +239,24 @@ assistants inspecting each other's work:
    asynchronously.
 4. **A constellation watcher** runs as a cron-fired daily subagent
    constellation (checker / planner / reporter / verifier) emitting
-   dated artifacts. Observe-only — no git push, no commits, no
-   deploys. Outputs flow back into the operator queue.
-5. **An adversarial sibling** runs on demand: one subagent per
-   target produces ten numbered "shorting positions" — findings
-   pressuring the system from the position of someone who *wants*
-   it to fail. Routed back into the watcher.
+   dated artifacts. Observe-only in the sense that matters — it
+   performs no deploys and mutates no subproject's working tree. It
+   does commit, and it does fast-forward and push the main branch to
+   the authority remote, but strictly inside its own audit lane and
+   never forced. Outputs flow back into the operator queue.
+5. **An adversarial sibling** runs on demand in two shapes. The first
+   is the per-target positions lane: one subagent per target produces
+   ten numbered findings written from the position of someone who
+   *wants* the system to fail. The second is a set of three chartered
+   review fleets — one that pressures the charter and spec corpus for
+   coherency and concision, one that reviews the formal-kernel program
+   across all three axes for shared machinery and cross-axis learnings,
+   and one that acts as the counterweight to the shrink pass: before
+   anything is trimmed, its content must be *spread* down the
+   disclosure ladder rather than discarded. Every fleet is
+   observe-only — it writes a blueprint and an action prompt, and the
+   actual edits happen out of band in a session that holds the
+   write-lock.
 6. **Cloud multi-agent review** is operator-fired and aggregates
    findings from multiple independent reviewer agents on the current
    branch or a pull request.
@@ -256,18 +268,29 @@ a prompt; subagents fan out from there). A growing fraction is
 programmatic — cron-fired routines that don't have an operator in
 the loop:
 
-- A typed Python wrapper bundles the SDK, the routine schedule, and
-  the cost ledger. Routines opt into SDK mode by suffixing the
-  routine name with `:sdk` in the launchd schedule; the legacy
-  interactive-print lane stays as-is until a routine is migrated.
+- The programmatic lane is **parked**. The separately funded SDK credit
+  pool was withdrawn, the opt-in fleet reverted, and every cron routine
+  now runs the default non-interactive print lane against the
+  interactive subscription. The wrapper, the ledger, the routine
+  definitions and their tests are all retained as-is; nothing has been
+  deleted, and a single suffix restores the lane if access returns.
+  Until then it is treated as an external blocker with a registry
+  entry, deliberately excluded from every bottleneck metric so a parked
+  dependency cannot distort the dependency graph.
+- **The cron wrapper fails closed on billing.** It refuses to run
+  against an API key unless an explicit override is set, and it refuses
+  the highest-cost model tier outright with no override at all. Model
+  selection uses bare tier aliases, never pinned minor versions, so a
+  tier sweep is one edit. Budget caps are widened, never traded for a
+  weaker model.
 - Three audited LLM-call lanes ride the donation drive's primary
   subscription line:
   - **Tier A** — interactive assistant sessions. Operator at the
     keyboard.
   - **Tier B** — programmatic SDK routines. These currently draw the
     same Claude Max 20× subscription limits as the interactive lane; a
-    separately funded SDK credit pool was planned but is paused (it
-    reverses only if a new plan ships). Cron-fired routines ride this.
+    separately funded SDK credit pool was funded, then withdrawn — the
+    lane is parked, not planned. Cron-fired routines ride this.
   - **Tier C** — optional API-rate overage. Default off; stays
     inside the AI-assistant bucket if enabled. Cross-bucket use is
     forbidden — the donation drive's JSON manifest pins the
@@ -336,7 +359,9 @@ qagents-public/
 This first cut is **product-focused**: the `CLAUDE.md` mirrors and
 session-lifecycle skills behind the two shipping products plus the core
 infrastructure, not yet the full graph. The `claude-md/` and `skills/`
-subtrees are live; `memory/` and `memsearch/` are scaffolded and fill in on
+subtrees are live; `memory/` and `memsearch/` carry their READMEs and nothing
+else — a ruling rather than a backlog, restated below. Formerly described as
+filling in on
 later weekly refreshes. At steady state the graph runs to a few hundred
 files (the full subproject + infrastructure `CLAUDE.md` set, ~200–250 memory
 topic files, and ~50 aggressively-pruned memsearch daily memos). See
@@ -351,7 +376,7 @@ drift, even redacted.
 
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `analyzing/`   | VSCode extension (TypeScript) for market inspection — DuckDB + Parquet, lightweight-charts v5, ingest from public OHLCV sources.                       |
+| `analyzing/`   | **Market-inspection tooling (TypeScript), local-only viewer** — DuckDB + Parquet, charting, ingest from public OHLCV sources.                       |
 | `trading/`     | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines. |
 | `monitoring/`  | Local-only Astro Node-SSR web app for AI-assistant token analytics (was a VSCode extension, retired). 100% TypeScript; SQLite store. Consumes the operational Lean4 axis. |
 | `appealing/`   | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub.                                                        |
@@ -388,7 +413,8 @@ the assistant has to remember without re-reading the whole codebase.
 
 ### Language split
 
-- TypeScript for the VSCode extensions and the Astro sites.
+- TypeScript for the Astro sites, the local-only analytics app, the
+  market-inspection tooling, and the cloud-infrastructure definitions.
 - Python for the trading agents and the kernel drivers.
 - Lean4 for the formal kernels (`proving/`, `accounting/`, `studying/`)
   — three orthogonal axes: textual (federal statutes), numerical (market
@@ -507,12 +533,16 @@ over public federal statutes only, so it carries no privacy-floor
 surface; it is the natural place to build the project in the open. The
 project today is a single developer working with AI assistance, now
 opening this effort to contributors. Start at
-[`qnarre-public`](https://github.com/quantapix/qnarre-public)
-(CONTRIBUTING + good-first-issues) and the Discussions here.
+[`qnarre-public/CONTRIBUTING.md`](https://github.com/quantapix/qnarre-public/blob/main/CONTRIBUTING.md)
+and open an issue on that repo to claim a unit. It links a curated starter
+set of nine tasks, each a verified defect with acceptance criteria and
+reproducible counts. (Discussions are not enabled here, and the nine are not
+yet filed as individual issues.)
 
 ## Contact
 
-[`quantapix@gmail.com`](mailto:quantapix@gmail.com)
+[github.com/quantapix](https://github.com/quantapix) — open an issue on any repo
+in the org. Answered in public; there is no contact email.
 
 ## License
 

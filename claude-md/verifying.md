@@ -24,16 +24,16 @@ Python kernels, and the kernel's layering invariants stay intact.
 
 **Since 2026-07-11 (web-unification M4) the web rides the Meridian layer,
 BRAND-VIA-HOST:** design SoT is the adopted CD-B bundle at
-`rendering/designs/verifying-web/` (10 sheets + ADOPTION.md floors; the old
-`data/renders/verifying-design/` bundle + its two-drift sweep are RETIRED for
-this site). Brand values never enter this tree: `web/scripts/sync-meridian.mjs`
+`rendering/designs/verifying-web/` (10 sheets + ADOPTION.md floors; supersedes
+`data/renders/verifying-design/`). Brand values never enter this tree:
+`web/scripts/sync-meridian.mjs`
 (predev/prebuild/prelint hooks) host-copies the W5 css layers from
 `code/web/css/meridian/`, the font trio from `rendering/brand/fonts/`, and
 composes the dual-signal `/meridian-tokens.css` from
 `rendering/brand/tokens/meridian/{light,dark}.css` — all gitignored under
 `public/`. `<body class="m-body m-app-qnarre">` binds the teal accent;
 tri-state theme (System | Light | Dark) via `@qagents/web/theme` +
-the shared TopNav's ThemeSegment (the `color-scheme: dark` meta is retired).
+the shared TopNav's ThemeSegment.
 Shared chrome/island shells come from `@qagents/web` (W2 TopNav/BracketedQ/
 DisclaimerCallout; W4 TraceRail/ConfBar/PredicatesTable/StructureView/
 ReportZone/useRunData) with copy injected from `src/content/copy.ts`
@@ -47,8 +47,8 @@ No hex colors / font strings outside the token-definition files
 and the generated `public/meridian-tokens.css`). Refer to `var(--m-*)` /
 `var(--token)` everywhere else. Lint = the composed
 `code/web/scripts/lint-tokens.sh` + `web/lint-tokens.conf` (hex +
-font-family + derived-alpha ban + undef-var guard + retired-brand-name ban; the old
-`web/scripts/lint-tokens.sh` retired at M4). `public/graphs2/` stays
+font-family + derived-alpha ban + undef-var guard + retired-brand-name ban).
+`public/graphs/` stays
 excluded (disjoint kit-token namespace, R-T2) — the kit canvas + overlays
 are DARK in both legs; only page chrome flips.
 
@@ -121,16 +121,14 @@ ever processed is the curated `examples/<id>/complaint.md` which is
 already redacted in tree. The donating drive's `POST /api/runs`
 refusal binding (`../donating/drive.md` Promise 3, 2026-06-01 →
 2026-12-01) is therefore honored without any redaction-sweep code at
-this layer. Revisit when admin-gated freeform POST lands; admin-gated
-freeform requires the rule set from `legal/public/` staging (already in
-use for `documenting/`).
+this layer. Revisit when admin-gated freeform POST lands.
 
-## 8. Proof-graph kit (Lean4 DAG visualisation) — graphs-2 mount (G6)
+## 8. Proof-graph kit (Lean4 DAG visualisation) — graphs mount (G6)
 
 Since 2026-06-11 the proof-graph surface renders via the domain-neutral
-**graphs-2 kit** from `visualizing/` (the unified kit-mount that also
+**graphs kit** from `visualizing/` (the unified kit-mount that also
 backs Qresev's strategy mount — visualizing spec
-`data/specs/visualizing-2026-06-03/graphs-2026-07-02/SPEC.md` G6). Routes:
+`data/charters/visualizing/specs/visualizing-2026-06-03/graphs-2026-07-02/SPEC.md` G6). Routes:
 
 - `/proof-graph/` — lobby + cards linking to the two demos and the F1-gated
   live runs (see below).
@@ -146,7 +144,26 @@ backs Qresev's strategy mount — visualizing spec
   in the header.
 - `/lattice/` — the axiomatization catalog (coverage × agreement × tier)
   over `data/visualizing/legal-catalog.json`, same kit in catalog mode
-  (cells collapsed, agreement lens, `tokens-lattice.css`).
+  (cells collapsed, agreement lens, `tokens-lattice.css`). Also hosts the
+  **C3 rollups + trends panel** (see below).
+
+**C3 aggregate charts panel (charts-2026-07-02 § 7.1, ns verifying/7).** A
+toggle-opened overlay panel ON `/lattice` (no new route — a new route enters
+the F1 leak-guard sweep and buys nothing). The `rollups` status-bar button
+paints corpus-level rollups (`QViz.charts.fromCatalog` → tier distribution /
+axis coverage / agreement, 3 SVG bar charts) + trends (`fromCatalogTrend` over
+`data/visualizing/legal-catalog-trend.jsonl`). The charts SVG surface rides
+`kit.js` (the `QViz.charts.*` namespace in `dist/kit-proof.js`; `charts.*`
+because the flat global already carries graphs' `fromCatalog`); it self-themes
+dark like the DAG canvas (kit defaults — no `--chart-*` overlay copied). Panel
+chrome is app-owned in `pages.css` (`.rollups-panel`/`.chart-cell`, display
+scoped to `:not([hidden])`). **Degenerate-trend guard is host-side** (`trend.ts`
+delegates it): the trend half stays empty-state until ≥ 2 trend records exist
+AND a dimension has moved — today 1 emit (all `tier:unknown`) → empty-state, so
+a flat 100%-unknown line never ships next to the F1 language. Inherits
+`/lattice`'s F1/named-never-worked posture verbatim + the PLEADING-REVIEW
+binding; catalog cells are corpus-level (no `<live-matter>_*`). e2e: the `C3 rollups`
+describe in `proof-graph.spec.ts`.
 
 **F1 thesis-floor gate (named-never-worked).** The textual axis is *named,
 never worked* in any public material, and no public worked example is drawn
@@ -157,15 +174,15 @@ single gate: it drops every non-RICO example (only `rico` is in
 `frameworks.ts` `PUBLIC_DEMOED`) and every `<live-matter>_*` example (live matter,
 incl. `rico-hier`). Both run pages' `getStaticPaths` AND the lobby's live-run
 scan call it; the same gate backs the `/app` island chips (non-demoed →
-"encoded · not demoed", no verdict/Boolean) and `LiveReportZone`. Round 04
-debate `data/debates/quantapix-thesis-github-2026-06-23.md` G2; pleading/
-binding (cleared 2026-06-24 — `PLEADING-FINAL-GATE-2026-06-24.md` in the
-same spec family). The replay API is gated to the same floor (§ 7); residual
+"encoded · not demoed", no verdict/Boolean) and `LiveReportZone`. Provenance:
+Round 04 G2 (`data/debates/quantapix-thesis-github-2026-06-23.md`); pleading/
+cleared 2026-06-24 (`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/PLEADING-FINAL-GATE-2026-06-24.md`).
+The replay API is gated to the same floor (§ 7); residual
 (intentional): it also serves the synthetic non-RICO `titlevi_sample`.
 
-Kit files live at `verifying/web/public/graphs2/`:
+Kit files live at `verifying/web/public/graphs/`:
 
-- `kit.js` — the graphs-2 IIFE bundle (global `QViz`: `mountProof` /
+- `kit.js` — the graphs IIFE bundle (global `QViz`: `mountProof` /
   `mountCatalog` → a `KitMount` with lenses, collapse gestures, regions,
   `exportSVG`). **Regen-wholesale** from
   `visualizing/graphs/dist/kit-proof.js` — never hand-edit.
@@ -180,10 +197,24 @@ Kit files live at `verifying/web/public/graphs2/`:
   kit). Not part of the kit re-sync.
 - `loader.js` — **app-owned never-fold side-car**. Exposes
   `ProofGraphKit.mountRun({host, graph, inspector, debug, synthetic,
-  lattice})`: lazy-injects `kit.js` when the host enters the viewport
-  (the visualizing § 10 payload rule), mounts `QViz`, wires the
+  lattice, nav, navLabels})`: lazy-injects `kit.js` when the host enters the
+  viewport (the visualizing § 10 payload rule), mounts `QViz`, wires the
   tap-a-leaf inspector, sets `body[data-ready]` (the e2e anchor), and
   publishes `window.__G2M__`. Schema seams live HERE — never in kit.js.
+
+**Navigator pane (navigator-2026-07-20 §§ 3/5 adoption, ns verifying/9).**
+Each graph-mount page carries an app-owned `<aside class="zone-nav"
+id="proof-nav">`; `mountRun` passes `nav`/`navLabels` through and, gated on
+`QViz.graphsCaps().navigator` (presence, never version-sniff — § 3.6), calls
+`QViz.renderNav(nav, m, …)` so the kit renders an ARIA tree into it and wires
+the § 3.5 unified selection bus (tree ↔ canvas ↔ inspector). Styling is
+app-owned in `pages.css` (`.zone-nav .qgnav-*`, ported from the code/web
+scaffold — verifying is a bespoke mount, not a scaffold consumer). The
+`.app:has(.zone-nav)` grid adds a left nav column; nav-less pages render
+byte-identical. Phone (≤900px) hides the pane (`display:none`) — the DOM/text
+stays for the F1 leak-guard. A stale `kit.js` (pre-navigator) degrades to no
+pane, never an error. e2e: the `navigator pane` describe in
+`proof-graph.spec.ts` extends the F1 forbidden-runs floor to the nav tree text.
 
 **Layout head slot.** Pages inject the three CSS files via
 `Layout.astro`'s `<slot name="head" />`. General rule:
@@ -193,9 +224,17 @@ Kit files live at `verifying/web/public/graphs2/`:
 
 1. `pnpm -C visualizing/graphs typecheck && pnpm -C visualizing/graphs gates`
 2. `node visualizing/graphs/kit/build.mjs`
-3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs2/kit.js`
-4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs2/`
+3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs/kit.js`
+4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs/`
 5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
+
+**Steps 3 and 4 are a lockstep pair — never one without the other.** The
+overlay and the bundle drift independently: a token added to
+`tokens-*.css` does nothing until `kit.js` is re-copied from a fresh
+canonical `dist/` (`colorTok(tok, '--edge-feedback', '--edge')` fails SOFT
+to the fallback — no error, no lint, no failing test; bitten 2026-07-14).
+After any token lift, grep the mounted `kit.js` (`grep -a`) for the new
+token name before treating the lift as landed.
 
 **Empty-state overlay pointer-trap (check on any mount edit).** Scope the
 overlay to `.empty:not([hidden])` — a bare `.empty{display:flex}` defeats the
@@ -211,11 +250,10 @@ behind Caddy at `api.qnarre.quantapix.com` (per `data/specs/serving-2026-05-26/S
 decision 3). Same code in both modes; only the API origin in
 `astro.config.mjs` env changes.
 
-**Static-shell deploy** — bucket `qnarre.quantapix.com`, wildcard
-`*.quantapix.com` cert. Invocation: `aws-vault exec qagents-deploy -- pnpm
+**Static-shell deploy** — `aws-vault exec qagents-deploy -- pnpm
 -C verifying/web deploy` (rides `serving/scripts/deploy-site.sh` +
-`serving/sites/qnarre.quantapix.com.env`). Cross-site contract, CF functions,
-404 mapping, IAM: `serving/CLAUDE.md` § 8.
+`serving/sites/qnarre.quantapix.com.env`). Bucket/cert, cross-site contract,
+CF functions, 404 mapping, IAM: `serving/CLAUDE.md` § 8.
 
 ## 9.5. e2e (Playwright)
 
@@ -236,7 +274,7 @@ Spec partitioning:
   `web/src/lib/frameworks.ts` — edit both in lockstep when a statute lands.
   Predicate counts use a floor (`minPreds`) so adding a predicate file
   doesn't break the spec.
-- `proof-graph.spec.ts` — lobby cardinality + graphs-2 kit-mount
+- `proof-graph.spec.ts` — lobby cardinality + graphs kit-mount
   (`data-ready` + cytoscape canvas) on `01-rico`, `02-debug`, the single
   F1-gated `sample` run (+ its `/debug/`), and `/lattice/`. Carries the F1
   leak-guard: `FORBIDDEN_RUNS` (`<live-matter>_*`, `titlevi_sample`) must 404 and

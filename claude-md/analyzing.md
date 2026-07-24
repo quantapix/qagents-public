@@ -1,32 +1,28 @@
 # analyzing/CLAUDE.md
 
-VSCode extension (TS) for market inspection: DuckDB + Parquet, lightweight-charts v5, yfinance/Stooq ingest, Alpaca IEX live feed. Cross-project conventions (TS strict + shared tsconfigs, canonical OHLCV bar shape, GICS hub, defined-risk options rule, status hub, language split) live in repo-root `CLAUDE.md` — not duplicated here.
+Market-inspection tooling (TypeScript; local-only viewer): DuckDB + Parquet, lightweight-charts v5, yfinance/Stooq ingest, Alpaca IEX live feed. Cross-project conventions (TS strict + shared tsconfigs, canonical OHLCV bar shape, GICS hub, defined-risk options rule, status hub, language split) live in repo-root `CLAUDE.md` — not duplicated here.
 
 ## Charter — two roles (spec: `data/specs/analyzing-charter-2026-07-01/SPEC.md`)
 
-Ratified by a 7-delegate cross-qagent debate (2026-07-01). Three adopted
-amendments (each subspec owns its detail): `tape-provenance-2026-07-11/`
-(P8 provenance events + manifest lineage — § "History preservation" below;
-kernel gets ZERO provenance predicates ever), `web-ui-trio-2026-07-11/`
-(role (b) widens to **chart-presentation driver**; P4 host = Astro Node-SSR
-local-only `analyzing/web/`; the monitoring+analyzing+visualizing trio
-fortnight), and `ta-schema-v2-2026-07-12/` (TA schema v2 — **frozen-14
-prefix, additive consumer-backed tiers**; Phases A–D shipped 2026-07-12:
-+42 TA cols (56 total, `scripts/ta_custom.py` via `ta_reference.compute()`),
-breadth → `financial/parquet/breadth/`, ^VIX/^VIX3M indices lane; debated
-ADOPT-AMEND, record `data/debates/ta-charter-expansion-2026-07-12.md`;
-open item D-1 = options-chain/IV tape).
+Ratified by a 7-delegate cross-qagent debate (2026-07-01). Five adopted
+amendment subspecs own their detail: `tape-provenance-2026-07-11/` (P8
+provenance events + manifest lineage — § "History preservation" below; kernel
+gets ZERO provenance predicates ever), `web-ui-trio-2026-07-11/` (role (b)
+widens to **chart-presentation driver**; P4 host = Astro Node-SSR local-only
+`analyzing/web/`; the monitoring+analyzing+visualizing trio fortnight),
+`ta-schema-v2-2026-07-12/` (absorbed — next paragraph), and the workflow pair
+`workflow-coverage-2026-07-13/` (the accepted inspection-workflow roster) +
+`workflow-ui-2026-07-13/` (the UI phases U1a/U1b/U2… that encapsulate it).
 
-**The schema contract has matured into a charter (2026-07-16):**
-`data/charters/analyzing/tape-schema/CHARTER.md` is now the single normative
-source for the tape's *shape* (frozen-14 prefix, consumer-backed tiers,
-aggregate/breadth/indices lanes) — cite it, not the absorbed `ta-schema-v2`
-subspec. Ratified by `data/debates/analyzing-charter-consolidation-2026-07-16.md`,
-which **deferred** a `tape-supply` charter (the supplier machinery — INV-H,
-the new INV-U guard, freshness manifest, provenance — changed materially
-2026-07-16 and P3 is unshipped; it re-mints as a conditional charter once it
-settles). The supplier invariants stay in `analyzing-charter-2026-07-01/`
-meanwhile.
+**Tape *shape* is chartered (2026-07-16):**
+`data/charters/analyzing/tape-schema/CHARTER.md` is the single normative
+source for the tape's shape (frozen-14 prefix, consumer-backed tiers,
+aggregate/breadth/indices lanes) — cite it, never the absorbed `ta-schema-v2`
+subspec. The supplier machinery (INV-H, INV-U, freshness manifest, provenance)
+stays in `analyzing-charter-2026-07-01/` until it settles into the deferred
+conditional `tape-supply` charter (ruling
+`data/debates/analyzing-charter-consolidation-2026-07-16.md`; mint conditions
+tracked at next-steps item 14).
 
 - **(a) Market-data supplier.** Named owner/producer of the historical
   aggregate tape — `financial/parquet/ohlcv-equities/` (`ingest.py --flat`) +
@@ -150,9 +146,17 @@ Per-symbol verdicts in the summary:
 - `restated` — values changed on shared dates. **Written, not refused**: with
   `auto_adjust=False` Yahoo still applies splits retroactively to raw OHLC, and
   dividends rewrite `adj_c`; blocking those would wedge the tape on routine
-  corporate actions. Classified `split_like` (one uniform ratio across all bars) /
-  `dividend_like` (`adj_c` only) / `irregular` (eyeball this one). The pre-write
-  parquet is copied to `financial/parquet/.history-backup/<SYM>/<ISO>.parquet`.
+  corporate actions. Classification is **compositional** (2026-07-16,
+  `history_guard._classify_restatement`): each restatement decomposes into
+  world-fact components `{split_like, dividend_like, volume_settle, residual}`
+  — consumers read the component set, never the legacy scalar (any `residual`
+  ⇒ scalar `irregular`; the producer emits facts, never a consumer verdict).
+  Rescale uniformity (split/dividend) is judged over the column's **changed
+  bars only** (2026-07-19): a corporate action rescales bars BEFORE its
+  effective date, and mixing the unchanged post-ex-div tail into the ratio
+  set mis-classed four routine dividends as `irregular`.
+  The pre-write parquet is copied to
+  `financial/parquet/.history-backup/<SYM>/<ISO>.parquet`.
 - `regression` — the vendor dropped in-window bars we already hold ⇒ **REFUSED**.
   The parquet is left byte-identical, the symbol lands in `blocked[]`, and the run
   **exits 3** (fails the P3 cron arm; aborts `dat.sh` Step 0.5 *before* a wave
@@ -178,7 +182,9 @@ per-refresh summary row; deterministic `uuid5(refreshed_at, symbol, dataset)`
 client_uids make a retry replay idempotent. Rows carry `pre_sha`/`post_sha`
 lineage and, for `rewritten`, the exact `--allow-history-rewrite` `allow_set` —
 the durable "on the record" for accepted resets. `.history-backup/` holds
-last-5-per-symbol (pruned at backup time). The manifest (P2) additionally
+last-5-per-symbol with **class-aware retention** (class tag in the filename; a
+benign snapshot never evicts a non-benign one — R2), pruned at backup time.
+The manifest (P2) additionally
 carries `prev_content_sha` + a `non_clean[]` digest so accounting's wave gate
 stays file-authoritative (store = audit superset, never a gate). The
 `content_sha` implementation is ONE function (`tape_manifest.file_sha256` /
@@ -197,6 +203,21 @@ under canonical `data/`/`financial/`; worktree-local writes skip it. The
 planned P3 cron writes direct-to-canonical under the lock — never through
 `pending/` (charter spec § 2.5).
 
+**Universe membership — INV-U (`scripts/universe_guard.py`, shipped 2026-07-16):**
+membership is monotone too. A `sp500.txt` DROP is refused by default
+(`--allow-universe-drop` per decision; a **held-symbol** drop hard-refuses,
+TG-1); removal is retire-in-place. `scripts/universe_refresh.py` writes
+append-only snapshots `financial/universe/sp500/<as_of>.txt`, advances the
+current pointer, and appends `sp500-retired.txt`; the Wikipedia membership
+diff is human-reviewed by design. Tests: `scripts/test_universe_guard.py`.
+The manifest's drop assertion widens by the **retired-and-still-held** set, not
+by a tolerance: `tape_manifest.retired_held_symbols()` intersects
+`sp500-retired.txt` with the parquets actually on disk and reports it as
+`manifest.retired_held[]`, so a retire-in-place stays green while a genuine
+silent drop still reds `count_matches_universe` — even in the same refresh
+(ns-17; the § 7 orphan-gate twin in `scripts/sync-ground-truth.sh`).
+Enforcement follow-ons + the `tape-supply` charter mint: next-steps item 14.
+
 ## Web viewer — `analyzing/web/` (P4 host, role (b))
 
 Astro **Node-SSR local-only** app (charter § 3.2 re-home; web-ui-trio § 3
@@ -213,7 +234,7 @@ T2+T3 (P4a+P4b) 2026-07-11:
   (Bollinger / Keltner-TTM / Donchian / SuperTrend — pairs swap, never
   stack; fills + per-segment coloring are chartered qchart requests) and a
   pane-3 picker swaps ADX+ATR ↔ ±DI in place; `/api/ta` serves the
-  19-column charted subset (`TA_COLS` in `src/lib/tape.ts` is the pin).
+  charted subset (`TA_COLS` in `src/lib/tape.ts` is the pin).
 - **AggregateSelection drill-down** (charter § 3.3): `/sectors` ▸
   `/sector/<S>` ▸ `/industry/<S>/<I>` (GICS spine via
   `gics-symbols.parquet`) and `/portfolios` ▸ `/portfolio/<slug>` —
@@ -239,12 +260,13 @@ T2+T3 (P4a+P4b) 2026-07-11:
   call them (grep-audited with A4 at close). `QAGENTS_TAPE_ROOT` /
   `QAGENTS_PORTFOLIOS_ROOT` override the roots (hermetic e2e).
 - **Kit delivery:** `scripts/sync-charts.mjs` (predev/prebuild) host-copies
-  canonical `visualizing/graphs/dist/kit-strategy.js` → `public/graphs2/kit.js`
+  canonical `visualizing/graphs/dist/kit-strategy.js` → `public/graphs/kit.js`
+  (mount dir renamed `graphs2/` → `graphs/`, operator ruling 2026-07-21)
   (fail-soft: absent dist ⇒ empty-state, never a hard fail) + the
   `kit.css`/`tokens-chart.css` overlays from their **tracked sources** in
   `visualizing/{graphs,charts}/kit/`. The mount probes `chartsCaps()` so
   a stale copy degrades loudly. Consumes only the built `QViz` API (A7).
-  **`public/graphs2/` is gitignored wholesale** — every file in it is a
+  **`public/graphs/` is gitignored wholesale** — every file in it is a
   host-copy, so at `/close` the rescue gate (exit 15) lists them: **discard,
   never rescue**; `pnpm dev`/`build` regenerates all three. Same for
   `test-results/`.
@@ -255,45 +277,165 @@ T2+T3 (P4a+P4b) 2026-07-11:
   states, LW canvas + SVG bar renders, STALE chip on every chart page,
   R-C5 pane cap (`data-panes` = 4), composite cohort honesty, never-pooled
   book language.
-- **U1a `[shipped 2026-07-17]`** (workflow-ui § 9): the IA shell landed.
-  `NavShell` (Layout-mounted flat 5-group nav — Inspect/Market live,
-  Rank/Books/Tape phased-disabled; active-group marker resolves on live leaf
-  routes incl. disabled Books). `/` reworked to group-cards; the symbol finder
-  re-homed to `/inspect`. `/market` WF-3 (indices ^VIX/^VIX3M term-structure +
-  SPY anchor regime strip, **skeleton-first server-render**). NEW seams:
-  `/api/indices` (indices dataset only, no ta twin, per-dataset
-  `tapeFreshness('indices')`); `src/lib/{labels.ts,citedLine.ts,regime.ts,nav.ts}`;
-  `DisclosureFrame`. **The label catalog is now THE seam** — every user-facing
-  event/state/threshold string passes `labels.ts`; `scripts/vocab-audit.mjs`
-  mechanically enforces the IR-2 denylist + a fail-loud live lockstep harvest
-  (accounting Lean ids + evaluating `FRAMEWORK_META`) + the `mirror-registry.md`
-  cross-ref (typed `mirrors:`) + the citedLine grep. Run `pnpm vocab:audit`
-  (folded into `verify`, owed at close). Threshold lines go through `citedLine`
-  (uncited = build error). Symbol-page pickers (band/pane3) are URL-state
-  (deep-link + `replaceState` writeback + unknown-param notice). `TA_COLS`
-  widened `+chop14/natr14/hv_cc20/bbw20`. Next: U1b (WF-2 events + `/api/events`
-  + oscillator/flow swap; next-steps item 11).
+- **U1a+U1b `[shipped 2026-07-17]` / U2a+U2b `[shipped 2026-07-19/20]`**
+  (workflow-ui § 9 — full ship detail lives in that spec's § 9.1 ledger;
+  retained here are the load-bearing operational pins only):
+  - **The label catalog is THE seam** — every user-facing event/state/
+    threshold string passes `src/lib/labels.ts`; `scripts/vocab-audit.mjs`
+    enforces the IR-2 denylist + fail-loud live lockstep harvest (accounting
+    Lean ids + evaluating `FRAMEWORK_META`) + `mirror-registry.md` cross-ref
+    (typed `mirrors:`) + the citedLine grep + K-C11 events-seam confinement.
+    `pnpm vocab:audit` (folded into `verify`), owed at close. Threshold lines
+    go through `citedLine` (uncited = build error).
+  - **`src/lib/events.ts` is the ONE event-extraction seam** (K-C11;
+    consumes the tape solely via `readBars`/`readTa`, A-U1) → `/api/events`.
+    Picker state is URL-state (deep-link + `replaceState` writeback +
+    unknown-param notice); pickers swap panes in place — `data-panes` stays 4.
+  - `/market` = WF-3 (indices term-structure + SPY anchor strip; `/api/indices`
+    reads the indices dataset only, no ta twin) + WF-4 breadth (MARKER-strength
+    frame, survivorship + per-family `n_effective` co-render, materialized-only
+    ZBT state — no kernel mirrors). `/tape` = manifest fields only,
+    metadata-only backup listing (A-U2), decidability table; never wave-lane
+    content (K-C4 — denylist carries `wave-gate`/`tape-provenance-check`);
+    `/api/tape` is a **closed-key envelope** `{manifest, backups, decidability}`
+    (K-C10).
+  - WF-8 drawdown leaves: mdd252 renders under the ONE K-C8 cc-half catalog
+    entry on every surface; `rec_bars` NaN-under-water = the labeled breach
+    state, never 0; dat veto-screen 0.15/0.05 render as register-cited
+    flat-series lines (the kit's horizontal Threshold binds pane 0 only —
+    pane-targeted thresholds filed upstream). Book curve = class-2 host-lib
+    `src/lib/drawdown.ts` (NO /api endpoint — the § 4.1 roster stays closed);
+    formula TEXT renders WITH its register row (K-C9); book-route labels are
+    `holdingsSafe`-flagged + floored via `data-catalog-id` (T-C16); MF-1
+    subject statement under stable test id (T-C17).
+  - `TA_COLS` (in `src/lib/tape.ts`) is THE charted-subset pin — widened only
+    per the § 9 schedule (U1a +chop14/natr14/hv_cc20/bbw20; U1b
+    +sar/st_dir/don_up55/don_lo10/sma5/rsi2 +obv/mfi14/adosc/pctb20 [the § 12
+    amendment]; U2b +mdd252/tuw252/rec_bars/chand_long22). Fixtures: EVT
+    (event-dense, 413 bars w/ drawdown tail — every catalog kind fires) +
+    breadth fixture + hand-authored fixture manifest (E-U7).
+- **U3a `[shipped 2026-07-21]`** (workflow-ui § 9): the aggregate-registry
+  port. `src/lib/aggregators.ts` is the HOST-side emitter of the extension
+  registry's SQL shapes (semantics pinned by python-duckdb goldens — family
+  `cases/golden_rank_sql.py`; the extension module keeps its own). Every
+  timestamp-binding query runs `SET TimeZone='UTC'` first (the MF-5
+  UTC-session contract — tz-aware ts vs naive `$start` in a local session
+  silently drops the first UTC-midnight bar). `/api/rank?metric=&cohort=&dir=`
+  serves the WF-5 frontier cross-section (raw value + PERCENT_RANK at the
+  DATASET's frontier ts — never a wall-clock window; `excluded[]` cohort
+  honesty). Metric vocabulary is CLOSED (`roc63|roc252|rs63|natr`) and
+  refuses the drawdown columns (workflow-ui § 14.2 law 4 — the K-C8 escape
+  pin). The `/market` regime classifier now emits `regime.high-vol`
+  (OWN_PCTILE trailing-252 own-percentile of natr14/hv_cc20 ≥ 0.70,
+  register-cited; class-2 — never derived in page/lib TS from the TA slice).
+- **U3b `[shipped 2026-07-21]`** (workflow-ui § 9): the IA flip + the
+  §§ 14–16 layout retrofits. ALL FIVE nav groups live (`nav.ts`). NEW `/rank`
+  (WF-5 frontier cross-section server-rendered via `aggregators.ts`;
+  metric/cohort/dir URL-state, closed vocabularies — drawdown metrics and
+  `book:` cohorts refuse as unknown values; `ScreenTable` = the Z3 figure in
+  a legend `DisclosureFrame`, numeric-only cells) and `/books` (two
+  `SpineList` spines — rows identity + leaf links ONLY, no numeric figure,
+  never a totals row; conditions@U5/compare@U6 phased "not yet"; zero
+  canvas/svg on the hub). Five-zone grammar mechanized: `data-zone` markup on
+  every workflow page; `labels.ts` `isStateBearing` (mirrors ∪ state-family
+  list) drives the § 14.2 law-8 frames — the symbol Z2 tile band and BOTH
+  drawdown tile rows now sit inside legend frames; the symbol page gained a
+  Z1 question + Z2 tiles (regime word via `classifyRegime`, per-dataset
+  as-of stamps) + a Z4 recent-events list served by the `events.ts`
+  accessors (`symbolEvents`/`latestEvent`/`recentEvents` — the C3 seam;
+  vocab-audit K-C11 allow-list = exactly the `/api/events` endpoint + the
+  symbol page). `/inspect` rows carry direct WF-8 drawdown links. Inline
+  empty-state strings live in the catalog. Floors: `layout.spec.ts`
+  (AU-10/AU-13/AU-15), `nojs.spec.ts` (AU-11 — `javaScriptEnabled:false`,
+  never a 4th Playwright project), `rank/books` specs. Components:
+  `TileRow`/`StatTile`/`LeafTabs`/`CitationsFooter`/`ScreenTable`/
+  `SpineList`. Fixture `testbook2` (owns `options_structures_allowed` +
+  `beta_target`; `testbook` stays keyless). Per-sector breadth stays
+  unshipped by design (no materialized source — workflow-ui family TODO.md;
+  the § 2.2 + roster clauses were amended in place 2026-07-21: struck with a
+  revival path via a breadth.py materialization spec).
+- **U4 `[shipped 2026-07-21]`** (workflow-ui § 9): WF-6 + the qgrid producer.
+  `/rank/correlation` — two sections, one mount each: the pairwise matrix
+  (registered ROLLING_CORR bound to the frontier-anchored last window+1
+  sessions + a host window-full gate — a pair with < window overlapping
+  returns is undecidable, never a short-window r; C5 summary =
+  meanPairwise/minPair/maxPair NAMED fields from `src/lib/corr.ts`, never
+  page-side; numeric-only `MatrixTable` in its legend frame) and rolling
+  beta (registered ROLLING_BETA vs SPY; the book's own `beta_target` as
+  register-cited reference lines — values only, NO in/out-of-band state
+  word until `hedge_sizing_beta_bounded` exists). Scope is SINGLE-BOOK only
+  (T-C18 — one shared `parseBookScope`; multi-book 400-refused). `/api/corr`
+  + `/api/beta` + **`/api/grid/{rank,corr}`** — the constellation's first
+  real-market-data `qgrid/1` producer: `privacy:'local-only'` stamped, 403
+  `privacy-refusal` on ANY `?privacy=` negotiation, ≤ 50k-cell budget; NO
+  beta grid kind (the 2D beta chart is already time-resolved — MF-16).
+  Surfacegrid mounts live on `/rank` + `/rank/correlation` (kit-3d built by
+  sync-charts' fail-soft ensure; hidden-until-mounted; PC1 literal client
+  match — the corr-page fetch is always-on so the AW-5 stripped-payload →
+  `data-error` floor runs kit-independent). `sync-charts.mjs` generalized to
+  a src→dest pair list (+`kit-3d.js` canonical, `tokens-3d.css` tracked).
+  `portfolios.ts` gained the additive `betaTarget` read (the beta-band half
+  of the U5 reader widening, pre-landed per § 2.2/§ 15.1). e2e 342 green.
+- **U5 `[shipped 2026-07-21]`** (workflow-ui § 9): WF-9 conditions board.
+  `/portfolio/<slug>/conditions` — `ConditionBoard` IS the Z2 answer band
+  AND the marker-framed figure (third byte-pinned constant
+  `DISCLOSURE_MARKER_CONDITIONS`, roster-verbatim; vocab-audit harvests all
+  three, fail-loud). `src/lib/conditions.ts` is the WF-9 derivation seam
+  (trend c-vs-sma200 with cross-dataset frontier-match honesty; write-gate
+  under pinned 20/25/70 register-cited constants; vol values
+  descriptive-only; book beta 252d × cost-basis weights VALUES-ONLY — the
+  `hedge_sizing_beta_bounded` mirror row stays owed, blocker recorded in
+  workflow-ui TODO.md). `/api/conditions/<slug>` never round-trips the
+  legend; `StructureLegend` (T-C14 distinct container; T-C13 empty state)
+  is the SOLE structure-vocabulary container — leg rows are symbol+qty only
+  (trading copy review CLEAR-WITH-AMENDMENTS, both applied). **Reader fix:**
+  `portfolios.ts` now reads `risk_policy.{beta_target,
+  options_structures_allowed, daily_drawdown_pause_pct,
+  monthly_drawdown_halt_pct}` — the U4 top-level `beta_target` read silently
+  missed every real book (schema pins the keys under `risk_policy`);
+  top-level fallback kept. e2e 396 green.
+- **U6 `[shipped 2026-07-21]`** (workflow-ui § 9 — **all U-rows complete**;
+  T6 = the remaining row, next-steps item 7): WF-11 compare. Three route
+  shapes (`/sector/<S>/compare` · `/industry/<S>/<I>/compare` ·
+  `/portfolio/<slug>/compare`) share `CompareView`; `CompareGrid` is layout
+  chrome ONLY — every cell is a server-built `qchart/1` payload
+  (`src/lib/compare.ts`, trailing-63 window) rendered via `QViz.SvgBackend`;
+  zero host-authored `<svg>` (family grep, quote-scoped). `cols=` closed to
+  1–2 of `TA_COLS ∪ {c}` minus the drawdown columns (K-C8 escape pin);
+  panelset stays BOUND on visualizing M3 — the 2D grid IS the deliverable.
+  Cells embed the legend line as SVG `<desc>` (saved-SVG honesty); the
+  visible in-SVG caption is filed as an SvgBackend widening of the charts
+  C9 `watermark` filing (hint queued, consumer WF-11). **Kit script order
+  matters:** `/graphs/kit.js` must load BEFORE any component's inline mount
+  script in document order (classic scripts — the sector-page precedent).
+  e2e 441 green.
 - **inv-5 (A8):** the viewer renders ground-truth tape only — no kernel
   emission, no verdict, no actionable framing. Anything exported off this
   surface becomes a FINANCIALLY-CLEARED subject (charter § 3.5).
-- Meridian skin + `code/web` primitives land at T6 (web-ui-trio § 4). **T6 is
-  NOT gated on monitoring** (corrected 2026-07-14 — the old "after monitoring's
-  M6 fold" framing was wrong; monitoring's slot says "Nothing blocks here").
-  Its two `rendering/`-side blockers both **CLEARED 2026-07-14**: the
-  charts-overlay decision (rendering minted `overlay/chart-{dark,light}.css`;
-  visualizing re-pointed `charts/kit/tokens-chart{,-light}.css` to byte-mirror
-  it — **the light leg is net-new**) and the `--m-analyzing-*` accent mint
-  (8 derivatives, both legs). **T6/M6 are now actionable** — next-steps item 7.
-- **Chart colour is never host-authored.** `web/public/graphs2/` is gitignored
-  generated host-copies (`sync-charts.mjs`); forking a kit stylesheet is barred.
-  Series colour rides the kit's `role` → closed `seriesToken()` map. **Never
-  conscript a chrome/furniture token as a data slot** — `symbol/[symbol].astro`
-  does exactly that today (8 series from 5 tokens; `--chart-overlay-grid`, a
-  decorative token at **1.20:1**, paints the volume histogram and every band
-  pair — a data series below the a11y floor on both legs). Unwind at
-  next-steps item 15, once the role tokens mint. **`--m-analyzing` is chrome
-  only, never a series colour** — it is ΔE 11.2 from the projection ghost
-  against a binding ΔE ≥ 18 floor (charts-series-dial debate, T1 REJECT).
+- **T6 `[shipped 2026-07-21]`** (web-ui-trio § 4 / workflow-ui § 5.5 — the
+  chrome-confined Meridian pass; ZERO `src/pages/**` edits, all prior floors
+  unchanged, e2e 450 green): `.m-app-analyzing` steel scene role minted into
+  `code/web` scene-roles (counterpoint qresev copper; accent = CHROME only);
+  NEW `scripts/sync-meridian.mjs` (monitoring sibling — W5 layers + fonts +
+  composed dual-signal `meridian-tokens.css`); `Layout.astro` on the layer
+  contract with `m-body m-app-analyzing`; `NavShell` + tri-state
+  `ThemeSegment` (IA/testids verbatim; wraps at narrow widths); `public/
+  tokens.css` = a pure var()-to-var() BRIDGE (`--page-*` → the Meridian
+  slice, re-declared on the app class so the accent substitutes where it
+  exists; chips → holds/undetermined/fails) — zero raw color values remain;
+  `sync-charts.mjs` writes the COMPOSED dual-signal `tokens-chart.css` from
+  BOTH kit legs at the mount path pages already link (light default, dark
+  media, data-theme wins both ways — never a host fork). `@qagents/web`
+  workspace dep added; lint conf gained meridian/fonts excludes +
+  `meridian-tokens.css` TOKEN_FILES row.
+- **Chart colour is never host-authored.** `web/public/graphs/` is gitignored
+  generated host-copies (`sync-charts.mjs`); forking a kit stylesheet is
+  barred. Series colour rides the kit's closed `role` → `seriesToken()` map.
+  **Never conscript a chrome/furniture token as a data slot** —
+  `symbol/[symbol].astro` still does (a shipped data series sits below the
+  a11y floor on both legs; unwind at next-steps item 15 once the role tokens
+  mint). **`--m-analyzing` is chrome only, never a series colour** (ΔE 11.2
+  vs the binding ΔE ≥ 18 ghost floor; series-dial T1 REJECT).
 
 ## Status emit (`data/status/analyzing.json`)
 
@@ -312,8 +454,8 @@ carries:
   per-symbol `TableEmit` (`symbol-coverage`);
 - `LiveState` pill: `NOT_YET_LIVE` (empty ohlcv dir); `DEGRADED` (manifest
   state STALE/DEGRADED — § 2.3 tiers incl. broken lockstep; pre-manifest
-  fallback = newest-bar mtime > 7 d); else `BUILDING`. The `BUILDING → OK`
-  promotion rides trio T6 (spec P4 ledger) — role (b) itself shipped 2026-07-11.
+  fallback = newest-bar mtime > 7 d); else `OK` (the `BUILDING → OK`
+  promotion landed with trio T6 2026-07-21 — all workflow-ui phases shipped).
 
 Pending-aware (`QAGENTS_PENDING_ROOT || REPO`, status-emit-cron-fleet
 convention — root `CLAUDE.md` § "Status hub"); fired daily by the 05:25

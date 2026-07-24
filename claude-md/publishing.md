@@ -61,9 +61,8 @@ subproject, Max-20x interactive billing) → verify/redact (HARD gate) → compi
 → push (operator-confirmed). Full mechanics: spec § 5; staging-tree layout +
 source mapping: `publishing/quantapix/CLAUDE.md`.
 
-No cron lane at v0.1 — the drive cadence (weekly Fridays) is operator-run via
-`/open publishing` → `/publish`. A cron lane is documented-future (spec § 10 P4),
-not v0.1.
+No cron lane — the drive cadence (weekly Fridays) is operator-run via
+`/open publishing` → `/publish`; a cron lane is documented-future (spec § 10 P4).
 
 ## 5. Redaction is a hard gate, not advisory
 
@@ -81,8 +80,7 @@ caught by the primary gate; a 2026-07-05 leak into a public weekly/ledger
 surface was the proof. `publish.sh` gate **(1b)** now backstops that class
 with a targeted content grep, pinned by a companion regression test.
 Gate (1b) is token-scoped, not semantic — **still scrub the SOURCE artifact
-before `/publish`**; `/publish` is not a safety net for federal-collateral
-material a new wording could evade.
+before `/publish`**; a new wording evades it.
 
 **Gate (1b) greps CONTENT; a barred token in a FILENAME evaded it (2026-07-10).**
 A path renders publicly (repo tree + blob URL) without appearing in any file's
@@ -108,16 +106,15 @@ Contract: `data/specs/extending-2026-07-13/cmux-coordinator-2026-07-12/SPEC.md` 
 condition 1) — the lane is `extending/`-owned.
 
 **Memory-slice ruling (2026-07-10).** Drive Promise 1's weekly redacted memory
-mirror was **never populated** (`sync_mirror.py` has no memory roster; only its
-README ever shipped). Ruling: **exclusion, not redaction** — an entry whose
-*subject* is the bar can't be scrubbed of it and stay useful; if the roster is
-ever authored it MUST be a curated **allow-list** (opt-in), never a deny-sweep
-(rule (D) + gate (1b) fail-closed either way). `sync` only *masks* an
-already-published leak (superseding commit) — barred blobs survive in public git
-history until a **history rewrite + force-push** (orphan-reset when 0 forks/PRs)
-purges them (the GitHub analog of the S3-wipe). Forensic detail (file counts,
-README correction): memory `project_publishing_subproject`. Gate wired before
-push, pinned by
+mirror is unpopulated (`sync_mirror.py` has no memory roster). Ruling:
+**exclusion, not redaction** — an entry whose *subject* is the bar can't be
+scrubbed of it and stay useful; if the roster is ever authored it MUST be a
+curated **allow-list** (opt-in), never a deny-sweep (rule (D) + gate (1b)
+fail-closed either way). `sync` only *masks* an already-published leak
+(superseding commit) — barred blobs survive in public git history until a
+**history rewrite + force-push** (orphan-reset when 0 forks/PRs) purges them
+(the GitHub analog of the S3-wipe; forensic detail in memory
+`project_publishing_subproject`). Gate wired before push, pinned by
 `data/specs/publishing-2026-05-31/tests/cases/t_10_publish_gate.sh`.
 
 **The candidate tree is markdown, so the gate scans markdown.**
@@ -271,10 +268,8 @@ CLAUDE.md language split).
 - **Release flow (gate-first; no step until the prior clears).** The **CDN upload
   is the FIRST public push** — the S3 object is fetchable at
   `videos.quantapix.com/<key>` the instant it lands (immutable cache), reachable by
-  URL even before it is linked from /videos. So it is gated **identically to the
-  YouTube upload**, NOT a pre-gate "build" step. The mistake to never repeat:
-  uploading the cut to S3 before the payload clears (4.1, 2026-06-30 — the chain
-  pushed the CDN object ahead of `evaluating/`'s sign-off). Order:
+  URL even before it is linked from /videos, so it is gated **identically to the
+  YouTube upload**, NOT a pre-gate "build" step (4.1 regression, 2026-06-30). Order:
   1. **Master finalized** (explaining) + thumbnail rendered.
   2. **Applicable gate(s) CLEAR on the full payload** — title + description + tags +
      chapters + thumbnail + the **derived public CDN slug** (the slug renders on
@@ -283,13 +278,8 @@ CLAUDE.md language split).
      a **financial-domain** video (Topic 3 / Topic 4 / any Qresev payload) needs
      `evaluating/` **FINANCIALLY-CLEARED** (sole grantor, `accounting/` advises — § 5);
      a **litigation-framed** video needs `pleading/` messaging CLEAR; where both
-     apply, **both** are required. Cite each attestation in the manifest entry's
-     `signoffs{}` map (keyed by registry gate-id — `signoffs["FINANCIALLY"]` /
-     `signoffs["MESSAGING"]` → the record-path; signoff-framework § 7) **and** the
-     release commit (`Signed-off-by-gate: <gate>=<record>`). The pre-migration
-     free-text form (4.2's "evaluating-cleared" commit cite) is superseded by the
-     map — `youtube_sync.py`/`youtube_upload.py` `signoff_blocker()` machine-refuses
-     a push whose in-scope gate lacks an on-disk record.
+     apply, **both** are required. Signoff-map mechanics + commit trailer +
+     `signoff_blocker()` machine-refusal: § 11 gate (1).
   3. **Publishing mints the key**, stages `descriptions/<key>.txt` + the manifest
      entry (`youtubeId: null` = built-not-uploaded); redaction/verb sweep clean.
   4. **CDN upload** (`serving/scripts/upload-video.sh <cut> T<n>/<slug>.mp4`) — the
@@ -320,9 +310,18 @@ in Studio; `youtube_sync.py` diffs and `videos.update`s drift. Skill:
 `publishing/scripts/youtube_{sync,upload,auth}.py`; deps in the root `[publishing]`
 extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
 
-- **Two hard gates.** (1) **Signoff gates** (signoff-framework § 7): each entry's
-  scope flags (`litigationFramed` → MESSAGING, `financialDomain` → FINANCIALLY) put
-  it in a gate's scope, and `signoff_blocker()` refuses push/adopt-over/upload unless
+- **Two hard gates.** (1) **Signoff gates** (signoff-framework § 7): an entry's scope is
+  the **R2 union — committed class floor ∪ per-entry flags** (`in_scope_gates()`, 2026-07-24).
+  The floor comes from `data/publishing/r2-scope-map.json` keyed by the **topic prefix** of
+  the manifest `key` (`T3`/`T4` → FINANCIALLY today), which is structurally mandatory in
+  every catalog key and so cannot be forgotten; the flags (`litigationFramed` → MESSAGING,
+  `financialDomain` → FINANCIALLY) survive as **additive-only** widenings that may never
+  narrow below the floor. An **unregistered class fails closed** (refuses the push) — a
+  gate that defaulted an unknown topic to ungated would reintroduce the R2 vacuity attack.
+  publishing PRODUCES that artifact and consumes it here; studying's Lean extractor is the
+  other reader (`load_scope_map`, R9: only prose-lifted gates may be scope-mapped, so
+  MESSAGING never appears in it). No cross-subproject import — both sides validate the same
+  committed JSON independently. `signoff_blocker()` then refuses push/adopt-over/upload unless
   every in-scope gate's `signoffs[<gate-id>]` names a record on disk — a promoted
   `data/messaging-rulings/<date>.md` (pleading grants) or an
   `evaluating-financial-signoff/signoffs/` record (evaluating grants, accounting
@@ -345,3 +344,12 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   then `check` → resolve → `push`; `--mode stats` writes
   `data/publishing/youtube-stats.json`. `youtube_sync` does NOT touch `videos.json`
   — the /videos live-flip stays the `videos_emit.mjs` edit (§ 10).
+- **CDN release gate (`CLEARANCE_COMMIT`).** `serving/scripts/upload-video.sh` refuses
+  any `T<n>/` catalog key unless the caller sets `CLEARANCE_COMMIT` — the
+  FINANCIALLY-CLEARED record's `granting_commit`, which must resolve to a commit in the
+  repo AND be an ancestor of HEAD (so the clearance is provably in the pushed tree). It
+  binds **every** `T<n>/` episode, not only financial ones: a non-financial episode
+  clears via a `verified-N/A` FINANCIALLY grant, whose commit is still the
+  `CLEARANCE_COMMIT`. Authoritative contract: `data/specs/serving-2026-05-26/SPEC.md`
+  release-gate bullet (serving owns the script + the gate); this bullet is the
+  publishing-side pointer the script's error message cites.

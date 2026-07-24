@@ -30,9 +30,9 @@ generic drift detection (the verifier subagent runs structural checks only,
 not pinned-commitment scoring). A miss against any of them is a **functionality**
 finding (highest priority).
 
-Commitment 1 (firm 6/1/2026 deliverables) is retired post-deadline; slots 2–8
-keep their numbers because `probes.md` cites commitment 4, `README.md` cites
-commitment 6, and `dco-manual` cites the checker's #7.
+Commitment 1 (firm 6/1/2026 deliverables) is retired post-deadline; the
+surviving slots keep their numbers because `probes.md` cites commitment 4,
+`README.md` cites commitment 6, and `dco-manual` cites the checker's #7.
 
 2. **Weekly summaries on the public `quantapix` GitHub org.** Any public repo
    under `quantapix/` with `pushedAt` older than 7 days is a finding. The
@@ -59,39 +59,25 @@ commitment 6, and `dco-manual` cites the checker's #7.
    goes in `probes.md` once endpoints + the first dated ledger exist; the
    ledger-existence check can land sooner.
 6. **Spec hygiene + phase tally.** `scripts/specs-audit.sh` is the single
-   source of truth (sections: SPECS phase tally / TESTS conformance /
-   LAYOUT lint / CHARTERS data/charters/ lint / TMP proposal status /
-   LEDGER manual-check reminders); its thresholds and finding rules mirror
-   `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
-   `data/charters/qagents/spec-lifecycle/CHARTER.md` and move in lockstep
-   with them (script + `checker.md` commitment 5 + this roster land in ONE
-   change — data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16
-   § 6.1 for the multi-root + DEBATES/TODOS arms). Every non-tally
-   finding it emits (`[in-flight]` > 14d, OVER-CAP, LAYOUT lint, CHARTERS
-   lint — header parse failure is P1 — a scope-resident family with an
-   unshipped phase (R4 de-maturity; `owner-living-program`-declared
-   families are exempt unless a marker is un-roadmapped —
-   `residency.txt` + owner-living-program-2026-07-16 § 4), a
-   residency-validator V1–V5 / missing-Residency-header row, a `todos/`
-   header parse failure (P1), an `OPEN P1 charter defect`, a `stale P2
-   charter defect`, stale / adopted-orphan `tmp/`, post-2026-05-19
-   tests-dir shape, LEDGER `PAST`/`DUE` rows — surface the note column
-   verbatim) is a **correctness** finding; `charters-tally` rows
-   (carve-out registry count + globs, `todos (<scope>): N open`,
-   `debates (<scope>): N migrated`, `residency: N declared
-   living-program row(s)`) are tally-only. SPECS/TESTS/LAYOUT walk data/specs/ **and** every
+   source of truth (six sections: SPECS phase tally / TESTS conformance /
+   LAYOUT lint / CHARTERS lint / TMP proposal status / LEDGER reminders);
+   its thresholds and finding rules mirror `data/specs/CLAUDE.md` +
+   `data/tmp/CLAUDE.md` + `data/charters/qagents/spec-lifecycle/CHARTER.md`
+   and move in lockstep (script + `checker.md` commitment 6 + this roster
+   land in ONE change — data-charters-2026-07-16 § 3.4 AUDIT-C1;
+   charter-scopes-2026-07-16 § 6.1 for the multi-root + DEBATES/TODOS arms).
+   Every non-tally finding it emits is a **correctness** finding — surface
+   the note column verbatim; the finding-class roster lives in `checker.md`
+   commitment 6 and the script itself, not here. `charters-tally` rows are
+   tally-only. SPECS/TESTS/LAYOUT walk data/specs/ **and** every
    `data/charters/<scope>/specs/` (scope rowids root-qualified). Layout
-   exemptions are data: the carve-out registry
+   exemptions are data — the carve-out registry
    (`data/charters/qagents/spec-lifecycle/carve-outs.txt`) + signoff dirs
-   derived from `.claude/skills/do-signoff/registry.tsv` — never prose,
-   never a second registry. New LEDGER rows are append-only entries in the
-   script's `SPEC_LEDGER` TSV; the `owner` column powers
-   `specs-audit.sh --owner <sub>` (pinned by `scripts/tests/`). The daily
-   tally rides in `checks/<date>.md` as `## Uncompleted spec phases` +
-   `## tmp/ proposal status` + `## Spec ledger reminders` + `## Charters`
-   (see § 8). The same linter also fires pre-landing: `/close` runs
-   `specs-audit.sh --lint-paths` on session-touched SPEC.md/CHARTER.md
-   files (close.sh exit 45).
+   from `.claude/skills/do-signoff/registry.tsv` — never prose. New LEDGER
+   rows are append-only entries in the script's `SPEC_LEDGER` TSV; the
+   `owner` column powers `--owner <sub>` (pinned by `scripts/tests/`). The
+   daily tally rides in `checks/<date>.md` (§ 8); the same linter fires
+   pre-landing via `/close` → `specs-audit.sh --lint-paths` (close.sh exit 45).
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
    (regenerate via `scripts/claude-settings/build.py`). Hand-edit drift only;
@@ -128,6 +114,12 @@ commitment 6, and `dco-manual` cites the checker's #7.
    (or a first-class rejection note back to the node); merged leftovers are
    `scripts/pull.sh --tidy`'s job post-push-all. Spec:
    `data/specs/data-charters-2026-07-16/SPEC.md` § 6.2 step 7 (AUDIT-C4).
+   Same lane, no new number (S4, 2026-07-23): `scripts/node-pr-gate.sh`
+   evaluates every OPEN node PR against its topic's declared-surface
+   allow-list + deletion refusal (closed set in the script; no auto-widening).
+   Any `verdict=BLOCK` row → **correctness** finding surfaced verbatim — that
+   PR must not merge until amended or explicitly ruled. Spec:
+   `data/specs/node-return-lane-2026-07-14/SPEC.md` § 5 + § 8 Phase S4.
 
 11. **Flow-clause hygiene (tree-wide safety net).** `scripts/flow-lint.sh` is
    the source of truth (wraps `python -m qagents.flow_graph lint` at
@@ -138,11 +130,35 @@ commitment 6, and `dco-manual` cites the checker's #7.
    cites it, which the close-time gate cannot see. Advisory lines (near-dup
    slugs, missing bold leads) + the trailing summary are tally-only.
    Observe-only: route fixes to the citing slot's owner session.
+12. **Shorting review-lane hand-offs + D-4 escalation.**
+   `scripts/spread-runway.sh` is the source of truth. Lane rows with
+   `promote_items>0` extend the checker read set to that BLUEPRINT's
+   "Promote (checker-grade)" section (triage per `shorting/CLAUDE.md` § 5 —
+   the read-set grant requested by spread-enforcement R5, granted
+   2026-07-20); a `handback … sla=ESCALATE` row unconsumed in the newest
+   dco summary → **correctness** finding (optimization charter § 2.7 D-4
+   SLA). E4 `spread-review owed` leg declined until the session-lifecycle
+   seed ships.
+13. **Spec-family test-battery health.** `scripts/spec-battery.sh` is the
+   source of truth — the loud aggregating runner over every family/charter
+   `tests/run.sh` tree-wide (per-suite timeout, always exit 0). Any
+   `FAIL`/`TIMEOUT` row → **correctness** finding (silent-red shape-gate:
+   a chartered artifact landed without its expected-set update — the
+   studying `t_02_quartet` class). Discipline: the expected-set update
+   lands in the SAME change as the artifact.
+14. **Blind-metric provenance on published figures.**
+   `scripts/blind-metric-drift.sh` is the source of truth (day-over-day
+   changed statCards on `data/status/{proving,accounting}.json`; recency
+   values filtered). A changed coverage/tier figure whose minting wave +
+   closed-oracle status cannot be named from the owning sub's newest close
+   summary / conformance matrix → **correctness** finding
+   (`feedback_blind_fanout_oracle_channels`). `withheld` is the correct
+   posture, never a finding.
 
 Subagent prompts under `.claude/agents/` encode these commitments verbatim —
 keep them in sync when a threshold changes.
 
-## 2. Three top-tier-model subagents, clean contexts each
+## 2. Four subagents (three top-tier + one haiku), clean contexts each
 
 The 06:00 cron fires a single coordinator that spawns three top-tier-model subagents +
 one Haiku subagent in parallel, each with a clean context. Each subagent owns
@@ -202,18 +218,14 @@ files > shipped websites > internal docs > backlog).
 
 ### 3.1 Suppressed-finding class — Agent SDK (operator directive 2026-06-30)
 
-Anthropic dropped the SDK credits from the Max-20x subscription, so the SDK
-lane is unusable for now. **All four subagents must NOT surface any
-SDK-related finding** until the subscription regains SDK access. Concretely,
-suppress: `data/agent-sdk-ledger/` failure-stage findings (checker.md's
-`data/agent-sdk-ledger/` scan), SDK-lane fire failures, `agent-sdk-adoption-2026-05-17`
-spec-phase stalls / OVER-CAP, SDK-credit references, and the
-`pending/data/agent-sdk-ledger/**` unclassified surfacing (now classified
-DORMANT in the verifier internal-set + `verify-pending.sh`). This is a
-reversible, dated directive — drop the suppression and re-enable the scans
-when a new subscription/SDK plan ships. See memory
-`reference_agent_sdk_credit_200_mo`. (Revert applied 2026-06-30; § 7 owns
-lane status + restore path.)
+The SDK lane is parked — root CLAUDE.md § Agent SDK lane owns status +
+restore path. Until it returns, **all four subagents must NOT surface any
+SDK-related finding**: `data/agent-sdk-ledger/` failure-stage findings,
+SDK-lane fire failures, `agent-sdk-adoption-2026-05-17` spec-phase stalls /
+OVER-CAP, SDK-credit references, and `pending/data/agent-sdk-ledger/**`
+unclassified surfacing (classified DORMANT in the verifier internal-set +
+`verify-pending.sh`). Reversible, dated directive — drop the suppression
+when access returns. Memory: `reference_agent_sdk_credit_200_mo`.
 
 ## 4. Functionality probes — random, weighted
 
@@ -299,6 +311,29 @@ sub-50-byte `pending/**` stubs (thresholds + skip-list live in the script
 and match the verifier's stub-reject rule). pending/ is gitignored — no
 commit, no lock contention.
 
+Same script also owns the **S5 state write-back** (shipped 2026-07-20;
+`data/specs/node-return-lane-2026-07-14/SPEC.md` § 8 Phase S5): every fire
+ff-only-syncs local `main` from the `github` authority before committing and
+pushes `main` back after — both legs non-fatal, so a traveling laptop that
+cannot reach the authority still runs its verifier and converges on the next
+reachable fire. Trouble surfaces as greppable `[managing] s5-sync FINDING:` /
+`s5-push FINDING:` log lines (checker commitment #6 scans them; divergence
+ranks functionality). This is what lets the canonical-repo role travel with
+the seat; the non-holder's pull half lives in `qs open` (s5-sync phase).
+
+**`push_to_authority` is the LAST thing the fire does, so every step upstream of
+it is a silent single point of failure.** The script runs `set -euo pipefail`;
+any abort before the push skips it, and S5's own `s5-push FINDING:` line can
+only fire if the push is *reached* — so the failure mode is a green report and
+no write-back at all. Lived instance: `drain_ns_ledger` counted spool files with
+`find "$QAGENTS_LEDGER_SPOOL" … | wc -l`, the dir does not exist on a host that
+has never spooled, pipefail turned `find`'s exit 1 into an abort, and five
+consecutive fires (2026-07-20 → 07-23) pushed nothing while reporting clean.
+Rule: **guard every optional path before touching it**, and when adding a step
+between the lanes and the push, add a fixture proving the push still fires when
+that step's inputs are absent (`data/specs/ledger-lan-primary-2026-07-19/tests/cases/t_16_ns_drain_missing_spool_nonfatal.sh`
+is the pattern — assert it goes red against the unfixed script first).
+
 ## 6. Layout
 
 ```
@@ -331,16 +366,17 @@ Cron-fired daily at 06:00 local via the qagents launchd scheduler at
 `data/schedules/`. Registered as `com.qagents.managing-daily`; spec row in
 `data/schedules/cron_triggers.md`; ROUTINES entry
 `managing:daily:06:00:0,1,2,3,4,5,6` in `data/schedules/launchd/install.sh`.
-**The `:sdk` token was removed 2026-06-30** — SDK lane parked; root
-CLAUDE.md § Agent SDK lane owns status + restore path (re-append `:sdk`,
-then `install.sh --enable` from canonical). § 3.1 owns the
-suppressed-finding class. The fired routine is the coordinator prompt at
+(The routine's `:sdk` token was removed 2026-06-30 — root CLAUDE.md
+§ Agent SDK lane; § 3.1 owns the suppressed-finding class.) The fired
+routine is the coordinator prompt at
 `managing/.claude/coordinator-prompt.txt`, piped to `claude --print` by
 `data/schedules/launchd/run_routine.sh`. The coordinator runs the four
 subagents (three top-tier + one haiku verifier) in parallel and exits;
 runtime budget ≤ 10 min (subagents wrap independently).
-Per-run cost cap is **$9 USD** (`MAX_BUDGET_USD` defaults to `9.00` for
-`daily`; `3.00` for trading routines).
+Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`
+— one table keyed by routine, paired with `routine_policy_model` so a
+routine's model tier and its funding cannot drift apart; `daily`
+(managing's own) is $9 USD.
 
 Do **not** use `RemoteTrigger` / `CronCreate` / the cloud `schedule` skill —
 the cowork sandbox VM cannot mount the qagents tree, and that path was
@@ -402,5 +438,3 @@ managing/ does not import from any sibling subproject (root CLAUDE.md
 language-split rule). It reads via the filesystem only. There are no
 shared-code seams; the data hub for managing/ is the qagents tree itself.
 This is a read-side specialization of the data-hub-not-shared-code pattern.
-
-

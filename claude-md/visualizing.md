@@ -5,8 +5,12 @@ Claude Code's default guidance and the repo-root `qagents/CLAUDE.md`. Don't
 re-litigate those.
 
 **Registered subproject (2026-06-03).** Authoritative contract:
-**`data/specs/visualizing-2026-06-03/SPEC.md`**. Subproject memory:
-`project_visualizing_subproject`.
+**`data/charters/visualizing/specs/visualizing-2026-06-03/SPEC.md`** —
+scope-resident since 2026-07-20 under the `owner-living-program` residency
+class (declared in the family header + `residency.txt`; every open phase
+marker carries a `(frontier: …)` ref — an un-roadmapped marker de-matures the
+family). Scope charter: **`data/charters/visualizing/graphing-surface/CHARTER.md`**.
+Subproject memory: `project_visualizing_subproject`.
 
 ## 1. What this is
 
@@ -40,7 +44,14 @@ The only cross-engine mandate is the shared data layer; layout is per-engine.
 
 - **Schema:** `qcatalog/1` — `cells` / `bridges` / `leaves` only. Structural
   compounds (Title / Chapter / Cluster / Section / Sector) are **derived by the
-  loader**, never stored. Full shape in the spec § 3.1.
+  loader**, never stored. Full shape in the spec § 3.1. **Vocabulary custody
+  (G10 "studying proposes, visualizing versions") — ratified 2026-07-20, spec
+  § 3.1a:** the operational `axis` set is 44 tokens (version of record:
+  `extractor/validate_catalog.py` `AXES`, lockstep twin `graphs/src/core/model.ts`
+  `Axis`); the qrounds/1 `kind`/`attack_style` enums are ratified with the
+  corpus-reconciled sets; the leaf-level `leanRef` join is pinned (leaf labels
+  unique per module). `OPERATIONAL_AXES` (the render-palette roster) stays the
+  7 git axes until the 36-cell emit mounts (next-steps item 29).
 - **A cell** is one blind `(title, cluster, axis)` unit (financial:
   `(sector, axis)`, no cluster). **Section is a leaf sub-grain, not a cell.**
 - **Golden refs are addressable cells** (`blindOrGolden:"golden"`); no separate
@@ -79,8 +90,8 @@ this § 3 is authoritative.
 (`@qagents/graphs`, pnpm workspace member):
 render-neutral core (`qgraph/1` model + `collapse.project()` + layout/style/axes
 + merge/inductive/method) + adapters (`fromCatalog`/`fromProof`/`fromNodeLink`/
-`fromConstellation`) + **ONE backend — cytoscape + fcose** — + `src/kit/mount.ts`
-(the mount API: `mountProof`/`mountCatalog`/`mountNodeLink`/`mountConstellation`,
+`fromConstellation`/`fromFlow`) + **ONE backend — cytoscape + fcose** — + `src/kit/mount.ts`
+(the mount API: `mountProof`/`mountCatalog`/`mountNodeLink`/`mountConstellation`/`mountFlow`,
 regions/onLayout/onTapLeaf — the compose RegionSource surface) + `sandbox/`
 browser gates. **The layered branch (tf-graph derivative) was ELIMINATED
 2026-07-02** (`graphs-2026-07-02/SPEC.md` § 4; `feedback_retire_dont_tombstone`);
@@ -89,21 +100,26 @@ rank-kind derived — `PROOF_RANK_KINDS`, T8 shipped 2026-07-11; § 3 of that sp
 **three** IIFE dist bundles (global `QViz`): `dist/kit-proof.js` (graphs + the
 charts SVG-only `QViz.charts.*` namespace for the `/lattice` rollups+trends
 panel, charts-2026-07-02 § 7.1 →
-`verifying/web/public/graphs2/kit.js`) + `dist/kit-strategy.js`
-(graphs+charts+compose → `evaluating/web/public/graphs2/kit.js`) +
+`verifying/web/public/graphs/kit.js`) + `dist/kit-strategy.js`
+(graphs+charts+compose → `evaluating/web/public/graphs/kit.js`) +
 `dist/kit-graphs.js` (domain-neutral node-link → `monitoring/web/public/graphs/
-kit.js` + the designing hero). verifying/evaluating keep the historical
-`graphs2` mount name; monitoring renamed to `graphs/` (2026-07-11).
+kit.js`). **the legacy `graphs2` mount name is RETIRED everywhere (operator
+ruling 2026-07-21)** — monitoring renamed to `graphs/` 2026-07-11,
+verifying + evaluating 2026-07-22; designing REMOVED its dormant hero mount
+wholesale 2026-07-22 (no longer a `kit-graphs.js` consumer — the `/thesis`
+live mount is re-added with the hero arc, items 9/15); analyzing N/A
+(ns:visualizing/32).
+`fromFlow`/`mountFlow` (constellation flow graph, kit-graphs bundle ONLY;
+Option-B fold, renderer computes nothing, the kit never reads
+`graph.bottlenecks[]`) — spec `flow-adapter-2026-07-16/SPEC.md`.
 Re-sync = rebuild + cp into the app dirs + the app's `pnpm verify` / e2e.
 Authoritative detail: `graphs/README.md`. See § 4. Also in-dir:
 `00..02-*.prompt.md` — the proof-DAG leaf-tier design prompts (token palette,
 geometry, animation, a11y, and the `Failure[]` wiring contract `verifying/web/`'s
-`/proof-graph/02-debug/` consumes). The 2026-06-03..11 POC
-engines (cytoscape.js / tensorboard / bakeoff / blender) live only in git
-history; survivor: `graphs/sandbox/scale_catalog.py`.
+`/proof-graph/02-debug/` consumes).
 
 **`charts/` — quantitative modality (BUILT; `@qagents/charts` workspace member;
-authoritative contract `data/specs/visualizing-2026-06-03/charts-2026-07-02/SPEC.md`,
+authoritative contract `data/charters/visualizing/specs/visualizing-2026-06-03/charts-2026-07-02/SPEC.md`,
 debated + adopted `data/debates/charts-mixed3d-2026-07-02.md`):** the render-neutral
 `qchart/1` closed-set series model + `validate()`; two adapters (`fromCatalog`
 aggregate rollups · `fromReport` per-framework overlays + `predicate-selected` OHLCV
@@ -121,9 +137,8 @@ keeps flat charts exports. indicators are DATA never kit code (§ 4). **C8
 framework-union** (§ 4.1 carries the standing invariant): `Framework` is a closed
 mapped union over the OPEN `WireFramework`, `fromReport` degrades an unmapped id
 (`degraded:true`, never a TypeError); ships in **kit-strategy only**, so C8's
-host-copy debt is `evaluating/` alone. **Cross-owner W-ledger remainders:** C3
-verifying `/lattice` mount · C4 accounting extras reshape + evaluating FINANCIALLY
-re-scan · C5 analyzing adoption · C6 financial rollups mount.
+host-copy debt is `evaluating/` alone. **Cross-owner W-ledger remainders live in
+the charts SPEC's ledger** — trust the SPEC rows, not this line.
 
 **Modality scaffolds (`catalog.json` consumers):**
 
@@ -133,21 +148,13 @@ re-scan · C5 analyzing adoption · C6 financial rollups mount.
   render-neutral `q3d/1` kit, kinds `pointcloud | surfacegrid | panelset`
   (charts-in-3D = opaque fully-resolved SVG payloads, composed via a compose
   `PanelSink` at M3, never parsed). **Re-chartered 2026-07-02 — authoritative
-  contract is `data/specs/visualizing-2026-06-03/mixed3d-2026-07-02/SPEC.md`**
-  (debated + adopted; PRIVACY gate PC1–PC6): phase order INVERTED — M1
-  surfacegrid kit + M2 monitoring cost mount first (its re-home gate cleared
-  2026-06-17; `hourlyBreakdown` stranded), embedding pointcloud lens LAST (R1
-  kill criterion carried). **M1 SHIPPED 2026-07-05:** `q3d/1` model + validate
-  (`var()`-payload reject, missing-`privacy` reject) + `fromGrid` (fail-closed
-  privacy, sparse/fill/index) + `fromCatalogSurface` (aggregate height-field,
-  VZ4-pinned) + one Three.js backend + `dist/kit-3d.js` (IIFE global `Q3D`);
-  gated `pnpm -C visualizing/mixed3d gates` (39 unit + 10 headless-WebGL verify
-  + strict CSP + `sandbox:frames` SSIM ≥ 0.98 over 8 committed frames).
-  **Projected cells SHIPPED 2026-07-06 (spec § 9, operator amendment):**
-  q3d/1.1 additive `surfacegrid.projected?: boolean[][]` mask + `qgrid/1` cell
-  `projected?` flag — ghost `--q3d-projected` color (never a ramp step), hover
-  `(projected)`, `tap-cell.projected`; absent ≡ all-actual, byte-compat. M2
-  (monitoring cost mount) is monitoring-owned + chartered-not-scheduled; the
+  contract `data/charters/visualizing/specs/visualizing-2026-06-03/mixed3d-2026-07-02/SPEC.md`**
+  (PRIVACY gate PC1–PC6): phase order INVERTED — M1 surfacegrid kit + M2
+  monitoring cost mount first, embedding pointcloud lens LAST (R1 kill criterion).
+  **M1 + projected-cells SHIPPED (2026-07-05/06):** `q3d/1(.1)` +
+  `surfacegrid.projected?`/`qgrid/1` `projected?` mask, ghost `--q3d-projected`
+  (never a ramp step), byte-compat; shipped enumeration + gates in the spec +
+  next-steps item 16. M2 is monitoring-owned + chartered-not-scheduled; the
   `pointcloud`/`panelset` backends throw until M5/M3. Seeds `03-spatial-3d/`.
 - `scenes/` — baked replay animation + frame export for `explaining/` (spec § 8;
   Phase 5). Frame capture rides the cytoscape kit (headless Playwright —
@@ -165,23 +172,19 @@ Drives the monitoring/ operational mounts (live) + later the uscode mount
 in verifying/ (M2). Debate record:
 `data/debates/uscode-graph-monitoring-pipeline-2026-06-16.md`.
 
-**Method-DAG hero (designing `/thesis`).** Moved off HOME to `/thesis` 2026-07-07
-(HOME switched to the membrane module; the dormant `designing/web/public/graphs2/`
-fixture awaits designing's content de-dup). An authored interactive INDUCTIVE DAG
-exercising three general, byte-compat node-link capabilities: cluster-as-node edges
-(`nodelink.ts`), expansion-state merge (`core/merge.ts`), inductive clusters
-(`core/inductive.ts`) + role→shape + `MountKitOpts` knobs. Encoding + standing
-graph-def grammar live in **parent SPEC § 15** (operator-reviewed; firewall
-A-ONLY, merged `S→T` forbidden). Authored `etype ∈ {flow,use,feedback,veto}` with
-role-inferred USE default (`method.ts`/`elements.ts`). fcose ordering constraints
-survive collapse states (**W7, 2026-07-07** — expanded-compound endpoints re-target
-onto childless members, `MEMBER_CAP` 8; deterministic merged wiring via
-`MountKitOpts.seed`; regression bed `graphs/test/flow-constraints.test.ts` +
+**Method-DAG hero (designing `/thesis`).** Moved off HOME to `/thesis` 2026-07-07.
+An authored interactive INDUCTIVE DAG exercising three general, byte-compat
+node-link capabilities: cluster-as-node edges (`nodelink.ts`), expansion-state
+merge (`core/merge.ts`), inductive clusters (`core/inductive.ts`) + role→shape +
+`MountKitOpts` knobs; authored `etype ∈ {flow,use,feedback,veto}`
+(`method.ts`/`elements.ts`). Encoding + standing graph-def grammar + the W7
+constraint mechanism live in **parent SPEC § 15** (firewall A-ONLY, merged `S→T`
+forbidden; regression bed `graphs/test/flow-constraints.test.ts`,
 `sandbox/w7-check.mjs`). **Single render** — one cytoscape-fcose source serves the
-silent hero video and the `/thesis` mount, same designing-owned `hero-graph.json`
-(with `loader.js`). 7-chapter animation contract
-`data/specs/visualizing-2026-06-03/thesis-hero-2026-07-07/SPEC.md`, capture bundle
-`scenes/thesis-hero/`; open work = next-steps items 9–12, public MP4 deferred on W8.
+silent hero video and the `/thesis` mount (`hero-graph.json` + `loader.js`);
+7-chapter animation contract
+`data/charters/visualizing/specs/visualizing-2026-06-03/thesis-hero-2026-07-07/SPEC.md`, capture bundle
+`scenes/thesis-hero/`; open work = next-steps items 9/11/15, MP4 deferred on W8.
 
 **Constellation modality (M) + cluster-lens.** studying's SECOND operational
 input — the qagents monorepo + `~/.claude` memory as one non-hierarchical graph
@@ -198,15 +201,15 @@ overlay), and constellation is **dark-only** (`tokens-constellation.css` DARK So
 no light twin). The M1 picture-floor knobs (`sizeBy`/`labelMinDegree`/`edgeRouting`/
 `overviewDepth`) are opt-in `StyleSpec`/`MountKitOpts`; lattice/proof defaults are
 untouched. monitoring owns `/constellation` + the mechanical kit-dist re-host-copy
-(next-steps item 8). Spec:
+(next-steps items 21 + 7). Spec:
 `data/charters/studying/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md` § 8.
 
 ## 4. Phased roadmap (spec § 12)
 
 Phases 0–3 ✅ (registration · catalog extractor `qcatalog/1` · cytoscape
-web-port · scale bake-off) — POC engines superseded + removed 2026-06-11 (§ 3
-carries the bake-off-preservation detail); the cytoscape CSP patch lives on as
-the graphs `pnpm patch` (Phase 4).
+web-port · scale bake-off) — POC engines superseded + removed 2026-06-11
+(survivor: `graphs/sandbox/scale_catalog.py`); the cytoscape CSP patch lives on
+as the graphs `pnpm patch` (Phase 4).
 **Phase 4 RE-SCOPED → built from scratch as the kit** (G0–G6 DONE + gated +
 MOUNTED; single cytoscape-fcose backend, see § 3 + `graphs-2026-07-02/SPEC.md`).
 cytoscape ships as npm deps + a `pnpm patch` (CSP fix), NOT vendored-source. Implementation/gate detail (test counts, per-app
@@ -218,6 +221,21 @@ byte-equality).
 
 ## 4.1 Standing kit contracts (easy to break silently)
 
+- **Caps-key discipline (charts `chartsCaps()`, MODALITY gate V-U2).** `chartsCaps()`
+  is a closed record (6 keys today); every future qchart capability filing MUST
+  declare its additive caps key in the filing text — consumers key upgrade triggers
+  on that key, never on version/feature-sniffing. `m3dCaps()` landed 2026-07-20
+  (M8: `{surfacegrid, pointcloud, panelset, projected}`, deep-equal-pinned) under
+  the same rule. `graphsCaps()` minted 2026-07-21 (navigator-2026-07-20 § 3.6:
+  `{navigator}`, deep-equal-pinned in `graphs/test/navigator.test.ts`) — same rule.
+- **Declared-token gate (the third gate class, 2026-07-20).** The parity gates
+  compare the two DECLARED mirrors; they cannot see a token the CODE reads that
+  neither declares (`--chart-pane-h` shipped that way — read at the LW backend,
+  declared nowhere, `''` forever, every gate green). `{charts,mixed3d}/test/
+  declared-tokens.test.ts` now assert every `'--…'` string literal in src is a
+  declared token (DEFAULT_TOKENS[_3D] ∪ SERIES_TOKENS; family prefixes admitted
+  iff members are declared). A px dimension is never an overlay token — the
+  pane-h read was deleted, not declared.
 - **The proof conformance anchor is SYNTHETIC and stays that way.**
   `graphs/test/fixtures/graph-v1-doe_acme.json` = proving's real `sample` (Doe v.
   Acme) emit + an authored § 1961(1) refusal (`sandbox/gen-doe-acme-fixture.py`); it
@@ -248,18 +266,14 @@ byte-equality).
   `charts-series-dial-2026-07-14` R2). A series declares a **role** (`price` |
   `indicator` | `volume` | `band`, + `slot 1..6`) and the KIT owns the token
   (`seriesToken()`). **No chrome, furniture, or annotation token is reachable from any
-  role** — that absence IS the contract: it is what makes painting a data series with
-  `--chart-overlay-grid` (decorative, 1.21:1) or `--chart-overlay-marker` (breach red)
-  *unrepresentable* rather than merely discouraged. It had to be, because the open
-  `styleRef` set let every host do exactly that — analyzing painted 8 series from 5
-  slots, and the kit's own `report.ts`/`trend.ts` do it too. **Never widen a role to
+  role** — that absence IS the contract (painting a data series with a decorative or
+  breach token is *unrepresentable*, not merely discouraged). **Never widen a role to
   reach a furniture token, and never add a colour by handing hosts a new raw token
-  name — add a role.** `seriesColor()` is role-first with a legacy-`styleRef`
-  fallback, so the role palette (rendering-owned, `data/tmp/charts-role-palette-2026-07-14.md`)
-  **self-activates on mint**; an *undeclared* series must never default into the ramp
-  (that would silently re-colour every legacy chart on mint day — pinned by a test).
-  `lintSeriesTokens()` is the migration lever; `charts/test/palette.test.ts` gates the
-  palette as a SET (AA · ΔE≥18 from the ghost · pairwise), not token-by-token.
+  name — add a role.** `seriesColor()` is role-first with a legacy-`styleRef` fallback
+  (role palette rendering-owned, `data/specs/charts-role-palette-2026-07-14/SPEC.md`;
+  self-activates on mint; an *undeclared* series never defaults into the ramp).
+  Migration lever + palette-SET gate (`lintSeriesTokens()`,
+  `charts/test/palette.test.ts`): next-steps item 26.
 
 ## 5. Seam discipline — JSON only
 
@@ -268,11 +282,11 @@ JSON (`catalog.json`, `graph.json` v1). **No cross-subproject imports**
 (`feedback_cross_project_data_sharing`). No Lean parsing in the renderer; the
 kit consumes JSON, the extractor produces it. `loader.js` is the never-fold
 side-car — a schema change is a two-sided edit (spec § 3.1 / R5;
-`proving-results-propagation-2026-05-09.md` § 2.3).
+`data/specs/proving-results-propagation-2026-05-09/SPEC.md` § 2.3).
 
 ## 5.1 Modality boundary + composition (locked 2026-06-08)
 
-`data/specs/visualizing-2026-06-03/charts-2026-07-02/SPEC.md` § 1 (carried locks L1–L4). Subproject-local
+`data/charters/visualizing/specs/visualizing-2026-06-03/charts-2026-07-02/SPEC.md` § 1 (carried locks L1–L4). Subproject-local
 by decision (L4) — **not** promoted to root `CLAUDE.md`.
 
 - **One modality per visual primitive class.** Node-link topology (cells,
@@ -318,12 +332,15 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
   overlay per app (axis palette / tier ramp / agreement green-amber-red); never
   redefine base tokens. **Overlay SoT = `rendering/` for ALL THREE kits**
   (graphs since 2026-06-16, brand-polishing § 3b variant A; charts + mixed3d
-  since the 2026-07-14 re-point, next-steps item 23). Every
-  `{graphs,charts,mixed3d}/kit/tokens-*.css` is a **byte-identical mirror** of
-  `rendering/brand/tokens/quantapix/overlay/{lattice,proof,chart,q3d}-{dark,light}.css`
-  — DO NOT edit in-kit; edit the SoT then re-copy. All three now carry dark+light
-  (graphs is no longer the sole dual consumer); theme selection is at the app's
-  mount-dir copy (`graphs2/`; monitoring `graphs/`). Tier ramp is frozen at
+  since the 2026-07-14 re-point). Every `{graphs,charts,mixed3d}/kit/tokens-*.css`
+  is a **byte-identical mirror** of
+  `rendering/brand/tokens/quantapix/overlay/{lattice,proof,chart}-{dark,light}.css`
+  + `q3d-dark.css` — DO NOT edit in-kit; edit the SoT then re-copy. graphs +
+  charts carry dark+light kit-side; **mixed3d is dark-only** (the q3d light SoT
+  was withdrawn at series-dial R5 and the kit's orphan light mirror was dropped
+  2026-07-20 — rendering mints the pair at M2, and the mirror-test loop gains
+  the light tuple back then); theme selection is at the app's mount-dir copy
+  (`graphs/` for every consumer). Tier ramp is frozen at
   `{a-full,a,b,modulo,unknown}` — **no `--tier-uncovered`**; an uncovered cell is
   `tier:unknown` + `coverage:false` (studying emit is SoT-aligned; adding the
   value is a non-goal).
@@ -331,21 +348,16 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
 - **The token chain has THREE hops and each one drifts silently — two are now
   gated, one is not.** A missing token NEVER errors: it resolves to `''` and
   either drops the property, takes a wrong local fallback, or (mixed3d)
-  reaches `new THREE.Color('')`, **which is white**. Both known drifts shipped
-  for days under fully green gates.
+  reaches `new THREE.Color('')`, **which is white**.
   1. **SoT → kit mirror** — gated by `{graphs,charts,mixed3d}/test/tokens.test.ts`
      (byte-diff; skips when `rendering/` is absent, since the kits ship standalone
-     via `publishing/`). *This hop had gone stale:* rendering shipped
-     `--edge-feedback`/`--edge-veto` on 2026-07-07 and the graphs mirror never got
-     them, so the W9 edge distinction had never once rendered.
+     via `publishing/`).
   2. **kit CSS ↔ `DEFAULT_TOKENS`** (charts) / `DEFAULT_TOKENS_3D` (mixed3d) — the
      browser reads the overlay, the headless exporter reads the map, and they must
      agree. Gated by the same `tokens.test.ts` (key-set AND value equality).
      `DEFAULT_TOKENS` ≡ the **DARK** slice (operator ruling 2026-07-14: the
      `explaining/` frame export bakes dark; the light slice is browser-only).
-     *This hop had gone stale:* `--chart-overlay-projected` / `--q3d-projected`
-     landed in the maps 2026-07-06 and never in the overlays. graphs has no map
-     (browser-only) — nothing to drift.
+     graphs has no map (browser-only) — nothing to drift.
   3. **kit → app mount copy** — **UNGATED**, cross-subproject, each app's own
      `/close` (next-steps items 7 + 21). `dom.ts` in charts + mixed3d now falls
      back to the sanctioned map when the host copy lacks a token, so a stale host
@@ -360,6 +372,13 @@ digest `data/debates/adopted/rendering-spec-2026-06-09.md`). Standing bounds:
   the kit or consumes kit-emitted SVG; it never re-implements layout from
   `catalog.json`/`graph.json`. `scenes/` stays visualizing-owned content
   production; rasterization/composition ride rendering/'s engines downstream.
+- **Overlay VALUE changes are ATOMIC ⇒ lift-UP to `qagents`** (2026-07-14; mirrors
+  rendering/CLAUDE.md § 4b). The three kits' `test/tokens.test.ts` byte-mirror
+  gates mean a rendering-SoT value change and the kit re-copy can no longer land
+  in separate sessions — the window between the two `/close`s is a red `main`.
+  One whole-repo session lands SoT + mirror(s) + the headless map in one commit.
+  Net-new overlays may still land SoT-first (the gates are existence-guarded and
+  skip).
 - **Brand reaches the kits only via the host shells' build-time token copies**
   (VZ1/T4); no kit-side token file, no fetch — runtime `rendering/brand/` fetch
   forbidden. The visualizing-lattice slice under rendering's `designs/` is net-new

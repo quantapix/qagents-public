@@ -54,19 +54,15 @@ Every `agents/<pm>/` dir carries the same file set (semantics owned here; each P
 
 ## Bull-vs-bear debate (decision skill)
 
-`shared/skills/bull-bear-debate/` lets any PM run a parallel **bull vs
-bear** AI-session debate on one candidate symbol, then **hard-gate** the
-verdict through `accounting/`'s Lean kernel before it becomes a ticket.
-Evidence is already-reported data/news/trends (`watchlist.md` + journal +
-`news-scanner`) plus the analyzing-side TA-reference parquet — no new data
-source. Mechanics in `shared/lib/debate.py` (`bundle` + refuse-closed
-`gate`); advocates `bull-debater` / `bear-debater` (model pinned in their agent
-definitions). The gate
-is a **veto, not a vote** (mirrors the options-risk hard-refuse posture);
-a passing verdict still clears `risk-analyzer` (+ `options-risk-analyzer`)
-→ `trade-executor`. Gate coverage: TREND `is_uptrend` over the analyzing
-S&P 500 parquet universe (via the canonical
-`financial/parquet` worktree symlink); abstains on names outside it.
+`shared/skills/bull-bear-debate/` runs a parallel bull-vs-bear AI-session
+debate on one candidate symbol (advocates `bull-debater` / `bear-debater`),
+then hard-gates the verdict through `accounting/`'s Lean kernel before it can
+become a ticket. Mechanics + evidence sources in `shared/lib/debate.py`
+(`bundle` + refuse-closed `gate`); no new data source. The gate is a **veto,
+not a vote** (mirrors the options-risk hard-refuse posture); a passing verdict
+still clears `risk-analyzer` (+ `options-risk-analyzer`) → `trade-executor`.
+Gate coverage: TREND `is_uptrend` over the analyzing S&P 500 parquet universe
+(canonical `financial/parquet` worktree symlink); abstains on names outside it.
 
 ## Order ticket schema
 
@@ -104,7 +100,7 @@ The `journal-writer` sub-agent appends these sections; PMs draft the content.
 
 ## Python module invocation
 
-All Python helpers are invoked as modules — `python -m shared.lib.<name> <cmd> [flags]` — so they share the package namespace (current set: `ls shared/lib/`; conventions in `shared/CLAUDE.md`). Commands accept `--account {aggressive|moderate|conservative}` where relevant and emit JSON on stdout for programmatic parsing. Cron-fired programmatic Claude goes through `qagents.agent_sdk` (`code/agent_sdk/`); root `CLAUDE.md` § "Programmatic Claude — Agent SDK lane" owns lane status (parked) and the spec pointer.
+All Python helpers are invoked as modules — `python -m shared.lib.<name> <cmd> [flags]` — so they share the package namespace (current set: `ls shared/lib/`; conventions in `shared/CLAUDE.md`). Commands accept `--account {aggressive|moderate|conservative}` where relevant and emit JSON on stdout for programmatic parsing.
 
 **SPY benchmark + alpha figures** must come from `python -m shared.lib.performance daily --account <pm>` (or `leaderboard`), never estimated in chat. The module fetches 15-min-delayed SIP via Alpaca and reconciles fund vs SPY in one place. The daily report exposes `spy_day_return` and `day_alpha_bps` directly so all three PMs cite identical numbers; `spy_unavailable: true` is the explicit "halt and back-fill at next run" signal — never paraphrase a SPY number from news scans when it's set. `n_snapshots` is the running history length; below 30, stamp Sharpe/Sortino with the noisy-history disclaimer.
 
@@ -138,6 +134,47 @@ bracket_status    # optional free-form annotation
 
 ## Scheduled routines
 
+**A host that can reach the repo is not a host that can trade.** Git does
+not carry trading's state: the tape (`financial/parquet/`), the creds
+(`trading/.env`), and each PM's live `portfolio.json` context are
+gitignored or laptop-local — a fresh checkout that fires a routine would
+reason over a pre-session book and write it back over the real one.
+Before any seat/host move, sync + hash-match all three (the 2026-07-14
+seat drill caught exactly this pre-flip). 2026-07-23 added the converse:
+**a host that has the tape and the creds still cannot trade on a stale
+checkout** — qyel passed every gate, including `seat_preflight` GREEN
+24/24, and reported "no Morning Plan existed today" because its `main`
+predated the plan commit by 96 minutes. Tracked state matters as much as
+gitignored state. (It also could not compute a Greek: `py_vollib` was
+broken there with `pip check` clean. `lib/capability.sh` has no
+options-stack row — ns-14.)
+
+**THE ROUTINE ROSTER IS A SET OF DEPENDENCY CHAINS, NOT INDEPENDENT
+FIRES.** `overnight-research → premarket-brief → open-execution →
+midday-review → close-journal → leaderboard` is one chain per PM, and the
+medium it hands state along is **tracked files in this repo** (the
+journal, `portfolio.json`, `watchlist.md`). A chain must therefore run
+start-to-finish on ONE host. The seat gate proved exclusivity and
+capability but not this — so a flip pushed mid-morning on 2026-07-23
+split a day across both laptops and a pre-committed AMD ticket was never
+placed, with every gate verdict correct and nothing raising a finding.
+Mechanized since as the seat's third invariant, **CONTINUITY**: a tenure
+may only BEGIN in the 21:00–21:59 local changeover hour, and the incoming
+host fast-forwards `main` to the authority or refuses (`exit=75`;
+`data/specs/node-return-lane-2026-07-14/SPEC.md` § 12). Practical
+consequence for this subproject: **a seat flip no longer takes effect
+when it is pushed** — flip in the evening, never during a trading day.
+
+**Do not diagnose the health of the fire you are running inside.**
+`run_routine.sh` writes `qagents-cost` and `qagents-routine exit=` after
+the dispatch returns, so a routine grepping its own log always sees it
+truncated and can only conclude it crashed. To check a *sibling* fire,
+grep that sibling's log for `qagents-routine exit=` — and note
+`exit=0 skipped=not-seat-holder` means the routine was correctly declined
+**on this host**, not that it did not run anywhere. On a two-host lane
+those are different facts and only the first is locally visible; that
+distinction is exactly what the 2026-07-23 journals got wrong.
+
 The 16 trading LaunchAgents (3 PMs × 5 cron routines + leaderboard) are
 registered through the canonical qagents launchd scheduler at
 `data/schedules/`. Per-routine spec rows live in `data/schedules/cron_triggers.md`;
@@ -149,13 +186,12 @@ runbook at `data/schedules/Notes.md`.
 
 ### Cron-lane vs manual-lane producer contract (`pending/` migration)
 
-Trading producers haven't migrated yet — opportunistic per
-`data/specs/data-conventions-2026-05-06/SPEC.md` § 10 step 8 (pick up when
-next touching any PM prompt, per-PM skill, or trading sub-agent). Contract
-in root `qagents/CLAUDE.md` § "Shared-data write-lock". State files
-(`portfolio.json`, `watchlist.md`) stay canonical in both lanes — read by
-the next same-day cron fire, can't stage behind the once-daily verifier
-(spec § 6).
+Trading producers haven't migrated to `pending/` yet — pick the migration up
+opportunistically when next touching any PM prompt, per-PM skill, or trading
+sub-agent. Contract in root `qagents/CLAUDE.md` § "Shared-data write-lock".
+State files (`portfolio.json`, `watchlist.md`) stay canonical in both lanes —
+read by the next same-day cron fire, they can't stage behind the once-daily
+verifier (`data/specs/data-conventions-2026-05-06/SPEC.md` § 6).
 
 **Cron-lane path discipline (load-bearing).** A cron fire runs
 `run_routine.sh` → `claude --print "/<routine>"` with cwd already at the
@@ -171,45 +207,24 @@ landed in `qagents-wt/trading-13/`, absent from the daily-promotion commit).
 
 ### Relocation lane — off the laptop, onto a LAN node
 
-Spec:
+Adopted 2026-07-14; Phase T (qpur fixes) shipped; the relocation phases are
+REQUIRED and gated. Single owner:
 `data/specs/cron-ec2-migration-2026-05-19/trading-herdr-sessions-2026-07-14/SPEC.md`
-(adopted 2026-07-14; Phase T shipped). Debate + gates:
-`data/debates/trading-node-relocation-2026-07-14.md`. The **EC2 transport is
-superseded for trading** — the parent family's Phases 2–5 (`qagents-app-1`,
-`routines.toml`, `/srv/qagents-state/`) are deferred, and the SDK gate that
-deferred them is moot: the node lane runs full subscription-billed sessions.
+(§ 0 motive — qpur cannot leave the WiFi while it serves cron; § 12 gates);
+debate record: `data/debates/trading-node-relocation-2026-07-14.md`. The EC2
+transport is superseded for trading — the node lane runs full
+subscription-billed sessions, mooting the SDK gate that deferred the parent
+family's Phases 2–5.
 
-**Why it is REQUIRED, and it is not about failure rates:** qpur cannot be
-disconnected from WiFi, or used freely, while it serves cron. 211 of 212 fires
-ran under a `PreventUserIdle=1` power assertion; a 2-day absence lost **33 fires
-permanently** (launchd replays a miss only ONCE on wake). The schedule pins the
-laptop open 08:25–16:45 **and** 22:00–23:45+. **All 16 routines relocate** —
-`overnight-research` (22:00/22:30/23:00, longest-running) is the *worst*
-tethering offender, so any "leave it on qpur" carve-out is backwards.
-
-**Un-waivable gates before anything moves** (a stronger motive lowers no bar):
-
-- **Sparse checkout.** The node clone excludes `legal/` (631 tracked files, live
-  dockets) *and* narrows the `data/` cone — 247 files in the naive cone carry
-  docket tokens; `trading/` + `financial/` are clean. **Subtraction, not
-  fencing:** the repo hooks are hardcoded to macOS paths and **fail open** on
-  Linux, and the cron lane runs `bypassPermissions`, so no in-session refusal
-  layer is load-bearing there. Absence is a property; a fence is only a control.
-- **Human merge.** The node returns its day on a `<node>/<topic>` branch (tracked
-  files — the git lane is class-correct here); the **merge is a qpur `/open`
-  session under `.data-write-lock`**. Unattended auto-merge is BLOCKED
-  (unanimous): it holds no lock, and a git merge has a **delete channel** the
-  `pending/` lane does not.
-- **Allow-list carve-outs:** never `trading/agents/*/.claude/**`, `risk_policy.md`
-  or `strategy.md` — machine-**output** paths only, else a node session can
-  rewrite its own routine definitions.
-- Node wrapper **unsets `QAGENTS_PENDING_ROOT`**; both clocks pinned to ET (the
-  *process* clock too — artifacts are date-stamped paths).
-
-**herdr is not on the critical path.** Untethering needs only: sparse node clone,
-Linux `claude` auth (with the billing guard made a *positive* assertion — today it
-only checks `ANTHROPIC_API_KEY`), both clocks pinned, and the daily human merge.
-herdr lands on top as observability. AWS-touching artifacts stay `serving/`-owned.
+Un-waivable gates (spec-owned; summarized because they bind sessions here):
+sparse node clone excluding `legal/` + a narrowed `data/` cone (subtraction,
+not fencing — no in-session refusal layer is load-bearing on the node); the
+node's day returns on a `<node>/<topic>` branch merged ONLY by a qpur `/open`
+session under `.data-write-lock` (unattended auto-merge BLOCKED); allow-list =
+machine-output paths only — never `trading/agents/*/.claude/**`,
+`risk_policy.md`, or `strategy.md`; node wrapper unsets
+`QAGENTS_PENDING_ROOT`; both clocks pinned to ET. herdr is observability, not
+critical path; AWS-touching artifacts stay `serving/`-owned.
 
 ## Monthly retro + leaderboard
 
@@ -231,8 +246,8 @@ the 2026-07-14 audit found them already breached in committed artifacts:
 - **Session calendar.** `performance.is_trading_session` (Alpaca's calendar,
   fails closed) gates `snapshot` and `daily`. **A closed day produces no NAV mark, no
   day-return, no alpha, and no model spend.** Marking a shut tape is what produced the
-  phantom alpha, the fabricated "extended-hours −1.25% move" (06-19) and the fabricated
-  "half-day 13:00 close" (07-03). Check it first: `python -m shared.lib.performance
+  phantom-alpha and fabricated-session incidents of 06-19/07-03. Check it first:
+  `python -m shared.lib.performance
   is-session --date <d>`. Backfilling a day the calendar is genuinely wrong about needs
   an explicit `--allow-closed`.
 
@@ -253,11 +268,9 @@ python -m shared.lib.costs fill --account <pm>     # writes the line
 python -m shared.lib.costs day  --account <pm>     # just report it
 ```
 
-The source is the `qagents-cost cost_usd=…` line that `run_routine.sh` now appends to
-every per-run log. Before 2026-07-14 the lane ran on `--output-format text` and emitted
-no cost field at all — which is why this section specified a `Cost:` line that read
-`TBD` in every summary ever written. Runs with no cost line (crashes, cap kills,
-pre-telemetry logs) are reported as `unpriced_runs`, never silently counted as $0.
+The source is the `qagents-cost cost_usd=…` line that `run_routine.sh` appends to
+every per-run log. Runs with no cost line (crashes, cap kills, pre-telemetry logs)
+are reported as `unpriced_runs`, never silently counted as $0.
 
 ## Status emit (`data/status/trading.json`)
 
