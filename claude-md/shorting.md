@@ -27,7 +27,14 @@ case for the short).
   `shorting/shorten/` (the do-shorten lane, § 4a), `shorting/share/`
   (the do-share lane, § 4b), and `shorting/spread/` (the do-spread lane,
   § 4c) — plus the status-hub
-  emit (`scripts/status_emit.mjs`, root-conventions pending lane).
+  emit (`scripts/status_emit.mjs`, root-conventions pending lane) and the
+  two chartered parent-session-only ROUTING exceptions
+  (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
+  I1): the § lane-spread step-(6) apply-routing item (filed via
+  `ns-add qagents` — the slot is a store-backed GENERATED render), and § 3-class charter todos under
+  `data/charters/<scope>/todos/`. A debate this subproject convenes
+  writes its record to `data/debates/` (2026-07-14 precedent; the
+  `/close` lift lane handles the foreign write).
 - Never `git push`, `git commit`, `git add`, deploys, or mutates code in
   other subprojects.
 - Never edits another subproject's `CLAUDE.md` to "respond to" a
@@ -177,6 +184,16 @@ shorting/ (find) ──► managing/ (decide) ──► subproject /open session
 This split is deliberate: separating discovery from triage lets
 `shorting/` be hostile without that hostility leaking into actionable
 work plans.
+
+**`managing/checks/` is a 7-day CARRIER, not an archive.** Since the
+2026-07-29 do-retire P2 reap, all three promote targets rotate on a
+7-day TTL (`data/specs/do-retire-2026-07-26/lanes.tsv`:
+`managing/{reports,checks,tasks}/*`, `ephemeral`, archived to
+`archive.blob`). A promoted finding is therefore durable only if the
+**citing** side carries the substance — an ns item body, a charter, a
+spec — because the `checks/` file it points at will be gone in a week
+and a cite to it will dangle (`retire.sh --check-cites`, exit 46).
+Promote AND land the substance somewhere that survives.
 
 ## 6. Scope boundary
 

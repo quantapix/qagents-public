@@ -7,7 +7,8 @@ description: Flush queued cross-subproject CLAUDE.md hints from data/claude-upda
 
 Mechanical phases live in `scripts/dcu.sh` (`--pre`, `--finish`,
 `--report`). This skill is the orchestrator for the *judgment* loop in the
-middle. Spec: `open-close-dcu-<date>.md`. Uniform footer at
+middle. Contract: the session-lifecycle charter (condensed render at
+`specs/session-lifecycle.md`). Uniform footer at
 `scripts/lib/footer.sh` writes under `data/summaries/dcu/`.
 
 ## Procedure

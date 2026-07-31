@@ -254,32 +254,16 @@ Skill catalog (motif plates + Wave-3 scene skills) is owned by
 `blending/skills/README.md` — 11 skills as of 2026-07-13; don't
 restate the roster here. All three motif bridges carry cohort-tone
 params (`film_transparent` + `*_color` RGBA), added 2026-07-10 for
-the Meridian re-skins.
+the Meridian re-skins. Skill-authoring manual-crosscheck rule (locked
+2026-05-24): `blending/skills/README.md` § Manual crosscheck.
 
 **Cohort-tone params + tinting (all bridges).** The `film_transparent`
 + `*_color` (RGBA) params sit **outside** the `RenderSpec` — hash-stable,
-so a re-tint does not change the render hash (single consumer, nothing
-lost). Tinting GN-realized instances needs a `Set Material` node spliced
-in the bridge — a host-object material slot does **not** reach realized
-instances. All three motif bridges share the module-level
-`_tint_realized_geometry` helper in `motifs/_cli.py` (splices at the
-tree's `output` node's incoming link, so post-realize stages like
-tessellation's `subdivide` stay in the chain; node matching is by
-`.name`, never `is` — bpy RNA reads return fresh wrappers); base_color
-is **linear** RGB (Cycles), not sRGB. Re-tint param sets are committed
-as refspecs at `motifs/fixtures/` (2026-07-10 onward).
-
-## 8.5. Blender-skill manual crosscheck (locked 2026-05-24)
-
-Before shipping any `blending/skills/<name>/SKILL.md` that documents
-manual Blender / Geometry Nodes authoring steps, verify each named
-node, modifier, panel, and operator against the Blender 5.1 reference
-docs (or extracts under `blending/blendr/docs/`). Treat the docs as
-ground truth — not memory, not earlier prose. Same failure mode the
-2026-05-24 audit caught in `resolving/`'s v1 SKILL catalog
-(hallucinated properties, wrong node-kind, wrong token paths). Pinned
-in `feedback_fusion_skill_authoring_manual_crosscheck` (resolving's
-instance of the same rule).
+so a re-tint does not change the render hash. Re-tint param sets are
+committed as refspecs at `motifs/fixtures/`. The bpy mechanism (shared
+`_tint_realized_geometry` splice in `motifs/_cli.py`, `.name` node
+matching, linear-RGB base_color) is pinned in memory
+`project_blending_subproject` — read it before touching a bridge tint.
 
 ## 9. Pointers
 

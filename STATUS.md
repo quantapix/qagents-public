@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-07-24. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-07-31. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -36,38 +36,43 @@ refreshes.
   video-production chain, and the adversarial sibling all now publish their
   rule-sets. Three subprojects remain deferred and one is an open editorial
   call; the subtree README names each and why.
+- The `claude-md/` graph refreshed against a heavy week: twenty of the
+  twenty-one published rule-sets changed, several substantially (the
+  constellation watcher, the market-inspection surface, the kernel graphing
+  surface, and the operational-axis kernel most of all).
 
-## What changed since the last refresh (2026-07-10)
+## What changed since the last refresh (2026-07-24)
 
-- **A second Rust authoring surface was minted.** The session-lifecycle
-  mechanics layer finished its phased migration out of shell into a native
-  binary — each verb ported, dual-run against the original on an exhaustive
-  matrix, cut over behind a path-stable shim, and the superseded shell
-  libraries deleted in one commit once the last caller was gone. A second
-  crate now covers the context-transformation layer: injection, conservative
-  output shortening, and semantic recall. Two surfaces, chartered; a third
-  would need its own ruling.
-- **Cross-machine session lifecycle became symmetric.** Exactly one machine
-  merges per cycle, and which one is decided by the verb being run rather than
-  by the hardware. Everything else packages, pushes a namespaced topic ref, and
-  fast-forwards. Memory flows one direction only. The replaced model had worked
-  only by accident.
-- **Gating state became machine-readable.** The dependency graph across every
-  subproject's forward-looking slot is now assembled on demand from structured
-  clauses instead of read out of prose, with an explicit registry for external
-  blockers and a parked class excluded from bottleneck metrics.
-- **Ledger-shaped shared data moved to a store.** Surfaces with many appenders
-  now start as a table with a single writer rendering a git projection, rather
-  than as another hand-appended shared file. The forward-looking slots
-  themselves were the first cutover.
-- **The kernel graphing mount finished a constellation-wide rename**, and one
-  site dropped out as a consumer entirely after its remaining mount was found
-  dormant and removed rather than carried. Three consumers remain.
-- **All three formal kernels ran waves in-window** — the textual axis
-  re-earning chapter after chapter under a stricter evidence rule, the
-  numerical axis holding its frontier under freshly gated market-tape
-  provenance checks, and the operational axis proving its own
-  context-operations conventions. Detail lives in the product repos.
+- **A twenty-fifth subproject was created.** Deep agent-based market
+  simulation: an engine plus a local on-device model-fit lane and a local-only
+  UI that is never deployed. It reads promoted factor artifacts under a written
+  consumer contract rather than importing anything, and it is generative-
+  descriptive by charter — it models market structure, it does not forecast.
+  It carries the financial signoff floor from its first commit rather than
+  acquiring one later.
+- **The formal-kernel charter went from seven invariants to eight.** The new one
+  is proof-of-fire: every mechanical gate must ship a committed known-bad
+  witness that it demonstrably rejects. A gate that has never been observed to
+  fire is not evidence, however green it reads. Several existing gates were
+  re-examined against it in the same window.
+- **All three kernels ran waves.** The textual axis promoted two more statutory
+  chapters, one of them a second blind re-slice of a chapter it had already
+  covered, under a stricter evidence rule. The numerical axis landed a
+  tape-of-record pin — a host running against a stale market tape now fails
+  loudly instead of quietly comparing against a different one — and its
+  coverage rows gained a git-visible corpus identity. The operational axis
+  completed a four-theorem set about its own context operations.
+- **The launch-directory permission hole was closed.** A session launched from
+  an unexpected working directory could previously miss the deny rules that
+  scope its writes; the deny mirror and the agent-definition link are now
+  provisioned together when the session is created.
+- **The recall lane was repaired.** The vendored plugin was re-vendored and its
+  local patch set re-applied; one patch fixed a root-derivation bug that had
+  left semantic recall silently returning nothing. Writers had moved to a new
+  root convention months earlier and the reader had not followed — the lane was
+  green the whole time.
+- **The context-optimization pass shrank its own inputs.** A deferred-hint flush
+  consumed seven queued cross-subproject hint files in one pass.
 
 ## What's not populated, and why that is a ruling
 
@@ -94,13 +99,19 @@ failure, not a vacuous pass. The engineering content — conventions, exit-code
 contracts, hook behavior, phase ledgers — is preserved, because that is the
 methodology this repo exists to publish.
 
-Two additional bars are enforced as fail-closed pairs rather than single greps:
-each has a content scanner over file bytes *and* a path scanner over file names,
-because a barred token in a path renders publicly in the repo tree without ever
-appearing inside a file. Both abort the publish rather than silently dropping
-the offending file. As of 2026-07-24 no contact email appears on any public
+Three additional bars are enforced as fail-closed pairs rather than single
+greps: a bar on one collateral docket family, a bar on session-multiplexer local
+state (which carries branch names, transcript paths, and prompt previews), and a
+bar on contact addresses. Each has a content scanner over file bytes *and* a
+path scanner over file names, because a barred token in a path renders publicly
+in the repo tree without ever appearing inside a file. All three abort the
+publish rather than silently dropping the offending file. Each ships its own
+pinned regression test — the gates are themselves subject to the proof-of-fire
+rule described above. As of 2026-07-24 no contact email appears on any public
 surface in this organisation; the organisation page is the sole contact channel,
-so questions are answered in public.
+so questions are answered in public. A collateral federal-appeal docket number
+was added to the hard-blocked set on 2026-07-31; the spelled-out court name
+without the number remains publishable.
 
 ## Cadence
 

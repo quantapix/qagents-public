@@ -1,6 +1,6 @@
 ---
 name: do-claude-optimizations
-description: Periodic memory + CLAUDE.md optimization pass across the entire qagents constellation. Fans out one digester subagent per CLAUDE.md (every subproject + root) plus a memory-index digester in parallel, then one sequential cross-cutting digester, merges their digests into a single apply-plan, and trims stale content under both the data write-lock and the dot-claude sentinel. Run after-hours via cron (or manually) to keep the memory index under the load-truncation cap and every CLAUDE.md under the size warn caps. Companion to /open, /close, /do-claude-updates.
+description: Memory + CLAUDE.md optimization pass across the entire qagents constellation. Fans out one digester subagent per CLAUDE.md (every subproject + root) plus a memory-index digester and a recall-memo digester — twenty-seven in parallel — then one sequential cross-cutting digester, merges their digests into a single apply-plan, and trims stale content under both the data write-lock and the dot-claude sentinel. The scheduled/programmatic lane is parked; the standing path is the operator-run interactive variant. Keeps the memory index under the load-truncation cap and every CLAUDE.md under the size warn caps. Companion to /open, /close, /do-claude-updates.
 ---
 
 # do-claude-optimizations (alias: `/dco`)
@@ -10,10 +10,12 @@ The "shrinking" half of the session-lifecycle skill set. Whereas `/open`,
 continuous trim pass that keeps the memory index and every CLAUDE.md below
 the harness's load-truncation thresholds.
 
-Spec: `dco-<date>.md` (authoritative). Mechanics live in `scripts/dco.sh`.
-The subagent prompts live under `.claude/agents/dco-*`. An interactive lane
-(`dco-manual`) is the path until the programmatic-credit activation gates
-the SDK path open.
+Contract: the optimization charter (authoritative; the dated spec files it
+absorbed are historical). Mechanics live in `scripts/dco.sh`. The subagent
+prompts live under `.claude/agents/dco-*`. The programmatic/cron lane is
+**parked** alongside the rest of the programmatic-agent lane; the standing
+path is the operator-run interactive variant (`dco-manual`), which runs the
+same pass via interactive subagent fan-out.
 
 ## Procedure
 
@@ -33,8 +35,9 @@ run. Exit 13 → a pre-existing FAILED marker; operator investigates first.
 ### 2. Fan-out (Opus subagent invocation)
 
 Spawn the parallel digesters: one `dco-subproject` per subproject, one more
-parameterized for the root CLAUDE.md, and one `dco-memory` for the memory
-index + topic files. Each writes its digest to a gitignored buffer under
+parameterized for the root CLAUDE.md, one `dco-memory` for the memory index +
+topic files, and one `dco-memsearch` for the recall daily memos —
+twenty-seven in parallel. Each writes its digest to a gitignored buffer under
 `pending/dco-digests/`; all run in clean contexts.
 
 After the parallel fan-out completes, spawn one sequential `dco-cross`: it
@@ -51,13 +54,13 @@ tree separately. On any apply failure it halts at the first failure, writes
 a FAILED marker with the apply-plan + failing step, releases both locks, and
 exits non-zero.
 
-**Dry-run-first safety gate.** Until a run of unanimous operator approvals
-lands, `--apply` runs in dry-run mode by default — writes a plan file for
-review but mutates nothing. Operator workflow: list pending plans, eyeball
-the per-section trim counts + any BLOCKED triage rows, then flush with an
-explicit `--execute --plan-path <plan>`. On success an `.applied` sidecar
-lands (carrying the apply timestamp + commit + backup dir); re-running on
-the same plan refuses — the sidecar is the deduplication contract.
+**Plan-first safety gate — auto-apply is retired.** `--apply` writes a plan
+file for review and mutates nothing. Operator workflow: list pending plans,
+eyeball the per-section trim counts + any BLOCKED triage rows, then flush
+with an explicit `--execute --plan-path <plan>`. On success an `.applied`
+sidecar lands (carrying the apply timestamp + commit + backup dir);
+re-running on the same plan refuses — the sidecar is the deduplication
+contract.
 
 ### 4. Release + report (mechanical)
 

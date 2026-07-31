@@ -9,9 +9,10 @@ Mechanical phases live in `scripts/close.sh` (subcommands `--noop-check`,
 `--pre`, `--commit`, `--status-emit`, `--next-steps`, `--finish`,
 `--resume-after-stash-pop`, `--verify`, `--footer`). This skill is the
 orchestrator that interleaves the *judgment* steps only an LLM in session
-context can do. Specs: `open-close-dcu-<date>.md` (the close phases + the
-noop short-circuit + the per-hop cascade footer + the next-steps gate + the
-canonical-edit hook) + the close-time status-emit contract. Uniform footer
+context can do. Contract: the session-lifecycle charter (condensed render at
+`specs/session-lifecycle.md` — the close phases + the noop short-circuit +
+the per-hop cascade footer + the next-steps gate + the canonical-edit hook)
++ the close-time status-emit contract. Uniform footer
 at `scripts/lib/footer.sh` emits to stdout AND appends under
 `data/summaries/close/`.
 

@@ -8,7 +8,7 @@ default guidance and the repo-root `qagents/CLAUDE.md`. Don't re-litigate those.
 The company is **Quantapix**. The products are **Qnarre** and **Qresev**. Do
 **not** use a retired brand name in any file under `designing/web/`, in copy, in filenames,
 or in plan docs — even when the upstream Claude Design bundle uses it as an
-umbrella brand. The lint script (`web/scripts/lint-tokens.sh`) enforces this.
+umbrella brand. The composed token lint (`pnpm lint` → `code/web/scripts/lint-tokens.sh` + `web/lint-tokens.conf`, `BAN_SILCROW=1`) enforces this.
 
 ## 2. Design bundle is read-only; token SoT at rendering/brand/
 
@@ -19,8 +19,9 @@ and propagate.
 
 **Token SoT (promoted 2026-06-10):**
 `rendering/brand/tokens/quantapix/tokens.css` is canonical;
-`web/src/styles/tokens.css` is a byte-identical copy (`lint-tokens.sh`
-rule 4 enforces parity; `pnpm verify` fails on drift). Re-sync when a
+`web/src/styles/tokens.css` is a byte-identical copy (the composed lint's
+`SOT_CMP` pair in `web/lint-tokens.conf` enforces parity; `pnpm verify`
+fails on drift). Re-sync when a
 new bundle ships: run rendering's two-drift intake sweep
 (`rendering/CLAUDE.md` § 4) over `project/colors_and_type.css` (+ any
 sub-bundle `assets/tokens.css`), land the swept result at the brand SoT
@@ -93,15 +94,9 @@ Because `og:image` targets are never navigated, neither `pnpm verify` nor
 the e2e PDF-reachability sweep catches a missing PNG — `curl -sI` the live
 `og:image` URLs and assert `200 image/png` after any OG-asset-namespace change.
 
-**Favicon / PWA head assets**
-are the same never-navigated class: `Layout.astro` head carries `icon`
-(SVG) + `apple-touch-icon` + `manifest` (`/site.webmanifest`); icons +
-manifest live under `public/assets/brand/`, rasterized from the app's
-`app-icon.svg` via Playwright Chromium (no `rsvg`/`magick` locally).
-`pnpm verify` / e2e never fetch them — `curl -sI` after any change.
-Theme color is `theme_color` in the webmanifest, **not** a
-`<meta name="theme-color">` (the meta needs a hex literal that rule-2 lint
-forbids; the JSON manifest is unscanned).
+**Favicon / PWA head assets** are the same never-navigated class —
+`pnpm verify` / e2e never fetch them; `curl -sI` after any change
+(roster + rasterizer + `theme_color` detail: memory `project_designing_web`).
 
 **Disclaimer (concede-and-preempt) — single source, binding placement.**
 The `disclaimer` export in `copy.ts` (`canon` + `legalRider` + `financialRider`)
@@ -118,6 +113,25 @@ guard both directions. Binding record:
 `pleading/` owes the § 11.7 post-deploy cold-read after every deploy that
 changes messaging (incl. the promotion deploy's R6 — naive-reader test on
 the corrected figures + membrane).
+
+**This site has NO barred-token guard, and it is the site that shipped both
+prior leaks.** femfas.net has one; quantapix.com does not. When one lands
+here, its scope is the deployed **payload**, all routes — not the markup: on
+femfas.net, four sweeps of record grepping `.ts` / `.json` / built HTML all
+read clean while 16 of the 28 linked asset PDFs carried barred tokens, because
+a source-tree grep structurally cannot reach `web/public/assets/`. Three traps
+carried over from that finding: a hit is a **review trigger for `pleading/`,
+never an auto-delete**; source-code *comments* produce hits that never render;
+and a bare token like `leave to file` false-positives on innocent titles —
+widen the token, don't widen the action. Sibling instrument + wording: the femfas.net surface's CLAUDE.md carries the matching collateral-docket bar section.
+
+**Surface prose vs. hosted payload.** A verbatim filed paper published *as a
+dated filed paper* does not make an assertion this surface is answerable for;
+card text, leads, OG descriptions, `drive.json` strings, status slots and
+public READMEs are present-tense publisher speech and do. A correction to a
+characterization therefore runs **forward** (new prose), never backward into
+an archive of dated filed papers. Authority:
+`data/messaging-rulings/2026-07-26.md` R2 C1.
 
 **Hub-backed pages are an exception — copy.ts holds chrome only.** Pages
 that render against a sibling subproject's data-hub slot keep
@@ -192,10 +206,14 @@ Scripts under `web/scripts/` (per-site, kept here):
 
 - `setup-bucket-hardening.sh` — per-site bucket hardening (serving § 8;
   one-shot, idempotent).
-- `lint-tokens.sh` — pre-build lint (no hex literals outside `tokens.css`,
-  no upstream-bundle brand leaks); designing-owned per-site lint, to be
-  composed over the shared base `code/lint/lint-tokens-base.sh`
-  (web-unification R-T5).
+
+Token-boundary lint (`pnpm lint`) is **composed over the shared base**
+`code/web/scripts/lint-tokens.sh` (web-unification R-T5 / M5b, adopted
+2026-07-22) — `pnpm lint` = `bash ../../code/web/scripts/lint-tokens.sh
+lint-tokens.conf`. The site's checks live in `web/lint-tokens.conf`
+(retired-brand-name ban, hex/font-literal bans, `thesis-steps` exclude, undefined-var
+guard, and the `tokens.css`↔brand-SoT byte `cmp`); `BAN_DERIVED=0` keeps the
+pre-existing `color-mix`/`rgba` wash literals passing (no check dropped).
 
 Deploy goes through the central `serving/scripts/deploy-site.sh
 quantapix.com` (invoked by `pnpm -C designing/web deploy`); IAM policy,
@@ -240,6 +258,9 @@ Playwright-verified. Build-time bake: the page reads
 validation, kitVersion drift guard, synthetic placeholder fallback on
 missing/malformed JSON — build never fails on a missing slot).
 
+**Propagation contract:** working a `/status/<axis>/` substance panel → read
+memory `project_designing_web` § "Status panels + producer contract".
+
 - **Schema** (kit-owned): `@qagents/diagram-kit` — root `qagents/CLAUDE.md`
   § "Status hub" owns the contract; `src/lib/status-loader.ts` carries the
   live `PRESENT_KIT_VERSION` + `ACCEPTED_KIT_VERSIONS` (SoT — never
@@ -259,63 +280,19 @@ missing/malformed JSON — build never fails on a missing slot).
   deep pages still build. Reversal is a one-line edit to the matching
   `members[]` array in `copy.ts` plus the e2e fixture sweep
   (KNOWN_SUBS + GROUPS + total-count assertion in `tests/e2e/status.spec.ts`).
-- **Six display modes (deep page).** Kinds + field shapes: kit `types.ts`
-  + `data/specs/display-modes-2026-05-07/SPEC.md`. Designing-side:
-  card-summary slot stays diagram-only (`summaryDiagramId` never points at
-  another kind); inspector hides on non-diagram panes via
-  `.content:not([data-active-kind="diagram"]) :global(.status-inspector)`.
-- **Components** (`src/components/status/*.astro`): one per emit kind plus
-  index card / pill / URL-hash chip-selector / global inspector; prop
-  detail lives in each file. Designing-specific invariants: teal/amber
-  accents reserved for Qnarre/Qresev (others neutral); `StatusDiagram`
-  carries NO inline
-  `<script>` (see "Page-level interactivity wiring"); `StatusDashboard`
-  renders `children[]` `bare`; `StatusInspector` is one global node the
-  kit's `attachInteractivity` finds via `root.ownerDocument` fallback.
-- **Page-level interactivity wiring.** `attachInteractivity` is invoked
-  in `pages/status/[sub].astro`'s page-level `<script>`, NOT inside
-  `StatusDiagram.astro` — Astro 5's dev pipeline breaks on the
-  component-inline form (memory `feedback_astro_dev_import_type_scanner`).
-- **Bridge tokens**: `src/styles/tokens-bridge.css` aliases the semantic
-  token names (`--color-fg-strong`, `--color-surface-2`, `--color-brand-
-  teal-soft`, etc.) that the kit's `tokens-diagrams.css` expects but the
-  marketing-bundle `tokens.css` doesn't define. Imported in
-  `Layout.astro` right after `tokens.css`. Don't fold these into
-  `tokens.css` — that file is a byte-identical copy of the promoted brand
-  SoT (§ 2); `tokens-bridge.css` itself stays designing-owned (DS1b).
-- **Copy** lives in `src/content/copy.ts`: `status` block + `STATUS_CARDS`
-  per-subproject map + per-route `OG_META` entries. Nav array in
-  `copy.ts` carries the `/status` entry — `Nav.astro` iterates, no edit
-  needed.
-- **Tests**: `tests/e2e/status.spec.ts` covers card count (matches
-  "Card count math"; revert with "Hidden cards"), pill color+icon, chip
-  selector, hash nav, SVG title+desc, single-panel/no-chips fallback,
-  reduced-motion, plus a "diagrams render as designed" describe block
-  enforcing the 2026-05-04 root-cause regressions (edgeless aspect h/w >
-  0.25, node fills resolve via bridge tokens on `:root`, labels visible,
-  node-click populates the inspector with rendered HTML). New routes are
-  walk + OG-meta checked in `tests/e2e/site.spec.ts`.
+- **Panel/emit detail spread to memory** — six display modes, status
+  components, page-level `attachInteractivity` wiring, bridge tokens,
+  copy blocks, `status.spec.ts` coverage, and the producer contract for
+  all 6 emit kinds: memory `project_designing_web` § "Status panels +
+  producer contract". Invariants that bite outside a status session:
+  teal/amber accents are reserved for Qnarre/Qresev (others neutral);
+  `StatusDiagram` carries NO inline `<script>` (`attachInteractivity`
+  wires in `pages/status/[sub].astro`'s page-level `<script>` — Astro 5
+  dev breaks on the component-inline form,
+  `feedback_astro_dev_import_type_scanner`).
 
 The Status page is the canonical surface for the engineer-debugging voice
 (§ 4) — system state, factual present-tense, no marketing fluff.
-
-**Producer contract (all 6 emit kinds).** Adding/altering any panel —
-diagram, table, statCard, kpiStrip, filterChip group, dashboard — is a
-producer-only change in `<sub>/scripts/status_emit.*` against the
-kit-owned emit types (field shapes: kit `types.ts` +
-`data/specs/display-modes-2026-05-07/SPEC.md`); re-run
-`pnpm build:status`. Designing-side invariants:
-
-- Every node needs populated `details` HTML — the inspector renders via
-  `set:html` (unsanitized; trusted producer code only), and empty
-  `details` leaves it blank on click.
-- `panels[]` (`{kind, id}` refs) overrides the default render order
-  (dashboards → diagrams → tables → statCards → kpiStrips →
-  filterChips); statCards referenced only from a KpiStrip's `cards[]`
-  stay out of `panels[]` (double-surface).
-- A producer panel migration drifts the consumer e2e — update the
-  chip-count/order arrays in `tests/e2e/status.spec.ts` in the same PR
-  (`feedback_emit_migration_consumer_test_drift`).
 
 ## 10. LOUD production app (web-next promoted 2026-07-07)
 
@@ -350,33 +327,31 @@ staging sibling 2026-07-07 (content de-dup deferred). Records: debate
   (videos live) is build-time hub-fed from `data/publishing/videos.json`
   `stats.live` via `videos-loader` (landed 2026-07-10); `copy.ts` holds
   a placeholder fallback.
-- **Thesis-steps animation (`/thesis`, Phase 3 shipped 2026-07-07).**
-  `public/thesis-steps/{thesis-steps.js,thesis-dark.css}` — the ported
-  thesis-hero delivery module + a byte-identical copy of the
-  rendering-owned `--step-*` overlay SoT
-  (`rendering/brand/tokens/quantapix/overlay/thesis-dark.css`).
-  Caption + rail render in dedicated slots OUTSIDE the canvas; chapter
-  titles live in the module (byte-exact contract with
-  `studying/thesis.md`). Hard floors (claim-free vocabulary, open ch-7
-  legs, silent, tokens-only): spec
-  `data/charters/visualizing/specs/visualizing-2026-06-03/thesis-hero-2026-07-07/SPEC.md` § 3.
-  The public MP4 bake stays Phase-5-deferred (W8 gate) — the page mounts
-  the live module only.
+  **Slot-5 is likewise hub-fed since 2026-07-24** — `src/lib/corpus-coverage.ts`
+  measures it over the two PUBLIC axes' status slots (proving
+  `uscEncodedSections/uscSectionUniverse` + accounting
+  `tradingEncodedSymbols/tradingSymbolUniverse`; `copy.ts` keeps `<1%` as the
+  both-placeholder fallback). That module is the single owner of the three
+  slot-5 locks and they are enforced in code, not by convention: the
+  operational axis is never summed (carry-condition 2 / privacy R9); the
+  withheld `uscTierA/B/C` strings are never read, so no golden/automated ratio
+  is derivable (ns-54 withholding); and because carry-condition 4 binds the
+  clearance to the wording, the loader renders the cleared `<1%` while the
+  measured aggregate is < 1% and warns loudly if it crosses. **The slot-5 e2e
+  assertion (`tests/e2e/interactivity.spec.ts`) is therefore the clearance
+  tripwire** — when it fails, the fix is a pleading re-clear of the new
+  wording, NEVER a loosened expectation. Add a public axis here only if its
+  producer already emits both counts; a new emit field is strictly riskier than
+  reading one that ships (root § Status hub whole-slot failure trap).
+- **Thesis-steps animation (`/thesis`).** Touching `/thesis` or
+  `public/thesis-steps/` → read memory `project_designing_web`
+  § "Thesis-steps delivery module" (floors + byte-exact contract).
 - **Tokens.** § 2/§ 3 apply (byte-identical brand-SoT copy, incl. lint
   rule 4). LOUD-only raw values live in `tokens-next.css` (pure
   `var()`/`color-mix`, no hex); mask gradients use the `black` keyword to
-  clear the hex lint; `lint-tokens.sh` carries `--exclude-dir=graphs2` +
-  `--exclude-dir=thesis-steps` (kit / delivery-module mounts with their
-  own token-definition files).
-- **Graphs-2 kit mount (dormant on `/`).** `public/graphs2/` still
-  serves the kit bundle (`kit.js`, regen-wholesale from
-  `visualizing/graphs` dist `kit-graphs.js`) + `loader.js` + the
-  method-DAG `hero-graph.json` (kit-mount pattern). The home hero mounts
-  the membrane, not the kit
-  — the fixture is dormant but stays messaging-guarded by
-  `interactivity.spec.ts`'s METHOD_VOCAB block; removal is deferred to
-  the content de-dup pass. On any fixture lift, sweep the e2e guard
-  (`feedback_emit_migration_consumer_test_drift`).
+  clear the hex lint; the composed lint conf (`web/lint-tokens.conf`) carries
+  `EXCLUDE_DIRS=(thesis-steps)` (the delivery-module mount with its own
+  token-definition file).
 - **Background variant** is **glass** (operator-chosen 2026-06-21): dark wash
   + breathing teal/amber blobs (`Ground`) + gradient-shimmer numerals
   (`StatStrip`). NB the fixed `Ground` (`z-index:-1`) needs the base canvas bg

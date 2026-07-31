@@ -6,7 +6,7 @@
 > the private working tree.
 
 A weekly-refreshed window into how a sole developer plus an expert AI
-assistant collaborate inside a single monorepo across twenty-four
+assistant collaborate inside a single monorepo across twenty-five
 sibling subprojects. The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
 It is the **rule set** the assistant reads at every session start,
@@ -22,7 +22,7 @@ curated alongside.
 The 2026 bet: what is worth publishing is no longer the implementation
 code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
 that lets a sole developer collaborate with an AI
-assistant across twenty-four non-overlapping subprojects without
+assistant across twenty-five non-overlapping subprojects without
 contradicting itself. Eight themes carry that bet; a founding case
 study closes the section.
 
@@ -51,7 +51,7 @@ this repo publishes.
 
 ### 2. Core competencies + inter-project tension resolution
 
-The private repo runs **twenty-four** sibling subprojects under a single
+The private repo runs **twenty-five** sibling subprojects under a single
 root. They share a venv, a pnpm workspace, a Lean toolchain, and a
 Git tree — but they explicitly do *not* share code. The boundary rule
 ("No cross-subproject imports — ever") is load-bearing.
@@ -168,7 +168,7 @@ parallelises freely. A single laptop, no external coordinator.
 ### 5. Context-window optimisation
 
 A `CLAUDE.md` over ~600 lines / 30KB silently truncates at session
-load. The memory index over 200 lines does the same. These caps are
+load. The memory index over 180 lines does the same. These caps are
 not soft; they are hard ceilings on what the assistant sees at turn
 zero. Every session that runs over an unoptimised tree is running
 with a partial map of its own working context.
@@ -177,21 +177,24 @@ qagents treats context optimisation as a first-class engineering
 concern, on the same level as test coverage:
 
 - **The memory index is an index, not a memory.** It holds one line
-  per topic, ≤150 chars, under the 200-line cap. Detail lives in
+  per topic, ≤150 chars, under the 180-line cap. Detail lives in
   topic files (`feedback_*.md`, `project_*.md`, `reference_*.md`)
   loaded on demand. The index is curated, not appended-to.
 - **`CLAUDE.md` files cite, they don't inline.** A new convention
   goes into a dated spec; the `CLAUDE.md` paragraph naming it is one
   sentence + a relative path. Mechanics live in scripts; rules live
   in `CLAUDE.md`s; reasoning lives in specs.
-- **`/do-claude-optimizations`** is a nightly assistant pass that
-  fans out one digester subagent per `CLAUDE.md` (root +
-  per-subproject) plus a memory-index subagent — around two dozen
-  in parallel — followed by one sequential cross-cutting digester.
-  Each proposes concrete edit-tool-ready trims to bring its target
-  back under the load-truncation caps. The coordinator merges into
-  an apply plan; the apply phase is mechanical. Goal: every
-  `CLAUDE.md` reload-survives the next session.
+- **The optimization pass** fans out one digester subagent per
+  `CLAUDE.md` (root + per-subproject) plus a memory-index digester
+  and a recall-memo digester — twenty-seven in parallel — followed
+  by one sequential cross-cutting digester. Each proposes concrete
+  edit-tool-ready trims to bring its target back under the
+  load-truncation caps. The coordinator merges into an apply plan;
+  the apply phase is mechanical and gated on operator approval, and
+  auto-apply is retired. Its scheduled lane is parked alongside the
+  rest of the programmatic lane (theme 8); the standing path is
+  operator-run. Goal: every `CLAUDE.md` reload-survives the next
+  session.
 - **memsearch is the fork-isolated recall lane.** Per-subproject
   vector collections + per-subproject daily memo trees. Recall runs
   in a forked context so the curated digest doesn't pollute the main
@@ -223,7 +226,7 @@ assistants inspecting each other's work:
 
 1. **Specialised subagents.** Read-only file/symbol exploration,
    read-only architecture planning, diff-correctness review, the
-   four-subagent context-optimisation pass, plus per-subproject
+   constellation-wide context-optimisation fan-out, plus per-subproject
    sub-agents (e.g. a runtime defined-risk enforcement agent for the
    trading side; a coordinator + ten volume agents for federal
    record-appendix assembly).
@@ -314,11 +317,13 @@ conventions the constellation itself runs on (the branch-as-write-lock
 rule of theme 4 is its first proved theorem). Its consumer is the
 local-only monitoring web app, fed over the same files/SSE seam the other
 two kernels use. The kernels never share
-domain, ground truth, or consumer; the charter pins **seven** invariants,
+domain, ground truth, or consumer; the charter pins **eight** invariants,
 including "no manual proof driving, ever" — every proof is driven by AI
-assistants debating in parallel, with the kernel as the only judge — and, most
-recently, gate uniformity: every kernel must pass the same fixed set of
-cross-kernel coherency checks with a hard exit code, not an advisory log.
+assistants debating in parallel, with the kernel as the only judge. The most
+recent addition is proof-of-fire: every mechanical gate must ship a committed
+known-bad witness that it demonstrably rejects. A gate that has never been
+shown to fire is not evidence, however green it reads — the measure is
+reachability, not pass count.
 
 The two products ship the same kernel against different statutes and
 different OHLCV. The public verifier endpoints accept **redacted
@@ -354,6 +359,8 @@ qagents-public/
     reference_*.md                public-facing pointers
   memsearch/                      curated daily memos
     <sub>/YYYY-MM-DD.md           one per opt-in publishable day
+  specs/                          condensed public-safe renderings of adopted specs
+    <name>.md                     one per spec cleared for the umbrella
 ```
 
 This first cut is **product-focused**: the `CLAUDE.md` mirrors and
@@ -372,7 +379,7 @@ Litigation-domain `CLAUDE.md`s (the appeals / pleading / legal-hub
 surface) are deliberately excluded — too easy for federal-record
 drift, even redacted.
 
-## Sibling subprojects (twenty-four, one venv, one workspace)
+## Sibling subprojects (twenty-five, one venv, one workspace)
 
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -400,6 +407,7 @@ drift, even redacted.
 | `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images live, video next) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
 | `extending/`   | Desktop-assistant extensions + adoption enablement. Ships thin stdio MCP servers that proxy the two product surfaces (allow-listed replay, kernel refusal rules mirrored, never an additional kernel consumer), packaged through the release lane. |
 | `developing/`  | Native macOS (and next iOS) SwiftUI clients for the two products. A generated-project + package-manager monorepo; never an additional kernel consumer — future live wiring rides the existing product seams. |
+| `simulating/` | Deep agent-based market simulation — a Python engine plus a local on-device LLM fit lane, with a local-only web UI that is never deployed. Reads promoted factor artifacts under a written consumer contract as the licensed second reader; the fourth consumer of the market-tape hub. Never an additional kernel consumer. Generative-descriptive by charter — it models market structure, it does not forecast and is not an alpha engine — and it carries the financial-domain signoff floor from birth. |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish
@@ -484,9 +492,32 @@ renders `/status`. No cross-subproject TypeScript imports — the JSON
 hub is the only seam. This is the canonical example of
 *data-hub-not-shared-code*.
 
+### Two Rust surfaces, each scoped to one job
+
+Rust is not the general implementation language here. There are exactly two
+in-repo Rust authoring surfaces: the session-lifecycle mechanics layer, and the
+context layer (injection, output shortening, semantic recall). Each was
+chartered separately; a third would need its own ruling. External Rust CLIs stay
+arm's-length binaries, never workspace members.
+
+### Ledger-shaped shared data starts as a store, not a file
+
+When a shared surface has one reader and many appenders, the file form loses.
+New ledger-shaped surfaces start as a table in a shared store with exactly one
+writer rendering a git-visible projection. Three consequences carry the rule:
+the store is authoritative, the projection is retained and never dropped
+(a gate reading it would break), and it has exactly one writer.
+
+### Semantic recall runs forked, and markdown is the source of truth
+
+Recall across sessions is served from per-subproject daily memos in markdown.
+The vector index over them is derived and rebuildable, never authoritative, and
+recall runs in a forked context so its digest does not consume the main
+session's window.
+
 ## What you will not find here
 
-- The private working tree itself (twenty-four subprojects, the filing
+- The private working tree itself (twenty-five subprojects, the filing
   hub, the redacted legal drafts).
 - Per-subproject implementation code — that lives in the
   per-subproject public repos (`qnarre-public`, `qresev-public`,
@@ -498,7 +529,7 @@ hub is the only seam. This is the canonical example of
 
 ## Cadence
 
-Refreshed weekly from four private sources:
+Refreshed weekly from five private sources:
 
 - The root + per-subproject `CLAUDE.md` graph → `claude-md/`.
 - The `open` / `close` / `do-claude-updates` / `do-claude-optimizations`
@@ -508,6 +539,8 @@ Refreshed weekly from four private sources:
 - The auto-memory topic-file tree → `memory/`.
 - Selected daily memsearch memos opted in by the operator →
   `memsearch/` (quarterly batch sweep).
+- Condensed renderings of adopted specs cleared for this repo →
+  `specs/`, refreshed when the source spec changes.
 
 Re-rankings, new subprojects, and new cross-subproject conventions
 are committed as ordinary diffs — the commit log is the change
@@ -519,12 +552,14 @@ the public-repo roster, or the contact channel changes.
 The framework's six-month public donation drive runs 2026-06-01 →
 2026-12-01, with Open Source Collective as the intended fiscal sponsor.
 Four exclusive-use buckets: the AI-assistant subscription, a third-party
-MCP service line, AWS, and a SCOTUS petition-fee bucket. Public
+MCP service line, AWS, and a federal court docketing-fee bucket. Public
 ledger at <https://opencollective.com/qagents>. The first
 fiscal-sponsorship application (submitted 2026-05-23) was declined
-2026-06-03 on community-involvement grounds; the drive is holding the
-channel float and re-applying ~end of June 2026. Details, monthly
-ledgers, and weekly digests in the sibling repo `qdonating-public`.
+2026-06-03: the host's model is built for projects with community
+involvement, which the project did not yet have. No re-application is
+pending. The drive's work continues on schedule regardless; details,
+monthly ledgers, and weekly digests are in the sibling repo
+`qdonating-public`.
 
 **Open to outside contributors.** The U.S. Code axiomatization program
 — Lean4 theorems backed by LLM-evaluated predicates over the full Code
@@ -538,6 +573,8 @@ and open an issue on that repo to claim a unit. It links a curated starter
 set of nine tasks, each a verified defect with acceptance criteria and
 reproducible counts. (Discussions are not enabled here, and the nine are not
 yet filed as individual issues.)
+
+Authored by a sole developer working with an AI assistant (Claude Code) under written CLAUDE.md contracts.
 
 ## Contact
 

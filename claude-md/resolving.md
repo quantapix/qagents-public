@@ -14,7 +14,7 @@ wrapper — the wrapper is one component among several. The full scope:
   selection/curation, Fusion node-tree authoring, color/grade
   application, audio loudness pass, render-farm operation,
   subtitle/loudness QA. Each skill is invokable from a consumer
-  subproject (§ 3). Catalog at `skills/` — 16 skills; the roster,
+  subproject (§ 3). Catalog at `skills/` — the roster,
   per-skill force-graph diagram ledger, and chain pseudocode live in
   `skills/README.md` (single owner — don't restate them here). The
   branded outro is NOT a Fusion skill — it bakes a flat Pillow plate
@@ -126,29 +126,17 @@ The wrapper bakes in the Resolve gotchas that bite every consumer:
    has shipped at both 25 fps PAL and 30 fps, so do not hardcode
    either rate anywhere new. The wrapper itself is rate-agnostic —
    it reads `MediaPoolItem.fps` and validates against `Timeline.fps`.
-4. **Project Manager window blocks all scripting** — with Resolve
-   sitting at the project-picker, `GetCurrentPage()` returns None and
-   `CreateProject`/`SaveProject` return falsy (surfacing a bare
-   `ResolveApiReturnedFalsy`). Fix: one `LoadProject` call unblocks
-   everything (verified 2026-06-11 driving the explaining 1.5 chain).
-5. **Audio-only clips need an explicit `end_frame`** — a WAV
-   `MediaPoolItem` has no `"Frames"` clip property, so
-   `TimelineAppend`'s fallback `end_frame=item.frames` raises
-   `ResolveApiReturnedFalsy` ("returned empty Frames"). Callers must
-   pass `end_frame` explicitly (`seconds × timeline_fps`).
-6. **`LoadProject` refuses a project that is already current** — the
-   inverse of #4: `pm.use(name)` always calls `LoadProject`, which
-   Resolve rejects when that project is the open one
-   (`ResolveApiReturnedFalsy(LoadProject)`). A driver that dies mid-run
-   leaves its project loaded, so the retry fails. Short-circuit `use()`
-   when `current().name == name`.
-7. **Color-managed projects crush near-blacks silently** — setting
-   `color_science_mode` without also pinning `color_space_timeline` +
-   `color_space_output` leaves both at `Rec.709 (Scene)` (scene-linear),
-   crushing every near-black in the render. `ProjectSettings` has no
-   `timelineWorkingLuminanceMode` field, so the raw escape hatch is
-   needed; `_assemble.py` pins them. Memory
-   `reference_resolve_color_managed_scene_crushes_blacks`.
+4. **Bare `ResolveApiReturnedFalsy`?** — two known causes (the
+   Project-Manager window blocks all scripting; audio-only WAV clips
+   need an explicit `end_frame`): read `davinci/docs/gotchas.md`
+   §§ 6–7 before debugging further.
+5. **`LoadProject` refuses a project that is already current** —
+   short-circuit `use()` when `current().name == name`. Detail:
+   `reference_resolve_scripting_gotchas` #9.
+6. **Color-managed projects crush near-blacks silently** — pin
+   `color_space_timeline` + `color_space_output`, not just
+   `color_science_mode`; `_assemble.py` does. Detail + the pixel
+   evidence: `reference_resolve_color_managed_scene_crushes_blacks`.
 
 Every skill that touches Resolve calls these in via the wrapper —
 they are not optional. Pinned in
@@ -181,69 +169,35 @@ a running Resolve, not the manual or `docs/api.md`. See
 
 **Full-frame overlays bake to transparent ProRes, never host on a clip
 (live-verified 2026-06-03).** A Fusion comp renders its output ONLY on a
-*sourceless* generator (`Timeline.insert_fusion_composition`); a comp on ANY
-sourced clip renders the source and drops the overlay (the "two Janets" leak).
-So burned captions + the PIP ring holder go through
-`davinci.recipes.bake_overlay`/`bake_caption_overlay` → render transparent
-ProRes 4444 (`ProRes4444` codec + `ExportAlpha`) → `composite_overlay` the
-baked plain clip on the top track. `SubtitleTrack.burn_in` is the low-level
-authoring (used by the bake), valid only on a sourceless generator comp. Full
-diagnosis + disproven hypotheses:
-`reference_resolve_subtitle_api_textplus_from_srt` + `davinci/docs/gotchas.md`
-§ 4 + spec § 3 decision 8.
+*sourceless* generator; a comp on ANY sourced clip renders the source and
+drops the overlay (the "two Janets" leak). Bake recipes, `burn_in`, full
+diagnosis + disproven hypotheses: `davinci/docs/gotchas.md` § 4.
 
 **PIP decoration is OFF-RESOLVE (locked 2026-06-07, build 21.0.0.48).** A
-scripted comp on a sourced clip leaks the carrier source at delivery on 21.0
-even with `set_pip`, so the whole corner-PIP decoration moved off the clip:
-`davinci.recipes.pip.{prekey_pip_element, prekey_pip_wipe, bake_pip_chrome}`
-produce the rounded element / moving-edge frosted-band wipe / ring+name-plate
-chrome with **ffmpeg + Pillow** (→ transparent ProRes 4444, box mirrors
-`set_pip` to the pixel); `composite_pip` composites them as plain alpha media.
-The Fusion `compose-pip-corner` / `compose-wipe-transition` node trees stay as
-the interactive `## Manual` fallback only. Gotchas: mp4 codec token is `"H264"`
-(not the display `"H.264"`); `tl.add_track("video")` before `composite_pip`.
-Full diagnosis: `davinci/docs/gotchas.md` § 5 +
+sourced-clip comp leaks its carrier even with `set_pip`, so the corner-PIP
+element / wipe / chrome bake off-Resolve and composite as plain alpha media;
+the Fusion `compose-pip-corner` / `compose-wipe-transition` node trees are
+the interactive `## Manual` fallback only. Recipes + render gotchas:
+`davinci/docs/gotchas.md` § 5; spec:
 `data/specs/resolving-2026-05-26/headless-decoration-2026-06-07/SPEC.md`.
 
 ## 6. Asset partitioning rule (Fusion-first; locked 2026-05-09)
 
 Cross-consumer guidance for any subproject that uses `resolving/` as a
-rendering stage. Before drafting **any** video-asset prompt — Claude
-Design, HeyGen (`heygen-video` skill), image generators (Imagen / FLUX /
-Midjourney / SD / Recraft / Firefly), or Remotion components — partition
-the deliverable's elements and **ask the upstream generator only for
-content that Fusion can't synthesize natively**. Reduce the matrix
-first; prompt second.
+rendering stage: before drafting **any** video-asset prompt (Claude
+Design, HeyGen, image generators, Remotion components), partition the
+deliverable's elements and ask the upstream generator only for content
+Fusion can't synthesize natively.
 
-Fusion synthesizes natively (so these are NEVER prompt asks):
-
-- Field tone / gradient (`Background` + `ColorCorrector`)
-- Grain / noise (`FastNoise`)
-- Lighting rake / vignette (`Glow` + `MaskPaint` + `ColorCorrector`)
-- Typography / wordmarks (`Text+` with `Bevel` modifier)
-- Geometric line-glyphs and silhouettes (`sShape` polygons or imported
-  SVG via `Loader`)
-- Bevel / blind-deboss / raised-emboss (`Bevel`)
-- Brand-variant swaps (e.g. Qnarre↔Qresev SubGroup toggle — never two
-  image-gen calls)
-- Dual-aspect renders (one comp, two `Saver` outputs)
-
-Those live in the per-episode `phase*_*.py` drivers calling
-`resolving/skills/compose-*` recipes. Generators are reserved for
-**unique creative content that can't be primitive-composed** —
-irregular Escher-style geometry, photographic atmospheres, HeyGen
-narration, illustrative B-roll where Remotion-token primitives don't
-carry the message.
-
-The rule is **not mechanical** — it requires judgment about what
-"primitive-composable" means for each new asset class; this section
-exists so future consumers reach the same partition without
-re-discovering it.
+Single owner of the rule, both lists (Fusion-native vs
+generator-eligible), and the "not mechanical — it needs judgment per
+asset class" caveat: `feedback_fusion_first_video_generation`. The
+Fusion-native side is realized in the per-episode `phase*_*.py` drivers
+calling `resolving/skills/compose-*` recipes.
 
 Worked example: `data/charters/explaining/specs/background-prompts-2026-05-09/SPEC.md` § 2
 (24-asset matrix collapsed to Fusion-composable primitives; its
 12-plate remainder later superseded by the `blending/` plate lane).
-Memory pin: `feedback_fusion_first_video_generation`.
 
 ## 7. Status emit slot
 

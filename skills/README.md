@@ -34,18 +34,20 @@ optimizations` is the continuous trim that keeps the whole graph under the
 caps that would otherwise silently truncate at session load. Together they
 are the lifecycle: open → work → close (× N) → periodic flush + trim.
 
-## The adopted specs ([`specs/`](./specs/))
+## The contracts ([`specs/`](./specs/))
 
-- [`open-close-dcu-<date>.md`](./specs/) — the consolidated open / close /
-  do-claude-updates triad: the lock model, the stack, the per-hop cascade,
-  the canonical-edit hook, the close-time status + next-steps gates.
-- [`dco-<date>.md`](./specs/) — the do-claude-optimizations fan-out: the
-  digester-per-CLAUDE.md + memory-index parallel pass, the sequential
-  cross-cutting digester, the apply-plan, and the dry-run-first safety gate.
+The dated spec files that originally governed these skills were absorbed into
+two standing charters; the subtree now carries condensed charter renders:
 
-Both are redacted public renderings — faithful on design, phase ledger, and
-contracts; operator-specific absolute paths are genericized to `<repo>` /
-`<worktree>`.
+- [`session-lifecycle.md`](./specs/session-lifecycle.md) — the open / close /
+  do-claude-updates triad: the branch-as-lock model, the stack, the hint
+  cascade, the canonical-edit hook, and the close-time gates.
+- [`optimization.md`](./specs/optimization.md) — the do-claude-optimizations
+  shrink pass: the surfaces owned with their caps, the parked programmatic
+  lane, the retired auto-apply, and the twenty-eight-agent fleet shape.
+
+Both are redacted public renderings — faithful on design and contracts;
+operator-specific absolute paths are genericized.
 
 ## Redaction
 

@@ -8,8 +8,9 @@ description: Start a new Claude Code session by creating a git branch + worktree
 Provision a write-locked session for a qagents project. Companion to
 `/close` and `/do-claude-updates`.
 
-Spec: `open-close-dcu-<date>.md` (authoritative — consolidated triad; the
-open phases + the next-steps mandate + the zero-prompt allow-list).
+Contract: the session-lifecycle charter (authoritative — condensed render at
+`specs/session-lifecycle.md`; the open phases + the next-steps mandate + the
+zero-prompt allow-list).
 Mechanics live in `scripts/open.sh`; the uniform footer in
 `scripts/lib/footer.sh`.
 

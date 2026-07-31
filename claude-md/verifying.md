@@ -180,6 +180,20 @@ cleared 2026-06-24 (`data/specs/publishing-2026-05-31/quantapix-thesis-github-20
 The replay API is gated to the same floor (§ 7); residual
 (intentional): it also serves the synthetic non-RICO `titlevi_sample`.
 
+**These host-copies can go STALE AT CANONICAL, and nothing detects it.** The
+lockstep-pair rule governs re-copying both halves *together*; no check asserts
+that canonical's copy is FRESH. `scripts/open.sh` hydrates a worktree from
+**current** source while canonical carries whatever its last build left — so the
+copy a `/close` is about to delete can be the *more current* one, inverting the
+usual assumption. Lived 2026-07-30: canonical's `meridian-tokens.css` +
+`meridian/meridian-components.css` were ~6 days stale (Jul 23) against worktree
+copies carrying the 2026-07-27 simulating orchid accent and 07-29 comment fixes;
+only a close-time hash compare found them, and both had to be rescued rather
+than discarded. Two takeaways — a rescue-gate hit under `web/public/` is not
+automatically discardable, and the cheap fix if there is appetite is hashing
+`public/meridian*` against its `code/web` / designing source in whatever lane
+already rebuilds (memory `project_proof_graph_kit_mount_pattern`).
+
 Kit files live at `verifying/web/public/graphs/`:
 
 - `kit.js` — the graphs IIFE bundle (global `QViz`: `mountProof` /

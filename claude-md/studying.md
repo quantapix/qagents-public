@@ -60,18 +60,12 @@ the standard examples in `hub/theorem_proving_in_lean4` and
   + ADOPT-AMEND record `data/debates/proof-context-injection-2026-07-09.md`
   (PRIVACY 9-cond + NO-MANUAL-PROVING 4-cond; predecessor
   `…/axiomatized-ops-context-memory-2026-06-27/SPEC.md` Phase 3 / PRIVACY
-  re-clear untouched — condition 9). Machinery: `scripts/live_check.sh`
-  (canonical-side; ledger-pinned targets; **state-key = digest of the extractor
-  input snapshot — refs + worktree table + sentinel stats, never HEAD** (R2);
-  clean-tree eligibility; pidfile singleton; atomic `result.json`) +
-  `scripts/emit_live_check.py` (term-only check file, exit-9 privacy anchor) +
-  `scripts/emit_context_manifest.py` (≤40 lines/2KB, emit-time fail-closed
-  self-scan) + `scripts/check_context_redactions.py` (kernel-derived denylist;
-  `--dotted-only` = downstream-sweep mode) + SessionStart hook
-  `studying/scripts/hooks/session-start-ctx.sh` (registered in
-  `data/claude-settings/sources/baseline.hooks.json`; pilot scope
-  `studying*`/`qagents*` in-script) + `close.sh --ctx-check` (exits 46/47) +
-  `/open`-time async spawn in `scripts/open.sh`. The surface is a
+  re-clear untouched — condition 9). The machinery roster (`live_check.sh`, the
+  three `emit_*`/`check_*` scripts, the SessionStart hook, `close.sh --ctx-check`
+  exits 46/47, the `/open` async spawn) is the SPEC's — don't mirror it here; it
+  is also mid-migration to a `qx` shim (`ns:studying/39`). Two invariants bite:
+  the live-check **state-key is a digest of the extractor INPUT SNAPSHOT — refs
+  + worktree table + sentinel stats, never HEAD** (R2); and the surface is a
   **machine-context seam** — templates-class extension, non-precedential across
   axes, `monitoring/` stays the sole consumer app (R15). Ledger privacy:
   § 5.1.2(c) path-blocklist carries (committed-but-never-published — the
@@ -92,23 +86,84 @@ canonical-vs-worktree divergence — with git's semantics as the axiom layer
 beneath them. Proofs are driven by the coding-v.-testing `/dao` debate lane
 (manual-interactive first: `/dao-manual`), never manually.
 
-**HARD RULE — adversarial independence is the ONLY oracle; protect ALL FOUR channels
-(2026-07-14).** A parried attack is evidence *only* if the attacker did not know the
-proof and the proof was not pre-hardened against the attack list. Four leak channels —
-C1 scratchpad, C2 orchestrator, C3 read-property, C4 memsearch (spec-of-record:
+**HARD RULE — adversarial independence is the ONLY oracle; protect ALL FIVE channels
+(2026-07-14; C5 added 2026-07-27).** A parried attack is evidence *only* if the attacker
+did not know the proof and the proof was not pre-hardened against the attack list. Five
+leak channels — C1 scratchpad, C2 orchestrator, C3 read-property, C4 memsearch, **C5
+shared canonical vocabulary** (any enumeration of `Operating/Operating/Common/` — a cell
+that has seen the roster produces echo, not evidence; graded `names`/`types` REVIEW vs
+`roster` BREACH) (spec-of-record:
 `data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-shared-2026-07-04/SPEC.md` § 4a) —
 closing one buys nothing; (a)/(b) below detail C1/C2, the two that live in this
-orchestrator's own hands. (a) *Filesystem:* the runtime hands every subagent the SAME
+orchestrator's own hands.
+
+**(c) *Mechanized, and it must run IN-SESSION.*** `dao.sh --blindness-audit <id>`
+(`/dao-manual` Step 7b) runs the shared five-channel auditor
+`code/lean_tools/transcript_audit.py` over the round's cells and freezes the verdict at
+`Operating/examples/<id>/rounds/blindness-<NN>.json`; exits 62 breach / 63 unauditable.
+**Transcript retention is ~10 days AT BEST — observed as short as ~1–2 days
+(2026-07-30, `studying/AUDIT-ns55-readjudication-2026-07-30.md`)**, so an un-audited
+wave becomes *permanently unauditable*, not merely unchecked — the only remedy is a
+full blind re-slice (P0-5(iv)), and "audit the history later" is not a plan. Any
+`clean` recorded before 2026-07-27 means clean on **C1–C4 only** — C5 did not exist;
+read the rung, not just the verdict. Both cell contracts ride `--contract-file`
+(2026-07-30, ns-53), so an inlined-contract fallback prompt no longer saturates C2.
+Gate `t_11` (two committed known-bads + a clean cell that must NOT be convicted + a
+review fixture pinning that contract subtraction fires without swallowing a
+non-contract leak). *Rooting is axis-specific:* dao roots the audit at `examples/`, not
+`examples/<id>`, because dao's two sides share one example dir with disjoint FILE
+surfaces — a sibling axis must re-derive its own rooting rather than paste dao's.
+**Reading a BREACH (first wave-time runs, 2026-07-29):** the verdict is mechanical, the
+discrimination is yours. Both `ctx_recall` rounds scored BREACH on C3 hits that are the
+KNOWN shared-instrument false positives — the root-sweep rule scores cwd and cannot see
+a scoped target or a pathspec, plus a `//` normalisation artefact — owned by
+`ns:proving/89`. Read the matched text and the rung, never the count; never rewrite a
+frozen verdict. ONE hit was genuine — the testing contract barred `git status` while
+giving a cell no sanctioned way to check an attack-filename collision against
+prior-round files it may not read. CURED 2026-07-30 (ns-54): `dao.sh
+--claim-attack-name <id> <name>` answers existence of ONE name (`free`/`taken`,
+exit 0/65, never a roster; gate `t_13`), and the testing contract points at it — the
+audit stays noisy on OTHER shapes until `ns:proving/89` F3 lands, never on this one. (a) *Filesystem:* the runtime hands every subagent the SAME
 writable session scratchpad — agent scratch goes under its own disjoint
 `<out>/.scratch/`; the session scratchpad is off-limits
 (`.claude/agents/dao-{coding,testing}.md` § Scratch isolation). (b) *Orchestrator:*
 from round 2 the orchestrator holds both sides' results — routing one side's finding
 into the other's prompt makes the next green an echo; **name the METHOD, never the
-ANSWER**. A leaked round's Lean may be sound yet **VOID as evidence** — no tier, no
+ANSWER**. **(b′) The brief can author a C3 breach the cell cannot self-police
+(2026-07-31, `ctx_degrade` r01; ledger seq 173).** Every C3 rule bars the cell from
+CHOOSING a sibling read; none bars the orchestrator from INSTRUCTING one, and an
+instructed read arrives as an instruction, not a violation. That round's brief said
+"the sibling `ctx_shorten/proof.lean` shows the SHAPE of a `gap_*` probe" — the cell
+complied, disclosed it, and the frozen verdict came back BREACH on that single event
+while every other conviction was the known root-sweep FP class. dao roots at
+`examples/` precisely so a sibling EXAMPLE is the leak unit, so brief and instrument
+contradicted each other. **Convey shape by inlining the pattern or citing
+`studying/templates/`, never by pointing a blind cell at a sibling's committed
+proof/attack artifact.** A leaked round's Lean may be sound yet **VOID as evidence** — no tier, no
 standing promotion, no coverage number (both proving lanes broke this 2026-07-14,
 ~3M tokens of green work discarded). Guard: `…/dao-scheduling-2026-07-10/PROMPTS.md`
 § Orchestrator blindness discipline (P1 step 5 self-check); memory
 `feedback_blind_fanout_oracle_channels`.
+
+**Evidence archive (`studying/waves/` — the dao archive half, landed
+2026-07-31, ns:qagents/107 co-land).** Blindness-audit evidence freezes to the
+gitignored, LAN/S3-backed `studying/waves/<example-id>-r<NN>/` via
+`dao.sh --blindness-audit` → `transcript_audit.py --archive-evidence` (raw
+`agent-*.jsonl` copies + `manifest.json`; replay via `--regrade <manifest>`),
+in the SAME freeze-first step as the round verdict; gate `t_11` carries the
+evidence arm. **Nothing evidence-shaped is ever committed** — a committed
+evidence file is a C5 answer-roster, and any proposal to commit evidence
+re-opens the PRIVACY gate (`data/debates/transcript-retention-2026-07-30.md`
+R1/R8). Rounds stay committed append-only: the archive holds evidence ONLY —
+no wave freeze, no `--archive-wave`, no `--push`. Operator ruling L-122
+(cold-S3 non-debt — ledger row in
+`…/axiomatize-shared-2026-07-04/LEARNINGS.md`) now has its studying surface,
+carried here: no tunnel ritual — the archive rides the qred-nightly → qblk →
+S3 daily ship. Backup lockstep (graduated 2026-07-31): `studying` left
+`PROSPECTIVE_WAVE_SOURCES` and `capability.sh have_waves()` gained the matching
+arm — **empty `studying/waves` hard-refuses** (half-migrated signature), absent
+is a plain skip, and the dir is born POPULATED by the first evidence write,
+never pre-created empty. Pinned by workstation-parity `t_14`.
 
 **git v2 — index/staging.** Spec
 `data/specs/index-staging-v2-2026-06-19/SPEC.md` (extends
@@ -187,24 +242,11 @@ they CANNOT prove the judged bindings (e.g. FINANCIALLY CLEAR-5: verdict-token �
 run-emit) — a green `--rider-floor` / `scan_financial.sh` is necessary, never
 sufficient (3.6 was mechanically green, substantively refused, 2026-07-10). This
 is R1/R15 in operational terms.
-**CLEAR-3 is DISCHARGE-TYPED (P2f, 2026-07-21).** A clearance record anchors at
-TWO levels — a roll-up `payload.content_sha256` AND a `faces[]` table — while the
-push-ledger records the BYTES that landed on a surface (one face). Joining the two
-scalars by name made a properly-cleared CDN push read as a FALSE `UngatedPush`.
-`BindsPayload` = roll-up ∨ face-at-the-class-the-push-discharges (`Discharge` enum
-+ `BindsFace` + `DischargedAt`, the last a committed surface→class map reaching the
-kernel as a FACT in the `GatedBy` pattern); non-widening is the kernel theorem
-`face_class_confusion_uncleared`, never a convention. **Three FACTS-1 obligations
-travel with it** — the NEGATIVE discharge closure for an unclassified push, the
-CLASS-KEYED face closure, and no `rollup` face class. Drop any one and the CLEAR-3
-BREACH lens silently stops biting while coverage stays fail-closed and `lake build`
-stays green; gate `t_07`.
-Remaining: P3 only (spec § 10; frontier ns:studying/25) — wire the publishing
-§ 10 build gate + `upload-video.sh` emit and the atomic `clearedBy →
-signoffs{}` migration; P0–P2f shipped 2026-06-30/07-03/07-21. The **live** cell is
-blocked on an evaluating-owned input defect, not on studying: `granting_commit` is
-the unfilled placeholder `"pending-grant-commit"` in 14/17 FINANCIALLY records, so
-CLEAR-1 emits no `Precedes` fact (`ns:evaluating/13`).
+**CLEAR-3 is DISCHARGE-TYPED (P2f, 2026-07-21)** — non-widening kernel theorem
+`face_class_confusion_uncleared`; the three STANDING FACTS-1 negative-closure
+obligations + typing + gate `t_07` live in spec § 10 P2f (path above).
+P0–P2f shipped 2026-06-30/07-03/07-21; P3 alone remains (spec § 10). Live-leg
+status tracked at `ns:studying/25` — don't mirror it here.
 
 **Constellation graph M.** A second instance-level graph (alongside the
 snapshot graph): the whole monorepo + the separate `~/.claude` memory repo as
@@ -218,50 +260,32 @@ an **observation** graph — never enters the coverage numerator, never gates
 `data/charters/studying/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md`.
 
 **Operational safety invariants — pending-promotion + worktree-links
-(2026-07-07).** Two standalone operational safety PROPERTIES proved by the
-`/dao` lane (NOT skill bridges — no flat golden): `Operating/Session/
-Pending.lean` — `PromotionTotality` over the cron-lane `pending/` → canonical
-CLOSED-SET allow-list classifier + the `unclassified_not_promoted` default-skip
-safety (no unregistered path reaches canonical; `syn_pending`,
-pending-promotion-scope-2026-05-28); and `Operating/Session/
-WtLinks.lean` — `WorktreeLinkSafe` (a declared `.worktree-links` glob is
-symlink-safe IFF its canonical target is pure-gitignored — zero tracked files) +
-the `safe_target_untracked` payoff + the `unsafe_of_tracked` refusal / `UnsafeLink`
-breach dual (`syn_wtlinks`, session-lifecycle charter § 2.4). Both GREEN, on the coverage
-numerator, breach duals inhabitable.
+(2026-07-07).** Two standalone PROPERTIES proved by the `/dao` lane (NOT skill
+bridges — no flat golden), both GREEN, on the coverage numerator, breach duals
+inhabitable: `Operating/Session/Pending.lean` `PromotionTotality` (cron-lane
+`pending/` → canonical CLOSED-SET allow-list classifier + the
+`unclassified_not_promoted` default-skip — no unregistered path reaches
+canonical; `syn_pending`, pending-promotion-scope-2026-05-28); and
+`Operating/Session/WtLinks.lean` `WorktreeLinkSafe` (a declared
+`.worktree-links` glob is symlink-safe IFF its canonical target is
+pure-gitignored — zero tracked files; `syn_wtlinks`, session-lifecycle
+charter § 2.4).
 
-**Full-project state review 2026-07-03 — mostly discharged.**
-`studying/reviews/state-review-2026-07-03.md` (5 HIGHs + fix plan P0–P4 +
-metric set M-1…M-10) + the 6-counsel debate record
-`data/debates/studying-state-review-2026-07-03.md` (21 rulings, ADOPT-AMEND).
-P0 + docs + the 2026-07-10 hardening sweep + the 2026-07-13 W3 partial
-(K-2/D-6/E-1/E-3/M-5 + numeric-lift audit) landed — detail in the review doc.
-Residue (next-steps item 30): the former custody-gated-on-visualizing items
-UN-GATED 2026-07-20 (visualizing ratified the qcatalog/qrounds vocabulary —
-validator `AXES` + kit `Axis` at **44** operational tokens, corpus-reconciled;
-the routed "+29" proposal was stale/insufficient; visualizing filed its
-reciprocal item 29). **30(b) catalog-roster leg LANDED 2026-07-20:**
-`emit_catalog.py` restructured into DERIVED (22 file-clean cells, leaves
-auto-extracted) + CURATED (14 multi-file/cited cells) = **36 cells / 133
-leaves** (was 7); `validate_catalog.py` two-sided PASS; t_07 green (cells=36
-covered=31); tiers 22-A/9-B/5-unknown — the 7 uncertified-basis cells
-(posix bridges + signoff) LOUDLY refused Tier-A → B via the P2-5 provenance
-guard (integrity: coverage is CONSTRUCTIVE-proof-target-only, never appear-only,
-so no inflation). NOTE: catalog is local-only; its Tier-A for the two
-K-1-repaired cells (`syn_close`/`syn_delegated`, R13 `open_ct` basis) is a
-DIFFERENT basis than the public pill's conservative 20/22 hold-out — the two
-bases are never corrected to each other. **The hold-out is now a RULING, not
-an open question (operator, 2026-07-22; L-118 adopted): the blind-cert badge
-stays gated on CUMULATIVE `standing.adversarial === 0`, so a historical
-landed-then-repaired attack disqualifies a cell permanently and the public
-figure stays 20/22.** The latest-round-scoped alternative (which would read
-22/22) was REJECTED, not deferred; reversing it is a public-figure change
-needing a fresh operator ruling, never a gate edit. Recorded at the gate site
-in `status_emit.mjs`. Rationale worth keeping: a cell that ever had something
-land has been shown to be repairable, not un-landable. Remaining 30(b) sub-legs: H-4 rounds-schema (qrounds/1) re-apply,
-R11 register TSV + R13 metrics.json envelope, M-6 STALE pill. Still
-deferred-landable: P-6 / M-6 producer / D-7b. K-rounds all landed 2026-07-17
-(frontier § 8 W3b/W3c rows).
+**Full-project state review 2026-07-03 — mostly discharged.** Record +
+residue: `studying/reviews/state-review-2026-07-03.md`, the 6-counsel debate
+`data/debates/studying-state-review-2026-07-03.md`, and `ns:studying/30`.
+Two rules outlive them. (1) Coverage maps from CONSTRUCTIVE proved-target
+moves ONLY, never appear-only — the P2-5 provenance guard LOUDLY refuses an
+uncertified-basis cell's Tier-A down to B rather than inflate; the local-only
+`emit_catalog.py` basis (R13 `open_ct`) and the public pill's conservative
+20/22 hold-out are two blessed bases, never corrected to each other.
+(2) **The hold-out is a RULING, not an open question (operator, 2026-07-22;
+L-118): the blind-cert badge gates on CUMULATIVE `standing.adversarial === 0`,
+so a historical landed-then-repaired attack disqualifies a cell permanently and
+the public figure stays 20/22.** The latest-round-scoped alternative (22/22) was
+REJECTED, not deferred; reversing it needs a fresh operator ruling, never a gate
+edit (recorded at the gate site in `status_emit.mjs`). Rationale: a cell that
+ever had something land is repairable, not un-landable.
 
 **dao-scheduling program (2026-07-10) — the standing run plan.**
 `data/charters/studying/specs/lean4-charter-2026-06-10/dao-scheduling-2026-07-10/SPEC.md` +
@@ -269,13 +293,13 @@ deferred-landable: P-6 / M-6 producer / D-7b. K-rounds all landed 2026-07-17
 frontier + model/effort matrix + dated actual-vs-estimate rows; LEARNINGS
 L-057s), target-scoped for `/dao` rounds. § 3 frontier ranks the backlog;
 § 12.1 is the calendar. **axiomatize-ledger — COMPLETE on its ranked set
-(R1–R4 shipped 2026-07-10/11, A1–A4 met).** Subspec
-`data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-ledger-2026-07-10/SPEC.md` +
-t_01–t_03 suite 3/3: the shared-ledger-store RDB semantics
+(R1–R4 shipped 2026-07-10/11, A1–A4 met; R-T6 DEFERRED event-gated, § 3.6).**
+Subspec
+`data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-ledger-2026-07-10/SPEC.md`
+(t_01–t_03 3/3): the shared-ledger-store RDB semantics
 (`data/specs/shared-ledger-store-2026-07-09/SPEC.md`) as an `Operating/Rdb/`
 substrate quartet + five `Qagents/Ledger{Append,Replay,Spool,Render,Adopt}.lean`
-bridge cells (R-T1..R-T5 GREEN; R-T6 DEFERRED event-gated, § 3.6); all rounds
-GREEN incl. the R4 differential-probe re-judge; breach duals inhabitable.
+bridge cells, all GREEN with inhabitable breach duals.
 Live rules: modeled fixtures, 0 LLM leaves (L-051s lane; L-053s caveat); NO
 live DB extractor in v1 (privacy § 5); rdb cells ON the coverage numerator
 (spec § 7 supersedes the ns-29 off-numerator note); five `op.Rdb.*` K-graph
@@ -283,11 +307,27 @@ probes + the `ledger-concepts` cite parser (code/lean_graph). Coverage + pill
 numbers live in `Operating/emits/lean_graph/coverage.json` + the status emit —
 the § 3 frontier is the ranked backlog; consult it, don't mirror it here.
 
-**axiomatize-context-ops — Leg B + W1 SHIPPED 2026-07-22 (frontier row 11; W2 = next GO).**
+**axiomatize-context-ops — Leg B + W1 SHIPPED 2026-07-22; W2 COMPLETE 2026-07-31 (frontier row 11). The CTX-T1..T4 bridge-cell set is CLOSED.**
+**CTX-T3 `ctx_recall` is closed on a NEGATIVE RESULT and must not be re-opened as a
+repair round** — clause (iii) of `RecallIsolation` is not axiomatizable as a
+fork-mechanism guarantee. Normative record + the two conditions binding any re-seat
+(a NON-ENUMERATING fixture; escapes with an INHABITED NEGATIVE CASE) live in the
+NEGATIVE RESULT section of `Operating/Operating/Qagents/CtxRecall.lean` — read it
+there, never restate it from memory. Ledger seq 167; committed witnesses
+(`attack/r0{1,2,3}_*`, `rounds/0{1,2,3}.json`) are the evidence and are never deleted
+to make the cell look clean. Two residues the rounds proved: REFUSE-1 carries the
+identical disease (warn-only "scanner flagged, pipeline shipped" is `False` by axiom),
+and every seat here is DROPPABLE because the modeled fixture over-emits.
+**CTX-T4 `ctx_degrade` GREEN 2026-07-31** (`Qagents/CtxDegrade.lean` DegradedHonesty —
+declared consumers, per-consumer degraded semantic, destructive-refuses/reporting-labels
+conformance; duals grounded in the memsearch `reset` finding). Judge GREEN, 15 attacks
+0 LANDED, C:11 A:7, **Tier-B on an uncertified basis — the round's blindness verdict is
+BREACH, so no tier, no standing promotion, no coverage number rests on it.** Round 02's
+seven ranked gaps: `ns:studying/60` (do not re-derive the two prose defects marked
+`CORRECTED round 01`).
 **Leg B:** `scripts/ctx_miner.py` (frozen pattern set, no LLM) + gate `t_02_miner_floors`;
-report local-only under the § 5 C-1..C-5 floors. Its first run inverts the entailment
-ledger's own question — the top concepts by avoidable re-derivation cost are all
-UNLEDGERED, so **adding rows beats graduating rows 2–6** (spec § 9.1).
+report local-only under the § 5 C-1..C-5 floors. Its first run inverted the
+graduation question — **adding rows beats graduating rows 2–6** (spec § 9.1).
 **W1:** `Qagents/{CtxTypes,CtxVerdict,CtxShorten}.lean` + modeled `ctx_verdict`/`ctx_shorten`,
 judge GREEN both. **Read spec § 9.2 before touching either cell:** the round landed NINE
 attacks against the orchestrator-authored kernel (K1–K9), repaired same-round. Standing
@@ -295,36 +335,22 @@ consequences that bind future work:
 · **K1 (the kill) — every conditioning axiom carries an ESCAPE PREDICATE.** An
   unconditioned seat whose conclusion is the NEGATION of a breach dual makes that dual
   UNINHABITABLE: the kernel refutes its own breach, and the detection lifter proves
-  anything. `ctxInject_gated` is now conditioned on `PushGated` (the `Operating.Rdb`
-  `SeqBacked` shape). Never state a seat whose domain is the dual's domain.
-· **K3/K4 — emit the closure the PRIMARY dual's bite needs, and credit it correctly.**
-  Guarding the secondary dual passes every gate. And a closure credited to the wrong dual
-  in prose invites a later author to drop the load-bearing fact.
-· **K5/K6/K7 — withdraw, don't patch.** `Counted` is a MARK not a count (the empty
-  renderer is conservative — SPOOL-2 conservation-not-liveness); the A-1 cost story was
-  relocated not escaped (`cost_bound_seat` is the identity, the cost lane is DISJOINT from
-  the property); a MEASURED load-free conditioning axiom was deleted, not defended.
-· **K8/K9 are OPEN W2 decisions, recorded not taken** — CTX-T1 today *certifies* a snapshot
-  on which a stale certificate crossed (ineligible rows), and the seat is droppable because
-  the modeled fixture OVER-EMITS. Do not take either under repair pressure.
-Tier stays modeled Tier-B; a C3 read-side breach is on the record, so no blind-cert is
-claimed for either cell. Original adoption context follows. The
-2026-07-21 extending reviews (`data/specs/{rtk-review,memsearch-pg-review}-2026-07-21/`)
-routed to studying as kernel targets: four `Operating/Qagents/Ctx*.lean` bridge
-cells — CTX-T1 VerdictTotality (typed inject/withhold/refuse over the PCI push
-gates) · CTX-T2 ShorteningConservativeness (closed-set classification, unclassified
-⇒ passthrough never drop, counted omission, gap-pinned `never_worse`) · CTX-T3
-RecallIsolation (the C4 seat as a fact) · CTX-T4 DegradedHonesty (per-consumer
-`refuse|label|serve`; consumer CONTRACT only, non-precedential) — **no new
-substrate** (shared enums in `Qagents/CtxTypes.lean`); breach duals grounded in
-lived failures (rtk silent-drop, memsearch reset-drops-fallback, the C4 breach).
+  anything. `ctxInject_gated` is now conditioned on `PushGated`. Never state a seat
+  whose domain is the dual's domain.
+· **K3–K7 — emit the closure the PRIMARY dual's bite needs** (guarding the secondary
+  passes every gate), **credit it to the right dual in prose**, and **withdraw rather
+  than patch** a refuted seat. Per-attack detail: spec § 9.2.
+· **K8/K9 are OPEN W2 decisions, recorded not taken** — the three are at `ns:studying/38`(b).
+Tier stays modeled Tier-B; a C3 read-side breach is on the record for every cell in
+this family, so no blind-cert is claimed anywhere in it. Adoption context (the four `Operating/Qagents/Ctx*.lean`
+bridge cells CTX-T1..T4, their claims + breach duals, and the no-new-substrate
+rule) is the spec § 4 table — don't mirror it here.
 Live rules: the R3 emit/derive law (negative closures are EMITTED facts or the
 dual is disarmed — W6/CLEAR-3f); modeled Tier-B unless per-cell blind-certified;
 committed GREEN duals are per-wave deliverables; AXES custody — new catalog axis
 tokens route to visualizing BEFORE the wave, cells stay off-emit until landed
-(H-3/H-4 law); Leg-B miner is qagents-transcripts-only, report local under § 5
-C-1..C-5 (the `--ctx-check` scanner does NOT enforce the miner-content bar —
-authoring discipline). Spec
+(H-3/H-4 law); the `--ctx-check` scanner does NOT enforce the Leg-B
+miner-content bar (authoring discipline). Spec
 `data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-context-ops-2026-07-22/SPEC.md`
 + record `data/debates/axiomatize-context-ops-2026-07-22.md`; PCI § 7 item 6 is
 the folded Leg A.
@@ -376,12 +402,10 @@ Verify each axis separately and say so; do not let the three drift across a day.
 
 **The pin is CWD-DEPENDENT (2026-07-14).** `elan` reads `lean-toolchain` from the
 *current directory*, so a bare `lean` invoked from anywhere without a pin file (a
-sandbox probe dir, `/tmp`) silently falls back to elan's **default** toolchain. This
-voided real work on the textual axis: cells validated against 4.32 while the kernel
-was pinned at 4.31, and a bare `lean` **rejected the kernel's oleans with
-`incompatible header`** — which a cell then "worked around" by recompiling the shared
-`Common` from source, i.e. validating against a compiler the kernel does not use. Its
-green meant nothing. Always `lake env` from the package root, or
+sandbox probe dir, `/tmp`) silently falls back to elan's **default** toolchain. It
+voided real textual-axis work (anatomy: memory
+`reference_lean_isolation_probe_full_path_imports`). Always `lake env` from the
+package root, or
 `elan run leanprover/lean4:<pin> lean`. A file-in-the-root is not a pin for any process
 whose cwd is elsewhere.
 

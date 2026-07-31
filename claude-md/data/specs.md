@@ -97,3 +97,41 @@ Root `data/specs/<slug>-<date>/SPEC.md`; subspec
 `data/specs/<slug>-<date>/tests/`; prose shorthand "spec `<slug>-<date>`".
 Post-absorption the charter is the single current-contract citation.
 The tests exemplar is `pending-promotion-scope-2026-05-28/tests/` (bash).
+
+**Which of those forms survives the `/do-retire` reaper** (lane registry
+`data/specs/do-retire-2026-07-26/lanes.tsv`): `<fam>/SPEC.md` is REAPED at P3 —
+a cite to it will dangle. The family **directory**, its `tests/`, and a bare
+family slug (an identifier, not a path) all survive — lanes name artifacts,
+never dirs, and `tests/` is KEEP-CODE. So prefer citing the **mechanism** — a
+script, a test case, a constant in code — over the prose describing it; R-6
+wants tests cited anyway. Every other CLAUDE.md carries dated `SPEC.md` pointers
+that are load-bearing while the corpus is live — **do not pre-emptively strip
+them**, the widening is P3's.
+
+**The § 4.4 gate (`retire.sh --check-cites`) reads TWO scopes under DIFFERENT
+predicates.** Root `CLAUDE.md` + every `CHARTER.md` take the *prospective* ban:
+never cite a path the reaper would delete. `data/next-steps/*.md` take
+*dangling-only*: flagged only once the path stops resolving — an ns item citing
+the debate that produced it is doing its job, and the prospective predicate
+returns 125 violations there. Both halves derive from `lanes.tsv` (2026-07-29):
+the candidate finder builds its prefixes from the registry's ephemeral rows, so
+adding a lane cannot leave the gate behind. The slot arm reads a FRESH render of
+`ledger.ns_item_event`, not the committed projection — a repair made this session
+via `ns-rephrase` is in the store, while `data/next-steps/` is only rewritten at
+`close.sh --finish`.
+
+**A bare family slug is not a key — key on the relpath, or test both
+depths.** `specs-audit.sh` resolved families one level deep only, so every
+family *promoted into* a parent as a subspec became unaddressable and its
+`SPEC_LEDGER` row was skipped with no finding (measured 2026-07-26: 65 root
+vs 80 subspec families — 55 % sat at subspec depth; one row had been dark
+46 days). Promotion is the ordinary, encouraged lifecycle move, so this
+fires on routine activity, silently, in the direction that reads like
+success. Two consequences for anything keyed on a family name — ledgers,
+audits, cross-refs, future registries: (a) the **two-level nesting cap
+above is a correctness precondition for code**, not layout hygiene —
+`spec_resolve_any_root` tests `<root>/<slug>/` then `<root>/*/<slug>/` and
+walks no deeper, so relaxing the cap is a lockstep change (widen every walk
+in the same commit), never a pure-layout decision; (b) a subspec relpath
+carries **two** dates — derive slug-dates from the **basename**, since
+`grep -oE '[0-9]{4}-…' | head -1` takes the parent's.

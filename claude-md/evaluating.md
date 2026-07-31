@@ -233,9 +233,10 @@ financial decision. `evaluating/` is the **sole grantor**; `accounting/`
 **advises** (frameworks/kernel truth), it does not grant.
 
 **Recording a grant.** Each granted/blocked sign-off lands as a dated record in the
-spec's **§ 9 sign-off ledger** (`data/specs/evaluating-financial-signoff-2026-06-24/signoffs/<date>-<subject>.md`),
-kept in evaluating's own family — never in `pleading/`'s `messaging-rulings/` (the
-§ 5 orthogonality). First entry: `signoffs/2026-06-30-4.1-ta-bestiary.md`. A consumer
+FINANCIALLY slot of the signoff hub (`data/signoffs/FINANCIALLY/<date>-<subject>.md`;
+relocated 2026-07-30 from the spec family's § 9 ledger, do-retire P3 step 1) —
+never in `pleading/`'s `messaging-rulings/` (the
+§ 5 orthogonality). First entry: `2026-06-30-4.1-ta-bestiary.md`. A consumer
 cites it (manifest + release commit) before any public push. A record's
 `payload.content_sha256` is a **roll-up over the record's `faces[]` table** — one
 level up from `data/publishing/push-ledger.jsonl`'s same-named field (which hashes

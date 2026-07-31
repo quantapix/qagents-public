@@ -80,6 +80,10 @@ mechanical rewrite):
 - `rendering` — not yet on the publishable roster; whether the brand /
   render-engine `CLAUDE.md` belongs on a public surface is an open
   editorial call (a public-surface expansion beyond the settled set).
+- The desktop-extension, native-client, and simulation surfaces joined
+  the constellation after this subtree's roster was last drawn. None has
+  been assessed for publication yet; they are unlisted rather than
+  deferred.
 
 Excluded (never published):
 

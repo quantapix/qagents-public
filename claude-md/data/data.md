@@ -74,7 +74,7 @@ entry lands or an existing one's verdict flips.
 | Entry | Kind | Producer | CLAUDE.md |
 |---|---|---|---|
 | `agent-sdk-ledger/` | data-hub | `code/agent_sdk/qagents/agent_sdk/ledger.py` (append-only, per SDK call) | `data/agent-sdk-ledger/CLAUDE.md` |
-| `charters/` | convention-anchor | sessions — charters by ratifying debate + spec-lane amendment (`data/specs/data-charters-2026-07-16/SPEC.md` § 3.3/§ 4.4); migrated spec families/debate records by the owner-scope's `/open` session; `todos/` fix-requests by session/operator (charter-scopes-2026-07-16 § 4) | `data/charters/CLAUDE.md` |
+| `charters/` | convention-anchor | sessions — charters by ratifying debate (maturity gate `data/specs/data-charters-2026-07-16/SPEC.md` § 3.3) + amendment via `data/charters/CLAUDE.md` § "Amendment lane" (single owner since the 2026-07-27 relocation; that spec's § 4.4 is now only a pointer — do not cite it as the procedure); migrated spec families/debate records by the owner-scope's `/open` session; `todos/` fix-requests by session/operator (charter-scopes-2026-07-16 § 4) | `data/charters/CLAUDE.md` |
 | `claude-settings/` | convention-anchor | manual `sources/*` → `scripts/claude-settings/build.py` | `data/claude-settings/CLAUDE.md` |
 | `claude-updates/` | convention-anchor | `scripts/close.sh` | `data/claude-updates/CLAUDE.md` |
 | `debates/` | convention-anchor | sessions (debate convener at `/close`) | `data/debates/CLAUDE.md` |

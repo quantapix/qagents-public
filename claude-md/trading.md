@@ -135,19 +135,20 @@ bracket_status    # optional free-form annotation
 ## Scheduled routines
 
 **A host that can reach the repo is not a host that can trade.** Git does
-not carry trading's state: the tape (`financial/parquet/`), the creds
-(`trading/.env`), and each PM's live `portfolio.json` context are
-gitignored or laptop-local — a fresh checkout that fires a routine would
-reason over a pre-session book and write it back over the real one.
+not carry trading's state on its own: the tape (`financial/parquet/`) and
+the creds (`trading/.env`) are **gitignored**, laptop-local; each PM's live
+`portfolio.json` is **TRACKED** but only as fresh as the last push — so a
+checkout that fires a routine without the holder's latest push reasons
+over a pre-session book and writes it back over the real one.
 Before any seat/host move, sync + hash-match all three (the 2026-07-14
 seat drill caught exactly this pre-flip). 2026-07-23 added the converse:
 **a host that has the tape and the creds still cannot trade on a stale
 checkout** — qyel passed every gate, including `seat_preflight` GREEN
 24/24, and reported "no Morning Plan existed today" because its `main`
 predated the plan commit by 96 minutes. Tracked state matters as much as
-gitignored state. (It also could not compute a Greek: `py_vollib` was
-broken there with `pip check` clean. `lib/capability.sh` has no
-options-stack row — ns-14.)
+gitignored state. (A dead `py_vollib` that `pip check` read clean also
+blocked Greeks; both `parity.sh` and `capability.sh` gained import
+witnesses 2026-07-27.)
 
 **THE ROUTINE ROSTER IS A SET OF DEPENDENCY CHAINS, NOT INDEPENDENT
 FIRES.** `overnight-research → premarket-brief → open-execution →
@@ -177,8 +178,11 @@ distinction is exactly what the 2026-07-23 journals got wrong.
 
 The 16 trading LaunchAgents (3 PMs × 5 cron routines + leaderboard) are
 registered through the canonical qagents launchd scheduler at
-`data/schedules/`. Per-routine spec rows live in `data/schedules/cron_triggers.md`;
-hand-run any routine off-schedule via
+`data/schedules/`. **Schedule times are owned by the `ROUTINES` array in
+`data/schedules/launchd/install.sh`** (post-D1 2026-07-25);
+`data/schedules/cron_triggers.md` is trading-lane *narration* (timing
+rationale, per-routine prose) — read it for why, never for when.
+Hand-run any routine off-schedule via
 `data/schedules/launchd/run_routine.sh trading/<pm> <routine>` (e.g.
 `trading/aggressive overnight-research`). Per-run logs at
 `data/schedules/launchd/logs/trading-<pm>-<routine>-*.log`. Operator
@@ -205,26 +209,39 @@ and MUST NOT be applied here: there is no session branch, so prefixing a
 orphaned and never promoted (caused the 2026-06-02 moderate miss — files
 landed in `qagents-wt/trading-13/`, absent from the daily-promotion commit).
 
-### Relocation lane — off the laptop, onto a LAN node
+### Relocation lane — DONE, onto the qyel seat (not a LAN node)
 
-Adopted 2026-07-14; Phase T (qpur fixes) shipped; the relocation phases are
-REQUIRED and gated. Single owner:
-`data/specs/cron-ec2-migration-2026-05-19/trading-herdr-sessions-2026-07-14/SPEC.md`
-(§ 0 motive — qpur cannot leave the WiFi while it serves cron; § 12 gates);
-debate record: `data/debates/trading-node-relocation-2026-07-14.md`. The EC2
-transport is superseded for trading — the node lane runs full
-subscription-billed sessions, mooting the SDK gate that deferred the parent
-family's Phases 2–5.
+**Relocated 2026-07** (re-derived 2026-07-27). The cron lane runs on
+**qyel — a macOS laptop holding
+its own subscription seat**, not a headless herdr/EC2 node: qblk/qred cannot
+hold a seat at all. qpur is freed, which was the entire driver (§ 0 — it could
+not leave the WiFi while it served cron). Live program + mechanism:
+`data/specs/node-return-lane-2026-07-14/SPEC.md` (seat gate, § 12 changeover
+discipline, S5 write-back). The herdr-transport spec
+(`cron-ec2-migration-2026-05-19/trading-herdr-sessions-2026-07-14/SPEC.md`) is
+retained as the design record, trued 2026-07-27; debate record:
+`data/debates/trading-node-relocation-2026-07-14.md`.
 
-Un-waivable gates (spec-owned; summarized because they bind sessions here):
-sparse node clone excluding `legal/` + a narrowed `data/` cone (subtraction,
-not fencing — no in-session refusal layer is load-bearing on the node); the
-node's day returns on a `<node>/<topic>` branch merged ONLY by a qpur `/open`
-session under `.data-write-lock` (unattended auto-merge BLOCKED); allow-list =
-machine-output paths only — never `trading/agents/*/.claude/**`,
-`risk_policy.md`, or `strategy.md`; node wrapper unsets
-`QAGENTS_PENDING_ROOT`; both clocks pinned to ET. herdr is observability, not
-critical path; AWS-touching artifacts stay `serving/`-owned.
+**Most of the old "un-waivable gates" were Linux-target requirements and are
+moot on a laptop seat** — reinstate them verbatim if a headless node ever
+returns. Sparse checkout excluding `legal/` was mandated because repo hooks
+*fail open on Linux*, so subtraction was the only enforcement; on macOS they
+run, and qyel carries the full canonical checkout. TZ pinning is satisfied by
+construction (same macOS launchd lane, same ET local time). Co-location is
+satisfied — all three PMs and the leaderboard on one host.
+
+**What still binds a session here:**
+
+- **A tenure change lands only in the 21:00–21:59 LOCAL changeover hour**
+  (§ Scheduled routines above — the CONTINUITY invariant). Between the push
+  and 21:00 the lane is DARK and loud (`CHANGEOVER-DEFERRED`, `exit=75`).
+- **Session ↔ cron overlap is NOT yet fenced** (`ns:trading/1`). § 12 covers
+  host↔host handover only; an `/open trading` session and the cron lane on the
+  *same* host still write `portfolio.json` / `watchlist.md` / journals with no
+  lease between them, and those are read-after-write within one trading day.
+  Assume nothing protects you here.
+- `.claude/**`, `risk_policy.md` and `strategy.md` remain outside any
+  machine-writable allow-list. AWS-touching artifacts stay `serving/`-owned.
 
 ## Monthly retro + leaderboard
 

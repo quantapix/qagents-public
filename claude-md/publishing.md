@@ -66,7 +66,7 @@ No cron lane — the drive cadence (weekly Fridays) is operator-run via
 
 ## 5. Redaction is a hard gate, not advisory
 
-A HARD blocklist hit (the Hickory address family + the SOFT opposing-party /
+A HARD blocklist hit (the private-address family + the SOFT opposing-party /
 counsel / docket / agency-PII set) anywhere in the candidate tree **aborts**
 the compile/push. `publishing/` inherits `documenting/`'s redaction rules
 (`documenting/letters/REDACTION.md` + the `HARD_PATTERNS`/`SOFT_PATTERNS` in
@@ -82,40 +82,55 @@ with a targeted content grep, pinned by a companion regression test.
 Gate (1b) is token-scoped, not semantic — **still scrub the SOURCE artifact
 before `/publish`**; a new wording evades it.
 
-**Gate (1b) greps CONTENT; a barred token in a FILENAME evaded it (2026-07-10).**
-A path renders publicly (repo tree + blob URL) without appearing in any file's
-bytes. The live instance is the auto-memory tree, whose topic files are *named*
-after their subject. Closed at the one seat that already walks every path:
-`sync_mirror.py` `path_blocklist_hit` **rule (D)**, which back-stops both the
-staging tree and `publishing/resume/` via `--scan-tree`, and fails **closed**
-(abort, not silent drop). Regression pinned by a companion test. NB a `\b`
-word boundary does **not** separate on `_`, so rule (D) uses explicit
-alphanumeric boundaries; the `publish.sh` content twin must be swept in
-lockstep if a `_`-delimited body token ever matters.
+**Gate roster summary.** Gates **(1b)**/**(1c)**/**(1d)** in `publish.sh` are
+fail-closed CONTENT greps (collateral-docket family / cmux + herdr local state /
+any contact email — sole public contact `https://github.com/quantapix`,
+`resume/` exempt); rules **(D)**/**(E)** in `sync_mirror.py`
+`path_blocklist_hit` are their PATH twins (a filename renders publicly without
+appearing in any file's bytes); each gate ships a pinned test (`t_17`–`t_19`).
+Commit **metadata** stays outside every content gate
+(`data/next-steps/publishing.md` item 37, `feedback_gate_covers_payload_not_envelope`).
+Per-incident forensics (incl. the practical HARD bar on the collateral
+federal-appeal docket number, item 31, and the memory-slice
+exclusion-not-redaction ruling): `publishing/REDACTION-GATES.md` — committed,
+**never published** (path rule (C2) fail-closes any staged tree carrying it).
 
-**cmux local-state bar (gate (1c) + rule (E), 2026-07-12).** Same twin shape as
-(1b)/(D), a different never-publishable class: the cmux session-coordinator lane
-bars machine-private local session-coordinator state (session telemetry —
-branch-bearing workspace names, transcript paths, cleartext prompt previews)
-and private worktree-path literals from every public surface. `publish.sh`
-gate **(1c)** is the fail-closed CONTENT grep; the `sync_mirror.py`
-path-blocklist rule **(E)** is the PATH twin, blocking the coordinator's
-local-state path segments a content grep can't see. Pinned by a companion
-regression test.
-Contract: `data/specs/extending-2026-07-13/cmux-coordinator-2026-07-12/SPEC.md` § 8.4 (publishing
-condition 1) — the lane is `extending/`-owned.
+**Four rules for any source→artifact seam** (found live in `pleading/`
+2026-07-26, but this lane has the same exposure wherever internal material
+shares a file with shipped material — every source subproject → public repo).
+A "remove before rendering" heading is an instruction to a reader, not to the
+pipeline; the comment-wrap fix that followed then failed silently, and nothing
+in the file looked wrong. Case detail:
+`feedback_strip_instruction_is_not_a_mechanism`.
 
-**Memory-slice ruling (2026-07-10).** Drive Promise 1's weekly redacted memory
-mirror is unpopulated (`sync_mirror.py` has no memory roster). Ruling:
-**exclusion, not redaction** — an entry whose *subject* is the bar can't be
-scrubbed of it and stay useful; if the roster is ever authored it MUST be a
-curated **allow-list** (opt-in), never a deny-sweep (rule (D) + gate (1b)
-fail-closed either way). `sync` only *masks* an already-published leak
-(superseding commit) — barred blobs survive in public git history until a
-**history rewrite + force-push** (orphan-reset when 0 forks/PRs) purges them
-(the GitHub analog of the S3-wipe; forensic detail in memory
-`project_publishing_subproject`). Gate wired before push, pinned by
-`data/specs/publishing-2026-05-31/tests/cases/t_10_publish_gate.sh`.
+1. **Prefer a mechanism to an instruction.** If material must not ship, put it
+   where the tool already removes it and make removal a property of the
+   syntax. A CLAUDE.md warning would not have caught this — the instruction
+   already existed.
+2. **Assert on the OUTPUT, never the source.** Render, extract, then check the
+   artifact. A stripped-region defect has no visible signature: content that
+   should be gone looks exactly like content that IS gone, because you are
+   reading the input, which is *supposed* to contain it. Sibling of
+   `feedback_gate_covers_payload_not_envelope` and
+   `feedback_gate_before_any_public_push`.
+3. **Never spell a delimiter inside the region it delimits** — comment wraps,
+   fenced blocks, heredocs, template literals. First closer wins; describe it
+   in words.
+4. **Normalize whitespace before asserting on extracted PDF/DOM text** — a raw
+   substring check gives *false misses* (a line break made a present phrase
+   read as absent, which would have looked like a lost correction).
+
+(private pleading-drafting artifact) is a reusable implementation (fail-closed,
+exit 3, narrow `--allow=<substring>` rather than a blanket disable).
+
+**A text-layer check cannot see the page.** The redaction lane's content scans
+(`sync_mirror.py` HARD_PATTERNS, the staged-tree gates) read text — silent about
+what a rasterized page *shows*, and blind to glyphs that sit in the text layer
+without rendering inside the page box (a 9-for-9 pymupdf pass once cleared a
+filing whose caption was clipping at the page edge). The converse is already on
+file (`feedback_graphical_redaction_failure_modes` — visually hidden but
+extractable); **both directions are real and neither check sees the other's
+case.** Raster and look, or state explicitly that the gate covers text only.
 
 **The candidate tree is markdown, so the gate scans markdown.**
 `publishing/scripts/sync_mirror.py` Stage 3 applies the blocklist patterns as
@@ -170,14 +185,21 @@ the cross-repo half of the § 4 byte-equality check. Spec:
 - **`pending/publish-digests/`** is a gitignored, fork-internal buffer (mirrors
   `pending/dco-digests/`). It is **never** promoted by managing's verifier
   (registered in the verifier internal-set + `verify-pending.sh`'s
-  `require_not_internal_pattern` deny-list). Discarded at close by default.
+  `require_not_internal_pattern` deny-list). Discarded at close by default —
+  but it is **not** in the close rescue-scan skip set, so every `/publish`
+  session hits `--pre` exit 15 on these files. That refusal is worth one
+  deliberate pass, not a reflex delete: a digest's section (a) carries findings
+  the run did not apply (deferred enrichment, cross-subproject owed fixes), and
+  those are lost with the file. Extract them into the close summary or a
+  next-step **first**, then delete.
 
 ## 7. Status emit (`data/status/publishing.json`)
 
 `scripts/status_emit.mjs` participates in the status contract (root CLAUDE.md
-§ "Status hub"). Pins a `KIT_VERSION` constant (the producer's pin is the
-source of truth — 0.7.0 since the kit widened `SubprojectId` to 24 for
-`developing/`; swept in lockstep on kit bumps). Four-state pill machine: `OK`
+§ "Status hub"). Pins a `KIT_VERSION` constant; `scripts/status_emit.mjs` is
+its single source of truth — read the constant there rather than any
+restatement, and sweep it in lockstep on kit bumps (the closed `SubprojectId`
+set widens with every new subproject). Four-state pill machine: `OK`
 (last `/publish` clean) / `BUILDING` (run in flight) / `DEGRADED` (last run
 aborted on the redaction/drift gate — privacy floor held, release stale) /
 `NOT_YET_LIVE` (pre-first-publish; first live push 2026-06-12). The pill
@@ -210,9 +232,8 @@ publishing/
 `publishing/` convenes the recurring **messaging-hardening debate** — a
 structured multi-agent pass that makes the public surfaces (quantapix.com,
 femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
-adversarial read. It is **instance one** of the generic debate framework
-(`data/charters/qagents/debate/CHARTER.md`; absorbed from the
-`debate-framework-2026-06-09` family); its own contract:
+adversarial read. **Instance one** of the generic debate framework
+(`data/charters/qagents/debate/CHARTER.md`); contract
 `data/specs/messaging-hardening-debate-2026-06-06/SPEC.md` (adopted 2026-06-06).
 
 - **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model subagent
@@ -223,11 +244,10 @@ adversarial read. It is **instance one** of the generic debate framework
   past round 1, `managing/`'s daily cron stewards the recurring rounds (debate
   charter § 2.7 — deferred with the absorbed spec, details TBD).
 - **Round records** land in the shared hub
-  `data/debates/messaging-hardening-<date>.md` (tracked; debate charter § 2.2, spec-like
-  `<slug>-<date>` naming — migrated 2026-06-09 out of the former
-  `publishing/debates/<date>/round-NN-rulings.md`). These are **pre-gate triage**
-  — per spec § 6 a ruling reaches the promoted digest
-  `data/messaging-rulings/<date>.md` **only after `pleading/` returns CLEARED**.
+  `data/debates/messaging-hardening-<date>.md` (tracked; debate charter § 2.2,
+  spec-like `<slug>-<date>` naming). These are **pre-gate triage** — per spec § 6
+  a ruling reaches the promoted digest `data/messaging-rulings/<date>.md` **only
+  after `pleading/` returns CLEARED**.
 - **Advisory model (§ 7 Q2):** the debate emits rulings; each owning subproject
   applies the public-surface edit in its **own** `/open <sub>` session.
   `publishing/` never mutates a sibling tree (§ 3 boundary posture).
@@ -263,42 +283,17 @@ CLAUDE.md language split).
   never appears publicly). Title is metadata, the path slug is an opaque id, so a
   title change never triggers a rename cascade. publishing gates the **derived**
   key, not just the title metadata — the redaction + verb-blocklist sweep scans
-  the `cdnUrl` slug too. Mirror + worked example: `explaining/CLAUDE.md`
+  the `cdnUrl` slug too. Source MP4s stay laptop-local (`explaining/videos/<slug>/cuts/`,
+  gitignored) — the CDN object is the only durable public copy; cross-site
+  contract `serving/CLAUDE.md` § 8. Mirror + worked example: `explaining/CLAUDE.md`
   § "Publish-key shape".
-- **Release flow (gate-first; no step until the prior clears).** The **CDN upload
-  is the FIRST public push** — the S3 object is fetchable at
-  `videos.quantapix.com/<key>` the instant it lands (immutable cache), reachable by
-  URL even before it is linked from /videos, so it is gated **identically to the
-  YouTube upload**, NOT a pre-gate "build" step (4.1 regression, 2026-06-30). Order:
-  1. **Master finalized** (explaining) + thumbnail rendered.
-  2. **Applicable gate(s) CLEAR on the full payload** — title + description + tags +
-     chapters + thumbnail + the **derived public CDN slug** (the slug renders on
-     /videos *and* is publicly reachable, so a blocked verb can't hide in the URL) —
-     as ONE piece, **before any public push** (CDN upload included):
-     a **financial-domain** video (Topic 3 / Topic 4 / any Qresev payload) needs
-     `evaluating/` **FINANCIALLY-CLEARED** (sole grantor, `accounting/` advises — § 5);
-     a **litigation-framed** video needs `pleading/` messaging CLEAR; where both
-     apply, **both** are required. Signoff-map mechanics + commit trailer +
-     `signoff_blocker()` machine-refusal: § 11 gate (1).
-  3. **Publishing mints the key**, stages `descriptions/<key>.txt` + the manifest
-     entry (`youtubeId: null` = built-not-uploaded); redaction/verb sweep clean.
-  4. **CDN upload** (`serving/scripts/upload-video.sh <cut> T<n>/<slug>.mp4`) — the
-     first public push, gated by step 2.
-  5. **YouTube upload** (unlisted-first) → Studio altered-content toggle → public flip.
-  6. **Live-flip:** `videos_emit.mjs` `status: 'live'` + fill `cdnUrl`/`youtubeUrl`,
-     re-run; `explaining/` records the release in `meta.json` (the § 4 standing rule
-     there — explaining-owned, never publishing). A `stats.live` change drifts
-     `designing/web`'s home stat-strip e2e literal (hub-fed at build time from
-     `data/publishing/videos.json`) — bump it in a `/open designing` session.
-
-  **Site-thumb gotcha:** `designing/web/public/video-thumbs/<id>.png` is a
-  SECOND, independently-deployed copy of the `rendering` `priority-10` render —
-  clearing the YouTube payload does NOT clear it; it can serve stale/blocked art
-  live on `quantapix.com/video-thumbs/<id>.png` (CloudFront-cached) on its own. On
-  any framing change refresh BOTH, lift the site thumb across to the designing
-  worktree (§ 10 above; it's designing-owned), and **CloudFront-invalidate** the
-  thumb path. Close publishing first (videos.json live-flip → main) before
-  designing syncs + builds, else /videos shows the new thumb but stale `upcoming`.
+- **Release flow (gate-first).** Floor (always-loaded): **no public push before
+  the applicable gate(s) CLEAR on the full payload as ONE piece** (title +
+  description + tags + chapters + thumbnail + derived public CDN slug) — the
+  **CDN upload is the FIRST public push**, gated identically to the YouTube
+  upload, NOT a pre-gate "build" step (4.1 regression, 2026-06-30). Six-step
+  recipe + the site-thumb second-copy/CloudFront-invalidation gotcha:
+  `.claude/skills/youtube-sync/SKILL.md` § "Release flow".
 
 ## 11. The `/youtube-sync` pipeline (channel ↔ repo)
 
@@ -314,7 +309,10 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   the **R2 union — committed class floor ∪ per-entry flags** (`in_scope_gates()`, 2026-07-24).
   The floor comes from `data/publishing/r2-scope-map.json` keyed by the **topic prefix** of
   the manifest `key` (`T3`/`T4` → FINANCIALLY today), which is structurally mandatory in
-  every catalog key and so cannot be forgotten; the flags (`litigationFramed` → MESSAGING,
+  every catalog key and so cannot be forgotten (a ROOT-LEVEL ledger key — a non-episode
+  cdn asset — derives its literal filename as its class and is registered PER-ASSET with
+  an explicitly stated floor, since the push ledger covers every cdn push, not only
+  episodes; 2026-07-31); the flags (`litigationFramed` → MESSAGING,
   `financialDomain` → FINANCIALLY) survive as **additive-only** widenings that may never
   narrow below the floor. An **unregistered class fails closed** (refuses the push) — a
   gate that defaulted an unknown topic to ungated would reintroduce the R2 vacuity attack.
@@ -324,17 +322,12 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   committed JSON independently. `signoff_blocker()` then refuses push/adopt-over/upload unless
   every in-scope gate's `signoffs[<gate-id>]` names a record on disk — a promoted
   `data/messaging-rulings/<date>.md` (pleading grants) or an
-  `evaluating-financial-signoff/signoffs/` record (evaluating grants, accounting
+  `data/signoffs/FINANCIALLY/` record (relocated 2026-07-30; evaluating grants, accounting
   advises). publishing never self-grants. The MESSAGING half is the same § 11.2 floor the upload
   sheets ride. The old single `clearedBy`/inert `financiallyCleared` fields are
-  retired (R17 atomic-lockstep migration, 2026-06-30). **IGA enforcement (R7, landed
-  2026-07-03):** when a cited record is an inline-operator grant (`granted_via:
-  inline-operator`, publishing SPEC § 5.5), `signoff_blocker()` additionally runs
-  `iga_verify.py` — committed-blob re-verify against the push commit (`git rev-parse
-  <push-commit>:<path>`, never the worktree), `grantor == registry sole-grantor`, and a
-  cron/SDK-lane refuse. Ceremony records (all shipped to date) + MESSAGING are a strict
-  no-op. Also swept in `publish.sh` over each prose-lifted gate's `LEDGER.md`. Test
-  `t_16_iga_enforcement.sh` (15). Owed: `github_meta.py` repo-content binding (needs the
+  retired (R17 atomic-lockstep migration, 2026-06-30). **IGA enforcement (R7):** inline-operator
+  grants get `iga_verify.py`'s three refuse checks — contract, wiring, test:
+  spec § 5.5. Owed: `github_meta.py` repo-content binding (needs the
   evaluating-owned FINANCIALLY `LEDGER.md`, R1). (2) The synthetic-content
   **altered-content disclosure has no API field** — it stays a manual Studio toggle
   per upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete on
