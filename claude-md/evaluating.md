@@ -106,6 +106,38 @@ matches the qagents brand-level invariant from
 + ✗ for refused legs (§ 2 R-T2; the legacy `.teal`/`.amber` class names survive
 only as pinned e2e selector anchors).
 
+**COMPOSITION CARVE — ruled 2026-08-01 (ns:evaluating/16), binding on the
+FINANCIALLY gate.** A multi-leg structure named OUTSIDE the six-value `Strategy`
+inductive (`accounting/Accounting/Common/Types.lean:65`) does **not** widen the
+allow-list, and the enum is NOT extended, **iff** both hold:
+
+1. **Decomposition** — every leg is independently an allow-list `Strategy` value;
+   and
+2. **Cover** — every short leg is covered by a position the *same book* actually
+   holds. Cover is a fact about the portfolio, never about the label.
+
+A **collar** satisfies both: `CoveredCall` (long stock + short call) ∧
+`ProtectivePut` (long stock + long put) on one underlying. The name never enters
+the kernel; `Strategy` stays six-valued and `strategy_closed`
+(`OptionsRisk/Hier/VetoSurvives.lean:36`) is untouched. **`collar_bounds_computable`
+in accounting's Hedging BOUND P3 roster (`Hedging/Predicates.lean:22`) is
+therefore admissible as a bound over an already-allowed two-leg composition** —
+accounting's BOUND remainder is ungated by this ruling.
+
+Clause 2 is the whole content of the carve, and it is **not new** — it restates
+`options-risk/SKILL.md` § "Book-level coverage (composition is not leg-wise
+safe)", which already names the *composed collar* as a short-call ticket that
+must pass `shared.lib.risk composition`. Boundary case, stated so the carve has
+one: a short call + long put **without the underlying** is a synthetic short —
+its short leg has no cover, it fails (2), and it is refused however it is
+described. That refusal is the per-leg veto working (`noNaked` is a field with
+no default), which is why the carve is safe to state rather than assume — a
+composed structure no rule names is exactly the shape that reads as cleared
+without ever having been cleared.
+
+Extending `Strategy` remains a brand-level change (SKILL.md hard rule: update
+`trading/CLAUDE.md` + the gate skill first).
+
 ## 5. Frameworks scope
 
 TREND · MOMENTUM · OPTIONS-RISK · SECTOR · DRAWDOWN. Each maps to an
@@ -197,6 +229,20 @@ Spec partitioning:
   graphs CSS set.
 - `app.spec.ts` — `client:only` island hydration, 5-chip set + click +
   the OPTIONS-RISK lock panel.
+- `theme.spec.ts` — M4 tri-state theme + the FINANCIALLY per-leg R-T2
+  floors (§ 2), plus the **two-child flex-row gap sweep** (added
+  2026-08-01, ns:evaluating/14). It is DISCOVERING, not a selector list: it
+  walks every `display:flex` + `justify-content:space-between` element with
+  exactly two non-collapsed children, measures `b.left - a.right`, asserts a
+  4px floor, and runs at a **380px viewport** (the trap needs content lengths
+  that fill the row). `space-between` is distribution, never spacing: pair it
+  with an explicit `gap`. Rationale (overlap is not overflow), the both-apps
+  cure roster, the witness discipline, and the better narrow-leg idiom —
+  reuse an existing Playwright PROJECT (`chromium-mobile`) instead of the
+  drifting 380px literal, as verifying did — are in
+  `[[project_qnarre_qresev_apps]]` § "Two-child flex-header zero-gap trap".
+  Verifying's extra offenders lived in its `web/public/graphs/pages.css`;
+  this mount's `pages.css` has zero `space-between` (checked 2026-08-05).
 - `api.spec.ts` — live-only; `ALLOWED_IDS` mirrors `ALLOWED_EXAMPLE_IDS`
   in `server/main.py` AND `extending/servers/qresev-mcp/src/allowlist.ts` — a
   **triple** since extending landed 2026-07-04, all exhaustive by design; edit
@@ -241,12 +287,23 @@ cites it (manifest + release commit) before any public push. A record's
 `payload.content_sha256` is a **roll-up over the record's `faces[]` table** — one
 level up from `data/publishing/push-ledger.jsonl`'s same-named field (which hashes
 the pushed binary itself); never join the two by field name (studying L-127;
-wording precedent: `studying/scripts/extract_signoff_facts.py` header). **The `serving/scripts/upload-video.sh`
-gate binds EVERY episode, financial or not** — a non-financial (T1/T2) episode is blocked at CDN
-push without a record just the same (1.2 semantic-search-limits was blocked until its record
-landed). So non-financial episodes must file a **verified-N/A** `/do-signoff FINANCIALLY <subject>`
-proactively (record disposition = CLEARED, scope = "out of § 3 financial scope"), rather than
-discovering the block at upload time. The generic version of
+wording precedent: `studying/scripts/extract_signoff_facts.py` header). **The
+`serving/scripts/upload-video.sh` release gate is WEAKER than this § used to claim —
+corrected 2026-08-07 after reading the script rather than the prose.** It refuses a
+`T<n>/` key unless `CLEARANCE_COMMIT` is set and is an **ancestor of HEAD**, and that
+is *all* it checks: it never verifies the commit is a FINANCIALLY record's
+`granting_commit`, so **any** ancestor commit satisfies it. The script says so itself —
+"the mechanical ancestry precondition, not a safety guarantee". The old text here said
+the gate "binds EVERY episode … a non-financial (T1/T2) episode is blocked at CDN push
+without a record just the same"; that is false, and the push ledger proves it — **4 of
+the 5 pushed T1/T2 episodes carry no FINANCIALLY record and shipped anyway** (only 1.2
+semantic-search-limits has one). Treat the gate as an ordering precondition, never as
+record enforcement. Hardening handed to `ns:serving/82`; the residual hole it leaves in the
+T1/T2 floor is `ns:evaluating/28`.
+Filing a **verified-N/A** `/do-signoff FINANCIALLY <subject>` for a non-financial
+episode (disposition CLEARED, scope "out of § 3 financial scope") therefore remains
+**good practice and is not required by any mechanism** — do it because the coverage
+record is worth having, not because something will block you. The generic version of
 this machinery is **ADOPTED**: the `/do-signoff <gate> <subject>` skill
 (`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing instance,
 resolver refuses unless the session IS the grantor) over the governance-layer spec
@@ -271,16 +328,13 @@ Intra-app faces asserted by `app.spec.ts`; cross-repo by the publishing
 (`lib/scan_financial.sh`) and explaining's `phase0_preflight.py --rider-floor`
 prove rider *presence + byte-equality* only. Neither can see **CLEAR-5 (R10)** —
 binding each framework verdict token to a committed `accounting/` run-emit — which
-is a **judged** clause (skill § 5). 3.6 `live-evaluator-walkthrough` is the
-worked counterexample: mechanically green, **BLOCKED** 2026-07-10
-(`signoffs/2026-07-10-3.6-live-evaluator-walkthrough.md`). Necessary, never
-sufficient.
-
-**CLEAR-5 run-binding rule (video payloads).** A verdict token that **names an
-example run** binds to *that run's* emit; a token naming no run binds to the
-committed framework; an absent framework uses 3.3 `G6Triad33`'s three-valued cell
-(`none` = `— not claimed`, same weight as a verdict). Run-emit facts (e.g.
-`balance_sample` = four frameworks, no MOMENTUM): server allow-list comment +
+is a **judged** clause (skill § 5). Necessary, never sufficient. Worked
+counterexample (3.6 `live-evaluator-walkthrough`: mechanically green, BLOCKED
+2026-07-10, cleared same day after explaining's cure `ddfbed82` — the CLEARED
+record is `data/signoffs/FINANCIALLY/2026-07-10-3.6-live-evaluator-walkthrough.md`;
+a BLOCKED record never leaves the gitignored buffer) + the CLEAR-5 run-binding
+rule (names-a-run ⇒ that run's emit · names-no-run ⇒ the committed framework ·
+absent framework ⇒ the three-valued `none` cell) + run-emit facts:
 `[[project_cohort3_financial_signoff_rider_floor]]`.
 
 **Orthogonal to `pleading/` (load-bearing):** never a substitute for the

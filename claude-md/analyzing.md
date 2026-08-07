@@ -173,6 +173,15 @@ Per-symbol verdicts in the summary:
   set mis-classed four routine dividends as `irregular`.
   The pre-write parquet is copied to
   `financial/parquet/.history-backup/<SYM>/<ISO>.parquet`.
+  **Materiality, measured 2026-08-05** (353 restatements, backups replayed
+  through `talib.OBV` — the `ta_reference.py:126` call): `dividend_like` is
+  EXACTLY invariant for OBV (it rewrites `adj_c`; OBV reads raw `c`), and
+  `volume_settle` shifts OBV by a CONSTANT from the restated bar forward, so
+  every OBV increment / slope / divergence read after that bar is unchanged
+  (level shift median 1.6e-05, max 2.3e-02, zero sign flips over 349 symbols).
+  **No warn tier is warranted for either class**; NOT bounded by that
+  measurement — a level read whose window spans the restated bar, and repeated
+  settles landing on the SAME bar. Detail + method: ns:analyzing/12.
 - `regression` — the vendor dropped in-window bars we already hold ⇒ **REFUSED**.
   The parquet is left byte-identical, the symbol lands in `blocked[]`, and the run
   **exits 3** (fails the P3 cron arm; aborts `dat.sh` Step 0.5 *before* a wave
@@ -227,7 +236,7 @@ by a tolerance: `tape_manifest.retired_held_symbols()` intersects
 silent drop still reds `count_matches_universe` — even in the same refresh
 (ns-17; the § 7 orphan-gate twin in repo-root `scripts/sync-ground-truth.sh`
 — NOT under `analyzing/scripts/`; owner: workstation-parity spec).
-Enforcement follow-ons + the `tape-supply` charter mint: next-steps item 14.
+Live residual: next-steps item 14 (enforcement legs complete 2026-07-29).
 
 ## Web viewer — `analyzing/web/` (P4 host, role (b))
 
@@ -286,7 +295,6 @@ monitoring's proven shape). **127.0.0.1:4327 only** (port registry
   override the roots (hermetic e2e).
 - **Kit delivery:** `scripts/sync-charts.mjs` (predev/prebuild) host-copies
   canonical `visualizing/graphs/dist/kit-strategy.js` → `public/graphs/kit.js`
-  (mount dir renamed `graphs2/` → `graphs/`, operator ruling 2026-07-21)
   (fail-soft: absent dist ⇒ empty-state, never a hard fail) + the
   `kit.css`/`tokens-chart.css` overlays from their **tracked sources** in
   `visualizing/{graphs,charts}/kit/`. The mount probes `chartsCaps()` so

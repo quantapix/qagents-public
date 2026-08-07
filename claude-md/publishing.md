@@ -85,43 +85,28 @@ before `/publish`**; a new wording evades it.
 **Gate roster summary.** Gates **(1b)**/**(1c)**/**(1d)** in `publish.sh` are
 fail-closed CONTENT greps (collateral-docket family / cmux + herdr local state /
 any contact email — sole public contact `https://github.com/quantapix`,
-`resume/` exempt); rules **(D)**/**(E)** in `sync_mirror.py`
+`resume/` exempt); rules **(D)**/**(D2)**/**(E)**/**(E2)** in `sync_mirror.py`
 `path_blocklist_hit` are their PATH twins (a filename renders publicly without
 appearing in any file's bytes); each gate ships a pinned test (`t_17`–`t_19`).
 Commit **metadata** stays outside every content gate
-(`data/next-steps/publishing.md` item 37, `feedback_gate_covers_payload_not_envelope`).
+(`feedback_gate_covers_payload_not_envelope`) — closed for the one live producer
+2026-07-31: `github_meta.py` commits with an explicit noreply identity override,
+pinned by `t_20_sync_commit_identity.sh`.
 Per-incident forensics (incl. the practical HARD bar on the collateral
 federal-appeal docket number, item 31, and the memory-slice
 exclusion-not-redaction ruling): `publishing/REDACTION-GATES.md` — committed,
 **never published** (path rule (C2) fail-closes any staged tree carrying it).
 
-**Four rules for any source→artifact seam** (found live in `pleading/`
-2026-07-26, but this lane has the same exposure wherever internal material
-shares a file with shipped material — every source subproject → public repo).
-A "remove before rendering" heading is an instruction to a reader, not to the
-pipeline; the comment-wrap fix that followed then failed silently, and nothing
-in the file looked wrong. Case detail:
-`feedback_strip_instruction_is_not_a_mechanism`.
-
-1. **Prefer a mechanism to an instruction.** If material must not ship, put it
-   where the tool already removes it and make removal a property of the
-   syntax. A CLAUDE.md warning would not have caught this — the instruction
-   already existed.
-2. **Assert on the OUTPUT, never the source.** Render, extract, then check the
-   artifact. A stripped-region defect has no visible signature: content that
-   should be gone looks exactly like content that IS gone, because you are
-   reading the input, which is *supposed* to contain it. Sibling of
-   `feedback_gate_covers_payload_not_envelope` and
-   `feedback_gate_before_any_public_push`.
-3. **Never spell a delimiter inside the region it delimits** — comment wraps,
-   fenced blocks, heredocs, template literals. First closer wins; describe it
-   in words.
-4. **Normalize whitespace before asserting on extracted PDF/DOM text** — a raw
-   substring check gives *false misses* (a line break made a present phrase
-   read as absent, which would have looked like a lost correction).
-
-(private pleading-drafting artifact) is a reusable implementation (fail-closed,
-exit 3, narrow `--allow=<substring>` rather than a blanket disable).
+**Four rules for any source→artifact seam** — (1) prefer a mechanism to an
+instruction, (2) assert on the OUTPUT never the source, (3) never spell a
+delimiter inside the region it delimits, (4) normalize whitespace before
+asserting on extracted PDF/DOM text. Found live in `pleading/` 2026-07-26;
+this lane has the same exposure wherever internal material shares a file with
+shipped material (every source subproject → public repo). Full derivation +
+the reusable fail-closed implementation ((private pleading-drafting artifact),
+exit 3, narrow `--allow=<substring>`): `feedback_strip_instruction_is_not_a_mechanism`
+(siblings `feedback_gate_covers_payload_not_envelope`,
+`feedback_gate_before_any_public_push`).
 
 **A text-layer check cannot see the page.** The redaction lane's content scans
 (`sync_mirror.py` HARD_PATTERNS, the staged-tree gates) read text — silent about
@@ -340,9 +325,20 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
 - **CDN release gate (`CLEARANCE_COMMIT`).** `serving/scripts/upload-video.sh` refuses
   any `T<n>/` catalog key unless the caller sets `CLEARANCE_COMMIT` — the
   FINANCIALLY-CLEARED record's `granting_commit`, which must resolve to a commit in the
-  repo AND be an ancestor of HEAD (so the clearance is provably in the pushed tree). It
-  binds **every** `T<n>/` episode, not only financial ones: a non-financial episode
-  clears via a `verified-N/A` FINANCIALLY grant, whose commit is still the
-  `CLEARANCE_COMMIT`. Authoritative contract: `data/specs/serving-2026-05-26/SPEC.md`
+  repo AND be an ancestor of HEAD (so the clearance is provably in the pushed tree).
+  **That is the whole mechanism: an ANCESTRY check, not a record lookup.** The script
+  never resolves the commit against `data/signoffs/FINANCIALLY/` — any ancestor commit
+  passes, so a caller may satisfy it without a clearance record existing. Reading
+  `CLEARANCE_COMMIT` as record enforcement is the natural misreading of the *name*, and
+  two CLAUDE.mds made it independently (evaluating's half corrected 2026-08-07). The
+  "every `T<n>/` episode clears via a `verified-N/A` FINANCIALLY grant" rule is a
+  **practice with no mechanical backing today**, and it is not being followed: measured
+  2026-08-07 against `data/publishing/push-ledger.jsonl`, **4 of the 5 pushed T1/T2
+  episodes carry no FINANCIALLY record and shipped anyway** (`T1/01-hallucination-tax`,
+  `T1/05-negative-verification`, `T1/07-civil-rico-walkthrough`,
+  `T2/01-docket-record-disagree`; only `T1/02-semantic-search-limits` has one). Hardening
+  — resolve `CLEARANCE_COMMIT` against a real record's `granting_commit`, shipped with a
+  known-bad witness — is filed at `ns:serving/82`.
+  Authoritative contract: `data/specs/serving-2026-05-26/SPEC.md`
   release-gate bullet (serving owns the script + the gate); this bullet is the
   publishing-side pointer the script's error message cites.

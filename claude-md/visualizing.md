@@ -78,29 +78,46 @@ this § 3 is authoritative.
 **Shared (top-level, modality-neutral):**
 
 - `extractor/` — **the highest-value deliverable** (Python, system `python3`).
-  `usc_to_catalog.py` (legal, built); the financial twin is deferred until
-  axiomatize-trading builds `Universe/S<code>/<Axis>/` (driver-emit-only until then).
-  The parser **reads the `dau`/`dat` score-gate certification artifact** for
-  `tier`/`agreement`; it does **not** run a green `lake build` (spec § 11.0a).
+  `usc_to_catalog.py` (legal, built); `accounting_to_catalog.py` (financial,
+  built 2026-08-01 — walks `Universe/S<code>/<Axis>/` + `coverage.json`;
+  the symbol→(sector,axis) coverage fold spec lives in its docstring).
+  Spec § 11.0a says the parser reads a `dau`/`dat` score-gate certification
+  artifact for `tier`/`agreement` (never a green `lake build`) — **but no such
+  artifact is written** (2026-08-06). The scorer is
+  `code/lean_tools/score_bridge.py` (NOT `proving/scripts/` — C19 moved it) and
+  reports via stdout + exit codes only, so § 11.0a is wrong where it says the
+  gate "writes a certification record". Owed work is the emit, not a producer
+  (ns:visualizing/17).
   Stays top-level: `catalog.json` feeds **every** modality, not just `graphs/`.
 - `rounds/` — the **qrounds/1 two-sided rounds contract** (custody ruled to
   visualizing, do-share P0-8 2026-07-18): `qrounds.schema.json` +
   `qrounds-standing.schema.json` + `validate_rounds.py` (stdlib, exit-coded
-  0/2/4/5) over each axis's `…/examples/*/rounds/`. Append-only union —
-  `builds[].target` stays free-string; the compact `attack:<stem>` join is the
-  validator's arm, `_target_stems` diff-locked with studying's
-  `fold_standing.py`. Detail: `rounds/README.md`.
+  0/2/4/5) over each axis's `…/examples/*/rounds/`.
+  **Blindness pair since 2026-08-04 (do-share run 7, R-3):**
+  `qblindness.schema.json` + `qblindness-corrected.schema.json` — a `#corrected`
+  record supersedes a base WITHOUT overwriting it (in-dir/existence checks in
+  `_corrected_preconditions()`, unexpressible in JSON Schema); base + corrected
+  are committed FOREVER, append-only adjudication FACTS — **the base is not
+  reapable** (a reaped base turns its correction into an unfalsifiable claim).
+  **The schema subset is CLOSED and self-enforcing since 2026-08-06:** every
+  run audits the loaded schemas and REFUSES (exit 2) on a keyword `_check` does
+  not implement, so widening it is a three-part change — interpreter arm +
+  `_UNDERSTOOD` entry + known-bad witness. The guard exists because a
+  hand-rolled subset silently ignores what it does not implement, making an
+  unimplemented constraint indistinguishable from a satisfied one; a remembered
+  rule was not enough (`minItems` let an `agents: []` known-bad pass).
+  Detail (append-only target union, `_target_stems` diff-lock, retention):
+  `rounds/README.md`.
 - `specs/` — the three POC extraction specs (provenance for the consolidated
   spec's appendix). `shared/INPUTS.md` — pointers to the axiomatized data.
 
 **`graphs/` — the node-link modality = the uniform kit, mounted in the § 1 apps**
-(`@qagents/graphs`, pnpm workspace member):
-render-neutral core (`qgraph/1` model + `collapse.project()` + layout/style/axes
-+ merge/inductive/method) + adapters (`fromCatalog`/`fromProof`/`fromNodeLink`/
-`fromConstellation`/`fromFlow`) + **ONE backend — cytoscape + fcose** — + `src/kit/mount.ts`
-(the mount API: `mountProof`/`mountCatalog`/`mountNodeLink`/`mountConstellation`/`mountFlow`,
-regions/onLayout/onTapLeaf — the compose RegionSource surface) + `sandbox/`
-browser gates. Ordering is owned by **fcose constraint mechanisms** (flow-edge +
+(`@qagents/graphs`, pnpm workspace member): render-neutral core (`qgraph/1`
+model + `collapse.project()` + layout/style/axes + merge/inductive/method) +
+five adapters + **ONE backend — cytoscape + fcose** — + `src/kit/mount.ts` (the
+`mount*` API + regions/onLayout/onTapLeaf — the compose RegionSource surface) +
+`sandbox/` browser gates; per-file roster: `graphs/README.md` § Layout.
+Ordering is owned by **fcose constraint mechanisms** (flow-edge +
 per-view rank-kind derived — `PROOF_RANK_KINDS`, T8 shipped 2026-07-11;
 `graphs-2026-07-02/SPEC.md` § 3/§ 4). `kit/build.mjs` builds
 **three** IIFE dist bundles (global `QViz`): `dist/kit-proof.js` (graphs + the
@@ -175,7 +192,20 @@ render** — one cytoscape-fcose source (`hero-graph.json` + `loader.js`) serves
 both the silent hero video and the `/thesis` mount once designing re-adds it;
 7-chapter animation contract `…/visualizing-2026-06-03/thesis-hero-2026-07-07/
 SPEC.md`, capture bundle `scenes/thesis-hero/`; open work = next-steps items
-9/11/15, MP4 deferred on W8.
+9/11/15, MP4 deferred on W8. **W6 method-projection producer: designed AND
+BOTH phases SHIPPED 2026-08-06** —
+`…/visualizing-2026-06-03/method-projection-2026-08-06/SPEC.md`.
+`extractor/method_projection.py` emits `data/visualizing/method-{legal,
+financial}.json` (instance fixtures over the committed catalogs; hero NEVER
+regenerated; zero kit changes), `validate_method.py` gates G1–G5 + merge
+sanity with 10 committed known-bad witnesses, and the W3 plural-merge sandbox
+arm (`graphs/sandbox/w3-check.mjs`, in `pnpm gates`) landed with the first
+multi-group wire (per-axis cell-fold groups — the four-kernel § 15 swap is a
+HERO device; nested merge groups are outside the mount's variant-composition
+contract, spec § 6 amendment; kit-side hardening = ns:visualizing/50).
+Financial is structural-only: coverage-veto records render as veto REFUSALS
+(no grammar role), and the TOKEN-based directional gate (camel/snake-proof)
+refuses unconditionally until a FINANCIALLY record exists.
 
 **Constellation modality (M) + cluster-lens.** studying's SECOND operational
 input — the qagents monorepo + `~/.claude` memory as one non-hierarchical graph
@@ -198,12 +228,11 @@ untouched. monitoring owns `/constellation` + the mechanical kit-dist re-host-co
 ## 4. Phased roadmap (spec § 12)
 
 Phases 0–3 ✅ (registration · catalog extractor `qcatalog/1` · cytoscape
-web-port · scale bake-off; POC engines removed 2026-06-11, survivor
-`graphs/sandbox/scale_catalog.py`). **Phase 4 RE-SCOPED → built from scratch as
-the kit** (G0–G6 DONE + gated + MOUNTED; single cytoscape-fcose backend, § 3 +
-`graphs-2026-07-02/SPEC.md`); cytoscape ships as npm deps + a `pnpm patch` (CSP
-fix), NOT vendored-source. Implementation/gate detail (test counts, per-app mount
-provenance) lives in `graphs/README.md` + `project_visualizing_subproject`.
+web-port · scale bake-off). **Phase 4 RE-SCOPED → built from scratch as the
+kit** (G0–G6 DONE + gated + MOUNTED; single cytoscape-fcose backend, § 3 +
+`graphs-2026-07-02/SPEC.md`). Implementation/gate detail (test counts, per-app
+mount provenance, the cytoscape npm-deps + `pnpm patch` posture) lives in
+`graphs/README.md` + `project_visualizing_subproject`.
 **Phase 5** (next): replay animation + `explaining/` frame export on the
 cytoscape capture path (settle-based determinism — seeded fcose + constraints;
 raster acceptance = SSIM, never byte-equality).
@@ -218,26 +247,18 @@ raster acceptance = SSIM, never byte-equality).
   MUST declare its additive caps key in the filing text — consumers key upgrade
   triggers on that key, never on version/feature-sniffing.
 - **The component ΔE floor is a PROXY for R2, and it is loose at its own
-  boundary.** `charts/test/palette.test.ts` labels its ΔE2000 ≥ 18 check against
-  the three verdict anchors "the mechanical green/red/amber exclusion". It is
-  not: an unrestricted search over the feasible set returns `#048b47` at ΔE
-  **18.2** from `--chart-candle-up` — clears every floor, unmistakably green.
-  What actually delivers R2 is the **hue arc 175–330**, which lives in
-  `rendering/brand/BRAND.md` § CH-2 (re-derived independently to the R2
-  witness's exact figure, min-pair 21.5 both legs) and in **no test**. Two
-  things a future palette author needs: the ΔE floor alone does not deliver the
-  verdict exclusion, and **the lightness band must stay wide** — tightening to
-  .32–.72 drops the dark leg to 17.1, under the pairwise floor, which reads as
-  "the cool arc cannot fit nine" when the arc was never the cause
-  (`feedback_proxy_floor_loose_at_its_boundary`).
+  boundary** — `charts/test/palette.test.ts`'s ΔE2000 ≥ 18 check does NOT
+  deliver the green/red/amber verdict exclusion it claims. What does is the
+  **hue arc 175–330**, which lives in `rendering/brand/BRAND.md` § CH-2 and in
+  **no test**; never tighten the lightness band. Case + the boundary witness:
+  `feedback_proxy_floor_loose_at_its_boundary`.
 - **"M1" names three different milestones — always qualify it.** `graphs` M1
   (constellation cluster-lens + picture-floor knobs, § 3 — shipped
   2026-06-14..17), `mixed3d` M1 (surfacegrid kit, § 3 — shipped 2026-07-05/06),
   and `code/web` M1 (web-unification, not visualizing-owned). A bare "M1
-  prettiness floor" left `ns:monitoring/3` gated for weeks — it read as the
-  mixed3d M1 while the graphs M1 it actually meant had already shipped, and
-  `ns:studying/3` inherited the same conflation. One ambiguous token, wrong in
-  two slots at once. Write "graphs M1" / "mixed3d M1", never bare.
+  prettiness floor" gated `ns:monitoring/3` + `ns:studying/3` for weeks — it read
+  as mixed3d M1 while the graphs M1 it meant had shipped. Write "graphs M1" /
+  "mixed3d M1", never bare.
 - **Declared-token gate (the third gate class, 2026-07-20).** The parity gates
   compare the two DECLARED mirrors; they cannot see a token the CODE reads that
   neither declares (`--chart-pane-h` shipped that way — read at the LW backend,
@@ -306,17 +327,12 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
 - **Composition is a visualizing-owned routing layer** (`visualizing/compose/`,
   `@qagents/compose` — **BUILT Phase 2 2026-06-08**), a `visualizing/`-level
   package sibling of the modality kits — **not** a `code/` hub and **not** a
-  root/qagents concern. It owns cross-modality placement + typed event wiring
-  (DAG `predicate-selected` → charts `sideView`) and holds no domain logic and no
-  kit internals (**R1**); it drives `@qagents/charts` directly but consumes the
-  graphs kit through an **opaque `RegionSource` interface** — kits stay mutually
-  unaware. **R2:** placement reads the DAG's published node-region map (a kit
-  *output*) and positions absolutely, never named DOM slots (pure core in
-  `compose/src/placement.ts`). **R3:** bars resolve via an injected `resolveBars`
-  (the run-emit's job) — no parquet in the renderer. Gated
-  `pnpm -C visualizing/compose {test,typecheck,sandbox:verify,sandbox:verify:csp}`
-  over a fake DAG + fake run-emit. App shells **mount** the composed bundle via
-  the kit-mount side-car; they never route between kits themselves
+  root/qagents concern. R1 (no domain logic, no kit internals) · R2 (placement
+  reads the DAG's published node-region map, a kit *output*, and positions
+  absolutely — never named DOM slots) · R3 (bars via an injected `resolveBars`,
+  the run-emit's job — no parquet in the renderer); architecture + gates:
+  `compose/README.md`. App shells **mount** the composed bundle via the
+  kit-mount side-car; they never route between kits themselves
   (`evaluating/web/`: the graphs kit's `KitMount` backs `RegionSource`, Qresev's
   `GET /api/runs/<id>/bars` is the injected `resolveBars`, bundle =
   `kit-strategy.js`; overlay tiles light up as accounting's run-emit grows
@@ -362,6 +378,16 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
   `/close` (next-steps items 7 + 21) — charts/mixed3d `dom.ts` degrades to the
   sanctioned map, so a stale host copy is the right colour but still stale. Full
   failure model: `feedback_two_token_mirrors_ship_two_palettes`.
+
+- **T10 deviations seat = `rendering/designs/visualizing-lattice/manifest.json`,
+  key `deviations` — NOT `sanctioned_deviations`.** That bundle seats the WHOLE
+  kit family (charts · mixed3d · graphs), so its `deviations[].file` paths point
+  outside it. The wrong key greps clean and reads as "not declared" — it held
+  ns:visualizing/5 gated for seven weeks past its trigger
+  (`feedback_gate_must_name_the_right_subsystem` case 5). Declared:
+  `DEFAULT_TOKENS`, `DEFAULT_TOKENS_3D`, `--font-mono`.
+  `managing/scripts/brand-drift.sh` gates the first two; the third is uncovered
+  and its sanction rests on a premise no gate watches — ns:managing/34.
 
 ## 7. rendering/ seam (rendering-spec debate, Round 01 — 2026-06-09)
 

@@ -47,8 +47,9 @@ the standard examples in `hub/theorem_proving_in_lean4` and
   `data/charters/proving/specs/axiomatize-uscode-2026-05-29/hierarchical-predicates-2026-06-20/SPEC.md`
   (tactic layer is kernel-side Lean, never a plugin — charter § 4 pin R2.5).
 - **Hierarchical predicates H0/H1 — applied to the operational axis** (sibling
-  parity with proving/accounting). H0 = the Mathlib-free tactic substrate
-  `Operating/Common/Tactic.lean`; H1 = the `Operating/Qagents/Hier/`
+  parity with proving/accounting). H0 = the Mathlib-free tactic substrate in the
+  shared `Common/` namespace (path deliberately unnamed — C5-graded roster; find
+  it by behaviour); H1 = the `Operating/Qagents/Hier/`
   cell decomposing `OpenedAs` (the axis's single LLM-judged predicate) with a
   term-only `Bridge.lean` oracle guard, shrinking the lone model call to the
   narrow `has-session-footer` leaf. Specs `predicates/operating/hier/`;
@@ -57,19 +58,16 @@ the standard examples in `hub/theorem_proving_in_lean4` and
 - **Proof-carrying context injection — Phases A+B+C SHIPPED (C 2026-07-16: the
   fork-isolated `kernel-recall` pull skill, `studying/skills/kernel-recall/`).** Spec
   `data/charters/studying/specs/lean4-charter-2026-06-10/proof-context-injection-2026-07-09/SPEC.md`
-  + ADOPT-AMEND record `data/debates/proof-context-injection-2026-07-09.md`
-  (PRIVACY 9-cond + NO-MANUAL-PROVING 4-cond; predecessor
-  `…/axiomatized-ops-context-memory-2026-06-27/SPEC.md` Phase 3 / PRIVACY
-  re-clear untouched — condition 9). The machinery roster (`live_check.sh`, the
-  three `emit_*`/`check_*` scripts, the SessionStart hook, `close.sh --ctx-check`
-  exits 46/47, the `/open` async spawn) is the SPEC's — don't mirror it here; it
-  is also mid-migration to a `qx` shim (`ns:studying/39`). Two invariants bite:
-  the live-check **state-key is a digest of the extractor INPUT SNAPSHOT — refs
-  + worktree table + sentinel stats, never HEAD** (R2); and the surface is a
-  **machine-context seam** — templates-class extension, non-precedential across
-  axes, `monitoring/` stays the sole consumer app (R15). Ledger privacy:
-  § 5.1.2(c) path-blocklist carries (committed-but-never-published — the
-  `studying_entailment_ledger` Stage-4 rule in `publishing/scripts/sync_mirror.py`).
+  + ADOPT-AMEND record `data/debates/proof-context-injection-2026-07-09.md` (PRIVACY
+  9-cond + NO-MANUAL-PROVING 4-cond). The machinery roster is the SPEC's — don't
+  mirror it here; it is mid-migration to a `qx` shim (`ns:studying/39`). Two
+  invariants bite: the live-check **state-key is a digest of the extractor INPUT
+  SNAPSHOT — refs + worktree table + sentinel stats, never HEAD** (R2); and the
+  surface is a **machine-context seam** — templates-class extension,
+  non-precedential across axes, `monitoring/` stays the sole consumer app (R15).
+  Ledger privacy: § 5.1.2(c) path-blocklist carries (committed-but-never-published
+  — the `studying_entailment_ledger` Stage-4 rule in
+  `publishing/scripts/sync_mirror.py`).
 
 ## 3. Workstream B — operational axiomatization (git first)
 
@@ -98,166 +96,175 @@ closing one buys nothing; (a)/(b) below detail C1/C2, the two that live in this
 orchestrator's own hands.
 
 **(c) *Mechanized, and it must run IN-SESSION.*** `dao.sh --blindness-audit <id>`
-(`/dao-manual` Step 7b) runs the shared five-channel auditor
-`code/lean_tools/transcript_audit.py` over the round's cells and freezes the verdict at
-`Operating/examples/<id>/rounds/blindness-<NN>.json`; exits 62 breach / 63 unauditable.
-**Transcript retention is ~10 days AT BEST — observed as short as ~1–2 days
-(2026-07-30, `studying/AUDIT-ns55-readjudication-2026-07-30.md`)**, so an un-audited
-wave becomes *permanently unauditable*, not merely unchecked — the only remedy is a
+(`/dao-manual` Step 7b) runs the shared auditor `code/lean_tools/transcript_audit.py`
+(GRADES C1–C5; C6 reconciler licensing, C7 contract-referenced docs) over the round's
+cells, freezing the verdict at `Operating/examples/<id>/rounds/blindness-<NN>.json`;
+exits 62 breach / 63 unauditable. Mechanism, retention figure, `--contract-file`,
+axis-specific rooting and gate `t_11` are owned by
+`…/blindness-firewall-2026-07-25/SPEC.md` — cite it, never a number here. Four
+consequences bind the lane. **Retention is SHORT and NON-MONOTONE**, so an un-audited
+round becomes *permanently unauditable*, not merely unchecked; the only remedy is a
 full blind re-slice (P0-5(iv)), and "audit the history later" is not a plan. Any
-`clean` recorded before 2026-07-27 means clean on **C1–C4 only** — C5 did not exist;
-read the rung, not just the verdict. Both cell contracts ride `--contract-file`
-(2026-07-30, ns-53), so an inlined-contract fallback prompt no longer saturates C2.
-Gate `t_11` (two committed known-bads + a clean cell that must NOT be convicted + a
-review fixture pinning that contract subtraction fires without swallowing a
-non-contract leak). *Rooting is axis-specific:* dao roots the audit at `examples/`, not
-`examples/<id>`, because dao's two sides share one example dir with disjoint FILE
-surfaces — a sibling axis must re-derive its own rooting rather than paste dao's.
-**Reading a BREACH (first wave-time runs, 2026-07-29):** the verdict is mechanical, the
-discrimination is yours. Both `ctx_recall` rounds scored BREACH on C3 hits that are the
-KNOWN shared-instrument false positives — the root-sweep rule scores cwd and cannot see
-a scoped target or a pathspec, plus a `//` normalisation artefact — owned by
-`ns:proving/89`. Read the matched text and the rung, never the count; never rewrite a
-frozen verdict. ONE hit was genuine — the testing contract barred `git status` while
-giving a cell no sanctioned way to check an attack-filename collision against
-prior-round files it may not read. CURED 2026-07-30 (ns-54): `dao.sh
---claim-attack-name <id> <name>` answers existence of ONE name (`free`/`taken`,
-exit 0/65, never a roster; gate `t_13`), and the testing contract points at it — the
-audit stays noisy on OTHER shapes until `ns:proving/89` F3 lands, never on this one. (a) *Filesystem:* the runtime hands every subagent the SAME
+`clean` recorded before 2026-07-27 means clean on **C1–C4 only** — read the rung, not
+just the verdict. **A verdict can be about the WRONG SUBJECT, and that reads exactly
+like a real one** — act on the verb's "CHECK IT NAMES THIS SESSION" print; a
+wrong-subject verdict is NULL, not lenient, and `--supersede` freezes
+`blindness-<NN>.corrected-<k>.json` beside the base (never rewritten) while `--book`
+reads the highest corrected as authoritative. And **reading a BREACH is
+discrimination, not arithmetic: read the matched text and the RUNG, never the count;
+never rewrite a frozen verdict** — the known shared-instrument false-positive classes
+are `ns:proving/89`/`110`/`112`, and the wrong-subject anatomy plus its cross-axis
+reciprocals are `ns:studying/64`. When a contract bars a read with no sanctioned
+substitute, add the narrow answer rather than relax the bar (`dao.sh
+--claim-attack-name <id> <name>` → `free`/`taken`, exit 0/65, never a roster; gate
+`t_13`).
+(a) *Filesystem:* the runtime hands every subagent the SAME
 writable session scratchpad — agent scratch goes under its own disjoint
 `<out>/.scratch/`; the session scratchpad is off-limits
 (`.claude/agents/dao-{coding,testing}.md` § Scratch isolation). (b) *Orchestrator:*
 from round 2 the orchestrator holds both sides' results — routing one side's finding
 into the other's prompt makes the next green an echo; **name the METHOD, never the
-ANSWER**. **(b′) The brief can author a C3 breach the cell cannot self-police
-(2026-07-31, `ctx_degrade` r01; ledger seq 173).** Every C3 rule bars the cell from
-CHOOSING a sibling read; none bars the orchestrator from INSTRUCTING one, and an
-instructed read arrives as an instruction, not a violation. That round's brief said
-"the sibling `ctx_shorten/proof.lean` shows the SHAPE of a `gap_*` probe" — the cell
-complied, disclosed it, and the frozen verdict came back BREACH on that single event
-while every other conviction was the known root-sweep FP class. dao roots at
-`examples/` precisely so a sibling EXAMPLE is the leak unit, so brief and instrument
-contradicted each other. **Convey shape by inlining the pattern or citing
-`studying/templates/`, never by pointing a blind cell at a sibling's committed
-proof/attack artifact.** A leaked round's Lean may be sound yet **VOID as evidence** — no tier, no
+ANSWER**. **(b′) THE BRIEF CHANNEL — channel-independent, and stated that way on
+purpose.** *Every blindness rule constrains what the CELL may CHOOSE; none
+constrains what the BRIEF may REQUIRE* — and an instructed read arrives at the cell
+as an instruction, not a violation, so it is the one breach a cell cannot
+self-police. It fires on whatever channel the brief NAMES: r01 pointed at a sibling
+EXAMPLE → C3 (2026-07-31, seq 173); r04 named an instrument by MODULE PATH, a
+C5-roster member → BREACH rung `roster` (2026-08-02, seq 192); r05/r06 proved the
+same conflict can be authored one level up, in the INSTRUCTIONS (seq 196). **Filing
+r01 as a C3 anecdote is exactly why r04 recurred** — hence the general form here and
+three dated instances rather than three rules. Cures: state instrument requirements
+BEHAVIOURALLY ("audit closures with an existence-checked wrapper; a bare
+`collectAxioms` returns an empty closure for an unknown constant" carries the whole
+requirement and names nothing); convey artifact shape by inlining the pattern or
+citing `studying/templates/`, never by pointing a blind cell at a sibling's committed
+proof/attack artifact; **grep your own brief AND your own instructions for any repo
+path before spawning, and ask which channel would grade it** — mechanically since
+2026-08-04 via `code/lean_tools/mandate_conflict.py` (exit 9 blocks the spawn; a hit
+is a review obligation on the author, since it cannot tell prohibition from
+direction). A leaked round's Lean may be sound yet **VOID as evidence** — no tier, no
 standing promotion, no coverage number (both proving lanes broke this 2026-07-14,
 ~3M tokens of green work discarded). Guard: `…/dao-scheduling-2026-07-10/PROMPTS.md`
 § Orchestrator blindness discipline (P1 step 5 self-check); memory
 `feedback_blind_fanout_oracle_channels`.
 
-**Evidence archive (`studying/waves/` — the dao archive half, landed
-2026-07-31, ns:qagents/107 co-land).** Blindness-audit evidence freezes to the
-gitignored, LAN/S3-backed `studying/waves/<example-id>-r<NN>/` via
-`dao.sh --blindness-audit` → `transcript_audit.py --archive-evidence` (raw
-`agent-*.jsonl` copies + `manifest.json`; replay via `--regrade <manifest>`),
-in the SAME freeze-first step as the round verdict; gate `t_11` carries the
-evidence arm. **Nothing evidence-shaped is ever committed** — a committed
+**Evidence archive (`studying/waves/` — the dao archive half, 2026-07-31,
+ns:qagents/107 co-land).** Blindness-audit evidence freezes to the gitignored,
+LAN/S3-backed `studying/waves/<example-id>-r<NN>/` via `dao.sh --blindness-audit`
+→ `transcript_audit.py --archive-evidence` (raw `agent-*.jsonl` + `manifest.json`;
+replay via `--regrade <manifest>`), in the SAME freeze-first step as the round
+verdict; gate `t_11` carries the evidence arm. **Nothing evidence-shaped is ever
+committed** — a committed
 evidence file is a C5 answer-roster, and any proposal to commit evidence
 re-opens the PRIVACY gate (`data/debates/transcript-retention-2026-07-30.md`
-R1/R8). Rounds stay committed append-only: the archive holds evidence ONLY —
-no wave freeze, no `--archive-wave`, no `--push`. Operator ruling L-122
-(cold-S3 non-debt — ledger row in
-`…/axiomatize-shared-2026-07-04/LEARNINGS.md`) now has its studying surface,
-carried here: no tunnel ritual — the archive rides the qred-nightly → qblk →
-S3 daily ship. Backup lockstep (graduated 2026-07-31): `studying` left
-`PROSPECTIVE_WAVE_SOURCES` and `capability.sh have_waves()` gained the matching
-arm — **empty `studying/waves` hard-refuses** (half-migrated signature), absent
-is a plain skip, and the dir is born POPULATED by the first evidence write,
-never pre-created empty. Pinned by workstation-parity `t_14`.
+R1/R8). **An archive is EVIDENCE ONLY once something checks it is there — seven
+frozen verdicts turned out to have none (2026-08-06, `ns:studying/77`).** Every
+lane read `rounds/*.json` and none ever looked underneath, so the evidence was
+unguarded by construction, and the only guard was a rule a human had to recall at
+citation time — which three committed item bodies then broke, in both directions
+([[feedback_a_remembered_rule_is_not_a_guard]]). `scripts/archive_integrity.py`
+now runs inside `dao.sh --standing` (witness `t_21`): the PRESENCE arm is
+declarable via `Operating/examples/evidence-losses.json` — **a declared loss WARNs
+on every run, which is what keeps it visible; declaration is not absolution** —
+and the SUBJECT arm (archive roster must EQUAL the verdict's agent set) is never
+declarable, because a verdict computed from the wrong cells is null, not lost.
+**Four of the seven were never lost at all — and the census that called them lost
+is the cautionary half of this § (2026-08-06).** They sit on the **`qyel`** backup
+prefix, agent sets matching their verdicts exactly: those rounds RAN on the other
+workstation. The census enumerated by TREE **on one host** and reported
+absence-here as gone. Real permanent losses are THREE (`ctx_recall`, pre-dating
+the archiver). So **a gate has a COORDINATE SYSTEM, not a target set** —
+"scope by tree" fixes membership and leaves host, instrument version and corpus
+vintage silently partial ([[feedback_completeness_is_relative_to_a_coordinate_system]]);
+and **mechanizing a rule fixes who remembers it, not whether the question was
+scoped right.** Read a declared loss as *"absent on this host"* until a peer
+prefix is checked, and never harden a loss claim without one — declarations WARN
+rather than mute precisely so a wrong one stays recoverable.
+**Round STRUCTURE has a validator** — `visualizing/rounds/validate_rounds.py`
+(stdlib, system `python3`; exits 0/2/4/5 pass/usage/structural/join-orphan)
+checks `Operating/examples/*/rounds/` against the `qrounds/1` schema pair; its
+`_target_stems` is the declared diff-check sibling of
+`fold_standing.py::_target_stems` (S-85) — keep them in lockstep. Wired into
+the lane 2026-08-01: `dao.sh --standing`/`--report` call it before fold/report and a
+red exit BLOCKS both (gate `t_14`). **`--standing` itself now runs AFTER the
+blindness verdict, not before it** (`/dao-manual` Step 7c, 2026-08-06): folding
+first promoted standing off a round whose oracle had not run, and **nothing that
+promotes may run before the oracle that can void it** — the general form of the
+already-cured `ns:studying/59` judge-books defect. Rounds stay committed append-only: the archive
+holds evidence ONLY — no wave freeze, no `--archive-wave`, no `--push`. Per operator
+ruling L-122 (cold-S3 non-debt) there is no tunnel ritual — the archive rides the
+qred-nightly → qblk → S3 daily ship. Backup lockstep (rule owned by
+`serving/CLAUDE.md` § 10): **empty `studying/waves` hard-refuses**, absent is a plain
+skip — so the dir is born POPULATED by the first evidence write, never pre-created.
 
-**git v2 — index/staging.** Spec
-`data/specs/index-staging-v2-2026-06-19/SPEC.md` (extends
-`…/axiomatize-git-2026-06-10/SPEC.md`): the
-`Operating/Git/` index substrate (`Index`/`Staged`/`RecordsIndex`/`Captures`) +
-T4 promotion-discipline (the `data/tmp → data/specs` adopted-spec analogue,
-`PromotionDiscipline`/`PromotionBreached`), T4a/T4b proved by `/dao-manual`.
+**git v2 — index/staging.** Spec `data/specs/index-staging-v2-2026-06-19/SPEC.md`
+(extends `…/axiomatize-git-2026-06-10/SPEC.md`): the `Operating/Git/` index substrate
++ T4 promotion-discipline (the `data/tmp → data/specs` adopted-spec analogue),
+T4a/T4b proved by `/dao-manual`.
 
-**axiomatize-posix — the SUBSTRATE target (Phases 0–4 SHIPPED, family CLOSED —
-Phase 5 broad-corpus deferred by design).** The layer BENEATH git
-(files/processes/exit-codes): `Operating/Posix/` quartet + six
-`Operating/Qagents/` bridge cells, one per spec § 3 primitive (LockCreate ·
-RenameWrite · TrapRelease · SymlinkTeardown · PathContainment · GateAlgebra),
-each a safety PROPERTY with an inhabitable breach dual. Live rules: `posix_*`
-examples are modeled synthetic fixtures — no live extractor (§ 5),
-`--golden-check` no-op PASS on `modeled:true`; scope stays the six § 3
-primitives, NOT a POSIX-utility corpus. The `GateGreen` per-lane decomposition
-is the second hierarchical cell → H2–H4 reached in the decomposition-discipline
-sense (representation.md § H0–H4; model bake-off N/A-by-modeling, L-053s). Spec
-`data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-posix-2026-07-08/SPEC.md`.
+**axiomatize-posix — the SUBSTRATE target beneath git (files/processes/exit-codes;
+Phases 0–4 SHIPPED, family CLOSED, Phase 5 deferred by design).** `Operating/Posix/`
+quartet + six `Operating/Qagents/` bridge cells, one per spec § 3 primitive, each a
+safety PROPERTY with an inhabitable breach dual; `GateGreen`'s per-lane decomposition
+is the second hierarchical cell → H2–H4. Scope bound and modeled-fixture posture are
+the spec's (`…/axiomatize-posix-2026-07-08/SPEC.md` §§ 2/5).
 
-**axiomatize-llm-ops — COMPLETE on its ranked invariant set** (S-T2 index
-bijection, S-T3 provenance authority, S-T4 ownership totality; spec
+**axiomatize-llm-ops — COMPLETE on its ranked invariant set** (S-T2 index bijection,
+S-T3 provenance authority, S-T4 ownership totality; spec
 `…/axiomatize-llm-ops-2026-06-18/SPEC.md`, Round-1 record
-`data/debates/axiomatize-llm-ops-2026-06-18.md`). Live rules that survive the
-ship: the `Operating/Session/` domain is NOT a 4th axis; real-tree extractor
-runs write ONLY to gitignored `Operating/emits/live/` (exit-9 on a tracked
-target); S-T4 stays OFF the K-graph coverage numerator (observation posture —
-only synthetic goldens tracked); redaction gate
-`scripts/check_session_redactions.py`.
+`data/debates/axiomatize-llm-ops-2026-06-18.md`). `Operating/Session/` is NOT a 4th
+axis; the emit-privacy, off-numerator and redaction-gate rules are the spec's.
 
-**The git↔session decomposition bridge (spec § 10, complete).** A
-session-lifecycle skill is a DERIVED predicate decomposing into already-proved
-git operations + a narrow residue (S-T5/S-T6/S-T7 + the `/open`/`/close`/`/lift`
-bridge cells, all `Operating/Session/*Bridge.lean` + `Isolation.lean`
-+ `DelegatedLanding.lean`). The `/do-claude-updates` `DcuBridge` cell (2026-07-07)
-EXTENDS the skill-bridge family beyond the § 10 single-session vertical sequence
-to the cross-session CLAUDE.md-maintenance skill — proved-git-T2 cascade
-(merge-to-main) + the DCU-LOCK dual-sentinel + the QUEUE-1 hint-queue drain + one
-Tier-1 hint-adjudication residue; `syn_dcu` GREEN. Live rules: an operational-axis adopt round MUST
-seat the explicit qagents conditioning axioms as a first-class input (raw git
-is the substrate, never the ceiling); the § 10.8 conditioning-axiom register
-is canonical and grows leaf-by-leaf at the consuming skill (anti-vacuity).
-Records `data/debates/git-session-bridge{,-sharpening}-2026-06-21.md`.
+**The git↔session decomposition bridge (spec § 10, complete).** A session-lifecycle
+skill is a DERIVED predicate decomposing into already-proved git operations + a
+narrow residue (S-T5/S-T6/S-T7 + the `/open`/`/close`/`/lift` bridge cells, all
+`Operating/Session/*Bridge.lean` + `Isolation.lean` + `DelegatedLanding.lean`); the
+`/do-claude-updates` `DcuBridge` cell EXTENDS the family to a cross-session skill
+(`syn_dcu` GREEN). The one rule worth carrying here: an operational-axis adopt round
+MUST seat the explicit qagents conditioning axioms as a first-class input — **raw git
+is the substrate, never the ceiling** — and the § 10.8 register that holds them grows
+leaf-by-leaf at the consuming skill (anti-vacuity). Records
+`data/debates/git-session-bridge{,-sharpening}-2026-06-21.md`.
 
-**`/lift` pre-condition model (studying owns the lift spec).** Per operator
-directive studying OWNS + authors the entire lift spec (the `/open qagents`
-session does the `lift.sh`/`close.sh` implementation + bash testing). The
-donor-side-only eligibility model was inadequate for a two-party cross-session
-protocol; studying-owned amendment
-`data/specs/open-close-dcu-2026-05-26/lift-cross-agent-2026-06-24/SPEC.md`
-(R1–R3 recipient eligibility + `route-to-owner` + the lift-set resolving base
-OQ3). Axiomatic model `Operating/Session/LiftSafety.lean` — `LiftSafe`
-REFINES `LiftBridge.LiftSkill`; a metric-neutral kernel cell (no fixture, no
-status-pill bump). Promoting it to a coverage-bearing S-T6 `/lift` example is
-the deferred proving step.
+**`/lift` pre-condition model — studying OWNS + authors the entire lift spec**
+(`/open qagents` does the `lift.sh`/`close.sh` implementation + bash testing). A
+donor-side-only eligibility model is inadequate for a two-party cross-session
+protocol; the amendment is
+`data/specs/open-close-dcu-2026-05-26/lift-cross-agent-2026-06-24/SPEC.md` (R1–R3).
+Axiomatic model `Operating/Session/LiftSafety.lean` — `LiftSafe` REFINES
+`LiftBridge.LiftSkill`; metric-neutral. Promoting it to a coverage-bearing S-T6
+`/lift` example is the deferred proving step.
 
-**Action-gating hooks — S-T8 gated-action coverage + S-T9 subagent gate-scope
-monotonicity (proved).** `Operating/Session/HookGate.lean` models the
-ACTION stream (outbound tool calls) + the `PreToolUse` hooks that gate them —
-the dual of § 2d's context stream. Load-bearing: a project-scope hook does NOT
-fire on a spawned subagent's call (user-scope settings only). Conditioning
-axioms HOOK-1/2/3 + TOOL-1 + COST-1; spec § 11 of `axiomatize-llm-ops-2026-06-18`.
+**Action-gating hooks — S-T8 + S-T9 (proved).** `Operating/Session/HookGate.lean`
+models the ACTION stream (outbound tool calls) + the `PreToolUse` hooks that gate
+them, the dual of § 2d's context stream. Load-bearing: **a project-scope hook does
+NOT fire on a spawned subagent's call** (user-scope settings only). Spec § 11 of
+`axiomatize-llm-ops-2026-06-18`.
 
-**Provable signoff verification — S-T10 `SignoffCoverage` (governance dual of
-S-T8).** Kernel cell `Operating/Qagents/Signoff.lean` (governance primitives,
-NOT `Session/`); studying owns the verification amendment
-`…/signoff-verification-2026-06-30/SPEC.md` under
-the cross-cutting signoff framework (`data/specs/signoff-framework-2026-06-30/SPEC.md`).
-Live rules: coverage is over LEDGERED pushes only (completeness = the
-independent S3/CloudFront inventory diff, outside Lean); green is NOT a safety
-claim; OBSERVATION posture — lane metrics in `status_emit.mjs`, never the
-K-graph numerator; redaction gate `scripts/check_signoff_redactions.py`. A gate's
-**mechanical** scanners prove rider presence / byte-equality / clause absence;
-they CANNOT prove the judged bindings (e.g. FINANCIALLY CLEAR-5: verdict-token ↔
-run-emit) — a green `--rider-floor` / `scan_financial.sh` is necessary, never
-sufficient (3.6 was mechanically green, substantively refused, 2026-07-10). This
-is R1/R15 in operational terms.
-**CLEAR-3 is DISCHARGE-TYPED (P2f, 2026-07-21)** — non-widening kernel theorem
-`face_class_confusion_uncleared`; the three STANDING FACTS-1 negative-closure
-obligations + typing + gate `t_07` live in spec § 10 P2f (path above).
-P0–P2f shipped 2026-06-30/07-03/07-21; P3 alone remains (spec § 10). Live-leg
-status tracked at `ns:studying/25` — don't mirror it here.
+**Provable signoff verification — S-T10 `SignoffCoverage` (governance dual of S-T8).**
+Kernel cell `Operating/Qagents/Signoff.lean` (governance primitives, NOT `Session/`);
+studying owns the verification amendment `…/signoff-verification-2026-06-30/SPEC.md`
+under the cross-cutting signoff framework
+(`data/specs/signoff-framework-2026-06-30/SPEC.md`), which owns the coverage basis,
+the observation posture, the phase ledger (P3 alone remains) and CLEAR-3's P2f
+discharge-typing (`face_class_confusion_uncleared`, gate `t_07`); redaction gate
+`scripts/check_signoff_redactions.py`; live-leg status at `ns:studying/88`
+(`ns:studying/25` retired — a stale pointer here is what a dangling `(frontier: …)`
+looks like one surface over). The one
+rule that must be read here because it binds every gate on every axis: a gate's
+**mechanical** scanners prove rider presence / byte-equality / clause absence but
+CANNOT prove the judged bindings (e.g. FINANCIALLY CLEAR-5: verdict-token ↔
+run-emit), so a green `--rider-floor` / `scan_financial.sh` is necessary, never
+sufficient (3.6 was mechanically green, substantively refused, 2026-07-10) — R1/R15
+in operational terms.
 
-**Constellation graph M.** A second instance-level graph (alongside the
-snapshot graph): the whole monorepo + the separate `~/.claude` memory repo as
-one non-hierarchical networkx `MultiDiGraph`, the partitioning exercise the
-uscode tree and tiny K-graph cannot give (`scripts/extract_constellation.py` +
-the `graph-extract-constellation` skill + synthetic golden). Live invariants:
-an **observation** graph — never enters the coverage numerator, never gates
-`lake build`; `privacy:local-only` (R9) — live emit gitignored at
-`Operating/emits/live/constellation.json`, never under canonical `data/` or a
-`/publish` sweep; only the synthetic golden is tracked. Spec
-`data/charters/studying/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md`.
+**Constellation graph M.** A second instance-level graph: the whole monorepo + the
+separate `~/.claude` memory repo as one non-hierarchical networkx `MultiDiGraph` —
+the partitioning exercise the uscode tree and tiny K-graph cannot give
+(`scripts/extract_constellation.py` + the `graph-extract-constellation` skill +
+synthetic golden). It is an **observation** graph and `privacy:local-only` (R9); the
+numerator, `lake build` and emit-gitignore rules are spec-owned
+(`…/constellation-graph-2026-06-17/SPEC.md` § 5).
 
 **Operational safety invariants — pending-promotion + worktree-links
 (2026-07-07).** Two standalone PROPERTIES proved by the `/dao` lane (NOT skill
@@ -271,89 +278,138 @@ canonical; `syn_pending`, pending-promotion-scope-2026-05-28); and
 pure-gitignored — zero tracked files; `syn_wtlinks`, session-lifecycle
 charter § 2.4).
 
-**Full-project state review 2026-07-03 — mostly discharged.** Record +
-residue: `studying/reviews/state-review-2026-07-03.md`, the 6-counsel debate
-`data/debates/studying-state-review-2026-07-03.md`, and `ns:studying/30`.
-Two rules outlive them. (1) Coverage maps from CONSTRUCTIVE proved-target
-moves ONLY, never appear-only — the P2-5 provenance guard LOUDLY refuses an
-uncertified-basis cell's Tier-A down to B rather than inflate; the local-only
-`emit_catalog.py` basis (R13 `open_ct`) and the public pill's conservative
-20/22 hold-out are two blessed bases, never corrected to each other.
-(2) **The hold-out is a RULING, not an open question (operator, 2026-07-22;
-L-118): the blind-cert badge gates on CUMULATIVE `standing.adversarial === 0`,
-so a historical landed-then-repaired attack disqualifies a cell permanently and
-the public figure stays 20/22.** The latest-round-scoped alternative (22/22) was
-REJECTED, not deferred; reversing it needs a fresh operator ruling, never a gate
-edit (recorded at the gate site in `status_emit.mjs`). Rationale: a cell that
-ever had something land is repairable, not un-landable.
+**Full-project state review 2026-07-03 — mostly discharged.** Record + residue:
+`studying/reviews/state-review-2026-07-03.md`, the 6-counsel debate
+`data/debates/studying-state-review-2026-07-03.md`, `ns:studying/30`. Two rules
+outlive them. (1) Coverage maps from CONSTRUCTIVE proved-target moves ONLY, never
+appear-only — the P2-5 provenance guard LOUDLY refuses an uncertified-basis cell's
+Tier-A down to B rather than inflate; the local-only `emit_catalog.py` basis (R13
+`open_ct`) and the public pill's conservative 20/22 hold-out are two blessed bases,
+never corrected to each other. (2) **The hold-out is a RULING (operator 2026-07-22,
+L-118): the blind-cert badge gates on CUMULATIVE `standing.adversarial === 0`, so a
+historically landed attack disqualifies a cell permanently and the public figure
+stays 20/22.** The latest-round-scoped 22/22 was REJECTED, not deferred; reversing it
+needs a fresh operator ruling, never a gate edit (recorded at the gate site in
+`status_emit.mjs`).
 
 **dao-scheduling program (2026-07-10) — the standing run plan.**
-`data/charters/studying/specs/lean4-charter-2026-06-10/dao-scheduling-2026-07-10/SPEC.md` +
-`PROMPTS.md` (P0–P7) adopt proving's Phase-4M scheduling discipline (SPEC +
-frontier + model/effort matrix + dated actual-vs-estimate rows; LEARNINGS
-L-057s), target-scoped for `/dao` rounds. § 3 frontier ranks the backlog;
-§ 12.1 is the calendar. **axiomatize-ledger — COMPLETE on its ranked set
-(R1–R4 shipped 2026-07-10/11, A1–A4 met; R-T6 DEFERRED event-gated, § 3.6).**
-Subspec
-`data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-ledger-2026-07-10/SPEC.md`
+`data/charters/studying/specs/lean4-charter-2026-06-10/dao-scheduling-2026-07-10/SPEC.md`
++ `PROMPTS.md` (P0–P7) adopt proving's Phase-4M scheduling discipline, target-scoped
+for `/dao` rounds: § 3 frontier ranks the backlog, § 12.1 is the calendar. Consult
+it; don't mirror it here — and read coverage + pill numbers from
+`Operating/emits/lean_graph/coverage.json` + the status emit, never from prose.
+**axiomatize-ledger — COMPLETE on its ranked set** (R1–R4 shipped 2026-07-10/11;
+R-T6 DEFERRED event-gated). Subspec `…/axiomatize-ledger-2026-07-10/SPEC.md`
 (t_01–t_03 3/3): the shared-ledger-store RDB semantics
 (`data/specs/shared-ledger-store-2026-07-09/SPEC.md`) as an `Operating/Rdb/`
 substrate quartet + five `Qagents/Ledger{Append,Replay,Spool,Render,Adopt}.lean`
-bridge cells, all GREEN with inhabitable breach duals.
-Live rules: modeled fixtures, 0 LLM leaves (L-051s lane; L-053s caveat); NO
-live DB extractor in v1 (privacy § 5); rdb cells ON the coverage numerator
-(spec § 7 supersedes the ns-29 off-numerator note); five `op.Rdb.*` K-graph
-probes + the `ledger-concepts` cite parser (code/lean_graph). Coverage + pill
-numbers live in `Operating/emits/lean_graph/coverage.json` + the status emit —
-the § 3 frontier is the ranked backlog; consult it, don't mirror it here.
+bridge cells, all GREEN with inhabitable breach duals; fixture posture, privacy and
+numerator rules are the subspec's §§ 5/7, and the five `op.Rdb.*` probes +
+`ledger-concepts` cite parser live in `code/lean_graph`.
 
-**axiomatize-context-ops — Leg B + W1 SHIPPED 2026-07-22; W2 COMPLETE 2026-07-31 (frontier row 11). The CTX-T1..T4 bridge-cell set is CLOSED.**
-**CTX-T3 `ctx_recall` is closed on a NEGATIVE RESULT and must not be re-opened as a
-repair round** — clause (iii) of `RecallIsolation` is not axiomatizable as a
-fork-mechanism guarantee. Normative record + the two conditions binding any re-seat
-(a NON-ENUMERATING fixture; escapes with an INHABITED NEGATIVE CASE) live in the
-NEGATIVE RESULT section of `Operating/Operating/Qagents/CtxRecall.lean` — read it
-there, never restate it from memory. Ledger seq 167; committed witnesses
-(`attack/r0{1,2,3}_*`, `rounds/0{1,2,3}.json`) are the evidence and are never deleted
-to make the cell look clean. Two residues the rounds proved: REFUSE-1 carries the
-identical disease (warn-only "scanner flagged, pipeline shipped" is `False` by axiom),
-and every seat here is DROPPABLE because the modeled fixture over-emits.
-**CTX-T4 `ctx_degrade` GREEN 2026-07-31** (`Qagents/CtxDegrade.lean` DegradedHonesty —
-declared consumers, per-consumer degraded semantic, destructive-refuses/reporting-labels
-conformance; duals grounded in the memsearch `reset` finding). Judge GREEN, 15 attacks
-0 LANDED, C:11 A:7, **Tier-B on an uncertified basis — the round's blindness verdict is
-BREACH, so no tier, no standing promotion, no coverage number rests on it.** Round 02's
-seven ranked gaps: `ns:studying/60` (do not re-derive the two prose defects marked
-`CORRECTED round 01`).
-**Leg B:** `scripts/ctx_miner.py` (frozen pattern set, no LLM) + gate `t_02_miner_floors`;
-report local-only under the § 5 C-1..C-5 floors. Its first run inverted the
-graduation question — **adding rows beats graduating rows 2–6** (spec § 9.1).
-**W1:** `Qagents/{CtxTypes,CtxVerdict,CtxShorten}.lean` + modeled `ctx_verdict`/`ctx_shorten`,
-judge GREEN both. **Read spec § 9.2 before touching either cell:** the round landed NINE
-attacks against the orchestrator-authored kernel (K1–K9), repaired same-round. Standing
-consequences that bind future work:
-· **K1 (the kill) — every conditioning axiom carries an ESCAPE PREDICATE.** An
-  unconditioned seat whose conclusion is the NEGATION of a breach dual makes that dual
-  UNINHABITABLE: the kernel refutes its own breach, and the detection lifter proves
-  anything. `ctxInject_gated` is now conditioned on `PushGated`. Never state a seat
-  whose domain is the dual's domain.
-· **K3–K7 — emit the closure the PRIMARY dual's bite needs** (guarding the secondary
-  passes every gate), **credit it to the right dual in prose**, and **withdraw rather
-  than patch** a refuted seat. Per-attack detail: spec § 9.2.
-· **K8/K9 are OPEN W2 decisions, recorded not taken** — the three are at `ns:studying/38`(b).
-Tier stays modeled Tier-B; a C3 read-side breach is on the record for every cell in
-this family, so no blind-cert is claimed anywhere in it. Adoption context (the four `Operating/Qagents/Ctx*.lean`
-bridge cells CTX-T1..T4, their claims + breach duals, and the no-new-substrate
-rule) is the spec § 4 table — don't mirror it here.
-Live rules: the R3 emit/derive law (negative closures are EMITTED facts or the
-dual is disarmed — W6/CLEAR-3f); modeled Tier-B unless per-cell blind-certified;
-committed GREEN duals are per-wave deliverables; AXES custody — new catalog axis
-tokens route to visualizing BEFORE the wave, cells stay off-emit until landed
-(H-3/H-4 law); the `--ctx-check` scanner does NOT enforce the Leg-B
-miner-content bar (authoring discipline). Spec
+**axiomatize-context-ops — Leg B + W1 SHIPPED 2026-07-22; W2 COMPLETE 2026-07-31
+(frontier row 11). The CTX-T1..T4 bridge-cell set is CLOSED.** Spec
 `data/charters/studying/specs/lean4-charter-2026-06-10/axiomatize-context-ops-2026-07-22/SPEC.md`
-+ record `data/debates/axiomatize-context-ops-2026-07-22.md`; PCI § 7 item 6 is
-the folded Leg A.
++ record `data/debates/axiomatize-context-ops-2026-07-22.md`; PCI § 7 item 6 is the
+folded Leg A. The § 4 table (the four `Operating/Qagents/Ctx*.lean` cells, their
+claims + breach duals, the no-new-substrate rule) and § 9.2 (the nine W1 attacks
+K1–K9 against the orchestrator-authored kernel, repaired same-round — read it before
+touching `ctx_verdict`/`ctx_shorten`) are the record; live per-round state and what
+r07 owes are `ns:studying/60`. Don't mirror either here.
+**CTX-T3 `ctx_recall` is closed on a NEGATIVE RESULT and must not be re-opened as a
+repair round** — the normative record and the two conditions binding any re-seat live
+in the NEGATIVE RESULT section of `Operating/Operating/Qagents/CtxRecall.lean`; read
+it there, never restate it from memory. Committed witnesses are the evidence and are
+never deleted to make the cell look clean.
+**CTX-T4 `ctx_degrade`** (`Qagents/CtxDegrade.lean` DegradedHonesty; duals grounded in
+the memsearch `reset` finding): **only r03 is evidence rather than echo**, and the
+per-round bookkeeping is `ns:studying/60`'s — read it there. Three consequences
+outlive the rounds and generalize past this family.
+**K1 (the kill) — every conditioning axiom carries an ESCAPE PREDICATE:** an
+unconditioned seat whose conclusion is the NEGATION of a breach dual makes that dual
+UNINHABITABLE — the kernel refutes its own breach and the detection lifter proves
+anything; never state a seat whose domain is the dual's domain. **A GAP-PROBE INVERTS
+THE JUDGE'S POLARITY, and it will recur:** an `EXPECTED-DIAGNOSTIC` asserts an
+ABSENCE, so closing the gap makes the probe elaborate green and the attack lane reads
+green-on-annotated as `LANDED` — the round that FIXES a named gap reds itself. There
+is no DISCHARGED verdict; retire the probe into a standing discharge record (drop the
+directive, keep the measurement — the anchored `^-- EXPECTED-DIAGNOSTIC:` matcher
+lets the note still MENTION it in prose). And **the modeled fixture OVER-EMITS**, so
+a green § D is not evidence the declaration discipline works and every seat here is
+DROPPABLE.
+Tier stays modeled Tier-B family-wide and **no blind-cert is claimed anywhere in it**,
+though not for a uniform reason: `ctx_verdict`/`ctx_shorten` carry an adverse
+read-side record, while `ctx_degrade` r03 is CLEAN and is held at B by its open
+attacks plus the P2-5 provenance refusal.
+Live rules: the R3 emit/derive law (negative closures are EMITTED facts or the dual is
+disarmed — W6/CLEAR-3f); modeled Tier-B unless per-cell blind-certified; committed
+GREEN duals are per-wave deliverables; AXES custody — new catalog axis tokens route to
+visualizing BEFORE the wave, cells stay off-emit until landed (H-3/H-4); `--ctx-check`
+does NOT enforce the Leg-B miner-content bar (authoring discipline). **Leg B** =
+`scripts/ctx_miner.py` (frozen pattern set, no LLM) + gate `t_02_miner_floors`, report
+local-only under the § 5 C-1..C-5 floors; its first run inverted the graduation
+question — adding rows beats graduating rows 2–6 (spec § 9.1).
+
+**G1 axiom floor — RULED + SHIPPED 2026-08-03 (per-cell declared opt-in; witness
+`t_18`).** Three classes, previously one grep alternation that called them all
+unsoundness: `sorryAx` (unsoundness) and `Lean.ofReduce{Bool,Nat}`/`Lean.trustCompiler`
+(trust-base extension) are never declarable; **`Classical.choice`/`Quot.sound` are two
+of Lean's three standard axioms, are NOT unsound, and are refused only until the
+example declares `manifest.axiomFloor.allowClassical`.** The old form banned one
+standard axiom, silently permitted the other, and announced the ban with a false
+claim. Classification lives in `_classify_axiom_closure` behind a `DAO_SOURCE_ONLY`
+source guard so `t_18` drives the REAL function, not a copy. Two escapes closed with
+it, both INHERITED (the old alternation missed them equally): **`native_decide` mints
+a FRESH PER-DECLARATION axiom (`<thm>._native.native_decide.ax_1_1`), so the match
+must be a SHAPE rule — no literal roster can ever name it** — and `Lean.ofReduceNat`
+was simply unlisted. Still open, reported not reproduced: the G1 probe is built from a
+column-0 `^(theorem|lemma)` grep, so a Prop-valued `def` is outside its reach.
+
+**The instruction layer is a channel too — this file once MANDATED a C5 breach
+(blocking `ctx_degrade` r05–r07; seq 196), restated behaviourally 2026-08-05.** A
+brief-side cure cannot reach a conflict authored in the INSTRUCTIONS: r06 removed
+every brief-side cause and the channel stayed open. `mandate_conflict.py` now reports
+no conflict over this file + both cell contracts — re-run it after editing either.
+The still-unruled C5 rung (is reading ONE named kernel module `roster`-grade at all
+when `dao-testing.md` says the kernel is FAIR GAME?) and the landed
+`--blindness-audit` round scoping (witness `t_20`) are live at `ns:studying/60`;
+the `--standing`-upstream-of-the-audit step order was CURED 2026-08-06 (Step 7c
+reorder — § Evidence archive above), though the fold's breach-refusal stays
+prose-only until the routine-review R1 `--round-close` verb lands
+(`studying/reviews/routine-review-2026-08-06.md` § 3.2).
+
+**G7-KERNEL — the whole-tree axiom-closure arm (2026-08-05; witness `t_19`; ledger
+seq 205/206).** **A soundness gate scoped by ROSTER audits exactly what someone
+remembered to add, so what it misses is selected for by the same forgetting**
+([[feedback_roster_scoped_gate_misses_what_nobody_added]]). Both arms here were
+roster-scoped, and since `sorry` is a WARNING at rc 0 a `sorryAx` in an unlisted
+kernel cell left `--judge` GREEN on every arm — reproduced by injection before
+fixing. `--judge` now sweeps the whole kernel TREE; a non-0/2 attest exit is RED,
+never skipped, for the same shape-rule reason `native_decide` forced one. Two shared
+`attest_axioms.py` defects fixed with it are cross-axis (comment-stripping, so prose
+can't mint ghost targets; and `--scan-dir`'s silent drop of files not `relative_to`
+the `--root`, now a loud refusal) — the proving fallout is `ns:proving/115`. **A
+silently smaller attested set is the one failure mode a soundness gate cannot have.**
+
+**Fixture integrity has its own sweep, separate from `--judge`
+(`scripts/fixture_integrity_sweep.sh`, 2026-08-02).** `--judge` is PER-EXAMPLE, so a
+CLOSED example is never judged and its fixtures are unguarded by construction — that
+is how six `ctx_recall` attack files sat non-elaborating for days with every gate
+green (`ns:studying/70`). The sweep answers only "does the fixture build", leaves
+adjudication to `--judge`, separates `EXPECTED-DIAGNOSTIC` parries from real
+breakage, and reads breakage from the EXIT CODE — never by grepping output for the
+word "error", which misreads any fixture whose own report text contains it. Exit 3 on
+any break; read counts from a run, not from here. Its harness guard counts VERDICTS,
+not output lines, because **a sweep that reports success over a set it never checked
+is the same vacuity class the sweep exists to catch.** It RUNS from
+`spec_battery.sh` since 2026-08-06 — shipping an instrument does not run it, and an
+unrun sweep is the gap re-made. Whole-TREE and deliberately not in the dao lane:
+per-round scoping is the defect it answers. A missing sweep exits 2 there —
+**absence is not a pass.** The battery also seats the hermetic
+`QAGENTS_LEDGER_DSN=NONE` sentinel, as does every family `run.sh` (a suite invoked
+directly bypasses the aggregator), each with an armed-choke-point assertion;
+witness `t_04_ambient_dsn_seat` enumerates by the battery's OWN glob, which is how
+it caught a ninth suite the seating pass had missed.
 
 **Shape-gate discipline (load-bearing — the ns-34/ns-38 silent-red class).**
 Each spec-family suite (`data/charters/studying/specs/**/tests/run.sh`) is
@@ -364,9 +420,28 @@ artifact MUST update its shape-gate's expected-set **in the same change**;
 (2) run the loud aggregating battery `studying/scripts/spec_battery.sh` (globs
 every family `tests/run.sh`, exits non-zero on any red, dumps the failing
 suite's output) before `/close` — never trust that the one family you touched
-is the only one that drifted. A NEW family with a `tests/run.sh` is
-auto-discovered by the glob. Adjacent trap: a gate whose accumulator is only
-asserted in a wrapper `main()` is green-but-dead ([[feedback_pytest_ck_accumulator_laundered_pass]]).
+is the only one that drifted. A NEW family with a `tests/run.sh` is auto-discovered by the glob. Adjacent trap: a
+gate whose accumulator is only asserted in a wrapper `main()` is green-but-dead
+([[feedback_pytest_ck_accumulator_laundered_pass]]).
+**Both `spec_battery.sh` and `dao.sh` prepend elan to PATH for CHILD processes**
+(2026-08-01): an absolute `$LAKE` covers a script's own calls, but the G7 attest
+helper and the `t_05` build gate run `lake` BY NAME through subprocess, so a caller
+whose shell lacks elan got a FALSE RED wearing the face of a kernel regression.
+
+**Allow-list fixtures MUST collect closures through an EXISTENCE-CHECKED
+wrapper, never bare `Lean.collectAxioms`** — bare `collectAxioms` returns an EMPTY
+closure for a constant that does not exist, so the universal fixture shape skips
+every guard on an unknown pin and reports success (L-135; 102 sites swept
+2026-08-01). The sanctioned wrapper checks existence at the point of collection and
+is monad-polymorphic (some fixtures are `run_cmd`/`CommandElabM`, not `CoreM`
+`#eval`); it lives in the shared `Common/` namespace — **find it by that behaviour.
+This file deliberately no longer names its module and a brief must not either**
+(§ 3 (b′): naming it here is what made every allow-list round breach by
+construction, seq 196; the rung itself is still unruled — `ns:studying/60`). One
+bare call is deliberately retained as a control probe asserting the empty-on-unknown
+behaviour still holds; do not "fix" it. **A null result from such a sweep means
+nothing until per-site reachability is proved** — make the wrapper throw
+unconditionally, revert every other site, and confirm each one reds.
 
 ## 4. Guide-rails — `hub/` governance
 
@@ -382,23 +457,17 @@ GitHub URLs.
 
 ## 5. Toolchain — three-way lockstep
 
-`studying/lean-toolchain` is pinned in lockstep with `proving/lean-toolchain`
-+ `accounting/lean-toolchain` (the pin value is the file itself + the
-`guide-rails.md` skew note — not restated here). Any bump moves all three and
-replays each kernel's example proofs
-(`feedback_lean_toolchain_bump_verify_example_proofs`).
-
-**Studying carries TWO pins**, not one: `studying/lean-toolchain` *and*
-`studying/Operating/lean-toolchain` (the Operating package is the actual kernel).
-Both move together or `elan` resolves differently depending on cwd — see the
-cwd-dependency note below.
-
-**"One commit" is not always achievable — record the deviation when it isn't.**
-When the three subprojects are each held by their own open session
-(branch-as-write-lock), the bump lands as one commit per branch, in lockstep
-in time, each independently verified (done at the 2026-07-14 v4.31.0→v4.32.0
-bump — proving `25f8cf201`, accounting `4d7cfb548`, studying `4b81cc650`).
-Verify each axis separately and say so; do not let the three drift across a day.
+`studying/lean-toolchain` is pinned in lockstep with `proving/lean-toolchain` +
+`accounting/lean-toolchain` (the pin value is the file itself + the `guide-rails.md`
+skew note — not restated here). Any bump moves all three and replays each kernel's
+example proofs (`feedback_lean_toolchain_bump_verify_example_proofs`). **Studying
+carries TWO pins**, not one: `studying/lean-toolchain` *and*
+`studying/Operating/lean-toolchain` (the Operating package is the actual kernel) —
+both move together or `elan` resolves differently depending on cwd. **"One commit" is
+not always achievable — record the deviation when it isn't:** when the three
+subprojects are each held by their own open session, the bump lands as one commit per
+branch, in lockstep in time, each independently verified. Verify each axis separately
+and say so; do not let the three drift across a day.
 
 **The pin is CWD-DEPENDENT (2026-07-14).** `elan` reads `lean-toolchain` from the
 *current directory*, so a bare `lean` invoked from anywhere without a pin file (a

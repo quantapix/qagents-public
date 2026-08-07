@@ -91,11 +91,18 @@ through `loadFrameworks()`. Adding a federal statute = one entry in
 
 v0.1 is **replay-only**. POST `/api/runs` body is `{example_id}` from a
 closed allow-list, narrowed to **synthetic examples only** under the F1
-thesis floor: `{sample, titlevi_sample}`. No `<live-matter>_*` example is
-replayable — live matter, per the F1 gate (§ 8).
+thesis floor: `{sample, titlevi_sample, titlevii_fedsector_refused}`. No
+`<live-matter>_*` example is replayable — live matter, per the F1 gate (§ 8).
 The static public build is stricter still — RICO-synthetic only
 (`web/src/lib/public-runs.ts`); the replay API also serves the synthetic
-Title VI sample. Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`),
+Title VI sample and the synthetic Title VII federal-sector example
+(`titlevii_fedsector_refused`, added 2026-08-01 — the first GENUINELY
+refusing example: real predicate Falses on the exhaustion family, kernel
+REJECTED at locus `h_federal_administrative_exhaustion`, so the API can
+serve a true kernel refusal rather than the kit's injected-refusal
+rendering fiction; proving mirrors the id into `status_emit.py`
+`PUBLIC_EXAMPLE_IDS` SECOND, never first — ns:proving/40).
+Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`),
 `ALLOWED_IDS` (`api.spec.ts`), AND `extending/servers/qnarre-mcp/src/allowlist.ts`
 in lockstep — a **triple** since extending landed 2026-07-04; the extending
 parity test fails until all three match (§ 9.5).
@@ -180,19 +187,15 @@ cleared 2026-06-24 (`data/specs/publishing-2026-05-31/quantapix-thesis-github-20
 The replay API is gated to the same floor (§ 7); residual
 (intentional): it also serves the synthetic non-RICO `titlevi_sample`.
 
-**These host-copies can go STALE AT CANONICAL, and nothing detects it.** The
-lockstep-pair rule governs re-copying both halves *together*; no check asserts
-that canonical's copy is FRESH. `scripts/open.sh` hydrates a worktree from
-**current** source while canonical carries whatever its last build left — so the
-copy a `/close` is about to delete can be the *more current* one, inverting the
-usual assumption. Lived 2026-07-30: canonical's `meridian-tokens.css` +
-`meridian/meridian-components.css` were ~6 days stale (Jul 23) against worktree
-copies carrying the 2026-07-27 simulating orchid accent and 07-29 comment fixes;
-only a close-time hash compare found them, and both had to be rescued rather
-than discarded. Two takeaways — a rescue-gate hit under `web/public/` is not
-automatically discardable, and the cheap fix if there is appetite is hashing
-`public/meridian*` against its `code/web` / designing source in whatever lane
-already rebuilds (memory `project_proof_graph_kit_mount_pattern`).
+**These host-copies can go STALE AT CANONICAL, and nothing detects it** — the
+lockstep-pair rule governs re-copying both halves together, never freshness, and
+`scripts/open.sh` hydrates a worktree from *current* source while canonical
+carries whatever its last build left, so the copy a `/close` is about to delete
+can be the *more current* one. A rescue-gate hit under `web/public/` is
+therefore never automatically discardable: hash-compare before disposing. Lived
+instance (2026-07-30 meridian copies), the disposal procedure, and the cheap
+hashing fix: memory `project_proof_graph_kit_mount_pattern` § "Rescue-gate hits
+are not automatically discardable".
 
 Kit files live at `verifying/web/public/graphs/`:
 
@@ -234,10 +237,32 @@ pane, never an error. e2e: the `navigator pane` describe in
 `Layout.astro`'s `<slot name="head" />`. General rule:
 `[[feedback_layout_head_slot_for_per_page_links]]`.
 
+**This mount is DARK-ONLY and owes NO light overlay (operator-ruled
+2026-08-07).** The kit ships `tokens-{lattice,proof}-light.css` and
+`ns:visualizing/7` has twice listed them as owed here; they are not. R-T2 (§ 3)
+is the rule — kit canvas + overlays stay DARK in both legs, only page chrome
+flips — and `theme.spec.ts` enforces it (`.zone-canvas` kernel-dark under
+`colorScheme: 'light'`). Copying a light overlay in would land a tracked file
+nothing links and R-T2 forbids linking: the inert-overlay hazard inverted,
+silent, every gate green. The remaining light-leg debt is **evaluating's alone**.
+Correcting reciprocal: `ns:visualizing/51`. Re-propose only by re-opening R-T2
+itself, which is a debate-lane change touching § 3, `theme.spec.ts` and
+evaluating's twin — never a "for parity" copy.
+
+**No `tokens-chart.css` here is deliberate**, not a third missing overlay:
+`kit.js` carries the `QViz.charts.*` namespace for the C3 `/lattice` panel, and
+charts resolves `s.tok(…) || DEFAULT_TOKENS[…]`, so the panel self-themes dark
+by design.
+
 **Re-sync from a rebuilt kit** (run from the repo root):
 
 1. `pnpm -C visualizing/graphs typecheck && pnpm -C visualizing/graphs gates`
-2. `node visualizing/graphs/kit/build.mjs`
+2. `node visualizing/graphs/kit/build.mjs` — always run it (canonical `dist/` is
+   gitignored and lags `src/`), but **grade staleness by `md5`, never by mtime**:
+   a `visualizing/graphs` commit newer than `dist/` does NOT imply a stale
+   bundle. 2026-08-07: two commits (W6 Phase 1+2) postdated the build and the
+   rebuild was byte-identical — W6 never touched the kit entry graph, so only
+   the *mount* was stale.
 3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs/kit.js`
 4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs/`
 5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
@@ -282,7 +307,16 @@ the API origin defaults to `base.replace(qnarre. → api.qnarre.)`, override via
 Spec partitioning:
 
 - `site.spec.ts` — routes / brand / 404 / nav / external-link safety / PII
-  blacklist (retired brand names, operator address/phone/email).
+  blacklist (retired brand names, operator address/phone/email), plus the **flex-row
+  spacing floor**: a DISCOVERING sweep (not a selector list) over every
+  `display:flex` + `justify-content:space-between` row on 8 routes — the three
+  static pages, `/app` hydrated, and the kit mounts — asserting `b.left -
+  a.right >= 4px` between same-line children and that no child escapes a
+  non-scrollable parent. `space-between` is distribution, never spacing: with
+  no `gap` two grown children degenerate to 0px and read as overlapping text
+  while every overflow gate stays green, because **overlap is not overflow**.
+  Witness (keep it working): removing the `.stream-head` gap must red at phone
+  width with `stream-head: gap 0.0px between children 0 and 1`.
 - `frameworks.spec.ts` — locks the proving/-derived 3-row taxonomy
   contract. `EXPECTED_FRAMEWORKS` here mirrors `FRAMEWORK_META` in
   `web/src/lib/frameworks.ts` — edit both in lockstep when a statute lands.
@@ -291,9 +325,11 @@ Spec partitioning:
 - `proof-graph.spec.ts` — lobby cardinality + graphs kit-mount
   (`data-ready` + cytoscape canvas) on `01-rico`, `02-debug`, the single
   F1-gated `sample` run (+ its `/debug/`), and `/lattice/`. Carries the F1
-  leak-guard: `FORBIDDEN_RUNS` (`<live-matter>_*`, `titlevi_sample`) must 404 and
-  never appear on the lobby (mirrors `isPublicWorkedRun` in `web/src/lib/
-  public-runs.ts`).
+  leak-guard: `FORBIDDEN_RUNS` (`<live-matter>_*`, `titlevi_sample`,
+  `titlevii_fedsector_refused`) must 404 and never appear on the lobby
+  (mirrors `isPublicWorkedRun` in `web/src/lib/public-runs.ts`). Every
+  replay-API-servable non-RICO id belongs in that list — API-servable and
+  publicly-worked are different floors, and only the second is F1-gated.
 - `app.spec.ts` — `client:only` island hydration, chip set + click behaviour,
   plus the F1 floor: RICO-only demoed (default chip), non-demoed chips render
   "encoded · not demoed" with no verdict/Boolean, the synthetic demo ends

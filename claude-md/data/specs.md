@@ -56,6 +56,14 @@ A document is a subspec iff its `**Trigger:**` names this family's root
 spec; framework *instances* are never subspecs; when ambiguous, new
 family (charter § 2.8).
 
+**A root spec AT its cap cannot absorb its own amendment** — reach for the
+subspec first instead of discovering this at exit 45.
+`do-retire-2026-07-26/SPEC.md` sat at exactly 1,000 lines, so adding an
+amendment *pointer* red the lint. That is what subspecs are for; the authoring
+consequence is that every addition to an at-cap root must be **net-zero** —
+move normative text down into the subspec and leave a one-line pointer, or
+extend an existing line rather than opening a paragraph.
+
 ## SPEC.md header + phase markers (charter §§ 2.2–2.3)
 
 Header block directly under the title, then `---`:

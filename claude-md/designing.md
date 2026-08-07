@@ -114,16 +114,19 @@ guard both directions. Binding record:
 changes messaging (incl. the promotion deploy's R6 — naive-reader test on
 the corrected figures + membrane).
 
-**This site has NO barred-token guard, and it is the site that shipped both
-prior leaks.** femfas.net has one; quantapix.com does not. When one lands
-here, its scope is the deployed **payload**, all routes — not the markup: on
-femfas.net, four sweeps of record grepping `.ts` / `.json` / built HTML all
-read clean while 16 of the 28 linked asset PDFs carried barred tokens, because
-a source-tree grep structurally cannot reach `web/public/assets/`. Three traps
-carried over from that finding: a hit is a **review trigger for `pleading/`,
-never an auto-delete**; source-code *comments* produce hits that never render;
-and a bare token like `leave to file` false-positives on innocent titles —
-widen the token, don't widen the action. Sibling instrument + wording: the femfas.net surface's CLAUDE.md carries the matching collateral-docket bar section.
+**Barred-token guard (live 2026-07-31, ns designing/15 (c)):** `bash
+web/scripts/barred-tokens.sh` — run before **every deploy**. An invocation of
+documenting's path-agnostic `barred_tokens_guard.py` (canonical path — the
+venv's pymupdf lives there), never a second implementation: it scans the
+deployed **payload** (`dist/` + ALL of `public/`, PDF text included — a
+source-tree grep structurally cannot reach `public/` assets), against
+designing's own sha-keyed reviewed inventory
+`web/scripts/barred_tokens_reviewed.json` (empty today — this site hosts no
+legal PDFs). Exit 3 = unreviewed hit; a hit is a **review trigger for
+`pleading/`, never an auto-delete**, and only a `pleading/`-reviewed sha
+enters the inventory. Token set (incl. R14 widenings + the `leave to file`
+carve-out) lives in documenting's guard and is inherited automatically —
+widen the token there, don't widen the action. Sibling instrument + wording: the femfas.net surface's CLAUDE.md carries the matching collateral-docket bar section.
 
 **Surface prose vs. hosted payload.** A verbatim filed paper published *as a
 dated filed paper* does not make an assertion this surface is answerable for;
@@ -212,8 +215,11 @@ Token-boundary lint (`pnpm lint`) is **composed over the shared base**
 2026-07-22) — `pnpm lint` = `bash ../../code/web/scripts/lint-tokens.sh
 lint-tokens.conf`. The site's checks live in `web/lint-tokens.conf`
 (retired-brand-name ban, hex/font-literal bans, `thesis-steps` exclude, undefined-var
-guard, and the `tokens.css`↔brand-SoT byte `cmp`); `BAN_DERIVED=0` keeps the
-pre-existing `color-mix`/`rgba` wash literals passing (no check dropped).
+guard, and TWO `SOT_CMP` byte gates: `tokens.css`↔brand-SoT and, since
+2026-07-31, `public/thesis-steps/thesis-dark.css`↔the rendering overlay SoT —
+so an overlay VALUE change is an atomic rendering+designing co-land, same rule
+as the visualizing kits); `BAN_DERIVED=0` keeps the pre-existing
+`color-mix`/`rgba` wash literals passing (no check dropped).
 
 Deploy goes through the central `serving/scripts/deploy-site.sh
 quantapix.com` (invoked by `pnpm -C designing/web deploy`); IAM policy,
@@ -273,13 +279,14 @@ memory `project_designing_web` § "Status panels + producer contract".
   depends-on serving). Source of truth: `STATUS_GROUPS` in
   `src/content/copy.ts`. Card count math (as of 2026-07-07): 12 + 2 + 4 = 18.
   Don't move cards across groups without an explicit decision.
-- **Hidden cards (reversible).** Six subprojects are omitted from
-  `STATUS_GROUPS.members` to reduce marketing-surface noise: `resolving`,
-  `blending`, `monitoring`, `appealing`, `pleading`, `visualizing`.
-  `STATUS_CARDS`, `OG_META`, and `KNOWN_SUBS` entries all remain — `/status/<sub>/`
-  deep pages still build. Reversal is a one-line edit to the matching
-  `members[]` array in `copy.ts` plus the e2e fixture sweep
-  (KNOWN_SUBS + GROUPS + total-count assertion in `tests/e2e/status.spec.ts`).
+- **Hidden cards (reversible).** Several subprojects are omitted from
+  `STATUS_GROUPS.members` to reduce marketing-surface noise; the live roster +
+  per-sub reason is the comment block directly above `STATUS_GROUPS` in
+  `copy.ts`, never re-enumerated here. `STATUS_CARDS`, `OG_META`, and
+  `KNOWN_SUBS` entries all remain — `/status/<sub>/` deep pages still build.
+  Reversal is a one-line edit to the matching `members[]` array in `copy.ts`
+  plus the e2e fixture sweep (KNOWN_SUBS + GROUPS + total-count assertion in
+  `tests/e2e/status.spec.ts`).
 - **Panel/emit detail spread to memory** — six display modes, status
   components, page-level `attachInteractivity` wiring, bridge tokens,
   copy blocks, `status.spec.ts` coverage, and the producer contract for
@@ -328,21 +335,18 @@ staging sibling 2026-07-07 (content de-dup deferred). Records: debate
   `stats.live` via `videos-loader` (landed 2026-07-10); `copy.ts` holds
   a placeholder fallback.
   **Slot-5 is likewise hub-fed since 2026-07-24** — `src/lib/corpus-coverage.ts`
-  measures it over the two PUBLIC axes' status slots (proving
-  `uscEncodedSections/uscSectionUniverse` + accounting
-  `tradingEncodedSymbols/tradingSymbolUniverse`; `copy.ts` keeps `<1%` as the
-  both-placeholder fallback). That module is the single owner of the three
-  slot-5 locks and they are enforced in code, not by convention: the
-  operational axis is never summed (carry-condition 2 / privacy R9); the
-  withheld `uscTierA/B/C` strings are never read, so no golden/automated ratio
-  is derivable (ns-54 withholding); and because carry-condition 4 binds the
-  clearance to the wording, the loader renders the cleared `<1%` while the
-  measured aggregate is < 1% and warns loudly if it crosses. **The slot-5 e2e
-  assertion (`tests/e2e/interactivity.spec.ts`) is therefore the clearance
-  tripwire** — when it fails, the fix is a pleading re-clear of the new
-  wording, NEVER a loosened expectation. Add a public axis here only if its
-  producer already emits both counts; a new emit field is strictly riskier than
-  reading one that ships (root § Status hub whole-slot failure trap).
+  measures it over the two PUBLIC axes' status slots; `copy.ts` keeps `<1%` as
+  the both-placeholder fallback. That module is the single owner of the three
+  slot-5 locks — operational axis never summed, withheld `uscTierA/B/C` never
+  read, cleared wording rendered while the measured aggregate stays < 1% — and
+  they are enforced in code, not by convention; field names, ruling
+  carry-condition cites and the ns-54 withholding rationale: memory
+  `project_designing_web` § "State as of 2026-07-24". **The slot-5 e2e
+  assertion (`tests/e2e/interactivity.spec.ts`) is the clearance tripwire** —
+  when it fails, the fix is a pleading re-clear of the new wording, NEVER a
+  loosened expectation. Add a public axis here only if its producer already
+  emits both counts; a new emit field is strictly riskier than reading one that
+  ships (root § Status hub whole-slot failure trap).
 - **Thesis-steps animation (`/thesis`).** Touching `/thesis` or
   `public/thesis-steps/` → read memory `project_designing_web`
   § "Thesis-steps delivery module" (floors + byte-exact contract).

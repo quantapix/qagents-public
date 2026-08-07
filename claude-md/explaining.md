@@ -123,7 +123,7 @@ ElevenLabs deferred — see `reference_janet_video_stack`. **Subtitles render fr
 
 **Prompt-iteration discipline.** Promote a richer-than-asked Claude Design read into round N+1 (`feedback_design_round_richer_than_prompt_promote`); when typography IS the deliverable, carve it out of every per-tool "no text" negative list (`feedback_image_gen_subject_matter_text_carveout`).
 
-**Janet identity — LOCKED 2026-05-11 (real-Janet production set).** Three HeyGen Photo Avatars (priority 1 hand-down / 2 hand-up / 3 tight-crop PIP), rotated per beat-archetype. Voice `q03EFCokNol7UHaF1YAQ` (Janet-2, Design-a-Voice); `frozen_after_acceptance=true` — any avatar_id change is a channel-rebrand. Registry, identity anchor, rotation policy, superseded-AI-master provenance: `avatar/README.md` + memory `project_explaining_subproject`.
+**Janet identity — LOCKED 2026-05-11 (real-Janet production set).** Three HeyGen Photo Avatars (priority 1 hand-down / 2 hand-up / 3 tight-crop PIP), rotated per beat-archetype. Voice: one locked Design-a-Voice id (held privately); `frozen_after_acceptance=true` — any avatar_id change is a channel-rebrand. Registry, identity anchor, rotation policy, superseded-AI-master provenance: `avatar/README.md` + memory `project_explaining_subproject`.
 
 **AI disclosure posture (locked at v3 promotion).** No visible generator marks on the channel face; disclose via the platform altered-content toggle + description text naming the stack. Stack roster + sparkle-removal technique: `feedback_gemini_sparkle_synthid_unprompiable`.
 

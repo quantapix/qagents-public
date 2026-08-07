@@ -41,8 +41,7 @@ project-wide decision log (amendable); § 4 carries the wrapper decision
 log (LOCKED — amendments require a new dated spec); § 11 carries the
 P1..P6 + M1..M10 phases ledger. Spec § 3 decision 9 (2026-07-04) makes
 **Blender the third first-class plate engine** (kinds `still`/`loop`/`clip`
-on the `composite_overlay` seam; skill S11 `compose-blender-scene` +
-`davinci.recipes.decorate_scene_clip` shipped 2026-07-04) — contract at
+on the `composite_overlay` seam) — contract at
 `data/specs/resolving-2026-05-26/blender-compose-2026-07-04/SPEC.md`,
 render side at `data/specs/blending-scenes-2026-07-04/SPEC.md`.
 

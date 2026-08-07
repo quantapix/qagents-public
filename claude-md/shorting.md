@@ -28,11 +28,13 @@ case for the short).
   (the do-share lane, § 4b), and `shorting/spread/` (the do-spread lane,
   § 4c) — plus the status-hub
   emit (`scripts/status_emit.mjs`, root-conventions pending lane) and the
-  two chartered parent-session-only ROUTING exceptions
+  three chartered parent-session-only ROUTING exceptions
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
   I1): the § lane-spread step-(6) apply-routing item (filed via
-  `ns-add qagents` — the slot is a store-backed GENERATED render), and § 3-class charter todos under
-  `data/charters/<scope>/todos/`. A debate this subproject convenes
+  `ns-add qagents` — the slot is a store-backed GENERATED render), § 3-class charter todos under
+  `data/charters/<scope>/todos/`, and the § 1 warn-cap `spread-review
+  owed` item (`ns-add`/`ns-rephrase` at the shorting slot,
+  observing-session arm — LEDGER 9, 2026-08-05). A debate this subproject convenes
   writes its record to `data/debates/` (2026-07-14 precedent; the
   `/close` lift lane handles the foreign write).
 - Never `git push`, `git commit`, `git add`, deploys, or mutates code in
@@ -132,7 +134,17 @@ run's target, model, and parent-branch metadata at the top. Never overwrite
 — a later date is a follow-up read, not a replacement. Lane dirs are one
 per run, likewise never overwritten.
 
-### 4a. do-shorten lane — `shorting/shorten/<date>/`
+### 4a. do-shorten lane — `shorting/shorten/<date>/` — **RETIRED 2026-07-28**
+
+**Not a live lane.** `/do-shorten` was retired by `/do-retire` ruling **R-3**
+(`data/specs/do-retire-2026-07-26/SPEC.md` § 5.2 + § R-3 — "uncontested by its
+own counsel"; Exhibit A § 1.1: the 07-25 run read 83,242 prose lines and
+emitted 1.82 MB to propose a −12.3 % reduction, and the apply session closed
+with no commits). R-4 purged the run artifacts. **Revivable** — the skill
+(`.claude/skills/do-shorten/`) and charter § lane-shorten survive on disk
+under R-6 (code and tests are always maintained); it is the *invocation* that
+is retired, not the implementation. Read the rest of this section as the lane's
+recorded shape, not as a standing offer.
 
 Constellation-wide charter + spec coherency/conciseness review (first run
 2026-07-02): clean-context unit reviewers + a synthesis pass emit per-unit
