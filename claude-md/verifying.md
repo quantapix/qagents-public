@@ -114,8 +114,8 @@ canonical `examples/<id>/` only — no per-job staging.
 
 Endpoints: `POST /api/runs` · `GET /api/runs` (allow-list with current
 verdicts + predicate counts) · `GET /api/runs/<id>/stream` (SSE events
-typed per `data/specs/proving-results-propagation-2026-05-09/SPEC.md`
-§ 5.4: `predicateResult` / `factsWritten` /
+typed per `data/charters/proving/results-propagation/schema-of-record.md`:
+`predicateResult` / `factsWritten` /
 `lakeBuildStarted` / `lakeBuildResult`) · `GET /api/runs/<id>/report` ·
 `GET /api/runs/<id>/graph` (consumed by the kit loader at
 `/proof-graph/run/<id>/`).
@@ -182,20 +182,17 @@ single gate: it drops every non-RICO example (only `rico` is in
 incl. `rico-hier`). Both run pages' `getStaticPaths` AND the lobby's live-run
 scan call it; the same gate backs the `/app` island chips (non-demoed →
 "encoded · not demoed", no verdict/Boolean) and `LiveReportZone`. Provenance:
-Round 04 G2 (`data/debates/quantapix-thesis-github-2026-06-23.md`); pleading/
-cleared 2026-06-24 (`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/PLEADING-FINAL-GATE-2026-06-24.md`).
+Round 04 G2 (`data/debates/quantapix-thesis-github-2026-06-23.md`, HELD lane);
+pleading/ cleared 2026-06-24 (`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/PLEADING-FINAL-GATE-2026-06-24.md`).
 The replay API is gated to the same floor (§ 7); residual
 (intentional): it also serves the synthetic non-RICO `titlevi_sample`.
 
-**These host-copies can go STALE AT CANONICAL, and nothing detects it** — the
-lockstep-pair rule governs re-copying both halves together, never freshness, and
-`scripts/open.sh` hydrates a worktree from *current* source while canonical
-carries whatever its last build left, so the copy a `/close` is about to delete
-can be the *more current* one. A rescue-gate hit under `web/public/` is
-therefore never automatically discardable: hash-compare before disposing. Lived
-instance (2026-07-30 meridian copies), the disposal procedure, and the cheap
-hashing fix: memory `project_proof_graph_kit_mount_pattern` § "Rescue-gate hits
-are not automatically discardable".
+**A rescue-gate hit under `web/public/` is never automatically discardable** —
+the worktree copy can be the *more current* one, so hash-compare before
+disposing. Mechanism, both lived instances (2026-07-30 meridian, 2026-08-07
+close) + the disposal procedure: memory
+`project_proof_graph_kit_mount_pattern` § "Rescue-gate hits are not
+automatically discardable".
 
 Kit files live at `verifying/web/public/graphs/`:
 
@@ -258,11 +255,9 @@ by design.
 
 1. `pnpm -C visualizing/graphs typecheck && pnpm -C visualizing/graphs gates`
 2. `node visualizing/graphs/kit/build.mjs` — always run it (canonical `dist/` is
-   gitignored and lags `src/`), but **grade staleness by `md5`, never by mtime**:
-   a `visualizing/graphs` commit newer than `dist/` does NOT imply a stale
-   bundle. 2026-08-07: two commits (W6 Phase 1+2) postdated the build and the
-   rebuild was byte-identical — W6 never touched the kit entry graph, so only
-   the *mount* was stale.
+   gitignored and lags `src/`), but **grade staleness by `md5`, never by mtime**
+   (root CLAUDE.md § Kit-mount pattern owns the rule + the 2026-08-07 witness):
+   a newer `visualizing/graphs` commit does NOT imply a stale bundle.
 3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs/kit.js`
 4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs/`
 5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
@@ -285,8 +280,8 @@ UA `[hidden]` rule and pointer-traps the live cytoscape canvas; add an overlay
 
 Local dev: `astro dev` on `:4321` + `uvicorn` on `:8787` with a Vite proxy.
 Prod: static shell on S3+CloudFront at `qnarre.quantapix.com`, server on EC2
-behind Caddy at `api.qnarre.quantapix.com` (per `data/specs/serving-2026-05-26/SPEC.md` § 2
-decision 3). Same code in both modes; only the API origin in
+behind Caddy at `api.qnarre.quantapix.com` (provenance: the
+`data/specs/serving-2026-05-26/` family). Same code in both modes; only the API origin in
 `astro.config.mjs` env changes.
 
 **Static-shell deploy** — `aws-vault exec qagents-deploy -- pnpm

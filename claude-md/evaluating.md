@@ -77,7 +77,7 @@ never hand-edit kit files to placate the lint.
 **Three patterns inherited from `verifying/`** (side-car `loader.js`,
 per-run static pages via `getStaticPaths`, three-tab REPORT zone with
 `?id=<runId>` showing Predicates / Structure / Strategy-graph). The
-contracts come from `data/specs/proving-results-propagation-2026-05-09/SPEC.md`;
+contracts come from the `data/specs/proving-results-propagation-2026-05-09/` family;
 the worked references live at `verifying/CLAUDE.md` §§ 5, 7, 8 and the
 evaluating-instance detail (§ 2's `loader.js` schema adapter + selection
 forwarding) is pinned in memory `project_proof_graph_kit_mount_pattern` Instance 2.
@@ -94,7 +94,7 @@ Preserve this on any REPORT-zone edit (`app.spec.ts` asserts it). § 11.6:
 the `financialRider` is the operator/evaluating+accounting track, NOT
 pleading's gate — and as of 2026-06-24 `evaluating/` **owns** that track
 (§ 9, the FINANCIALLY-CLEARED gate). Cure: Round 03 T3 + cure 5,
-`data/debates/quantapix-thesis-public-pages-2026-06-23.md`.
+`debate record `quantapix-thesis-public-pages-2026-06-23` (data/debates/, HELD lane)`.
 
 ## 4. Defined-risk options — non-negotiable
 
@@ -196,7 +196,7 @@ redaction code. Revisit if admin-gated freeform POST lands.
 
 Local dev: `astro dev` on `:4322` + `uvicorn` on `:8788`. Prod: static shell
 on S3+CloudFront at `qresev.quantapix.com`, server on EC2 behind Caddy at
-`api.qresev.quantapix.com` (per `data/specs/serving-2026-05-26/SPEC.md` § 2 decision 3).
+`api.qresev.quantapix.com` (per the `data/specs/serving-2026-05-26/` family).
 
 **Static-shell deploy** — `aws-vault exec qagents-deploy -- pnpm -C evaluating/web deploy`
 (rides `serving/scripts/deploy-site.sh` + `serving/sites/qresev.quantapix.com.env`).
@@ -231,15 +231,12 @@ Spec partitioning:
   the OPTIONS-RISK lock panel.
 - `theme.spec.ts` — M4 tri-state theme + the FINANCIALLY per-leg R-T2
   floors (§ 2), plus the **two-child flex-row gap sweep** (added
-  2026-08-01, ns:evaluating/14). It is DISCOVERING, not a selector list: it
-  walks every `display:flex` + `justify-content:space-between` element with
-  exactly two non-collapsed children, measures `b.left - a.right`, asserts a
-  4px floor, and runs at a **380px viewport** (the trap needs content lengths
-  that fill the row). `space-between` is distribution, never spacing: pair it
-  with an explicit `gap`. Rationale (overlap is not overflow), the both-apps
-  cure roster, the witness discipline, and the better narrow-leg idiom —
-  reuse an existing Playwright PROJECT (`chromium-mobile`) instead of the
-  drifting 380px literal, as verifying did — are in
+  2026-08-01, ns:evaluating/14) — DISCOVERING, not a selector list, run at a
+  380px viewport. `space-between` is distribution, never spacing: pair it
+  with an explicit `gap`. Sweep mechanism, rationale (overlap is not
+  overflow), the both-apps cure roster, the witness discipline, and the
+  better narrow-leg idiom (reuse the `chromium-mobile` Playwright project
+  instead of the drifting 380px literal, as verifying did) are in
   `[[project_qnarre_qresev_apps]]` § "Two-child flex-header zero-gap trap".
   Verifying's extra offenders lived in its `web/public/graphs/pages.css`;
   this mount's `pages.css` has zero `space-between` (checked 2026-08-05).
@@ -271,8 +268,8 @@ or `designing/`. The only allowed reach is the server adapter calling
 
 `evaluating/` owns the **financial sign-off** (the FINANCIALLY-CLEARED gate) —
 the financial-domain analog of `pleading/`'s litigation-safety gate. Adopted
-2026-06-24 from a lifted publishing charter; spec
-`data/specs/evaluating-financial-signoff-2026-06-24/SPEC.md`. It is the single
+2026-06-24 from a lifted publishing charter; gate registry row:
+`.claude/skills/do-signoff/registry.tsv` (FINANCIALLY). It is the single
 gate that clears (or blocks), on financial-advice / securities-liability
 grounds, any **public** surface that evaluates, recommends, or implies a
 financial decision. `evaluating/` is the **sole grantor**; `accounting/`
@@ -287,37 +284,88 @@ cites it (manifest + release commit) before any public push. A record's
 `payload.content_sha256` is a **roll-up over the record's `faces[]` table** — one
 level up from `data/publishing/push-ledger.jsonl`'s same-named field (which hashes
 the pushed binary itself); never join the two by field name (studying L-127;
-wording precedent: `studying/scripts/extract_signoff_facts.py` header). **The
-`serving/scripts/upload-video.sh` release gate is WEAKER than this § used to claim —
-corrected 2026-08-07 after reading the script rather than the prose.** It refuses a
-`T<n>/` key unless `CLEARANCE_COMMIT` is set and is an **ancestor of HEAD**, and that
-is *all* it checks: it never verifies the commit is a FINANCIALLY record's
-`granting_commit`, so **any** ancestor commit satisfies it. The script says so itself —
-"the mechanical ancestry precondition, not a safety guarantee". The old text here said
-the gate "binds EVERY episode … a non-financial (T1/T2) episode is blocked at CDN push
-without a record just the same"; that is false, and the push ledger proves it — **4 of
-the 5 pushed T1/T2 episodes carry no FINANCIALLY record and shipped anyway** (only 1.2
-semantic-search-limits has one). Treat the gate as an ordering precondition, never as
-record enforcement. Hardening handed to `ns:serving/82`; the residual hole it leaves in the
-T1/T2 floor is `ns:evaluating/28`.
+wording precedent: `studying/scripts/extract_signoff_facts.py` header).
+
+**Bind a GENERATED face NORMALIZED, never by raw sha256** (`do-signoff` SKILL
+§ 3.6, landed 2026-08-08 with both-direction witnesses): `write_record.sh
+--json-face slot=data/status/accounting.json --strip-keys emittedAt,builtAt,…`
+makes the jq-canonical clock-stripped payload the condition while the raw byte
+hash stays as provenance — so the daily emit stops lapsing the grant on its
+granting day (the `ns:evaluating/29` failure) while a real tier/figure edit still
+does. **`--strip-keys` deletes RECURSIVELY BY KEY NAME, so the plain form cannot
+reach a clock value that shares its key with substantive values — and on the
+motivating slot it did not** (measured 2026-08-10: `emittedAt,builtAt,statusReason`
+still left `statCards[id=run-stats.latest].value` moving every emit, so the
+2026-08-08 cure would not have held the grant one day, while a bare `value` would
+have stripped every reviewed metric). Use the id-scoped entry form **`KEY@ID`** —
+`--strip-keys emittedAt,builtAt,statusReason,value@run-stats.latest` — which deletes
+`KEY` only from objects whose `.id == ID`. Three witnesses in `tests/run.sh` 8a′,
+and the load-bearing one is the **known-bad** arm asserting the unscoped form does
+NOT hold the pill: without it the fix is green on a fixture and still lapses in the
+field. A strip list is a standing blind spot — if a stripped field ever gains
+financial content, drop its entry in the same commit.
+**The PRODUCER half of the same problem has no cure:** a grant pinning a
+source FILE by raw sha256 breaks on comment edits — `84ffbf546` (do-retire S9)
+invalidated the accounting grant's producer face with two cite-repair comment
+lines and zero executable change, while `ns:designing/19` sat ready to deploy
+against it. A repo with a prose reaper will keep producing these.
+
+**The `serving/scripts/upload-video.sh` release gate now ENFORCES THE RECORD —
+`ns:serving/82` landed, re-read 2026-08-10.** History matters here because this § has
+been wrong in both directions: it once claimed the gate "binds EVERY episode", was
+corrected 2026-08-07 to "ancestry only, any ancestor satisfies it", and is now
+corrected again because the hardening shipped. Read the script, not this paragraph,
+before relying on either.
+
+What it does today: on **any** `T<n>/` key it requires `CLEARANCE_COMMIT` to (a)
+resolve to a real commit, (b) **equal the `granting_commit` of an actual record with a
+`CLEARED*` disposition** under the gate's `record-location` — resolved from
+`.claude/skills/do-signoff/registry.tsv`, refusing rather than falling back if the
+registry is missing, and reading the disposition in the same pass so a BLOCK's commit
+can never satisfy a release — and only then (c) that it is an ancestor of HEAD.
+
+**This floors T1/T2, which is why `ns:evaluating/28`'s hole largely closed by a route
+none of its three candidate cures named.** The gate keys on the `T<n>/` key prefix and
+never consults `r2-scope-map.json`, so `requiredGates: []` on T1/T2 no longer means "no
+gate at the push": the un-forgettable half the map was reaching for turned out to be
+the catalog key itself. `requiredGates` still governs the *coverage proof*, where `[]`
+remains the correct § 3 scope statement.
+The residual is the standing completeness caveat, not a T1/T2 one: an out-of-band
+`aws s3 cp` bypasses the chokepoint entirely, emits no push-ledger fact, and passes
+nothing (`managing`'s inventory diff carries that half).
+
+**Standing ruling — do NOT widen `data/publishing/r2-scope-map.json` T1/T2 to
+`["FINANCIALLY"]`** (operator 2026-08-07; re-affirmed on narrowed grounds 2026-08-10,
+relocated here from the retired `ns:evaluating/28` so it outlives the item). `[]` is a
+**scope** statement: T1 (proof-method) and T2 (docket-legal) content is genuinely
+outside § 3. Two reasons not to revisit it. (i) Widening would red the coverage proof
+for four already-pushed episodes — `T1/01-hallucination-tax`,
+`T1/05-negative-verification`, `T1/07-civil-rico-walkthrough`,
+`T2/01-docket-record-disagree`, none carrying a FINANCIALLY record — and back-filling
+records for shipped content violates gate-before-first-push (§ 3.5) by construction.
+Those four stay permanently uncovered; the hardening is prospective, and that is the
+right outcome, not a gap to fill. (ii) The push floor the widening was once wanted for
+now exists elsewhere: the gate keys on the `T<n>/` prefix, so the map no longer carries
+that weight. `requiredGates` governs the coverage proof only, where `[]` is honest.
 Filing a **verified-N/A** `/do-signoff FINANCIALLY <subject>` for a non-financial
-episode (disposition CLEARED, scope "out of § 3 financial scope") therefore remains
-**good practice and is not required by any mechanism** — do it because the coverage
-record is worth having, not because something will block you. The generic version of
+episode (disposition CLEARED, scope "out of § 3 financial scope") is therefore now
+**how a T1/T2 episode gets released at all** through the sanctioned path — no longer
+merely good practice. The generic version of
 this machinery is **ADOPTED**: the `/do-signoff <gate> <subject>` skill
 (`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing instance,
 resolver refuses unless the session IS the grantor) over the governance-layer spec
-`data/specs/signoff-framework-2026-06-30/SPEC.md`, with provable `lake build`
+family `data/specs/signoff-framework-2026-06-30/`, with provable `lake build`
 verification (studying S-T10 `SignoffCoverage`). Grant a FINANCIALLY surface with
 `/do-signoff FINANCIALLY <subject>` from this session; the 4.1 record carries the
 § 5 structured core as the worked example. See `[[project_signoff_framework]]`.
 
-**Scope:** spec § 3 (FINALIZED) — Qresev surfaces + any public surface
+**Scope** (FINALIZED): Qresev surfaces + any public surface
 evaluating stocks/portfolios/options with actionable framing; internal
 artifacts and a returns-free `/donate` are out.
 
-**FINANCIALLY-CLEARED iff:** the criteria are spec § 4-owned
-(`data/specs/evaluating-financial-signoff-2026-06-24/SPEC.md`). The two an
+**FINANCIALLY-CLEARED iff:** the criteria ride the § 4 defined-risk floor
+above (this file is their owner; registry row:
+`.claude/skills/do-signoff/registry.tsv`). The two an
 evaluating session must not regress in-app: the `financialRider` is present +
 adjacent to **every** framework verdict token (not just an intro), and the
 allow-list is framed "a kernel refusal, not a safety guarantee" (never "safe").

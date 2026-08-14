@@ -8,7 +8,7 @@ every entry must have a documented **producer-of-record**; every entry
 must carry a `data/<X>/CLAUDE.md` declaring producer + consumers +
 schema + refresh cadence + write-lock posture.
 
-Design rationale: `data/specs/data-charter-2026-05-17/SPEC.md` (this file
+Design rationale: `data/specs/data-charter-2026-05-17/` (this file
 owns the live rules — the closed-set kinds, three-question gate,
 single-owner rule, audit table, and stub template below).
 
@@ -45,7 +45,7 @@ subproject's own directory tree, not under `data/`.
 
 Ledger-shaped candidates (one shared file, many appenders) never pass
 this gate as files — they start as a shared-ledger-store table + rendered
-git projection (`data/specs/shared-ledger-store-2026-07-09/SPEC.md` § 2/§ 5).
+git projection (`data/specs/shared-ledger-store-2026-07-09/`).
 
 ## 3. Single-owner rule — what every `data/<X>/CLAUDE.md` carries
 
@@ -60,7 +60,7 @@ Every top-level entry's `CLAUDE.md` states:
    keys for JSON, file-layout convention for markdown bundles).
 5. **Refresh cadence** — manual / cron / per-session / per-commit.
 6. **Write-lock posture** — `.data-write-lock` acquired (manual
-   writers, per `data/specs/data-conventions-2026-05-06/SPEC.md` § 5.3) vs
+   writers, per `data/specs/data-conventions-2026-05-06/`) vs
    `pending/`-mirrored (cron lane, per § 4) vs neither (read-only
    mirrors).
 
@@ -74,7 +74,7 @@ entry lands or an existing one's verdict flips.
 | Entry | Kind | Producer | CLAUDE.md |
 |---|---|---|---|
 | `agent-sdk-ledger/` | data-hub | `code/agent_sdk/qagents/agent_sdk/ledger.py` (append-only, per SDK call) | `data/agent-sdk-ledger/CLAUDE.md` |
-| `charters/` | convention-anchor | sessions — charters by ratifying debate (maturity gate `data/specs/data-charters-2026-07-16/SPEC.md` § 3.3) + amendment via `data/charters/CLAUDE.md` § "Amendment lane" (single owner since the 2026-07-27 relocation; that spec's § 4.4 is now only a pointer — do not cite it as the procedure); migrated spec families/debate records by the owner-scope's `/open` session; `todos/` fix-requests by session/operator (charter-scopes-2026-07-16 § 4) | `data/charters/CLAUDE.md` |
+| `charters/` | convention-anchor | sessions — charters by ratifying debate (maturity gate `data/charters/qagents/spec-lifecycle/charter-tier-mint.md` § Maturity gate) + amendment via `data/charters/CLAUDE.md` § "Amendment lane" (single owner since the 2026-07-27 relocation); migrated spec families/debate records by the owner-scope's `/open` session; `todos/` fix-requests by session/operator (charter-scopes-2026-07-16 § 4) | `data/charters/CLAUDE.md` |
 | `claude-settings/` | convention-anchor | manual `sources/*` → `scripts/claude-settings/build.py` | `data/claude-settings/CLAUDE.md` |
 | `claude-updates/` | convention-anchor | `scripts/close.sh` | `data/claude-updates/CLAUDE.md` |
 | `debates/` | convention-anchor | sessions (debate convener at `/close`) | `data/debates/CLAUDE.md` |

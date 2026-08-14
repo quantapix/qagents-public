@@ -12,7 +12,7 @@ Cross-project conventions live in the repo root `qagents/CLAUDE.md`. The canonic
 4. **Risk gate before execution.** Every equity ticket is cleared by `risk-analyzer`, every options ticket by `options-risk-analyzer` *and* `risk-analyzer`, before `trade-executor` places it.
 5. **Separate capital per PM.** The three PMs never share positions, cash, or Alpaca accounts. Each has its own paper key-pair, `portfolio.json`, strategy doc, and journal tree.
 6. **Journal before quitting.** A routine that places or modifies a position must append the reasoning to `journal/YYYY-MM-DD.md` before exiting. If journaling fails, treat the run as failed.
-7. **Stop-losses on every equity buy**, per each PM's `risk_policy.md`. Use bracket orders. **Coverage is a claim about the BROKER, not about the ticket** — `midday-review` verifies it every day via `python -m shared.lib.risk coverage --account <pm> --orders-file <orders> --orders-status all`, which compares held quantity against live sell-stop quantity. **Fetch with `--status all`, and `--orders-status` is required** (2026-08-07): a bracket's stop leg hangs off its parent, the parent is terminal once the entry fills, so `--status open` omits both and every bracket-protected position reads naked. Under any other fetch a naked reading is `verdict: unknown`, never a breach — and on a real breach the remedy is no longer "submit the stop NOW": a duplicate stop against a resting bracket cancels the live legs via OCO, which on 2026-08-05 destroyed two of aggressive's take-profit legs and opened a ~26 s naked window. **If the broker refuses, stop and re-verify — do not improvise around the refusal**; that is the route the 08-05 damage actually took. `portfolio.json`'s `bracket.stop_loss` is the stop the PM *intended*; moderate's QQQ carried one for the whole 6h33m it sat naked on 2026-07-31 (fill landed 90 s after `open-execution` wrote it up as unfilled; the "submit the stop if and when it fills" follow-up never ran).
+7. **Stop-losses on every equity buy**, per each PM's `risk_policy.md`. Use bracket orders. **Coverage is a claim about the BROKER, not about the ticket** — `midday-review` verifies it every day via `python -m shared.lib.risk coverage --account <pm> --orders-file <orders> --orders-status all`, which compares held quantity against live sell-stop quantity. **Fetch with `--status all`, and `--orders-status` is required** (2026-08-07): a bracket's stop leg hangs off its parent, the parent is terminal once the entry fills, so `--status open` omits both and every bracket-protected position reads naked. Under any other fetch a naked reading is `verdict: unknown`, never a breach — and on a real breach the remedy is no longer "submit the stop NOW": a duplicate stop against a resting bracket cancels the live legs via OCO, which on 2026-08-05 destroyed two of aggressive's take-profit legs. **If the broker refuses, stop and re-verify — do not improvise around the refusal**; that is the route the 08-05 damage actually took. `portfolio.json`'s `bracket.stop_loss` is the stop the PM *intended*, never evidence of coverage (moderate's QQQ carried one through a 6h33m naked window on 2026-07-31). Incident detail: memory `project_trading_system` § Gate defects.
 8. **`risk_policy.md` is edited only during `monthly-retro`**, with the change justified in `retros/YYYY-MM.md`. **The retro fires INSIDE `close-journal` on the month's last session and nowhere else** — decide month-end with `python -m shared.lib.performance next-session` (`is_last_session_of_month`), never by a weekday proxy, and never defer to "tonight's retro": there is no such fire, and July 2026's moderate retro was lost exactly that way.
 
 ## Model assignment
@@ -85,7 +85,7 @@ Every proposed trade is represented as a JSON ticket before it hits the risk gat
 }
 ```
 
-Options tickets add a `legs` array with `strike`, `expiry`, `option_type`, `side`, `qty` per leg, plus a `structure` field — one of the defined-risk structures owned by root `qagents/CLAUDE.md` § Defined-risk options. Any ticket with a short-call leg (covered_call, composed collar) also carries `pairing: {"covering_shares": <n>}` **and** `pairing_id` (below), and must clear the book-level coverage check (`python -m shared.lib.risk composition`; enforced by `options-risk-analyzer` Step 2.5 per `data/specs/accounting-charter-expansion-2026-07-12/SPEC.md` § 8 T-C2 — leg-wise validation alone is not sufficient).
+Options tickets add a `legs` array with `strike`, `expiry`, `option_type`, `side`, `qty` per leg, plus a `structure` field — one of the defined-risk structures owned by root `qagents/CLAUDE.md` § Defined-risk options. Any ticket with a short-call leg (covered_call, composed collar) also carries `pairing: {"covering_shares": <n>}` **and** `pairing_id` (below), and must clear the book-level coverage check (`python -m shared.lib.risk composition`; enforced by `options-risk-analyzer` Step 2.5 per `data/specs/accounting-charter-expansion-2026-07-12/` T-C2 — leg-wise validation alone is not sufficient).
 
 ## Leg-pairing id + fills ledger (portfolio-schema v-next)
 
@@ -112,10 +112,6 @@ pruned ledger serves everything else and fails once, ~a year in, when
 malformed row makes `read_fills` **raise, not skip** (a skipped row lowers a
 spend figure, and a spend quietly too low clears a budget that was breached).
 Corrections are compensating rows, never edits.
-
-Not the Postgres ledger store (root § write-lock), which routes *shared* files
-with many appenders. This is three files, one appender each, already fenced by
-`assert_account_matches_cwd`.
 
 ## Journal entry schema
 
@@ -170,37 +166,25 @@ entry_premium     # options only; SIGNED net premium of this leg at entry
 
 ## Scheduled routines
 
-**A host that can reach the repo is not a host that can trade.** Git does
-not carry trading's state on its own: the tape (`financial/parquet/`) and
-the creds (`trading/.env`) are **gitignored**, laptop-local; each PM's live
-`portfolio.json` is **TRACKED** but only as fresh as the last push — so a
-checkout that fires a routine without the holder's latest push reasons
-over a pre-session book and writes it back over the real one.
-Before any seat/host move, sync + hash-match all three (the 2026-07-14
-seat drill caught exactly this pre-flip). 2026-07-23 added the converse:
-**a host that has the tape and the creds still cannot trade on a stale
-checkout** — qyel passed every gate, including `seat_preflight` GREEN
-24/24, and reported "no Morning Plan existed today" because its `main`
-predated the plan commit by 96 minutes. Tracked state matters as much as
-gitignored state. (A dead `py_vollib` that `pip check` read clean also
-blocked Greeks; both `parity.sh` and `capability.sh` gained import
-witnesses 2026-07-27.)
+**A host that can reach the repo is not a host that can trade.** The tape
+(`financial/parquet/`) and creds (`trading/.env`) are **gitignored**, laptop-local;
+each PM's live `portfolio.json` is **TRACKED** but only as fresh as the last push — a
+checkout firing a routine without the holder's latest push reasons over a pre-session
+book and writes it back over the real one. **Before any seat/host move, sync +
+hash-match all three.** Tracked state matters as much as gitignored state: on
+2026-07-23 a host with the tape and the creds passed every gate (`seat_preflight`
+GREEN 24/24) and reported "no Morning Plan existed today" because its `main` predated
+the plan commit by 96 minutes.
 
-**THE ROUTINE ROSTER IS A SET OF DEPENDENCY CHAINS, NOT INDEPENDENT
-FIRES.** `overnight-research → premarket-brief → open-execution →
-midday-review → close-journal → leaderboard` is one chain per PM, and the
-medium it hands state along is **tracked files in this repo** (the
-journal, `portfolio.json`, `watchlist.md`). A chain must therefore run
-start-to-finish on ONE host. The seat gate proved exclusivity and
-capability but not this — so a flip pushed mid-morning on 2026-07-23
-split a day across both laptops and a pre-committed AMD ticket was never
-placed, with every gate verdict correct and nothing raising a finding.
-Mechanized since as the seat's third invariant, **CONTINUITY**: a tenure
-may only BEGIN in the 21:00–21:59 local changeover hour, and the incoming
-host fast-forwards `main` to the authority or refuses (`exit=75`;
-`data/specs/node-return-lane-2026-07-14/SPEC.md` § 12). Practical
-consequence for this subproject: **a seat flip no longer takes effect
-when it is pushed** — flip in the evening, never during a trading day.
+**THE ROUTINE ROSTER IS A SET OF DEPENDENCY CHAINS, NOT INDEPENDENT FIRES.**
+`overnight-research → premarket-brief → open-execution → midday-review →
+close-journal → leaderboard` is one chain per PM, handing state along in **tracked
+files** (journal, `portfolio.json`, `watchlist.md`), so a chain must run
+start-to-finish on ONE host. Mechanized as the seat's third invariant,
+**CONTINUITY**: a tenure may only BEGIN in the 21:00–21:59 local changeover hour, and
+the incoming host fast-forwards `main` to the authority or refuses (`exit=75`;
+`data/specs/node-return-lane-2026-07-14/`). Consequence here: **a seat flip does not
+take effect when it is pushed** — flip in the evening, never during a trading day.
 
 **Do not diagnose the health of the fire you are running inside.**
 `run_routine.sh` writes `qagents-cost` and `qagents-routine exit=` after the
@@ -228,7 +212,7 @@ opportunistically when next touching any PM prompt, per-PM skill, or trading
 sub-agent. Contract in root `qagents/CLAUDE.md` § "Shared-data write-lock".
 State files (`portfolio.json`, `watchlist.md`) stay canonical in both lanes —
 read by the next same-day cron fire, they can't stage behind the once-daily
-verifier (`data/specs/data-conventions-2026-05-06/SPEC.md` § 6).
+verifier (`data/specs/data-conventions-2026-05-06/`).
 
 **Cron-lane path discipline (load-bearing).** A cron fire runs
 `run_routine.sh` → `claude --print "/<routine>"` with cwd already at the
@@ -242,24 +226,16 @@ and MUST NOT be applied here: there is no session branch, so prefixing a
 orphaned and never promoted (caused the 2026-06-02 moderate miss — files
 landed in `qagents-wt/trading-13/`, absent from the daily-promotion commit).
 
-### Relocation lane — DONE, onto the qyel seat (not a LAN node)
+### Relocation lane — DONE, onto a laptop SEAT (not a LAN node)
 
-**Relocated 2026-07** (re-derived 2026-07-27). The cron lane runs on
-**qyel — a macOS laptop holding
-its own subscription seat**, not a headless herdr/EC2 node: qblk/qred cannot
-hold a seat at all. qpur is freed, which was the entire driver (§ 0 — it could
-not leave the WiFi while it served cron). Live program + mechanism:
-`data/specs/node-return-lane-2026-07-14/SPEC.md` (seat gate, § 12 changeover
-discipline, S5 write-back). The herdr-transport spec
-(`cron-ec2-migration-2026-05-19/trading-herdr-sessions-2026-07-14/SPEC.md`) is
-retained as the design record, trued 2026-07-27; debate record:
-`data/debates/trading-node-relocation-2026-07-14.md`.
-
-**The old "un-waivable gates" were Linux-target requirements, moot on a laptop
-seat** — plaintext Linux OAuth, degraded repo hooks (the reason sparse checkout
-excluded `legal/`), TZ drift, co-location: all dissolved unearned once both
-candidate hosts were macOS laptops (same spec, "Three safety gates dissolve").
-Reinstate verbatim only if a headless node ever returns.
+**Relocated 2026-07.** The cron lane runs on whichever macOS laptop
+`data/schedules/SEAT` names — never a headless herdr/EC2 node (qblk/qred cannot
+hold a seat). **Never name the host here: the seat MOVES** (qyel → qpur
+2026-08-07). Program + mechanism: `data/specs/node-return-lane-2026-07-14/`
+(seat gate, changeover discipline, S5 write-back); debate record
+`data/debates/trading-node-relocation-2026-07-14.md`. Driver, the dissolved
+Linux-target gates, and the herdr design record: memory
+`project_trading_system` § Relocation.
 
 **What still binds a session here:**
 
@@ -293,31 +269,27 @@ the 2026-07-14 audit found them already breached in committed artifacts:
 - **Write-fence.** A PM writes only its own tree. `_common.assert_account_matches_cwd`
   refuses (exit 7) any `--account` that disagrees with the `agents/<pm>` directory the
   routine is running in; it guards `write_portfolio`, `journal append/open/summary` and
-  `costs fill`. Hard rule 5 (separate capital) had already been broken once —
-  `conservative/journal/2026-07-01.md` carried a verbatim copy of *moderate's* close.
-  **No env override, by design** — the `QAGENTS_TRADING_ALLOW_CROSS_ACCOUNT=1` hatch was
-  removed 2026-07-14 (a var a prompt can `export` is no fence). Cross-PM *reads* go
-  through the unfenced `read_portfolio`; a cross-PM write would need an explicit function.
+  `costs fill`. **No env override, by design** — a var a prompt can `export` is no
+  fence (the hatch was removed 2026-07-14). Cross-PM *reads* go through the unfenced
+  `read_portfolio`; a cross-PM write would need an explicit function.
 - **Session calendar.** `performance.is_trading_session` (Alpaca's calendar,
   fails closed) gates `snapshot` and `daily`. **A closed day produces no NAV mark, no
-  day-return, no alpha, and no model spend.** Marking a shut tape is what produced the
-  phantom-alpha and fabricated-session incidents of 06-19/07-03. Check it first:
-  `python -m shared.lib.performance
-  is-session --date <d>`. Backfilling a day the calendar is genuinely wrong about needs
-  an explicit `--allow-closed`.
+  day-return, no alpha, and no model spend.** Marking a shut tape produced the
+  phantom-alpha and fabricated-session incidents (`ns:trading/18`). Check first:
+  `python -m shared.lib.performance is-session --date <d>`; backfilling a day the
+  calendar is genuinely wrong about needs an explicit `--allow-closed`.
 
 **Every routine opens its journal before it starts spending** —
 `python -m shared.lib.journal open --account <pm> --date <today>`. A mid-run kill then
-degrades to a thin journal instead of none at all (2026-07-14: moderate's premarket-brief
-burned its whole budget and wrote nothing, leaving `open-execution` to fire against a
-missing Morning Plan). **Wired into all five routines since 2026-08-02** — it had been
-stated here but implemented in `premarket-brief` alone, and the other four improvised.
-Two consequences now mechanical:
+degrades to a thin journal instead of none at all. **Wired into all five routines since
+2026-08-02.** Two consequences now mechanical:
 
 - **`overnight-research` uses `--next-session`, never `--date <today>`.** It fires
   22:00–23:00 ET the night *before* the session it serves, so "today" is the wrong
-  day and on a Sunday is not a session at all. The improvised form left the only
-  two stub journals in the tree (moderate 2026-07-19 + 07-26, both Sundays).
+  day and on a Sunday is not a session at all. **Research is dated the night it runs;
+  only the journal takes the session it serves** — a journal dated to a shut exchange
+  asserts a session that did not exist (same class as the fabricated NAV marks,
+  `ns:trading/18`; the two 2026-07 Sunday stubs were deleted 2026-08-09).
 - **`journal open` refuses a non-session date (exit 9)**, `--allow-closed` to
   backfill. Note the deliberate asymmetry with `append_snapshot`: that guard fails
   CLOSED (unknown calendar ⇒ no mark, because it writes a derived number), this one
@@ -343,21 +315,37 @@ python -m shared.lib.costs day  --account <pm>     # just report it
 ```
 
 The source is the `qagents-cost cost_usd=…` line that `run_routine.sh` appends to
-every per-run log. Runs with no cost line (crashes, cap kills, pre-telemetry logs)
-are reported as `unpriced_runs`, never silently counted as $0.
+every per-run log. **A fire lands in exactly one of three buckets (`read_run`,
+2026-08-09) and the split is load-bearing:**
+
+- `unpriced_runs` — no cost line **and** no refusal token: a crash, a cap kill, a
+  pre-telemetry log. The only bucket that is a finding. Never counted as $0.
+- `declined_runs` — the wrapper refused **before dispatch** and spent nothing:
+  `exit=0 skipped=not-seat-holder`, `exit=75` changeover, `exit=76` session fence,
+  `exit=72/73` capability. The arm is conjunctive (structured exit token AND no cost
+  line), so it can never excuse a fire that started work.
+- `errored_runs` — **billed and still produced nothing** (`is_error=True`). Invisible
+  to both of the above: it prices normally and leaves `complete` true.
+
+Why the split exists: **a by-design refusal and a crash must not share a channel.**
+On 2026-08-04 fence refusals published the crash wording and `ns:trading/19` recorded
+the cause as a crash off it, so any proposal to escalate on `unpriced_runs` must
+post-date this split. Detail: memory `project_trading_system`.
+
+**The escalation and the failure share a host.** `costs fill`'s exit-10 refusal (below)
+runs inside `leaderboard`, itself subject to the seat gate and the session fence — on
+2026-08-07 `leaderboard` refused and the missing-summary detector never ran on the day
+it was most needed. Do not treat a silent `costs fill` as evidence a day was clean.
 
 **A missing summary on a SESSION day is a finding, not a no-op (exit 10, 2026-08-02).**
-`costs fill` used to return `written: false` with exit 0, which reads as success. On
-2026-07-29 aggressive's close-journal died on an `API Error: 529 Overloaded` after
-$0.56, leaving no Close section and no summary; the next morning's premarket-brief
-caught the missing NAV mark and backfilled it, but nothing noticed the missing
-narrative — and `costs fill`, the last fire of the day and the one holding the cost
-in its hand, declined to write and reported no problem. It now refuses loudly so the
-non-zero exit reaches managing checker commitment #6. Closed/unknown days keep the
-quiet return. **The cost is never lost** — `costs day` reconstructs it from the logs;
-the refusal is about the absent artifact. **Do not backfill the narrative**: a Close
-section written days later is not a contemporaneous record, and manufacturing one is
-the same failure class the session-calendar guard exists to prevent. Record the gap.
+`costs fill` used to return `written: false` with exit 0, which reads as success; it now
+refuses loudly so the non-zero exit reaches managing checker commitment #6 (the
+2026-07-29 aggressive gap it was built for: memory `project_trading_system`).
+Closed/unknown days keep the quiet return. **The cost is never lost** — `costs day`
+reconstructs it from the logs; the refusal is about the absent artifact. **Do not
+backfill the narrative**: a Close section written days later is not a contemporaneous
+record, and manufacturing one is the same failure class the session-calendar guard
+exists to prevent. Record the gap.
 
 ## Status emit (`data/status/trading.json`)
 

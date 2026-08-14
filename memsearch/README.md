@@ -22,7 +22,7 @@ assistant queries it mid-session, the search runs in a forked
 context, the relevant memo snippets get summarised back, and the
 curated digest doesn't pollute the main session's context window.
 That isolation is what makes memsearch usable across a constellation
-with twenty-two subprojects without context-window blowup.
+of this size without context-window blowup.
 
 ## What this subtree publishes
 

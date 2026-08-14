@@ -37,9 +37,10 @@ history — and the apply tool enforces the boundary at parse time.
 
 ## Fleet shape
 
-Twenty-eight subagents per pass: twenty-seven in parallel (one digester per
-project rule file including the root, plus a memory-index digester and a
-recall-memo digester), then one sequential cross-cutting digester that
+A parallel fan-out followed by one sequential agent. In parallel: one digester
+per project rule file including the root, plus a memory-index digester and a
+recall-memo digester — the roster is the sole owner of that slug set and of its
+size, so no consumer pins a count. Then one sequential cross-cutting digester that
 adjudicates conflicts on shared memory files — its digest overrides the
 others on those files only when its block actually carries an applicable
 edit, because dropping a per-project block that holds the only copy of an

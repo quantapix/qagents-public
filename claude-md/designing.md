@@ -37,12 +37,10 @@ here; re-run the emitter and re-copy. The promoted set is
 quantapix-only — femfas is a sibling set; quantapix values are never
 rewritten to accommodate it.
 
-**Sibling design-prompt discipline.** A Claude Design prompt referencing
-an existing brand artifact (`logo*.svg`) MUST say "embed
-`designing/web/public/assets/brand/<file>.svg` verbatim" — never
-re-describe the glyph (describing invites regeneration drift).
-Acceptance: the bundle's wordmark SVG diffs against the source with only
-viewBox-scale differences.
+**Sibling design-prompt discipline** → memory
+`reference_design_bundle_craft_checklist` § 8 (2026-08-09, intake #7): a prompt
+referencing an existing brand artifact embeds the SVG verbatim, never
+re-describes the glyph. Read when commissioning a bundle.
 
 ## 3. Tokens are the only boundary for raw values
 
@@ -90,13 +88,11 @@ Re-render after a tokens/copy change from the rendering harness:
 `--check`), then `cp data/renders/designing/og/og-*.png web/public/assets/`
 and redeploy. `/videos`+`/donate` reuse `og-home`; all `/status/*` reuse
 `og-status`.
-Because `og:image` targets are never navigated, neither `pnpm verify` nor
-the e2e PDF-reachability sweep catches a missing PNG — `curl -sI` the live
-`og:image` URLs and assert `200 image/png` after any OG-asset-namespace change.
-
-**Favicon / PWA head assets** are the same never-navigated class —
-`pnpm verify` / e2e never fetch them; `curl -sI` after any change
-(roster + rasterizer + `theme_color` detail: memory `project_designing_web`).
+**Never-navigated head assets** — `og:image` targets, favicon, PWA icons and
+manifest — are fetched by neither `pnpm verify` nor e2e, so a missing file is
+invisible to every gate: `curl -sI` them and assert `200 image/png` after any
+change to either namespace (favicon roster + rasterizer + `theme_color`
+detail: memory `project_designing_web`).
 
 **Disclaimer (concede-and-preempt) — single source, binding placement.**
 The `disclaimer` export in `copy.ts` (`canon` + `legalRider` + `financialRider`)
@@ -166,6 +162,22 @@ are producer-owned), so drift is a single-file edit in the source-of-
 truth subproject. Adding a field to a hub-backed surface: extend the
 loader types (`src/lib/<x>-loader.ts`) + the emitter; never paraphrase
 content into `copy.ts`.
+
+**What counts as content, and why a diff can never catch the failure.** Any
+string naming a **bucket, a channel state, an amount, or a court record** is
+content — derive it from the hub, never write the literal. A hardcoded literal
+survives the very deploy that changes the fact it states, and the page then
+**disagrees with itself**: one section contradicting another section of the
+same page is invisible to a diff review, which only ever sees the changed
+lines. Live 2026-08-07: `donate.astro:41/46/77` call Bucket 4 the "SCOTUS
+bucket" in three hardcoded strings while the buckets table rendered from
+`drive.buckets[3]` a few sections down reads "Federal docketing fees" —
+Bucket 4 was re-targeted away from any single anticipated filing on
+2026-07-31 and none of the three strings derives from the hub. Tracked at
+`ns:designing/18`; third instance of the class (the public contact email,
+2026-07-24, was the second — `donating/CLAUDE.md` § 3 records its three-layer
+shape). **Verification is a LIVE read of the rendered page, checked against
+the rest of that same page** — never a diff, never a deploy ID.
 
 ## 6. End-to-end tests (Playwright)
 
@@ -270,15 +282,15 @@ memory `project_designing_web` § "Status panels + producer contract".
 - **Schema** (kit-owned): `@qagents/diagram-kit` — root `qagents/CLAUDE.md`
   § "Status hub" owns the contract; `src/lib/status-loader.ts` carries the
   live `PRESENT_KIT_VERSION` + `ACCEPTED_KIT_VERSIONS` (SoT — never
-  re-enumerate elsewhere). Closed display-mode set + 3-layer model:
-  `data/specs/display-modes-2026-05-07/SPEC.md`.
+  re-enumerate elsewhere). Closed display-mode set + 3-layer model: spec
+  family `data/specs/display-modes-2026-05-07/`.
 - **Thematic groups (adopted 2026-05-06).** `/status` renders 3 group
   sections in fixed order: **Quantapix** (umbrella; neutral accent) →
   **Qnarre** (verifying ← proving; teal accent; depends-on serving) →
   **Qresev** (evaluating ← accounting · analyzing · trading; amber accent;
   depends-on serving). Source of truth: `STATUS_GROUPS` in
-  `src/content/copy.ts`. Card count math (as of 2026-07-07): 12 + 2 + 4 = 18.
-  Don't move cards across groups without an explicit decision.
+  `src/content/copy.ts`; card total = the `status.spec.ts` assertion, never
+  restated here. Don't move cards across groups without a decision.
 - **Hidden cards (reversible).** Several subprojects are omitted from
   `STATUS_GROUPS.members` to reduce marketing-surface noise; the live roster +
   per-sub reason is the comment block directly above `STATUS_GROUPS` in
@@ -305,10 +317,10 @@ The Status page is the canonical surface for the engineer-debugging voice
 
 `designing/web/` IS the adopted Claude Design "LOUD" treatment (dark,
 statistic-forward home; live membrane hero), promoted from the `web-next/`
-staging sibling 2026-07-07 (content de-dup deferred). Records: debate
-`data/debates/web-next-promotion-2026-07-07.md` (R1–R6) + pleading re-clear
+staging sibling 2026-07-07 (content de-dup deferred). Records: debate record
+`web-next-promotion-2026-07-07` (`data/debates/`, HELD lane; R1–R6) + pleading re-clear
 `data/messaging-rulings/2026-07-07.md`. Package `quantapix-web`; e2e port
-4322. Specs: `data/specs/designing-loud-redesign-2026-06-19/SPEC.md`,
+4322. Specs: `data/specs/designing-loud-redesign-2026-06-19/` (family),
 `data/charters/designing/specs/designing-hero-membrane-2026-07-06/SPEC.md`.
 
 - **Home-hero messaging gate (BINDING, pleading-signed 2026-07-07).**

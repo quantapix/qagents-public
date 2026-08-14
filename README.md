@@ -6,8 +6,8 @@
 > the private working tree.
 
 A weekly-refreshed window into how a sole developer plus an expert AI
-assistant collaborate inside a single monorepo across twenty-five
-sibling subprojects. The artifact this repo publishes is *not* the
+assistant collaborate inside a single monorepo of sibling subprojects
+(the roster is the table below). The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
 It is the **rule set** the assistant reads at every session start,
 the topic files it loads on demand, and the daily engineering memos
@@ -22,7 +22,7 @@ curated alongside.
 The 2026 bet: what is worth publishing is no longer the implementation
 code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
 that lets a sole developer collaborate with an AI
-assistant across twenty-five non-overlapping subprojects without
+assistant across a constellation of non-overlapping subprojects without
 contradicting itself. Eight themes carry that bet; a founding case
 study closes the section.
 
@@ -51,7 +51,7 @@ this repo publishes.
 
 ### 2. Core competencies + inter-project tension resolution
 
-The private repo runs **twenty-five** sibling subprojects under a single
+The private repo runs **every one of its sibling subprojects** under a single
 root. They share a venv, a pnpm workspace, a Lean toolchain, and a
 Git tree — but they explicitly do *not* share code. The boundary rule
 ("No cross-subproject imports — ever") is load-bearing.
@@ -186,7 +186,7 @@ concern, on the same level as test coverage:
   in `CLAUDE.md`s; reasoning lives in specs.
 - **The optimization pass** fans out one digester subagent per
   `CLAUDE.md` (root + per-subproject) plus a memory-index digester
-  and a recall-memo digester — twenty-seven in parallel — followed
+  and a recall-memo digester — one per roster slug, in parallel — followed
   by one sequential cross-cutting digester. Each proposes concrete
   edit-tool-ready trims to bring its target back under the
   load-truncation caps. The coordinator merges into an apply plan;
@@ -379,7 +379,7 @@ Litigation-domain `CLAUDE.md`s (the appeals / pleading / legal-hub
 surface) are deliberately excluded — too easy for federal-record
 drift, even redacted.
 
-## Sibling subprojects (twenty-five, one venv, one workspace)
+## Sibling subprojects (one venv, one workspace)
 
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -517,7 +517,7 @@ session's window.
 
 ## What you will not find here
 
-- The private working tree itself (twenty-five subprojects, the filing
+- The private working tree itself (every subproject, the filing
   hub, the redacted legal drafts).
 - Per-subproject implementation code — that lives in the
   per-subproject public repos (`qnarre-public`, `qresev-public`,
@@ -570,9 +570,14 @@ project today is a single developer working with AI assistance, now
 opening this effort to contributors. Start at
 [`qnarre-public/CONTRIBUTING.md`](https://github.com/quantapix/qnarre-public/blob/main/CONTRIBUTING.md)
 and open an issue on that repo to claim a unit. It links a curated starter
-set of nine tasks, each a verified defect with acceptance criteria and
-reproducible counts. (Discussions are not enabled here, and the nine are not
-yet filed as individual issues.)
+set of nine numbered tasks, each carrying acceptance criteria and the commands
+that re-derive its counts. Four of the nine (1, 2, 6, 8) were swept internally
+after first publication and are marked closed in place, keeping their numbers;
+the five still open were re-derived against the working tree on 2026-08-07.
+The acceptance commands name a kernel and helper scripts that have not been
+dropped into the public clone yet — the roster file says so at the top rather
+than leaving you to discover it. Discussions are not enabled here, and the nine
+are not yet filed as individual issues.
 
 Authored by a sole developer working with an AI assistant (Claude Code) under written CLAUDE.md contracts.
 

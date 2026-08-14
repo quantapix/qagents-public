@@ -54,12 +54,13 @@ memory/
   feedback_*.md           guidance the operator has given about how to work
   project_*.md            ongoing-project context (decisions, milestones, plans)
   reference_*.md          pointers to external systems (docs, URLs, gotchas)
+  index_*.md              domain sub-indexes, when one domain outgrows the index
 ```
 
-A fourth namespace (`user_*`) is reserved by the auto-memory system
+A further namespace (`user_*`) is reserved by the auto-memory system
 for operator profile entries but is currently empty.
 
-## The three namespaces
+## The namespaces
 
 Each topic file carries frontmatter (name, description, type). The
 description is what the index line summarises; the type drives where
@@ -70,27 +71,37 @@ the assistant looks for it.
   tests") and validations ("yes, that bundled PR was the right
   call"). Saved when the operator explicitly approves or pushes back,
   with a `**Why:**` line and a `**How to apply:**` line so the
-  assistant can judge edge cases. The broadest publishable category
-  here — about 100–120 of the ~140 entries are public-safe
-  engineering / authorship discipline. The rest touch litigation
-  workflow, redaction-blocklist mechanics, or operator-personal
-  posture and stay private.
+  assistant can judge edge cases. This is both the largest namespace
+  and the broadest publishable one — a large majority of its entries
+  are public-safe engineering / authorship discipline. The rest touch
+  litigation workflow, redaction-blocklist mechanics, or
+  operator-personal posture and stay private.
 - **`project_*`** — Ongoing context: who is doing what, why, by
-  when. Decisions, milestones, scope notes. About 30 of the ~38
-  entries publish (the remainder are litigation-specific). Each
+  when. Decisions, milestones, scope notes. Most entries publish; the
+  remainder are litigation-specific. Each
   carries the same `**Why:**` / `**How to apply:**` shape as feedback
   entries so future sessions can judge whether the memory is still
   load-bearing.
 - **`reference_*`** — Pointers to external systems and third-party
-  resources. URLs, public docs, API gotchas, vendor quirks. About
-  80–100 of the ~122 entries publish (the remainder cite private
-  dockets, IAM specifics, per-host paths).
+  resources. URLs, public docs, API gotchas, vendor quirks. Most
+  entries publish; the remainder cite private dockets, cloud-identity
+  specifics, or per-host paths.
+- **`index_*`** — Domain sub-indexes. When one domain accumulates
+  enough topic files that its lines crowd the top-level index, those
+  lines move into a sub-index and the top-level index keeps a single
+  pointer to it. A sub-index is an index of indexes, not a new kind of
+  memory; it exists to hold the top-level file under the cap that would
+  otherwise truncate it at session load. Whether a given sub-index
+  publishes follows its domain — the litigation one does not.
 
 The published set will be curated, not exhaustive. An entry that names
 private participants, private paths, or private infrastructure is
 either redacted to remove those references or dropped from the public
-mirror entirely. The per-namespace counts above describe the private
+mirror entirely. The proportions above describe the private
 tree; how many of each ship is settled when the allow-list is authored.
+Deliberately no absolute counts: a pinned figure here would drift
+silently against a tree that grows every session, and the number is
+not the point.
 
 ## `MEMORY.md` — the index
 
@@ -156,8 +167,10 @@ the line in the same edit.
 Start with `MEMORY.md`. Scan the namespace prefixes — `feedback_*`
 lines describe how the assistant should approach work in this
 project; `project_*` lines describe what the project actually *is*;
-`reference_*` lines point at external resources. Click through to a
-topic file when its one-line description names something relevant.
+`reference_*` lines point at external resources; an `index_*` line is
+a doorway into a domain that outgrew the top-level index, and is worth
+following first when that domain is what you came for. Click through to
+a topic file when its one-line description names something relevant.
 
 The collection is heterogeneous on purpose. It mirrors how the
 assistant actually uses it: load the index, pull relevant entries

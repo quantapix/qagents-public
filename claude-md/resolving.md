@@ -19,37 +19,41 @@ wrapper — the wrapper is one component among several. The full scope:
   `skills/README.md` (single owner — don't restate them here). The
   branded outro is NOT a Fusion skill — it bakes a flat Pillow plate
   in `explaining/`'s `phase3_outro.py` (see
-  `reference_resolve_fusion_compositing_gotchas`). Lift spec:
-  `data/specs/resolving-2026-05-26/skills-lift-2026-05-15/SPEC.md`.
+  `reference_resolve_fusion_compositing_gotchas`). Lift criteria:
+  `skills/README.md`.
 - **Step-by-step instructions** for in-Resolve operations that are
   hard to script through the API (Fusion-tree authoring patterns,
   cache management, project-version migration, render-queue triage).
 - **Typed Python wrapper** at `resolving/davinci/` — consumed by the
   skills above + by the per-phase `phase*_*.py` drivers in
-  `explaining/`. Locked decisions (15 items): consolidated spec § 4; the
-  `davinci.fusion` surface (typed Comp/Tool, primitives, keyframes,
-  `.setting` I/O + golden normaliser):
-  `data/specs/resolving-2026-05-26/fusion-scripting-2026-05-27/SPEC.md`.
-  Recipe shapes, golden capture, and the F7 offline-import smoke: spec
-  § 12.2 + § 4 decisions 23–24 + § 11 (P1..P6 + M1..M10 ledger).
+  `explaining/`. The `davinci.fusion` surface (typed Comp/Tool,
+  primitives, keyframes, `.setting` I/O + golden normaliser) is its own
+  documentation: `davinci/docs/api.md` + `davinci/docs/gotchas.md`.
 
-The consolidated subproject design contract is
-`data/specs/resolving-2026-05-26/SPEC.md` — it folds the retired
-`resolving/PLAN.md` (project master) and `resolving/davinci/PLAN.md`
-(locked wrapper sub-plan) into one canonical file. § 3 carries the
-project-wide decision log (amendable); § 4 carries the wrapper decision
-log (LOCKED — amendments require a new dated spec); § 11 carries the
-P1..P6 + M1..M10 phases ledger. Spec § 3 decision 9 (2026-07-04) makes
-**Blender the third first-class plate engine** (kinds `still`/`loop`/`clip`
-on the `composite_overlay` seam) — contract at
-`data/specs/resolving-2026-05-26/blender-compose-2026-07-04/SPEC.md`,
-render side at `data/specs/blending-scenes-2026-07-04/SPEC.md`.
+**The founding spec is REAPED — do not re-cite it.** do-retire S9
+(2026-08-08, `84ffbf546`) deleted `data/specs/resolving-2026-05-26/SPEC.md`
+and its `fusion-scripting-2026-05-27`, `blender-compose-2026-07-04` and
+`skills-lift-2026-05-15` subspecs; only `tests/` dirs survive. Surviving
+obligations promoted to `data/charters/resolving/headless-decoration/`
+and to this file.
+
+**Ratified hybrid** (debate `resolving-tooling-2026-06-30`, ADOPT-AMEND;
+digest `data/debates/adopted/`). Resolve = **assembler + caption-bake +
+final encode**; **all compositing stays code** — Remotion + ffmpeg/Pillow,
+plus **Blender as the third first-class plate engine** (kinds
+`still`/`loop`/`clip` on the `composite_overlay` seam; render side
+`data/specs/blending-scenes-2026-07-04/BLENDER-CREATIVE-PATH.md`). The
+staged in-Resolve Fusion **"Lane B" is RETIRED** — it cannot render
+headlessly on 21.0.1. The ffmpeg 2nd lane in `code/qreel` is **DEFERRED,
+evidence-triggered** — build only if a Resolve update breaks the pipeline
+or a creative need the hybrid can't serve appears; any seam is a thin
+internal `Timeline`/`Track`/`Clip` dataclass, never OTIO.
 
 ## 2. Layout
 
 ```
 resolving/
-├── CLAUDE.md            # this file (subproject conventions; design contract at data/specs/resolving-2026-05-26/SPEC.md)
+├── CLAUDE.md            # this file — the live contract surface (see § 1)
 ├── davinci/             # typed Python wrapper component
 │   ├── README.md        # consumer-facing intro + Quick start
 │   └── docs/manuals/    # vendored Blackmagic manuals + extracts
@@ -177,8 +181,10 @@ sourced-clip comp leaks its carrier even with `set_pip`, so the corner-PIP
 element / wipe / chrome bake off-Resolve and composite as plain alpha media;
 the Fusion `compose-pip-corner` / `compose-wipe-transition` node trees are
 the interactive `## Manual` fallback only. Recipes + render gotchas:
-`davinci/docs/gotchas.md` § 5; spec:
-`data/specs/resolving-2026-05-26/headless-decoration-2026-06-07/SPEC.md`.
+`davinci/docs/gotchas.md` § 5; live contract (single owner):
+`data/charters/resolving/headless-decoration/` — `CHARTER.md` +
+`headless-delivery-frame-check.md` (the founding subspec
+`headless-decoration-2026-06-07` was reaped by do-retire S9).
 
 ## 6. Asset partitioning rule (Fusion-first; locked 2026-05-09)
 
@@ -204,5 +210,5 @@ Producer `resolving/scripts/status_emit.mjs` writes
 `data/status/resolving.json` per the root § "Status hub" contract
 (placeholder shape — counts SKILL.md files under `skills/`; no
 production-lifecycle diagram yet). Pinned to `@qagents/diagram-kit`
-KIT_VERSION; sweep in lockstep on kit bumps. Spec:
-`data/specs/data-status-rename-2026-05-17/SPEC.md` § 4.3 Cat-1.
+KIT_VERSION; sweep in lockstep on kit bumps. Spec family:
+`data/specs/data-status-rename-2026-05-17/`.

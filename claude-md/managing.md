@@ -57,33 +57,28 @@ cites #6, and `dco-manual` cites the checker's #7.
    goes in `probes.md` once endpoints + the first dated ledger exist; the
    ledger-existence check can land sooner.
 6. **Spec hygiene + phase tally.** `scripts/specs-audit.sh` is the single
-   source of truth (eight sections: SPECS phase tally / TESTS conformance /
-   LAYOUT lint / CHARTERS lint / TMP proposal status / LEDGER reminders /
-   COHERENCY arms — commitment 15's surface, not this one's — / RETIRE
-   tally, S8 2026-08-06: relays `retire.sh --manifest` lane rows +
-   HOLD-suppressed 2×ttl aging findings, runs `--check-lanes` on the daily
-   cadence, emits the R-12 rule-scope growth tally, and the § 5.3
-   `dco-verify` arm — any `retire`-prefixed tsv row is a **correctness**
-   finding, `retire-tally` rows are tally-only);
-   thresholds mirror `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
-   `data/charters/qagents/spec-lifecycle/CHARTER.md` and move in lockstep
-   (script + `checker.md` commitment 6 + this roster land in ONE change —
-   data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16 § 6.1
-   for the multi-root + DEBATES/TODOS arms). Every non-tally finding is a
-   **correctness** finding — surface the note column verbatim. Walk scope
-   (both spec roots), the data-not-prose layout exemptions, and the
-   append-only `SPEC_LEDGER` TSV + `--owner <sub>` column: memory
-   `project_managing_subproject` commitment 6. The daily tally rides in
-   `checks/<date>.md`; the same linter fires pre-landing via `/close` →
-   `specs-audit.sh --lint-paths` (close.sh exit 45). Three labeled ARMS
+   source of truth (eight sections: SPECS / TESTS / LAYOUT / CHARTERS / TMP /
+   LEDGER / COHERENCY — commitment 15's surface, not this one's — / RETIRE).
+   Every non-tally row is a **correctness** finding, surfaced verbatim;
+   `*-tally` rows are tally-only. LAYOUT's exemptions and CHARTERS' tally
+   both read the **carve-out registry**
+   (`data/charters/qagents/spec-lifecycle/carve-outs.txt`) — an exempted dir
+   is never a finding and never a relocation candidate. Three labeled ARMS
    ride this commitment, same number (folded from the retired standalone
-   cron-lane slot, 2026-07-25) — cron-lane health (live launchd lane,
-   incl. the separate exit-75 / exit-76 collapse rules — ns:trading/1 —
-   plus the trading-chain artifact-existence check), S5-scan (verifier
-   FINDING lines), and memsearch Stop-hook health. Arm findings rank as
-   stated in `checker.md` #6 — cron-lane hits, S5 divergence, and
-   trading-chain holes rank **functionality**, not spec-hygiene
-   correctness.
+   cron-lane slot, 2026-07-25): cron-lane health (live launchd lane, incl.
+   the separate exit-75 / exit-76 collapse rules — ns:trading/1 — plus the
+   trading-chain artifact-existence check), S5-scan (verifier FINDING lines),
+   and memsearch Stop-hook health; their hits rank **functionality**, not
+   spec-hygiene correctness. Row semantics, the S8 `retire` relays, the
+   per-sub/date-ordered `dco-verify` marker rule, and the walk scope:
+   `checker.md` #6 + memory `project_managing_subproject` commitment 6.
+   Thresholds mirror `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
+   `data/charters/qagents/spec-lifecycle/CHARTER.md` and move in lockstep
+   (script + `checker.md` #6 + this roster land in ONE change —
+   data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16 § 6.1
+   for the multi-root + DEBATES/TODOS arms). The daily tally rides in
+   `checks/<date>.md`; the same linter fires pre-landing via `/close` →
+   `specs-audit.sh --lint-paths` (close.sh exit 45).
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
    (regenerate via `scripts/claude-settings/build.py`). Hand-edit drift only;
@@ -92,40 +87,47 @@ cites #6, and `dco-manual` cites the checker's #7.
    truth; `drift=YES` is a **correctness** finding. Three classes fold into it:
    (a) *kit-version* — a `KIT_VERSION` producer pin or the loader off the kit
    `package.json` version (the silent same-major class); (b) *overlay
-   byte-mirror parity* (arm 2a, 2026-07-23) — same severity, bigger blast
-   radius: an overlay divergence ships two palettes to a live surface,
-   silently; (c) *sanctioned-deviation premise* (arm 2c, 2026-08-07) — the
-   registry at `rendering/designs/visualizing-lattice/manifest.json` grants
-   `--font-mono` a re-declaration BRAND.md forbids, on a stated premise that
-   nothing shadows it. **A premise is not a mirror**: `cmp` and key-set
-   equality cannot decide it, so it can expire with (a) and (b) still green —
-   the same shape as the token-mirror class, one level up. Rows: `premise
-   EXPIRED` (a host's base `tokens.css` now defines the token), `deviation
-   UNCOVERED` (a net-new `deviations[]` locus with no arm), `premise UNKNOWN`
-   (always a finding, never clean). Mirror pairs, the `UNREGISTERED` sweep,
-   the headless literal maps, the `--q3d-projected` white-cell case, and the
-   two measured facts the manifest's own reason string gets wrong:
-   `checker.md` #8 + memory `feedback_two_token_mirrors_ship_two_palettes`.
-9. **Cron-seat capability + roster + posture + flip.** `scripts/seat-drift.sh`
-   is the source of truth (wraps `data/schedules/launchd/seat_preflight.sh`;
-   bit-field exit 1=capability, 2=roster). Four facts, ranked differently:
+   byte-mirror parity* (arm 2a, 2026-07-23) — an overlay divergence ships two
+   palettes to a live surface, silently; (c) *sanctioned-deviation premise*
+   (arm 2c, 2026-08-07) — **a premise is not a mirror**: `cmp` and key-set
+   equality cannot decide it, so it expires with (a) and (b) still green.
+   Rows `premise EXPIRED` / `deviation UNCOVERED` / `premise UNKNOWN` (the
+   last always a finding, never clean); the mirror pairs, the `UNREGISTERED`
+   sweep, the headless literal maps, and the two measured facts the
+   manifest's own reason string gets wrong: `checker.md` #8 + memory
+   `feedback_two_token_mirrors_ship_two_palettes`.
+9. **Cron-seat capability + roster + posture + flip + peer-dark +
+   pending-enable.** `scripts/seat-drift.sh` is the source of truth (wraps
+   `data/schedules/launchd/seat_preflight.sh`; bit-field exit 1=capability,
+   2=roster). Six facts, ranked differently:
    - `capability=GAPS` **on the seat holder** → **functionality**, highest
-     severity: that host's fires refuse at fire time with `exit=72`. Gaps **off**
-     the holder are a readiness report about a future flip: echo, never promote.
+     severity: that host's fires refuse at fire time with `exit=72`. Gaps
+     **off** the holder are a readiness report about a future flip: echo,
+     never promote.
    - `roster=DRIFT` → **correctness**. A declared-but-unplisted routine never
      fires and writes no log, so commitment 6's cron-lane arm cannot see it —
      **the checker only sees what FIRES; this is the one check that looks at
      what didn't.** Fix is `install.sh --enable` on the holder.
    - `posture=OFF-POSTURE-STALE` (≥ 7d off Posture A) → **correctness**; bare
      `OFF-POSTURE` is tally-only.
-   - `flip=STALE-UNACCEPTED` (a committed SEAT flip with ≥ 1 full 21:00–21:59
-     local window elapsed and no holder-side landing line) →
-     **functionality**. `flip=PENDING` / `flip=UNKNOWN` (non-holder) are
-     tally-only; `flip=landed` is green.
-   Landing-line forms, the rationale (exclusivity ≠ capability), and the
+   - `flip=STALE-UNACCEPTED` (committed SEAT flip, ≥ 1 full 21:00–21:59 local
+     window elapsed, no holder-side landing line) → **functionality**.
+     `flip=PENDING` / `flip=UNKNOWN` (non-holder) are tally-only;
+     `flip=landed` is green.
+   - `peerdark=DARK` → **correctness**, one per named entry — `roster=DRIFT`
+     one host over (facts 1–4 are all host-local, which is why this arm reads
+     the peer's published `env.launchd` NAME sets: a count can never name the
+     entry that is missing). `UNKNOWN` / `no-peer` are tally-only but
+     **never** "no dark entries"; grade the `PEER-AGE` line every compare.
+   - `pending-enable=<n>-AGED` (a `data/schedules/pending-enable.md` row
+     awaiting a host ≥ 7d) → **correctness**; `<n>` / `0` tally-only;
+     `UNKNOWN` (registry absent or table reshaped) is always a finding — `0`
+     and "could not find the table" read identically and mean the opposite.
+     managing REPORTS these rows and never edits them.
+   Landing-line forms, the exclusivity ≠ capability rationale, and the
    `monitoring:archive-scan` instance: `checker.md` #9 + memory
-   `project_mobile_cron_seat`. Spec:
-   `data/specs/node-return-lane-2026-07-14/SPEC.md` § 2, § 6.1, § 10 Q2.
+   `project_mobile_cron_seat`. Spec family:
+   `data/specs/node-return-lane-2026-07-14/`.
 10. **Node-PR staleness.** `scripts/node-pr-staleness.sh` is the source of
    truth (observe-only; roster-scoped remote-tracking refs, never fetches).
    An unmerged node PR older than 7 days (`stale=YES`) → **consistency**
@@ -135,42 +137,48 @@ cites #6, and `dco-manual` cites the checker's #7.
    evaluates every OPEN node PR against its topic's declared-surface
    allow-list + deletion refusal (closed set; no auto-widening). Any
    `verdict=BLOCK` row → **correctness** finding surfaced verbatim — that PR
-   must not merge until amended or explicitly ruled. Specs:
-   `data/specs/data-charters-2026-07-16/SPEC.md` § 6.2 step 7 (AUDIT-C4) +
-   `data/specs/node-return-lane-2026-07-14/SPEC.md` § 5 + § 8 Phase S4.
+   must not merge until amended or explicitly ruled. Spec families:
+   `data/specs/data-charters-2026-07-16/` (AUDIT-C4) +
+   `data/specs/node-return-lane-2026-07-14/` (Phase S4).
 
 11. **Flow-clause hygiene (tree-wide safety net).** `scripts/flow-lint.sh` is
    the source of truth (wraps `python -m qagents.flow_graph lint` at canonical
    — the SAME engine `close.sh --flow-lint` shells to; grammar owner
-   `data/specs/flow-graph-2026-07-16/SPEC.md` § 3/§ 7 Arm 2). Any HARD line →
+   `data/next-steps/CLAUDE.md`; spec family `data/specs/flow-graph-2026-07-16/`). Any HARD line →
    **correctness**; the load-bearing shape is a dangling `ns:` target — slot X
    resolved a blocker while untouched slot Y still cites it, which the
    close-time gate cannot see. Advisories + the summary are tally-only.
    Observe-only: route fixes to the citing slot's owner session.
-12. **Shorting review-lane hand-offs + D-4 escalation — LANE LEGS RETIRED
-   2026-07-28.** `spread-runway.sh` prints `lane=<l> RETIRED` / `handback
-   RETIRED` — expected output, never a finding. **Still live:** the
-   `p0_runway_slots` leg over `data/next-steps/*.md` — keep it in the read
-   set. Purge scope, `archive.blob` recovery, and re-creation semantics
-   (`/do-spread` is deferred, not abolished): `checker.md` #12.
+12. **Spread review-lane hand-offs + D-4 escalation — LIVE (dco SPREAD-OP,
+   spread-merge-2026-08-09).** `scripts/spread-runway.sh` is the source of
+   truth; the lane is absorbed into `/dco-manual` as the SPREAD-OP
+   (optimization charter § 2.12), run dirs land at `data/summaries/spread/`,
+   and every leg unions that home with the frozen `shorting/spread/` history.
+   `handback … sla=ESCALATE` rows (§ 2.7 D-4 SLA), the § 5.6 `ESCALATE
+   dco-spread apply item …` rows (a qagents-slot routing item unconsumed
+   after ≥ 2 committed shrink passes), and the R6 `STALE no shrink pass …`
+   row (N=14) are **correctness** findings; UNKNOWN rows are findings, never
+   clean. Triage routes to charter § 2.12 + `data/next-steps/qagents.md`.
+   **Still live:** the `p0_runway_slots` leg over `data/next-steps/*.md` —
+   keep it in the read set. Row detail + the purge-vs-disuse `no-runs`
+   reading: `checker.md` #12.
 13. **Spec-family test-battery health.** `scripts/spec-battery.sh` is the
    source of truth — the tree-wide aggregating runner over every spec-family /
-   charter / subproject-harness `run.sh` (per-suite timeout, always exit 0,
-   `--out` unique-per-run and clobber-refusing since 2026-08-07). **A red count
-   that is FLAT for days is unconsumed findings, not ambient state** — the row
-   set is the finding, and a sweep with no trailing `suites=…` summary is
-   UNKNOWN, never a clean count (truncation and clobber are indistinguishable
-   in a partial file; `ns:managing/37` leg 1).
-   Any `FAIL`/`TIMEOUT` row → **correctness** (silent-red shape-gate: an
-   artifact landed without its expected-set update — the studying
-   `t_02_quartet` class); the update lands in the SAME change.
-   **One row is honest red, not noise:** `store-durability-2026-07-26`'s
-   suite exercises the LIVE store daily and exits 3 when the verify cluster
-   is unreachable — the gate saying it could not verify
-   (`feedback_could_not_look_is_not_a_verdict`), so LAN-down nights gain a
-   failing row. Anything that starts COUNTING battery reds must not filter
-   it, and making the live arm opt-in is not a fix. Full rationale + the
-   2026-07-28 operator ruling: that suite's `tests/README.md`.
+   charter / subproject-harness `run.sh`. Any `FAIL`/`TIMEOUT` row →
+   **correctness** (silent-red shape-gate: an artifact landed without its
+   expected-set update — the studying `t_02_quartet` class); the update lands
+   in the SAME change. **A red count FLAT for days is unconsumed findings,
+   not ambient state**, and a sweep with no trailing `suites=…` summary is
+   UNKNOWN, never a clean count. **One row is honest red, not noise:**
+   `store-durability-2026-07-26` exercises the LIVE store and exits 3 when
+   the verify cluster is unreachable, so anything COUNTING battery reds must
+   not filter it and making the live arm opt-in is not a fix (rationale + the
+   2026-07-28 operator ruling: that suite's `tests/README.md`). **The sweep
+   is not side-effect-free**, so `checker.md` #13 runs `git status --short
+   data/ financial/` AFTER it — any dirt is a **correctness** finding; an
+   aggregating READER must never need a write lock
+   (`feedback_test_suite_shared_hub_spillage`). Invocation + `--out`
+   discipline: `checker.md` #13.
 14. **Blind-metric provenance on published figures.**
    `scripts/blind-metric-drift.sh` is the source of truth (day-over-day
    changed statCards on `data/status/{proving,accounting}.json`; recency
@@ -181,23 +189,43 @@ cites #6, and `dco-manual` cites the checker's #7.
    posture, never a finding.
 15. **Coherency arms — the deterministic half of the § 3 daily mandate.**
    `scripts/specs-audit.sh --section coherency` is the source of truth
-   (operator ruling 2026-08-05, recorded as do-retire ruling R-18 —
-   `data/specs/do-retire-2026-07-26/SPEC.md` § 7.1 — + reap-boundary R1:
-   an EXECUTION gap closed, not new ownership; § 3 already charters the
+   (operator ruling 2026-08-05 = do-retire R-18,
+   `data/charters/qagents/retire/rulings.md`, + reap-boundary R1: an
+   EXECUTION gap closed, not new ownership; § 3 already charters the
    mandate). Four arms: exit-46 citation existence (`scripts/retire.sh
-   --check-cites` — dangling dated-artifact cites); declared-pair value
-   checks (the LEDGER↔`**Amended:**` shape extended — `**Amended:**`
-   predating `**Ratified:**`, SPEC.md `**Date:**` ≠ dir slug-date); the
-   absorbed-body freeze detector (`scripts/absorbed-body-freeze.sh` —
-   drift rows are REPORT-ONLY per ns:managing/30, but its exit 2 is a
-   **correctness** finding: a dead matcher must never read as clean); and
-   the warn-cap fleet byte-sweep over every tracked CLAUDE.md vs the close
-   gate's 600-line/30,000 B warn rung, cross-checked against filed
-   `spread-review owed` items (review-lanes-seeds-2026-08-05 R1 executor
-   condition). Any `coherency` row is a **correctness** finding;
-   `coherency-report` rows are report-only echo; UNKNOWN (an arm that
-   could not look) is always a finding, never clean. Three-file lockstep:
-   the script section + `checker.md` #15 + this row move in ONE change.
+   --check-cites`); declared-pair value checks (`**Amended:**` predating
+   `**Ratified:**`; SPEC.md `**Date:**` ≠ dir slug-date); the absorbed-body
+   freeze detector (`scripts/absorbed-body-freeze.sh` — drift REPORT-ONLY
+   per ns:managing/30, but exit 2 is a **correctness** finding: a dead
+   matcher must never read as clean); and the warn-cap fleet byte-sweep over
+   every tracked CLAUDE.md vs the close gate's 600-line/30,000 B warn rung,
+   cross-checked against filed `spread-review owed` items in
+   `data/next-steps/qagents.md` (optimization charter § 2.12 /
+   session-lifecycle § 2.8 E4). Any `coherency` row is a **correctness**
+   finding; `coherency-report` rows are report-only echo; UNKNOWN (an arm
+   that could not look) is always a finding, never clean. Three-file
+   lockstep: the script section + `checker.md` #15 + this row move in ONE
+   change.
+16. **Node-backup per-arm verdict diff.** `scripts/backup-arm-drift.sh` is the
+   source of truth. `serving:node-backup`'s ~58 health arms report through one
+   aggregate exit code — a **saturated channel** that sat at a benign `exit=1
+   REFUSE … EMPTY` while the lane degraded to unable-to-reach-any-node, three
+   days unremarked (2026-07-26). R3 / CHAIN-SAFETY C8 wants a fire-to-fire
+   DIFF; `pg-health-assert.sh` supplies per-arm
+   `verdict=OK|FAIL|NOT-EVALUATED` on PASSING runs too (ns:serving/80 →
+   ns:managing/44 — naming only FAILING arms made a diff impossible).
+   Three states:
+   - `NEW-RED` → **functionality**: an arm not FAIL last fire is FAIL now. An
+     ALREADY-red arm is deliberately not a finding — that is the saturation
+     this defeats; standing reds are commitment 6's.
+   - `COVERAGE-REGRESSION` → **correctness**: `OK -> NOT-EVALUATED`, or a pair
+     that vanished outright — louder still, since the emit is specified to
+     flip arms rather than omit them.
+   - `UNKNOWN` → tally-only, **never green**: under two comparable fires.
+     Expect it — the lines are behind `PG_HEALTH_ARM_VERDICTS=1` and the fires
+     live on the SEAT HOLDER, so the diff is host-scoped.
+   Observe-only; route fixes to serving. Three-file lockstep: the script +
+   `checker.md` #16 + this row move in ONE change.
 
 Subagent prompts under `.claude/agents/` encode these commitments verbatim —
 keep them in sync when a threshold changes.
@@ -216,7 +244,7 @@ from their work** (its one write is the verifier-sidecar-derived
 | `checker` | opus (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`), `shorting/positions/` (adversarial findings — promote / dismiss-with-reason / ignore, per `shorting/CLAUDE.md` § 5) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
 | `planner` | opus (top tier) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
 | `reporter` | opus (top tier) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
-| `verifier` | `haiku` | `checks/<date>.pending.json` (coordinator-appended per above) | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the § 5.3 lock-protected rsync. Spec: `data/specs/pending-promotion-scope-2026-05-28/SPEC.md`. |
+| `verifier` | `haiku` | `checks/<date>.pending.json` (coordinator-appended per above) | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the § 5.3 lock-protected rsync. Spec family: `data/specs/pending-promotion-scope-2026-05-28/`. |
 
 Each subagent's prompt (`.claude/agents/`) lists exact inputs to read and the
 exact output path to write — they never negotiate scope at runtime.
@@ -259,12 +287,11 @@ files > shipped websites > internal docs > backlog).
 
 The SDK lane is parked — root CLAUDE.md § Agent SDK lane owns status +
 restore path. Until it returns, **all four subagents must NOT surface any
-SDK-related finding**: `data/agent-sdk-ledger/` failure-stage findings,
-SDK-lane fire failures, `agent-sdk-adoption-2026-05-17` spec-phase stalls /
-OVER-CAP, SDK-credit references, and `pending/data/agent-sdk-ledger/**`
-unclassified surfacing (classified DORMANT in the verifier internal-set +
+SDK-related finding** (ledger failure stages, SDK-lane fires, SDK spec-phase
+stalls / OVER-CAP, credit references, and `pending/data/agent-sdk-ledger/**`
+unclassified surfacing — DORMANT in the verifier internal-set +
 `verify-pending.sh`). Reversible, dated directive — drop the suppression
-when access returns. Memory: `reference_agent_sdk_credit_200_mo`.
+when access returns. Memory: `feedback_managing_suppress_sdk_findings`.
 
 ## 4. Functionality probes — random, weighted
 
@@ -276,6 +303,14 @@ checker reads from there. `managing/scripts/probe-pick.sh --k 2` is the picker
 (pure-awk seeded weighted draw — bounded rejection, deterministic order
 fallback; no GNU shuf dep), seeded `date +%j` — deterministic per day, varied
 across days.
+
+**A gate cross-checking a human-authored free-text field must match on the
+FACT, never on the FORMATTING.** Anchor to a delimiter-bounded name; never
+require a value to sit *adjacent* to another token, in a given order, or in a
+given phrasing — the coherency warn-cap arm did exactly that and reported a
+genuinely filed breach as unfiled, daily, until 2026-08-07. Corollary of
+`feedback_data_structure_over_brittle_code`: if the shape of the prose is
+load-bearing to a gate, the gate is reading the wrong surface.
 
 ## 5. Boundaries
 
@@ -322,8 +357,8 @@ managing MAY commit ONLY (a) paths listed in
 `managing/checks/<DATE>.pending.json` (the verifier's machine-readable
 pass-list), (b) clean-exit RUN_DIR contents under
 `pending/cron-ec2/<basename>/<sub>/<routine>/<run_id>/pending/<canonical>`
-promoted via `verify-pending.sh`'s `promote_cron_ec2` lane (spec
-`data/specs/cron-ec2-migration-2026-05-19/infra-2026-05-19/SPEC.md` § 3.6 + § 3.9 step 10),
+promoted via `verify-pending.sh`'s `promote_cron_ec2` lane (owner
+`data/charters/serving/cloud-base/cron-ec2-lane.md`),
 (c) the ns-drain render commit — the re-rendered `data/next-steps/`
 projections under the shared message `render: next-steps projections`
 (load-bearing string, keep byte-identical — the substrate close lifecycle
@@ -356,19 +391,18 @@ standard subproject shape per root CLAUDE.md § "Subproject `.claude/` shape";
 `checks/` + `tasks/` + `reports/` (the three dated outputs, § 1).
 
 `checks/`, `tasks/`, `reports/` are committed (markdown is the source of
-truth and lets future sessions reconstruct multi-day trajectories) — but
-**bounded at 7 days on disk since 2026-07-29**, when `/do-retire` P2 lane 4
-first reaped them (271 files). Older days are byte-exact in `archive.blob`:
-`bash scripts/retire.sh --restore 'managing/checks/*' --dest <dir>`. A
-trajectory longer than a week is a store query now, not a `ls`.
+truth and lets future sessions reconstruct multi-day trajectories).
+`/do-retire` P2 lane 4 reaps them on a registry TTL — **operator-fired, so
+nothing enforces the bound**; reaped days are byte-exact in `archive.blob`
+(`bash scripts/retire.sh --restore 'managing/checks/*' --dest <dir>`).
 
 **That TTL is bounded by these agents' own declared lookbacks, so the two
-move in lockstep** (§ 1.1's discipline, one level out).
-`data/specs/do-retire-2026-07-26/lanes.tsv` records `consumer_window` =
-**1** for `reports/` + `checks/` and **3** for `tasks/` (`planner.md:45`,
-the deepest read in the trio). Widening any agent's lookback past its
-column is a two-file change; a lookback the registry does not record is
-how a reap silently narrows the watcher's own evidence.
+move in lockstep** (§ 1.1's discipline, one level out):
+`data/specs/do-retire-2026-07-26/lanes.tsv` records each dir's `ttl` +
+`consumer_window` — read them there, never from a figure restated here.
+Widening any agent's lookback past its column is a two-file change; a
+lookback the registry does not record is how a reap silently narrows the
+watcher's own evidence.
 
 ## 7. Schedule
 
@@ -382,13 +416,16 @@ coordinator prompt at `managing/.claude/coordinator-prompt.txt`, piped to
 four subagents in parallel and exits, runtime budget ≤ 10 min.
 Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`,
 paired with `routine_policy_model` so a routine's tier and its funding cannot
-drift apart; `daily` is $9 USD. Never `RemoteTrigger` /
+drift apart; `daily` is **$12** (from $9, 2026-08-06; read the script, not this line — it
+was stale five days). A budget kill is *distinguishable*: exit 4 + `Error:
+Exceeded USD budget` verbatim, so a fire stopping with NO exit line died of
+something else (ns:managing/52). Never `RemoteTrigger` /
 `CronCreate` / cloud `/schedule` (root CLAUDE.md § `data/schedules/` owns
 the rule; rationale `data/schedules/Notes.md`).
 
 ### 7.1 The cron lane is SEAT-GATED and MOBILE (2026-07-14)
 
-Spec: `data/specs/node-return-lane-2026-07-14/SPEC.md`; memory
+Spec family: `data/specs/node-return-lane-2026-07-14/`; memory
 `project_mobile_cron_seat`. The lane runs on **exactly one laptop at a time** —
 `qyel` or `qpur`, the only two hosts with a "head" (headless boxes cannot hold a
 Claude subscription seat). `data/schedules/SEAT` names the holder;
@@ -421,7 +458,7 @@ on every host refuses. Order is merge → push → verify
 `git ls-tree github/main data/schedules/SEAT` is non-empty. `/close` does not push.
 
 **Cron-EC2 lane** is dead — before triaging `pending/cron-ec2/` or any AWS drift,
-read `data/specs/cron-ec2-migration-2026-05-19/SPEC.md` § Status.
+read `data/charters/serving/cloud-base/cron-ec2-lane.md`.
 
 ## 8. Voice + format for output .md files
 

@@ -12,7 +12,7 @@ pushes the public `github.com/quantapix/*` repos. After this subproject, **no
 other subproject carries any open-sourcing responsibility** — each keeps only
 its own internal `data/status/<sub>.json` emit.
 
-Authoritative contract: `data/specs/publishing-2026-05-31/SPEC.md`.
+Authoritative contract family: `data/specs/publishing-2026-05-31/`.
 
 ## 2. What it owns / what it does not
 
@@ -29,7 +29,7 @@ stay in `explaining/avatar/` + `explaining/voice/` (HeyGen narration is
 `explaining/`'s job); `youtube/` cites them, does not own them. The channel
 *design sources* (JSX harnesses + canvas bundles) live at
 `rendering/designs/publishing-youtube/` and the rendered deliverables at
-`data/renders/publishing/` (`data/specs/rendering-2026-06-09/SPEC.md`); request
+`data/renders/publishing/`; request
 re-renders via `rendering/scripts/render.sh publishing-youtube`, never a
 hand-rolled capture script.
 
@@ -97,16 +97,14 @@ federal-appeal docket number, item 31, and the memory-slice
 exclusion-not-redaction ruling): `publishing/REDACTION-GATES.md` — committed,
 **never published** (path rule (C2) fail-closes any staged tree carrying it).
 
-**Four rules for any source→artifact seam** — (1) prefer a mechanism to an
-instruction, (2) assert on the OUTPUT never the source, (3) never spell a
-delimiter inside the region it delimits, (4) normalize whitespace before
-asserting on extracted PDF/DOM text. Found live in `pleading/` 2026-07-26;
-this lane has the same exposure wherever internal material shares a file with
-shipped material (every source subproject → public repo). Full derivation +
-the reusable fail-closed implementation ((private pleading-drafting artifact),
-exit 3, narrow `--allow=<substring>`): `feedback_strip_instruction_is_not_a_mechanism`
-(siblings `feedback_gate_covers_payload_not_envelope`,
-`feedback_gate_before_any_public_push`).
+**Four rules for any source→artifact seam** — mechanism-over-instruction ·
+assert on the OUTPUT never the source · never spell a delimiter inside the
+region it delimits · normalize whitespace before asserting on extracted
+PDF/DOM text. This lane has the same exposure wherever internal material
+shares a file with shipped material (every source subproject → public repo).
+Derivation + the reusable fail-closed implementation:
+`feedback_strip_instruction_is_not_a_mechanism` (siblings
+`feedback_gate_covers_payload_not_envelope`, `feedback_gate_before_any_public_push`).
 
 **A text-layer check cannot see the page.** The redaction lane's content scans
 (`sync_mirror.py` HARD_PATTERNS, the staged-tree gates) read text — silent about
@@ -143,8 +141,8 @@ SAME gate as README prose (`github_meta.py scan` = `sync_mirror` blocklist +
 reads `_status` (procedural/bookkeeping gate only — a real apply carries the flip
 same-session); metadata `apply` is cleanly separable from content `sync` (the
 Friday `/publish` push). The gate persists for future string changes — re-clear,
-flip `_status` back to DRAFT. Program:
-`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/SPEC.md`.
+flip `_status` back to DRAFT. Program family (gate-decision records):
+`data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/`.
 
 **FINANCIALLY-CLEARED (financial sign-off, 2026-06-24).** `evaluating/` is the
 sole grantor (advised by `accounting/`) of the financial-advice/securities gate —
@@ -152,8 +150,9 @@ the financial-domain analog of `pleading/`'s litigation gate, **orthogonal** to 
 (where both apply, both clears are required). It is the blocking condition for
 `qresev-public` (content push **and** `gh repo edit` metadata `apply`) and any
 Qresev YouTube payload. `github_meta.py`'s `description`-strip thesis-floor lint is
-the cross-repo half of the § 4 byte-equality check. Spec:
-`data/specs/evaluating-financial-signoff-2026-06-24/SPEC.md`.
+the cross-repo half of the rider byte-equality check. Gate registry:
+`.claude/skills/do-signoff/registry.tsv` (FINANCIALLY row); floor detail:
+`evaluating/CLAUDE.md` §§ 4, 9.
 
 ## 6. Write-lock & session model
 
@@ -218,8 +217,10 @@ publishing/
 structured multi-agent pass that makes the public surfaces (quantapix.com,
 femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
 adversarial read. **Instance one** of the generic debate framework
-(`data/charters/qagents/debate/CHARTER.md`); contract
-`data/specs/messaging-hardening-debate-2026-06-06/SPEC.md` (adopted 2026-06-06).
+(`data/charters/qagents/debate/CHARTER.md`); contract family
+`data/specs/messaging-hardening-debate-2026-06-06/` (adopted 2026-06-06; the
+§ 11 gate standard now lives at
+`data/charters/pleading/messaging-gate/litigation-safety-standard.md`).
 
 - **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model subagent
   per vector); vector-owner subprojects defend; `managing/` judges; **`pleading/`
@@ -255,7 +256,7 @@ CLAUDE.md language split).
   Thumbnails live at `designing/web/public/video-thumbs/<id>.png`.
 - **Boundary (§ 3):** the consumer files are `designing/`-owned. publishing
   authors them but **lifts-across** to the `designing` worktree
-  (`data/specs/open-close-dcu-2026-05-26/lift-encapsulated-fixes-2026-06-08/SPEC.md` § 6, Mode A) for the
+  (`data/specs/open-close-dcu-2026-05-26/lift-encapsulated-fixes-2026-06-08/`, Mode A) for the
   designing session to verify + commit — publishing never closes carrying a
   sibling tree's hunks. The `data/publishing/*` hub + the emitter stay on the
   publishing branch (allowlisted shared hub, not foreign).
@@ -339,6 +340,6 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   `T2/01-docket-record-disagree`; only `T1/02-semantic-search-limits` has one). Hardening
   — resolve `CLEARANCE_COMMIT` against a real record's `granting_commit`, shipped with a
   known-bad witness — is filed at `ns:serving/82`.
-  Authoritative contract: `data/specs/serving-2026-05-26/SPEC.md`
-  release-gate bullet (serving owns the script + the gate); this bullet is the
+  Authoritative contract family: `data/specs/serving-2026-05-26/`
+  (serving owns the script + the gate); this bullet is the
   publishing-side pointer the script's error message cites.

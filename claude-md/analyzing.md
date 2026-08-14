@@ -2,7 +2,7 @@
 
 Market-inspection tooling (TypeScript; local-only viewer): DuckDB + Parquet, lightweight-charts v5, yfinance ingest, Alpaca IEX live feed. Cross-project conventions (TS strict + shared tsconfigs, canonical OHLCV bar shape, GICS hub, defined-risk options rule, status hub, language split) live in repo-root `CLAUDE.md` — not duplicated here.
 
-## Charter — two roles (spec: `data/specs/analyzing-charter-2026-07-01/SPEC.md`)
+## Charter — two roles (spec family: `data/specs/analyzing-charter-2026-07-01/`)
 
 Ratified by a 7-delegate cross-qagent debate (2026-07-01). Six adopted
 amendment subspecs own their detail: `tape-provenance-2026-07-11/` (P8
@@ -19,9 +19,9 @@ source for the tape's shape (frozen-14 prefix, consumer-backed tiers,
 aggregate/breadth/indices lanes) — cite it, never the absorbed `ta-schema-v2`
 subspec. The supplier machinery (INV-H, INV-U, freshness manifest, provenance)
 stays in `analyzing-charter-2026-07-01/` until it settles into the deferred
-conditional `tape-supply` charter (ruling
-`data/debates/analyzing-charter-consolidation-2026-07-16.md`; mint conditions
-tracked at next-steps item 14).
+conditional `tape-supply` charter (ruling R2, debate record
+`analyzing-charter-consolidation-2026-07-16` — `data/debates/`, HELD lane;
+mint conditions tracked at ns:analyzing/14).
 
 - **(a) Market-data supplier.** Named owner/producer of the historical
   aggregate tape — `financial/parquet/ohlcv-equities/` (`ingest.py --flat`) +
@@ -38,7 +38,7 @@ tracked at next-steps item 14).
   driver for every chart-like (`qchart`) presentation capability** — new
   capabilities prove on analyzing's real-tape mount (or record an explicit
   skip) before public mounts adopt them; driver ≠ owner — kits stay
-  `visualizing/`'s (`web-ui-trio-2026-07-11/SPEC.md`).
+  `visualizing/`'s (`web-ui-trio-2026-07-11/`).
 
 **Invariants audited each close** (detail: spec §§ 1.1, 2.3, 3.5):
 
@@ -71,7 +71,7 @@ Retire-vs-port is an open call, not an accident of drift.
 
 `scripts/ingest.py` and `scripts/ta_reference.py` both have an additive
 batch mode alongside the original single-symbol form, plus a `--flat`
-mode added by `data/specs/data-charter-2026-05-17/SPEC.md` § 5 for writing
+mode added by the `data/specs/data-charter-2026-05-17/` family for writing
 into the canonical `financial/parquet/` hub:
 
 - Legacy per-symbol-subdir layout (no `--flat`): `ingest.py` writes
@@ -103,44 +103,82 @@ The canonical universe is committed at `financial/universe/sp500.txt`
 `financial/universe/CLAUDE.md`). `ingest.py` chunks the yfinance fetch
 at `CHUNK = 64` symbols/request and isolates per-chunk download failures
 into `failed[]`, so a 500-symbol run never rides one giant download.
-Full refresh:
+Full refresh = the five-step chain — equities ingest → ta_reference →
+breadth → indices ingest → manifest+provenance — whose verbatim
+invocations live in the `tape-cron-2026-08-09/` family's step table, the
+one copy shared by the cron orchestrator and the manual/backfill path.
 
-```
-python scripts/ingest.py --symbols-file ../financial/universe/sp500.txt \
-  --start 2023-01-01 --end <today> --out-dir ../financial/parquet/ohlcv-equities --flat \
-  > /tmp/refresh-summary.json
-python scripts/ta_reference.py --in-dir ../financial/parquet/ohlcv-equities \
-  --out-dir ../financial/parquet/ta-reference --symbols-file ../financial/universe/sp500.txt --flat
-python scripts/breadth.py --parquet-root ../financial/parquet
-python scripts/tape_manifest.py --parquet-root ../financial/parquet \
-  --refresh-summary /tmp/refresh-summary.json
-```
+## Sub-daily tape — INV-W (`scripts/intraday_guard.py`)
+
+`ingest.py --tf 1m|5m|15m|1h` rides its **own** universe
+(`financial/universe/intraday.txt` — 6 broad-market + 11 sector SPDRs, a
+subset of `anchors.txt`) and its own dataset dir, on the `indices`
+own-universe pattern. `ohlcv-equities/` is the frozen daily shape and never
+mixes resolutions. **NEVER run `ta_reference.py` against it** — the frozen-14
+canon's warm-up and semantics are daily-calibrated, so `rsi14` over minute
+bars silently means something else.
+
+**INV-W: an intraday request must lie inside the vendor's retention window on
+both axes** — span (per request) and lookback. Measured live, not copied from
+docs: 1m = 8d/30d (7d→1950 bars, 8d→2340, 9d→empty), 5m+15m = 60/60, 1h =
+730/730; the bound is INCLUSIVE (an earlier 7d guess was a false refusal of a
+servable window). It exists because the vendor answers an out-of-window
+sub-daily request with an **empty frame**, which `ingest.py` reads as
+`failed[] frozen=True` — a coverage regression blaming the vendor for a window
+we chose, at exit 3. The tell does not look like the cause, so the window is
+checked before the fetch and the refusal carries its own arithmetic.
+
+`--rolling` computes a servable window (`ROLLING_SPAN_DAYS`, deliberately below
+the hard limit so a wake-coalesced late fire still lands in-window). **The
+retention wall bounds the REQUEST, not the tape:** INV-H's merge leaves bars
+older than `--start` as `E_out`, so a repeatedly-fired lane accumulates
+indefinitely — verified live (two runs, 08-03..08-06 then 08-05..08-10 → 5
+trading days × 390 RTH bars/symbol, no duplicates). It can never *backfill*
+behind the wall, so coverage begins the day the lane starts firing.
+
+`history_guard` is resolution-aware via a `tf` argument defaulting to `1d`
+(daily behaviour byte-identical): the `volume_settle` frontier conjunct
+tightens from 10d to 2d (10 days of minute bars is ~3,900 bars — wide enough
+to invert the arm from fail-closed to fail-open), and evidence labels
+(`lost_first`/`restated_first`/…) keep time-of-day, because `tape_refresh`'s
+expected-blocked signature keys on them and date-truncated labels let two
+different same-day gaps share one key. Tests: `scripts/test_intraday_guard.py`
+(17 witnesses; the four load-bearing arms each observed RED via sabotage).
+
+**SHIPPED 2026-08-10** (operator ruling; named consumer **`simulating/`**, in
+flight — the ruling to land ahead of it is recorded in the tape-schema charter
+§ 2.4). `financial/parquet/ohlcv-intraday/` is a registered own-universe
+dataset: `.worktree-links` + `parquet/.gitignore` rows, `OWN_UNIVERSE_DATASETS`
+entry with `ohlcv_intraday_count_ok` in lockstep, and an `intraday-ingest` step
+in the `tape_refresh.py` chain (between indices and manifest) that rides
+`--rolling`, never `START`. Sub-daily staleness is judged on the **session**,
+not the bar (`SUBDAILY_DATASETS` → `dataset_snapshot(stale_on_date=True)`):
+with the 0-day own-universe threshold, a symbol whose last bar is one minute
+behind the frontier would otherwise report `lag_days: 0` — noise dressed as a
+finding. That branch is defensive and currently VACUOUS on live data (all 17
+symbols shared one last-bar timestamp on 2026-08-10), so it carries a hermetic
+witness rather than living untested.
 
 The volatility-index lane refreshes separately (own cadence, own universe —
-ta-schema-v2 § 5 Phase D; INV-H applies; NEVER run ta_reference against it).
+tape-schema charter § 2.4; INV-H applies; NEVER run ta_reference against it).
 Own-universe lanes carry a tighter staleness surface: the manifest flags ANY
 frontier divergence (`OWN_UNIVERSE_STALE_LAG_DAYS = 0`) plus a per-symbol
 `frontiers` map, because an `as_of` of MAX hides a frozen sibling behind a
-healthy leg. Informational, never a lockstep gate. Refresh — the manifest
-step is part of this lane too:
+healthy leg. Informational, never a lockstep gate; the manifest step is part
+of this lane too.
 
-```
-python scripts/ingest.py --symbols-file ../financial/universe/indices.txt \
-  --start 2023-01-01 --end <settled> --out-dir ../financial/parquet/indices --flat
-python scripts/tape_manifest.py --parquet-root ../financial/parquet
-```
-
-A refresh is all four, in order (charter § 2.3 lockstep + P2; the breadth
-step is ta-schema-v2 Phase C — equities-only per `financial/universe/anchors.txt`,
-single implementation of the McClellan/ZBT recurrences [A-C2], materialized
-to `financial/parquet/breadth/breadth.parquet`, lockstepped by the manifest
-on `as_of`): the
+The daily cron lane (`analyzing:tape-refresh`, 04:30 — § History
+preservation below for its exit contract) runs this same chain plus the
+indices lane; the manual recipe stays the operator/backfill path.
+A refresh is all four, in order (charter § 2.3 lockstep + P2; breadth-lane
+detail — anchor-ETF exclusion, one materialized recurrence implementation,
+`as_of` lockstep — is tape-schema charter § 2.4): the
 manifest step rewrites `financial/parquet/manifest.json` (freshness
 sidecar — see `financial/parquet/CLAUDE.md` § "Freshness sidecar") and,
 given `--refresh-summary`, emits the P8 provenance events. Batch mode
 prints one summary JSON on stdout — the key set (and the `pre_sha` /
 `post_sha` / `backup_path` fields non-clean entries carry) is pinned by
-`tape-provenance-2026-07-11/SPEC.md` § 1, which is exactly what
+`tape-provenance-2026-07-11/`, which is exactly what
 `--refresh-summary` replays — plus ndjson per-symbol on stderr.
 
 ## History preservation — INV-H (`scripts/history_guard.py`)
@@ -184,8 +222,9 @@ Per-symbol verdicts in the summary:
   settles landing on the SAME bar. Detail + method: ns:analyzing/12.
 - `regression` — the vendor dropped in-window bars we already hold ⇒ **REFUSED**.
   The parquet is left byte-identical, the symbol lands in `blocked[]`, and the run
-  **exits 3** (fails the P3 cron arm; aborts `dat.sh` Step 0.5 *before* a wave
-  rebases on a truncated tape).
+  **exits 3** (enters the cron lane's refusal diff — loud on a NEW/changed
+  signature, absorbed when standing (tape-cron § 4); aborts `dat.sh` Step 0.5
+  *before* a wave rebases on a truncated tape).
 
 Accepting a genuine ticker reset is explicit and **per-symbol**:
 `--allow-history-rewrite SATS` (token `ALL` = deliberate full re-base). There is
@@ -198,7 +237,7 @@ blocked symbol by gluing an archived series onto it.
 Exit codes: `0` all written · `1` all failed · `3` ≥1 symbol blocked by the guard.
 
 **Provenance (P8, shipped 2026-07-11 — mechanism owner:
-`tape-provenance-2026-07-11/SPEC.md`, which owns the spool / `uuid5`-dedupe /
+`tape-provenance-2026-07-11/`, which owns the spool / `uuid5`-dedupe /
 backup-retention detail):** `ingest.py`'s summary is replayed by
 `tape_manifest.py --refresh-summary` into the shared ledger store
 `analyzing:tape-refresh`, appended **after** `.data-write-lock` releases,
@@ -219,8 +258,16 @@ keeps its old bars and its TA recomputes identically.
 
 Both scripts follow the configurable-output-path lock rule (root `CLAUDE.md`
 § "Shared-data write-lock"): `.data-write-lock` iff the resolved output is
-canonical. The planned P3 cron writes direct-to-canonical under the lock —
-never through `pending/` (charter spec § 2.5).
+canonical. The **P3 cron lane is `analyzing:tape-refresh`** (04:30 daily,
+script-direct; orchestrator `scripts/tape_refresh.py`): direct-to-canonical
+under the per-script lock, never through `pending/`'s promotion surface —
+the chartered exception (named at root `CLAUDE.md` § Shared-data write-lock)
+whose single normative owner is the family
+`data/specs/analyzing-charter-2026-07-01/tape-cron-2026-08-09/`
+(exit contract § 4 there: 0 clean/standing · 1 NEW refusal vs the
+machine-local expected-blocked baseline · 3 chain failure; settled frontier
+enforced in-script — late wake-coalesced fires refuse typed; the lane never
+passes `--allow-history-rewrite`).
 
 **Universe membership — INV-U (`scripts/universe_guard.py`, shipped 2026-07-16):**
 membership is monotone too. A `sp500.txt` DROP is refused by default
@@ -236,6 +283,28 @@ by a tolerance: `tape_manifest.retired_held_symbols()` intersects
 silent drop still reds `count_matches_universe` — even in the same refresh
 (ns-17; the § 7 orphan-gate twin in repo-root `scripts/sync-ground-truth.sh`
 — NOT under `analyzing/scripts/`; owner: workstation-parity spec).
+**A universe change is a THREE-step lane, not one command** (bit 2026-08-09,
+the lane's first live run — EA retired on a confirmed delisting): the
+retirement alone leaves the manifest `lockstep.ok: false` on
+`breadth_universe_equal`, because `breadth.parquet` still carries the
+pre-change `universe_sha`. Run `universe_refresh.py` → `breadth.py` →
+`tape_manifest.py`, in that order. TG-2 firing here is proof-of-fire, not a
+refresh bug — but stopping after step 1 leaves the tape lockstep-red and
+reads like one. Note also that `universe_review.age_days` is
+review-date minus tape frontier and so goes **negative** whenever the
+operator-run review lands on a non-trading day (−2 on that first run,
+Sunday review vs Friday frontier); `overdue` is unaffected, but never treat
+the field as a non-negative magnitude.
+**∅-held is UNKNOWN, never "nothing held" (2026-08-11):** `held_symbols()` promised
+fail-closed but delivered it only inside `for p in portfolio_paths`, so an EMPTY
+glob (`trading/agents/*/portfolio.json` — a rename, a move, a `root` resolving
+elsewhere) skipped the loop, returned `set()`, and let `--allow-universe-drop ALL`
+retire live positions while printing the same `held_dropped: []` a healthy run
+prints. Now raises `HeldBooksUnreadable`; `universe_refresh.py` catches it at
+**exit 4 — could-not-look, deliberately NOT the exit-2 verdict refusal** (exit 2 =
+judged and refused, exit 4 = could not judge; collapsing them makes a blind spot
+read as a verdict). Not to be confused with `financial/portfolios/`, which holds
+schema markdown and is not what the guard reads.
 Live residual: next-steps item 14 (enforcement legs complete 2026-07-29).
 
 ## Web viewer — `analyzing/web/` (P4 host, role (b))
@@ -248,8 +317,8 @@ monitoring's proven shape). **127.0.0.1:4327 only** (port registry
 - **Symbol mount** (executes charts C5): pane 0 candlestick + volume
   (overlay scale) + SMA20/50/200 overlays, pane 1 RSI, pane 2 MACD
   (2 lines + histogram), pane 3 ADX+ATR — the R-C5 pane budget exactly
-  (`data-panes` records it for the e2e floor). **Viewer toggles
-  (ta-schema-v2 § 6, Phase C):** a band picker swaps pane-0 line pairs
+  (`data-panes` records it for the e2e floor). **Viewer toggles** (pins:
+  this section + `web/tests/e2e/`): a band picker swaps pane-0 line pairs
   (Bollinger / Keltner-TTM / Donchian / SuperTrend — pairs swap, never
   stack; fills + per-segment coloring are chartered qchart requests) and a
   pane-3 picker swaps ADX+ATR ↔ ±DI in place.
@@ -312,10 +381,12 @@ monitoring's proven shape). **127.0.0.1:4327 only** (port registry
   section (127.0.0.1 guard, § 2 envelope shape, NaN warm-up + all-null
   render, `data-ready` terminal states, STALE chip, `data-panes` = 4,
   cohort honesty, never-pooled book language).
-- **Workflow-UI phases U1a…U6 + T6 — ALL `[shipped]`.** The per-phase pin
-  ledger lives in workflow-ui § 9.1 (+ §§ 14–16 layout/route pins, § 5.5 T6
-  chrome bar) — read § 9.1 BEFORE editing any route / component / `/api`
-  endpoint under `web/src/`. Cross-cutting seams a non-UI session can still
+- **Workflow-UI phases U1a…U6 + T6 — ALL `[shipped]`.** Provenance:
+  `data/specs/analyzing-charter-2026-07-01/` (the `workflow-ui-2026-07-13/`
+  family dir); the standing laws now live in this section's seam pins below
+  + the `web/tests/e2e/` suites — read them BEFORE editing any route /
+  component / `/api` endpoint under `web/src/`. Cross-cutting seams a
+  non-UI session can still
   trip: `src/lib/labels.ts` (THE label seam — every user-facing event/state/
   threshold string passes it; `pnpm vocab:audit` owed at close; threshold
   lines via `citedLine`, uncited = build error); `src/lib/events.ts` (the
@@ -355,5 +426,5 @@ convention — root `CLAUDE.md` § "Status hub"); fired daily by the 05:25
 `qagents:status-emit-all` fleet and at each `/close --status-emit`. Manual
 canonical writes acquire `.data-write-lock`.
 
-Full closed-set contract + display-mode catalog:
-`data/specs/display-modes-2026-05-07/SPEC.md`.
+Full closed-set contract + display-mode catalog: the kit types
+(`serving/diagrams/kit/src/types.ts`).

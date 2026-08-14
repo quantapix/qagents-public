@@ -43,7 +43,7 @@ refreshes.
 
 ## What changed since the last refresh (2026-07-24)
 
-- **A twenty-fifth subproject was created.** Deep agent-based market
+- **A new subproject was created.** Deep agent-based market
   simulation: an engine plus a local on-device model-fit lane and a local-only
   UI that is never deployed. It reads promoted factor artifacts under a written
   consumer contract rather than importing anything, and it is generative-

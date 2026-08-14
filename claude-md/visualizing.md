@@ -81,33 +81,26 @@ this § 3 is authoritative.
   `usc_to_catalog.py` (legal, built); `accounting_to_catalog.py` (financial,
   built 2026-08-01 — walks `Universe/S<code>/<Axis>/` + `coverage.json`;
   the symbol→(sector,axis) coverage fold spec lives in its docstring).
-  Spec § 11.0a says the parser reads a `dau`/`dat` score-gate certification
-  artifact for `tier`/`agreement` (never a green `lake build`) — **but no such
-  artifact is written** (2026-08-06). The scorer is
-  `code/lean_tools/score_bridge.py` (NOT `proving/scripts/` — C19 moved it) and
-  reports via stdout + exit codes only, so § 11.0a is wrong where it says the
-  gate "writes a certification record". Owed work is the emit, not a producer
-  (ns:visualizing/17).
+  The § 11.0a certification seam is BUILT (2026-08-10): the scorer
+  `code/lean_tools/score_bridge.py` (NOT `proving/scripts/` — C19 moved it)
+  emits a **`qcert/1`** record via `--out` (pass or fail), and the extractor
+  reads it via `--cert` — certified theorems override the naming heuristic, a
+  FAILED certification renders `agreement:"diverge"` (never silence); no
+  artifact → naming heuristic + `tier:"unknown"` cells, unchanged. The
+  COMMITTED emit is the lanes' (ns:proving/148 / ns:accounting/96); until one
+  lands the fallback stands.
   Stays top-level: `catalog.json` feeds **every** modality, not just `graphs/`.
 - `rounds/` — the **qrounds/1 two-sided rounds contract** (custody ruled to
   visualizing, do-share P0-8 2026-07-18): `qrounds.schema.json` +
-  `qrounds-standing.schema.json` + `validate_rounds.py` (stdlib, exit-coded
-  0/2/4/5) over each axis's `…/examples/*/rounds/`.
-  **Blindness pair since 2026-08-04 (do-share run 7, R-3):**
-  `qblindness.schema.json` + `qblindness-corrected.schema.json` — a `#corrected`
-  record supersedes a base WITHOUT overwriting it (in-dir/existence checks in
-  `_corrected_preconditions()`, unexpressible in JSON Schema); base + corrected
-  are committed FOREVER, append-only adjudication FACTS — **the base is not
-  reapable** (a reaped base turns its correction into an unfalsifiable claim).
-  **The schema subset is CLOSED and self-enforcing since 2026-08-06:** every
-  run audits the loaded schemas and REFUSES (exit 2) on a keyword `_check` does
-  not implement, so widening it is a three-part change — interpreter arm +
-  `_UNDERSTOOD` entry + known-bad witness. The guard exists because a
-  hand-rolled subset silently ignores what it does not implement, making an
-  unimplemented constraint indistinguishable from a satisfied one; a remembered
-  rule was not enough (`minItems` let an `agents: []` known-bad pass).
-  Detail (append-only target union, `_target_stems` diff-lock, retention):
-  `rounds/README.md`.
+  `qrounds-standing.schema.json` + the `qblindness{,-corrected}.schema.json`
+  pair (do-share run 7 R-3, 2026-08-04) + `validate_rounds.py` (stdlib,
+  exit-coded 0/2/4/5) over each axis's `…/examples/*/rounds/`. Two invariants a
+  session must not break: a `#corrected` blindness record supersedes its base
+  without overwriting it and **the base is not reapable**; the JSON-Schema
+  subset is CLOSED and self-enforcing (exit 2 on any keyword `_check` does not
+  implement), so widening it is a three-part change — interpreter arm +
+  `_UNDERSTOOD` entry + known-bad witness. Retention ruling, `_target_stems`
+  diff-lock, exit codes, fixtures: `rounds/README.md`.
 - `specs/` — the three POC extraction specs (provenance for the consolidated
   spec's appendix). `shared/INPUTS.md` — pointers to the axiomatized data.
 
@@ -120,13 +113,16 @@ five adapters + **ONE backend — cytoscape + fcose** — + `src/kit/mount.ts` (
 Ordering is owned by **fcose constraint mechanisms** (flow-edge +
 per-view rank-kind derived — `PROOF_RANK_KINDS`, T8 shipped 2026-07-11;
 `graphs-2026-07-02/SPEC.md` § 3/§ 4). `kit/build.mjs` builds
-**three** IIFE dist bundles (global `QViz`): `dist/kit-proof.js` (graphs + the
+**four** IIFE dist bundles (global `QViz`): `dist/kit-proof.js` (graphs + the
 charts SVG-only `QViz.charts.*` namespace for the `/lattice` rollups+trends
 panel, charts-2026-07-02 § 7.1 →
 `verifying/web/public/graphs/kit.js`) + `dist/kit-strategy.js`
 (graphs+charts+compose → `evaluating/web/public/graphs/kit.js`) +
 `dist/kit-graphs.js` (domain-neutral node-link → `monitoring/web/public/graphs/
-kit.js`). designing removed its dormant hero mount wholesale and is **no longer
+kit.js`) + `dist/kit-charts.js` (charts-only SVG surface, no DAG/LW/fromReport
+— so no C8 framework-union leg; the supported mount class for charts-only
+consumers, first `simulating/web/public/charts/kit.js`; depth-2026-08-12 § 5.2
+made the R12 alternative a supported class). designing removed its dormant hero mount wholesale and is **no longer
 a `kit-graphs.js` consumer** — the `/thesis` live mount returns with the hero
 arc (next-steps items 9/15).
 `fromFlow`/`mountFlow` (constellation flow graph, kit-graphs bundle ONLY;
@@ -138,18 +134,17 @@ proof-DAG leaf-tier design prompts). See § 4.
 
 **`charts/` — quantitative modality (BUILT; `@qagents/charts` workspace member;
 authoritative contract `data/charters/visualizing/specs/visualizing-2026-06-03/charts-2026-07-02/SPEC.md`,
-debated + adopted `data/debates/charts-mixed3d-2026-07-02.md`):** the render-neutral
+debated + adopted `debate record `charts-mixed3d-2026-07-02` (data/debates/, HELD lane)`):** the render-neutral
 `qchart/1` closed-set series model + `validate()`; two adapters (`fromCatalog`
 aggregate rollups · `fromReport` per-framework overlays + `predicate-selected` OHLCV
 `sideView`) with the **defined-risk REFUSED enforced at the `fromReport` boundary**,
 not just visually; five vanilla-SVG emitters (strict-CSP-clean + byte-stable export
 for `explaining/`) + a lightweight-charts v5 backend behind one `ChartBackend`
-interface. Phase-2 routing mount into Qresev shipped (§ 5.1). **`qcatalog-trend/1`**
-= append-only JSONL trend seam (extractor appends one rollup per `--out` run,
-lock-protected canonical, never `pending/`) + `fromCatalogTrend`. **`projected?`** =
-ghost-rendered strictly-future bars (`TimeseriesSeries.projected?`, producer-authored,
-`append` actuals supersede); `hasProjected()` = the FINANCIALLY face-change probe
-(public mount ⇒ re-scan + signoff). `QViz.charts.*` lives in kit-proof
+interface. Phase-2 routing mount into Qresev shipped (§ 5.1). The
+`qcatalog-trend/1` append-only trend seam + `fromCatalogTrend`, and `projected?`
+ghost bars — whose `hasProjected()` probe is the FINANCIALLY face-change trigger
+(public mount ⇒ re-scan + signoff) — are specified in that SPEC §§ 6 / 13.4.
+`QViz.charts.*` lives in kit-proof
 (`entries/charts-svg.ts`, SVG-only) for the verifying `/lattice` panel; kit-strategy
 keeps flat charts exports. indicators are DATA never kit code (§ 4). **C8
 framework-union** (invariant: § 4.1) ships in **kit-strategy only**, so its
@@ -162,18 +157,13 @@ the charts SPEC's ledger** — trust the SPEC rows, not this line.
 - `mixed3d/` — the **interactive-3D** modality (Three.js, MIT; `@qagents/mixed3d`
   workspace member; `scenes/` = baked Blender-provenance media, firewalled):
   render-neutral `q3d/1` kit, kinds `pointcloud | surfacegrid | panelset |
-  ribbonset` (charts-in-3D = opaque fully-resolved SVG payloads, composed via a
-  compose `PanelSink` at M3, never parsed; `ribbonset` = § 10 width-encoded
-  ribbons, M9 fully live — CH-2 minted 2026-07-29, caps `ribbonset:true` +
-  ribbons frames golden landed lockstep; playback seam = § 11, caps declared `false` until P1). **Re-chartered 2026-07-02 — authoritative
-  contract `data/charters/visualizing/specs/visualizing-2026-06-03/mixed3d-2026-07-02/SPEC.md`**
+  ribbonset`. **Authoritative contract (re-chartered 2026-07-02)
+  `data/charters/visualizing/specs/visualizing-2026-06-03/mixed3d-2026-07-02/SPEC.md`**
   (PRIVACY gate PC1–PC6): phase order INVERTED — M1 surfacegrid kit + M2
   monitoring cost mount first, embedding pointcloud lens LAST (R1 kill criterion).
-  **M1 + projected-cells SHIPPED (2026-07-05/06):** `q3d/1(.1)` +
-  `surfacegrid.projected?`/`qgrid/1` `projected?` mask, ghost `--q3d-projected`
-  (never a ramp step), byte-compat; shipped enumeration + gates in the spec +
-  next-steps item 16. M2 is monitoring-owned + chartered-not-scheduled; the
-  `pointcloud`/`panelset` backends throw until M5/M3. Seeds `03-spatial-3d/`.
+  M1 + projected-cells + M9 ribbonset are SHIPPED (enumeration + gates in the
+  spec + next-steps item 16); M2 is monitoring-owned + chartered-not-scheduled;
+  the `pointcloud`/`panelset` backends throw until M5/M3. Seeds `03-spatial-3d/`.
 - `scenes/` — baked replay animation + frame export for `explaining/` (spec § 8;
   Phase 5). Frame capture rides the cytoscape kit (headless Playwright —
   `sandbox/serve.mjs` + `__CY__.png()`/`exportSVG`).
@@ -192,46 +182,35 @@ render** — one cytoscape-fcose source (`hero-graph.json` + `loader.js`) serves
 both the silent hero video and the `/thesis` mount once designing re-adds it;
 7-chapter animation contract `…/visualizing-2026-06-03/thesis-hero-2026-07-07/
 SPEC.md`, capture bundle `scenes/thesis-hero/`; open work = next-steps items
-9/11/15, MP4 deferred on W8. **W6 method-projection producer: designed AND
-BOTH phases SHIPPED 2026-08-06** —
+9/11/15, MP4 deferred on W8. **W6 method-projection producer SHIPPED 2026-08-06**
+(design + both phases): `extractor/method_projection.py` + `validate_method.py`
+emit + gate `data/visualizing/method-{legal,financial}.json` (instance fixtures
+over the committed catalogs; hero NEVER regenerated; zero kit changes). Two
+findings outlive the build — nested merge groups are OUTSIDE the mount's
+variant-composition contract (the four-kernel § 15 swap is a HERO device;
+kit-side hardening = ns:visualizing/50), and the financial directional gate is
+TOKEN-based and refuses until a FINANCIALLY record exists. Detail (G1–G5, the 10
+known-bad witnesses, the § 6 amendment):
 `…/visualizing-2026-06-03/method-projection-2026-08-06/SPEC.md`.
-`extractor/method_projection.py` emits `data/visualizing/method-{legal,
-financial}.json` (instance fixtures over the committed catalogs; hero NEVER
-regenerated; zero kit changes), `validate_method.py` gates G1–G5 + merge
-sanity with 10 committed known-bad witnesses, and the W3 plural-merge sandbox
-arm (`graphs/sandbox/w3-check.mjs`, in `pnpm gates`) landed with the first
-multi-group wire (per-axis cell-fold groups — the four-kernel § 15 swap is a
-HERO device; nested merge groups are outside the mount's variant-composition
-contract, spec § 6 amendment; kit-side hardening = ns:visualizing/50).
-Financial is structural-only: coverage-veto records render as veto REFUSALS
-(no grammar role), and the TOKEN-based directional gate (camel/snake-proof)
-refuses unconditionally until a FINANCIALLY record exists.
 
 **Constellation modality (M) + cluster-lens.** studying's SECOND operational
 input — the qagents monorepo + `~/.claude` memory as one non-hierarchical graph
 (`graph.kind="constellation"`; producer `studying/scripts/extract_constellation.py`,
-golden `studying/Operating/emits/constellation/golden.json`). `fromConstellation`
-+ `mountConstellation` implement **Option B**: M's scoped node/edge kinds ride the
-open attrs bag (`attrs.kindClass`/`relKind`) folded onto distinct `qgraph/1`
-carriers — **NO `NodeKind`/`EdgeKind` union widening** (Option C re-opens R2's
-held-open veto). The **M1 cluster-lens** (`colorLens:'cluster'` + `--cluster-*`
-ring) is M's headline; that ring **is in the rendering lattice-overlay SoT**
-(`rendering/brand/tokens/quantapix/overlay/lattice-{dark,light}.css`, kit mirrors)
-— the `--rel-*` edge palette is a HOST-overlay class (monitoring's operational
-overlay), and constellation is **dark-only** (`tokens-constellation.css` DARK SoT,
-no light twin). The M1 picture-floor knobs (`sizeBy`/`labelMinDegree`/`edgeRouting`/
-`overviewDepth`) are opt-in `StyleSpec`/`MountKitOpts`; lattice/proof defaults are
-untouched. monitoring owns `/constellation` + the mechanical kit-dist re-host-copy
+golden `studying/Operating/emits/constellation/golden.json`). Option B: M's
+scoped node/edge kinds ride the open attrs bag — **NO `NodeKind`/`EdgeKind`
+union widening** (Option C re-opens R2's held-open veto). Adapter/mount
+mechanics, the cluster-lens ring + SoT, and the M1 picture-floor knobs:
+`graphs/README.md` § "Constellation (M) + the M1 picture floor". Constellation
+is **dark-only** (`tokens-constellation.css` DARK SoT, no light twin);
+monitoring owns `/constellation` + the mechanical kit-dist re-host-copy
 (next-steps items 21 + 7). Spec:
 `data/charters/studying/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md` § 8.
 
 ## 4. Phased roadmap (spec § 12)
 
-Phases 0–3 ✅ (registration · catalog extractor `qcatalog/1` · cytoscape
-web-port · scale bake-off). **Phase 4 RE-SCOPED → built from scratch as the
-kit** (G0–G6 DONE + gated + MOUNTED; single cytoscape-fcose backend, § 3 +
-`graphs-2026-07-02/SPEC.md`). Implementation/gate detail (test counts, per-app
-mount provenance, the cytoscape npm-deps + `pnpm patch` posture) lives in
+Phases 0–3 ✅; **Phase 4 RE-SCOPED → built from scratch as the kit** (G0–G6 DONE
++ gated + MOUNTED; single cytoscape-fcose backend, § 3 +
+`graphs-2026-07-02/SPEC.md`). Implementation/gate detail lives in
 `graphs/README.md` + `project_visualizing_subproject`.
 **Phase 5** (next): replay animation + `explaining/` frame export on the
 cytoscape capture path (settle-based determinism — seeded fcose + constraints;
@@ -240,8 +219,9 @@ raster acceptance = SSIM, never byte-equality).
 ## 4.1 Standing kit contracts (easy to break silently)
 
 - **Caps-key discipline (MODALITY gate V-U2).** All three kits expose a closed,
-  deep-equal-pinned caps record — `chartsCaps()` (8 keys — `componentSlots` is
-  the first NUMERIC key + `watermark`, 2026-07-27), `m3dCaps()` (6 keys —
+  deep-equal-pinned caps record — `chartsCaps()` (9 keys — `componentSlots` is
+  the first NUMERIC key + `watermark`, 2026-07-27; `distributionOrient`,
+  2026-08-12), `m3dCaps()` (6 keys —
   `ribbonset:true` since the CH-2 mint 2026-07-29; `playback` `false`, flips at P1), `graphsCaps()`
   (`{navigator}`, `graphs/test/navigator.test.ts`). Every future capability filing
   MUST declare its additive caps key in the filing text — consumers key upgrade
@@ -302,16 +282,16 @@ raster acceptance = SSIM, never byte-equality).
   a role.** `seriesColor()` is role-first with a legacy-`styleRef` fallback; an
   *undeclared* series never defaults into the ramp. Palette (rendering-owned) +
   the `lintSeriesTokens()` palette-SET gate:
-  `data/specs/charts-role-palette-2026-07-14/SPEC.md`, next-steps item 26.
+  the retired `charts-role-palette-2026-07-14` family, next-steps item 26.
 
 ## 5. Seam discipline — JSON only
 
 The only seam between `visualizing/` and the app shells / domain projects is
 JSON (`catalog.json`, `graph.json` v1). **No cross-subproject imports**
-(`feedback_cross_project_data_sharing`). No Lean parsing in the renderer; the
+(share data, not code — root CLAUDE.md § Status hub seam rule). No Lean parsing in the renderer; the
 kit consumes JSON, the extractor produces it. `loader.js` is the never-fold
 side-car — a schema change is a two-sided edit (spec § 3.1 / R5;
-`data/specs/proving-results-propagation-2026-05-09/SPEC.md` § 2.3).
+`data/charters/proving/results-propagation/schema-of-record.md`).
 
 ## 5.1 Modality boundary + composition (locked 2026-06-08)
 

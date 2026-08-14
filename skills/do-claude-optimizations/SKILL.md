@@ -1,6 +1,6 @@
 ---
 name: do-claude-optimizations
-description: Memory + CLAUDE.md optimization pass across the entire qagents constellation. Fans out one digester subagent per CLAUDE.md (every subproject + root) plus a memory-index digester and a recall-memo digester — twenty-seven in parallel — then one sequential cross-cutting digester, merges their digests into a single apply-plan, and trims stale content under both the data write-lock and the dot-claude sentinel. The scheduled/programmatic lane is parked; the standing path is the operator-run interactive variant. Keeps the memory index under the load-truncation cap and every CLAUDE.md under the size warn caps. Companion to /open, /close, /do-claude-updates.
+description: Memory + CLAUDE.md optimization pass across the entire qagents constellation. Fans out one digester subagent per CLAUDE.md (every subproject + root) plus a memory-index digester and a recall-memo digester — one per roster slug, in parallel — then one sequential cross-cutting digester, merges their digests into a single apply-plan, and trims stale content under both the data write-lock and the dot-claude sentinel. The scheduled/programmatic lane is parked; the standing path is the operator-run interactive variant. Keeps the memory index under the load-truncation cap and every CLAUDE.md under the size warn caps. Companion to /open, /close, /do-claude-updates.
 ---
 
 # do-claude-optimizations (alias: `/dco`)
@@ -36,8 +36,8 @@ run. Exit 13 → a pre-existing FAILED marker; operator investigates first.
 
 Spawn the parallel digesters: one `dco-subproject` per subproject, one more
 parameterized for the root CLAUDE.md, one `dco-memory` for the memory index +
-topic files, and one `dco-memsearch` for the recall daily memos —
-twenty-seven in parallel. Each writes its digest to a gitignored buffer under
+topic files, and one `dco-memsearch` for the recall daily memos — all in
+parallel, one per roster slug. Each writes its digest to a gitignored buffer under
 `pending/dco-digests/`; all run in clean contexts.
 
 After the parallel fan-out completes, spawn one sequential `dco-cross`: it

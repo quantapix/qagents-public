@@ -24,17 +24,17 @@ case for the short).
 - Reads the whole qagents tree (every subproject + `data/` + `code/` +
   `lib/` + `legal/`).
 - Writes only its own subtree — `shorting/positions/`,
-  `shorting/shorten/` (the do-shorten lane, § 4a), `shorting/share/`
-  (the do-share lane, § 4b), and `shorting/spread/` (the do-spread lane,
-  § 4c) — plus the status-hub
+  `shorting/shorten/` (the do-shorten lane, § 4a) and `shorting/share/`
+  (the do-share lane, § 4b); `shorting/spread/` is FROZEN history (the
+  do-spread lane was absorbed into `qagents/optimization` § 2.12 as the dco
+  SPREAD-OP, spread-merge-2026-08-09 — § 4c) — plus the status-hub
   emit (`scripts/status_emit.mjs`, root-conventions pending lane) and the
-  three chartered parent-session-only ROUTING exceptions
+  ONE chartered parent-session-only ROUTING exception
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
-  I1): the § lane-spread step-(6) apply-routing item (filed via
-  `ns-add qagents` — the slot is a store-backed GENERATED render), § 3-class charter todos under
-  `data/charters/<scope>/todos/`, and the § 1 warn-cap `spread-review
-  owed` item (`ns-add`/`ns-rephrase` at the shorting slot,
-  observing-session arm — LEDGER 9, 2026-08-05). A debate this subproject convenes
+  I1): § 3-class charter todos under `data/charters/<scope>/todos/`.
+  Warn-cap `spread-review owed` items now file to the **qagents** slot
+  (session-lifecycle § 2.8 E4 as re-pointed; shorting sessions are no
+  longer the warn-cap scribe). A debate this subproject convenes
   writes its record to `data/debates/` (2026-07-14 precedent; the
   `/close` lift lane handles the foreign write).
 - Never `git push`, `git commit`, `git add`, deploys, or mutates code in
@@ -68,8 +68,15 @@ in-scope target via the Agent tool (`subagent_type: general-purpose`,
 Default scope for an unparameterised `/open shorting` run: **every
 subproject in the root CLAUDE.md roster except the legal-drafting pair**
 (`appealing/`, `pleading/`) **and `shorting/` itself**, plus `qagents`
-(root constellation) and `publishing/quantapix/` (public-facing staging
-copy). The `legal/` corpus is likewise excluded. The roster is the source
+(root constellation), `publishing/quantapix/` (public-facing staging
+copy), and — a **named target since spread-merge-2026-08-09** (the
+positions-lane independence grant, review-lanes § 4) — the
+**optimization machinery** (`scripts/dco.sh` + `scripts/dco-helpers/`, the
+dco skills/agents incl. the SPREAD-OP investigators,
+`data/charters/qagents/optimization/`): the merged self-review trades the
+old counterweight-lane independence for closed-loop latency, so this lane
+owes the machinery a per-target adversarial read, not a glance. The
+`legal/` corpus is likewise excluded. The roster is the source
 of truth — new subprojects (e.g. `extending/`, `developing/`) enter scope
 automatically.
 
@@ -124,7 +131,7 @@ shorting/
   positions/<target>/<YYYY-MM-DD>.md   one file per run; never overwritten
   shorten/<YYYY-MM-DD>/                do-shorten lane (§ 4a)
   share/<YYYY-MM-DD>/                  do-share lane (§ 4b)
-  spread/<YYYY-MM-DD>/                 do-spread lane (§ 4c)
+  spread/<YYYY-MM-DD>/                 FROZEN do-spread history (§ 4c; live lane: data/summaries/spread/)
   scripts/                             status_emit.mjs
   .claude/                             settings.json; skills → ../../.claude/skills
 ```
@@ -137,14 +144,16 @@ per run, likewise never overwritten.
 ### 4a. do-shorten lane — `shorting/shorten/<date>/` — **RETIRED 2026-07-28**
 
 **Not a live lane.** `/do-shorten` was retired by `/do-retire` ruling **R-3**
-(`data/specs/do-retire-2026-07-26/SPEC.md` § 5.2 + § R-3 — "uncontested by its
+(`data/specs/do-retire-2026-07-26/` — "uncontested by its
 own counsel"; Exhibit A § 1.1: the 07-25 run read 83,242 prose lines and
 emitted 1.82 MB to propose a −12.3 % reduction, and the apply session closed
-with no commits). R-4 purged the run artifacts. **Revivable** — the skill
+with no commits). R-4 purged the run artifacts. The skill
 (`.claude/skills/do-shorten/`) and charter § lane-shorten survive on disk
-under R-6 (code and tests are always maintained); it is the *invocation* that
-is retired, not the implementation. Read the rest of this section as the lane's
-recorded shape, not as a standing offer.
+**until P5 fires** — spec § 5.4 schedules both for deletion under R-3, and
+R-18 confirms the deletion stands (R-6 protects code and tests, not these
+KEEP-RULE artifacts). An operator may still direct a scoped run of the
+charter shape while the artifacts exist (2026-08-08 precedent), but that is
+an explicit per-run revival, not a standing offer.
 
 Constellation-wide charter + spec coherency/conciseness review (first run
 2026-07-02): clean-context unit reviewers + a synthesis pass emit per-unit
@@ -165,14 +174,18 @@ cross-axis LEARNINGS ledger, and the G1–G7 conformance matrix. Same
 governance as 4a. Skill `/do-share`. Normative: § lane-share; absorbed
 anchor `data/charters/shorting/specs/do-share-2026-07-04/SPEC.md`.
 
-### 4c. do-spread lane — `shorting/spread/<date>/`
+### 4c. do-spread lane — ABSORBED into qagents/optimization (frozen history)
 
-Capacity + relocation review of the critical-context surfaces + the dco
-shrink machinery — the counterweight to `/dco` (first run 2026-07-04).
-Thesis: spread (Extract / Split / Demote) before shrink; spread never
-deletes. Same governance as 4a. Skill `/do-spread`. Normative:
-§ lane-spread; absorbed anchor
-`data/charters/shorting/specs/do-spread-2026-07-04/SPEC.md`.
+The capacity + relocation review (first run 2026-07-04) was absorbed into
+the dco pass as the **SPREAD-OP** on 2026-08-09 (spread-merge-2026-08-09;
+subspec `data/charters/qagents/specs/dco-2026-05-26/spread-merge-2026-08-09/SPEC.md`).
+Live contract: `data/charters/qagents/optimization/CHARTER.md` § 2.12; new
+run dirs land at `data/summaries/spread/<ISO>/`; the skill retired (invoke
+`/dco-manual spread`). `shorting/spread/` stays frozen where it landed
+(registry-retired, never reaped); the absorbed anchor
+`data/charters/shorting/specs/do-spread-2026-07-04/SPEC.md` is the history
+rendering. Adversarial review of the merged machinery is now the positions
+lane's named target (§ 2.1).
 
 ## 5. Hand-off to `managing/`
 

@@ -117,8 +117,12 @@ that are load-bearing while the corpus is live — **do not pre-emptively strip
 them**, the widening is P3's.
 
 **The § 4.4 gate (`retire.sh --check-cites`) reads TWO scopes under DIFFERENT
-predicates.** Root `CLAUDE.md` + every `CHARTER.md` take the *prospective* ban:
-never cite a path the reaper would delete. `data/next-steps/*.md` take
+predicates.** Root `CLAUDE.md`, **every top-level `*/CLAUDE.md`** (tree-derived
+and roster-free since the 2026-08-09 S9 pass — a new subproject or hub joins the
+gate the day its CLAUDE.md lands) and every `CHARTER.md` take the *prospective*
+ban: never cite a path the reaper would delete — cite the family DIR, its
+`tests/`, a charter rule file, or a bare slug. ~130 cites were repaired at S9,
+so a NEW violation is always fresh authorship. `data/next-steps/*.md` take
 *dangling-only*: flagged only once the path stops resolving — an ns item citing
 the debate that produced it is doing its job, and the prospective predicate
 returns 125 violations there. Both halves derive from `lanes.tsv` (2026-07-29):
@@ -127,6 +131,16 @@ adding a lane cannot leave the gate behind. The slot arm reads a FRESH render of
 `ledger.ns_item_event`, not the committed projection — a repair made this session
 via `ns-rephrase` is in the store, while `data/next-steps/` is only rewritten at
 `close.sh --finish`.
+
+**The gate's own blind spot: a reaped `SPEC.md` leaves the family DIRECTORY
+standing, and a cite of that directory reads clean.** S9 took the bodies of
+`data/specs/agent-sdk-adoption-2026-05-17/` and
+`data/specs/cron-ec2-migration-2026-05-19/` under the `data/specs/*/SPEC.md`
+lane; both families now hold `tests/` only, and the live ns items citing them
+had quietly become the sole prose record of what they described. Directory-form
+cites are the ban's own prescribed cure, so this is structural, not a lapse:
+**before retiring or reaping anything that cites a spec, check the BODY still
+exists, not just the directory.**
 
 **A bare family slug is not a key — key on the relpath, or test both
 depths.** `specs-audit.sh` resolved families one level deep only, so every

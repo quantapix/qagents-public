@@ -44,7 +44,7 @@ two standing charters; the subtree now carries condensed charter renders:
   cascade, the canonical-edit hook, and the close-time gates.
 - [`optimization.md`](./specs/optimization.md) — the do-claude-optimizations
   shrink pass: the surfaces owned with their caps, the parked programmatic
-  lane, the retired auto-apply, and the twenty-eight-agent fleet shape.
+  lane, the retired auto-apply, and the fleet shape.
 
 Both are redacted public renderings — faithful on design and contracts;
 operator-specific absolute paths are genericized.

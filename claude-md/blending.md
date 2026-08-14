@@ -58,7 +58,6 @@ blending/
 │   │                    # render / animation / io / asset / text / image /
 │   │                    # recipes / errors / _cli / _stubs/bpy.pyi
 │   ├── tools/           # gen_stubs.py + gen_nodes.py
-│   ├── docs/            # in-Blender authoring step-by-steps
 │   ├── examples/        # runnable spec files
 │   └── tests/           # unit / integration / acceptance
 ├── motifs/              # Escher motif library — consumer of blendr
@@ -155,8 +154,8 @@ git-diffable (vs the opaque `.blend`), drive the `blending/diagrams/`
 force graphs, compose from primitives without Blender-UI re-authoring,
 and validate cycles + socket types client-side (`GraphCycleDetected` /
 `SocketTypeMismatch`) **before** the translator runs — Blender crashes
-are not an allowed failure mode. Full rationale:
-`data/specs/blendr-2026-05-10/SPEC.md`.
+are not an allowed failure mode. Full rationale: spec family
+`data/specs/blendr-2026-05-10/`.
 
 Naming convention: GN node names use ASCII identifiers
 (`escher_tess_p4m`, `penrose_stairs_loop4`), not Blender's default
@@ -194,8 +193,7 @@ swappable: yes".
 registered via its own `scenes/_cli.py` bridge) owns **full shots** —
 geometry/GN + materials + lighting + camera path + keyframed animation
 + optional compositor look pass — vs motifs' background-plate
-geometry. Locked in `data/specs/blending-scenes-2026-07-04/SPEC.md` (subject
-roster A1–A11 + ship ledger live in the spec's Status line + § 3):
+geometry. Locked in `data/specs/blending-scenes-2026-07-04/`:
 custom-generated scripts
 are the *authoring* path only, production always goes through a
 registered builder + JSON spec (a per-episode variation is a param or
@@ -207,8 +205,10 @@ blending never computes domain values); `loop: true` renders must be
 seamless (first/last-frame delta gate); deliverable kinds are
 `still | loop | clip` (MANIFEST column); scene renders stay
 **verdict-free** (no `⊢`/verdict/rider tokens baked into Blender
-output — those live on downstream card layers). Consumption contract:
-`data/specs/resolving-2026-05-26/blender-compose-2026-07-04/SPEC.md`.
+output — those live on downstream card layers). Consumption-contract
+family: `data/specs/resolving-2026-05-26/` (subspec slug
+`blender-compose-2026-07-04`, body reaped at S9); live seam =
+`resolving/skills/compose-blender-scene/SKILL.md`.
 
 ## 7. Output → explaining/ pipeline
 
@@ -267,7 +267,7 @@ matching, linear-RGB base_color) is pinned in memory
 
 ## 9. Pointers
 
-- Authoritative spec: `data/specs/blendr-2026-05-10/SPEC.md`
+- Authoritative spec family: `data/specs/blendr-2026-05-10/`
   (companion tests at `data/specs/blendr-2026-05-10/tests/`).
 - Anti-Escher copyright check: `reference_escher_relativity_rights.md`
   (user memory).
