@@ -31,9 +31,11 @@ wrapper — the wrapper is one component among several. The full scope:
   documentation: `davinci/docs/api.md` + `davinci/docs/gotchas.md`.
 
 **The founding spec is REAPED — do not re-cite it.** do-retire S9
-(2026-08-08, `84ffbf546`) deleted `data/specs/resolving-2026-05-26/SPEC.md`
-and its `fusion-scripting-2026-05-27`, `blender-compose-2026-07-04` and
-`skills-lift-2026-05-15` subspecs; only `tests/` dirs survive. Surviving
+(2026-08-08, `84ffbf546`) deleted the `resolving-2026-05-26` family's
+SPEC.md body and its `fusion-scripting-2026-05-27`,
+`blender-compose-2026-07-04` and `skills-lift-2026-05-15` subspec bodies
+(recoverable via `archive.blob` + `retire.sh --restore`); only `tests/`
+dirs survive. Surviving
 obligations promoted to `data/charters/resolving/headless-decoration/`
 and to this file.
 
@@ -67,7 +69,7 @@ resolving/
 Per-skill diagram artefacts live beside their `SKILL.md`
 (`diagram.prompt.md` + rendered `diagram.svg` — a skill dir is
 self-contained); the `diagrams/` sibling is the reserved whole-pipeline
-production-lifecycle slot (P6, planned — spec § 11.1). Re-emit per-skill
+production-lifecycle slot (P6, planned). Re-emit per-skill
 diagrams with `python3 resolving/scripts/render_fusion_diagrams.py` from
 the worktree root.
 

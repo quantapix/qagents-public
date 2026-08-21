@@ -21,10 +21,9 @@ Authoritative contract family: `data/specs/publishing-2026-05-31/`.
 push); the external push surface `git push-quantapix`; drive Promise 1; the
 redaction-clean gate before any push; the **@Quantapix YouTube channel**
 material (`publishing/youtube/` — channel-page copy, brand/thumbnail/motion
-prompts, upload specs). The
-split is **channel vs. content**: the channel face (handle, banner, About,
-thumbnail system, brand kit, upload specs) is publishing's; the 50-video 5×10
-arc itself stays in `explaining/`. The Janet identity master + voice config
+prompts, upload specs). The channel-vs-content split (channel face here, the
+50-video 5×10 arc in `explaining/`) is owned by `publishing/youtube/README.md`
+§ Scope. The Janet identity master + voice config
 stay in `explaining/avatar/` + `explaining/voice/` (HeyGen narration is
 `explaining/`'s job); `youtube/` cites them, does not own them. The channel
 *design sources* (JSX harnesses + canvas bundles) live at
@@ -58,11 +57,11 @@ Triggered by the `/publish` skill (`.claude/skills/publish/SKILL.md`, a thin
 orchestrator over `scripts/publish.sh` + the top-tier-model collector fan-out). Five
 phases: preflight → sweep (top-tier-model fan-out, one `publish-collector` per source
 subproject, Max-20x interactive billing) → verify/redact (HARD gate) → compile
-→ push (operator-confirmed). Full mechanics: spec § 5; staging-tree layout +
-source mapping: `publishing/quantapix/CLAUDE.md`.
+→ push (operator-confirmed). Mechanics: the skill + `publish.sh`; staging layout
++ source mapping: `publishing/quantapix/CLAUDE.md`.
 
 No cron lane — the drive cadence (weekly Fridays) is operator-run via
-`/open publishing` → `/publish`; a cron lane is documented-future (spec § 10 P4).
+`/open publishing` → `/publish`; a cron lane stays documented-future.
 
 ## 5. Redaction is a hard gate, not advisory
 
@@ -79,23 +78,65 @@ family — enumerated in a private ruling, never on a public surface — was NOT
 caught by the primary gate; a 2026-07-05 leak into a public weekly/ledger
 surface was the proof. `publish.sh` gate **(1b)** now backstops that class
 with a targeted content grep, pinned by a companion regression test.
-Gate (1b) is token-scoped, not semantic — **still scrub the SOURCE artifact
-before `/publish`**; a new wording evades it.
 
-**Gate roster summary.** Gates **(1b)**/**(1c)**/**(1d)** in `publish.sh` are
-fail-closed CONTENT greps (collateral-docket family / cmux + herdr local state /
+**Gate roster summary.** Gates **(1b)**/**(1c)**/**(1d)**/**(1e)** in `publish.sh`
+are fail-closed CONTENT greps (collateral-docket family / cmux + herdr local state /
 any contact email — sole public contact `https://github.com/quantapix`,
-`resume/` exempt); rules **(D)**/**(D2)**/**(E)**/**(E2)** in `sync_mirror.py`
-`path_blocklist_hit` are their PATH twins (a filename renders publicly without
-appearing in any file's bytes); each gate ships a pinned test (`t_17`–`t_19`).
+`resume/` exempt / **rooted internal paths**); rules **(D)**/**(D2)**/**(E)**/**(E2)**
+in `sync_mirror.py` `path_blocklist_hit` are their PATH twins (a filename renders
+publicly without appearing in any file's bytes); each gate ships a pinned test
+(`t_17`–`t_21`).
+
+**Gate (1e) — the SCOPE is the guard (2026-08-14).** A string shaped
+`<subproject>/…` names the private tree's internal layout; it is invisible to the
+primary sweep, whose HARD set matches docket/party/address/contact TOKENS and
+whose Stage-2 path scrubbing strips only ABSOLUTE paths and runs only over
+RENDERED mirrors — so a hand-authored README is read and has nothing to match.
+**A blanket rooted-path bar would abort every push.** Two narrowings, both
+load-bearing and both derived by measuring the tree: PATH scope excludes
+`qagents-public/claude-md/` (21 files carry rooted paths as the *payload* —
+publishing the CLAUDE.md graph IS publishing the structure) and
+`github-metadata.json` (the bridge already `--exclude`s it, so gate scope now
+equals push scope); REGEX scope is anchored on the subproject names plus the
+`legal/` + `financial/` hubs, never "any rooted path", because `data/`, `code/`,
+`lib/` and `hub/` paths are published on purpose in `skills/` and
+`GOOD-FIRST-ISSUES.md`. `t_21` asserts both narrowings as behaviour **and
+carries an anti-vacuity arm** — it reds if the excluded subtree stops matching,
+since a mirror relocation would otherwise silently widen the blind spot into a
+total-abort while the test still passed. The gate is **case-sensitive**: the
+public kernel form `Proving/<Framework>/` survives only for that reason, and
+APFS hides the difference locally (`feedback_case_insensitive_path_collision`).
+Consequence to keep in view: the `claude-md/` exclusion means that subtree is
+un-gated for this class **by construction** — `claude-md/proving.md` was
+publishing the textual axis's barred golden-roster file by name, together with
+the bar's rationale, and the only lever that reaches inside the subtree is a
+`REWRITES` rule or a source-side edit. CURED 2026-08-21 by six `REWRITES` rules
+plus a Stage-1b `OUTPUT_BARS` assertion inside `sync_mirror.py` `redact()` that
+hard-exits when a rendered mirror still carries the token — because the rules
+alone are vacuous against a NEW unruled sentence, which is exactly how three
+fresh pointers appeared in one week. **Name the bar here, never the file:** this
+file is itself published as `claude-md/publishing.md`, so a mention here ships
+too, and `OUTPUT_BARS` now covers this source for that reason.
+
+**A blocklist gate is necessary and never sufficient.** Every gate here is
+token-scoped, not semantic, and that cuts two ways. Against *barred* content it
+means a new wording evades the bar — so **still scrub the SOURCE artifact before
+`/publish`** rather than trusting the gate. Against *false* content it means no
+gate applies at all: the 2026-08-14 run found four falsifiable claims live on
+public surfaces, all **true when written**, all falsified later by private-tree
+work, all clean under every gate on every prior run. That class needs the
+artifact tested against the *world*, which is what `ns:publishing/57`'s post-push
+cold read is for; until it exists, `/publish` has no mechanical defence against a
+page that is well-formed, un-barred, and no longer true.
 Commit **metadata** stays outside every content gate
 (`feedback_gate_covers_payload_not_envelope`) — closed for the one live producer
 2026-07-31: `github_meta.py` commits with an explicit noreply identity override,
 pinned by `t_20_sync_commit_identity.sh`.
-Per-incident forensics (incl. the practical HARD bar on the collateral
-federal-appeal docket number, item 31, and the memory-slice
-exclusion-not-redaction ruling): `publishing/REDACTION-GATES.md` — committed,
-**never published** (path rule (C2) fail-closes any staged tree carrying it).
+Per-incident gate forensics + the token/exclusion rulings live in a committed,
+**never-published** forensics file — path rule (C2) fail-closes any staged tree
+carrying it. Its NAME is deliberately not written here: C2 bars the file from a
+staged tree, not a mention of it inside another file's bytes, and this file is
+published (`feedback_gate_covers_payload_not_envelope`).
 
 **Four rules for any source→artifact seam** — mechanism-over-instruction ·
 assert on the OUTPUT never the source · never spell a delimiter inside the
@@ -107,12 +148,11 @@ Derivation + the reusable fail-closed implementation:
 `feedback_gate_covers_payload_not_envelope`, `feedback_gate_before_any_public_push`).
 
 **A text-layer check cannot see the page.** The redaction lane's content scans
-(`sync_mirror.py` HARD_PATTERNS, the staged-tree gates) read text — silent about
-what a rasterized page *shows*, and blind to glyphs that sit in the text layer
-without rendering inside the page box (a 9-for-9 pymupdf pass once cleared a
-filing whose caption was clipping at the page edge). The converse is already on
-file (`feedback_graphical_redaction_failure_modes` — visually hidden but
-extractable); **both directions are real and neither check sees the other's
+(`sync_mirror.py` HARD_PATTERNS, the staged-tree gates) read text — blind both to
+what a rasterized page *shows* and to glyphs in the text layer that never render
+inside the page box (a 9-for-9 pymupdf pass once cleared a filing whose caption was
+clipping at the page edge). The converse — visually hidden but extractable — is
+`feedback_graphical_redaction_failure_modes`; **neither check sees the other's
 case.** Raster and look, or state explicitly that the gate covers text only.
 
 **The candidate tree is markdown, so the gate scans markdown.**
@@ -167,7 +207,12 @@ the cross-repo half of the rider byte-equality check. Gate registry:
 - **The external push** (`git push-quantapix`) is not a qagents-repo write — no
   qagents lock involved; its scratch clones live outside the tree.
 - **`pending/publish-digests/`** is a gitignored, fork-internal buffer (mirrors
-  `pending/dco-digests/`). It is **never** promoted by managing's verifier
+  `pending/dco-digests/`) — **at the worktree ROOT only**. Root `.gitignore`
+  anchors `/pending/` plus `**/pending/tmp/`, so a collector resolving its output
+  against the SUBPROJECT dir lands in a **tracked** path; closed at the mechanism
+  (`publishing/.gitignore` now carries `pending/`), not by instructing collectors
+  harder — and `.gitignore` never untracks what is already tracked
+  (`ns:publishing/62`). It is **never** promoted by managing's verifier
   (registered in the verifier internal-set + `verify-pending.sh`'s
   `require_not_internal_pattern` deny-list). Discarded at close by default —
   but it is **not** in the close rescue-scan skip set, so every `/publish`
@@ -180,10 +225,9 @@ the cross-repo half of the rider byte-equality check. Gate registry:
 ## 7. Status emit (`data/status/publishing.json`)
 
 `scripts/status_emit.mjs` participates in the status contract (root CLAUDE.md
-§ "Status hub"). Pins a `KIT_VERSION` constant; `scripts/status_emit.mjs` is
-its single source of truth — read the constant there rather than any
-restatement, and sweep it in lockstep on kit bumps (the closed `SubprojectId`
-set widens with every new subproject). Four-state pill machine: `OK`
+§ "Status hub"; KIT_VERSION lockstep + the widening closed `SubprojectId` set:
+memory `project_diagram_kit`). It pins `KIT_VERSION` — read the constant in the
+emitter, never a restatement. Four-state pill machine: `OK`
 (last `/publish` clean) / `BUILDING` (run in flight) / `DEGRADED` (last run
 aborted on the redaction/drift gate — privacy floor held, release stale) /
 `NOT_YET_LIVE` (pre-first-publish; first live push 2026-06-12). The pill
@@ -217,26 +261,22 @@ publishing/
 structured multi-agent pass that makes the public surfaces (quantapix.com,
 femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
 adversarial read. **Instance one** of the generic debate framework
-(`data/charters/qagents/debate/CHARTER.md`); contract family
-`data/specs/messaging-hardening-debate-2026-06-06/` (adopted 2026-06-06; the
-§ 11 gate standard now lives at
-`data/charters/pleading/messaging-gate/litigation-safety-standard.md`).
+(`data/charters/qagents/debate/CHARTER.md` — owns staffing, record naming, lane);
+family `data/specs/messaging-hardening-debate-2026-06-06/`; gate standard
+`data/charters/pleading/messaging-gate/litigation-safety-standard.md`.
 
-- **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model subagent
-  per vector); vector-owner subprojects defend; `managing/` judges; **`pleading/`
-  holds a binding litigation-safety veto on every ruling** (spec § 4, § 7 Q1).
+- **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model
+  subagent per vector); vector-owner subprojects defend; `managing/` judges;
+  **`pleading/` holds a binding litigation-safety veto on every ruling**.
 - **Lane:** Max-20x interactive, operator-run inside `/open publishing` (mirrors
-  `/dco-manual`); the convener starts each round at v0.1. If the debate persists
-  past round 1, `managing/`'s daily cron stewards the recurring rounds (debate
-  charter § 2.7 — deferred with the absorbed spec, details TBD).
-- **Round records** land in the shared hub
-  `data/debates/messaging-hardening-<date>.md` (tracked; debate charter § 2.2,
-  spec-like `<slug>-<date>` naming). These are **pre-gate triage** — per spec § 6
-  a ruling reaches the promoted digest `data/messaging-rulings/<date>.md` **only
-  after `pleading/` returns CLEARED**.
-- **Advisory model (§ 7 Q2):** the debate emits rulings; each owning subproject
-  applies the public-surface edit in its **own** `/open <sub>` session.
-  `publishing/` never mutates a sibling tree (§ 3 boundary posture).
+  `/dco-manual`); the convener starts each round at v0.1. Recurring-round
+  stewardship by `managing/`'s daily cron is deferred (debate charter § 2.7).
+- **Round records** land at `data/debates/messaging-hardening-<date>.md` (tracked)
+  and are **pre-gate triage** — a ruling reaches the promoted digest
+  `data/messaging-rulings/<date>.md` **only after `pleading/` returns CLEARED**.
+- **Advisory model:** the debate emits rulings; each owning subproject applies the
+  public-surface edit in its **own** `/open <sub>` session. `publishing/` never
+  mutates a sibling tree (§ 3 boundary posture).
 
 ## 10. Drives the designing /videos page (data-hub, not shared code)
 
@@ -325,21 +365,27 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   — the /videos live-flip stays the `videos_emit.mjs` edit (§ 10).
 - **CDN release gate (`CLEARANCE_COMMIT`).** `serving/scripts/upload-video.sh` refuses
   any `T<n>/` catalog key unless the caller sets `CLEARANCE_COMMIT` — the
-  FINANCIALLY-CLEARED record's `granting_commit`, which must resolve to a commit in the
-  repo AND be an ancestor of HEAD (so the clearance is provably in the pushed tree).
-  **That is the whole mechanism: an ANCESTRY check, not a record lookup.** The script
-  never resolves the commit against `data/signoffs/FINANCIALLY/` — any ancestor commit
-  passes, so a caller may satisfy it without a clearance record existing. Reading
-  `CLEARANCE_COMMIT` as record enforcement is the natural misreading of the *name*, and
-  two CLAUDE.mds made it independently (evaluating's half corrected 2026-08-07). The
-  "every `T<n>/` episode clears via a `verified-N/A` FINANCIALLY grant" rule is a
-  **practice with no mechanical backing today**, and it is not being followed: measured
-  2026-08-07 against `data/publishing/push-ledger.jsonl`, **4 of the 5 pushed T1/T2
-  episodes carry no FINANCIALLY record and shipped anyway** (`T1/01-hallucination-tax`,
-  `T1/05-negative-verification`, `T1/07-civil-rico-walkthrough`,
-  `T2/01-docket-record-disagree`; only `T1/02-semantic-search-limits` has one). Hardening
-  — resolve `CLEARANCE_COMMIT` against a real record's `granting_commit`, shipped with a
-  known-bad witness — is filed at `ns:serving/82`.
+  FINANCIALLY-CLEARED record's `granting_commit`. **The gate ENFORCES THE RECORD**
+  (`ns:serving/82` landed; this bullet's former "an ANCESTRY check, not a record
+  lookup" wording is false, and understating a gate is the dangerous direction — it
+  invites treating clearance as ceremonial). Verified 2026-08-14: the commit must
+  resolve, must equal the `granting_commit` of a record whose disposition is
+  `CLEARED*` under the gate's registry-resolved `record-location` (missing registry ⇒
+  refuse outright, never fall back to bare ancestry; disposition read in the same pass,
+  so a BLOCKED record's commit can never release), and only then be an ancestor of
+  HEAD. So the `verified-N/A` FINANCIALLY grant for a non-financial episode is
+  **mechanically required**, not merely good practice.
+  **What the ancestry-only era cost, which is still true and still load-bearing:**
+  measured 2026-08-07 against `data/publishing/push-ledger.jsonl`, **4 of the 5 pushed
+  T1/T2 episodes carried no FINANCIALLY record and shipped anyway**
+  (`T1/01-hallucination-tax`, `T1/05-negative-verification`,
+  `T1/07-civil-rico-walkthrough`, `T2/01-docket-record-disagree`; only
+  `T1/02-semantic-search-limits` has one). Those four are **permanently uncovered** — the
+  hardening is prospective and back-filling a grant would violate
+  gate-before-first-push. Read that as history, never as what the gate allows today.
+  ⚠ This paragraph has now been wrong in **both** directions across three corrections, so
+  the standing advice is the one evaluating adopted: **read the script, not this
+  paragraph.**
   Authoritative contract family: `data/specs/serving-2026-05-26/`
   (serving owns the script + the gate); this bullet is the
   publishing-side pointer the script's error message cites.

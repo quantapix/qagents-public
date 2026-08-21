@@ -167,17 +167,24 @@ parallelises freely. A single laptop, no external coordinator.
 
 ### 5. Context-window optimisation
 
-A `CLAUDE.md` over ~600 lines / 30KB silently truncates at session
-load. The memory index over 180 lines does the same. These caps are
-not soft; they are hard ceilings on what the assistant sees at turn
-zero. Every session that runs over an unoptimised tree is running
-with a partial map of its own working context.
+Two ceilings sit above every always-loaded surface, and the discipline
+is to stay well under both rather than to ride them. The harness
+truncates a memory index that grows past roughly two hundred lines,
+silently, at session load; the per-project rule files carry a warn cap
+the close gate enforces. The targets the practice actually holds itself
+to sit deliberately below each — a byte budget for the index with a line
+count as its proxy, and a soft line/byte pair for the rule files with a
+floor beneath it so trimming cannot hollow a file out. Every session run
+over an unoptimised tree is running with a partial map of its own
+working context, which is why the margin exists.
 
 qagents treats context optimisation as a first-class engineering
 concern, on the same level as test coverage:
 
 - **The memory index is an index, not a memory.** It holds one line
-  per topic, ≤150 chars, under the 180-line cap. Detail lives in
+  per topic, ≤150 chars, against a byte budget with a line count as its
+  proxy — set below the harness's truncation point rather than at it, so
+  the index has somewhere to grow before anything is lost. Detail lives in
   topic files (`feedback_*.md`, `project_*.md`, `reference_*.md`)
   loaded on demand. The index is curated, not appended-to.
 - **`CLAUDE.md` files cite, they don't inline.** A new convention
@@ -214,10 +221,12 @@ get the full treatment in the "Cross-subproject conventions" section
 below. The asymmetry is: code is per-subproject; data hubs cross.
 
 A third primitive crosses the same way a data hub does: the **kit-mount**
-pattern. One domain-neutral graphing kit ships as vanilla JS into three
-product surfaces — the two verifier UIs build-inline it; the local-only
-monitoring app mounts it at request time over private live data. The kit is
-the shared seam; none of the three imports another's code.
+pattern. Domain-neutral rendering kits ship as vanilla JS into the product
+surfaces that need them — the two verifier UIs build-inline theirs; the
+local-only analytics app mounts at request time over private live data;
+other surfaces mount a different kit from a different entry point, because a
+mount need not be the composed bundle. The kit is the shared seam; no
+surface imports another's code.
 
 ### 7. AI-checking-AI patterns
 
@@ -385,7 +394,7 @@ drift, even redacted.
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `analyzing/`   | **Market-inspection tooling (TypeScript), local-only viewer** — DuckDB + Parquet, charting, ingest from public OHLCV sources.                       |
 | `trading/`     | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines. |
-| `monitoring/`  | Local-only Astro Node-SSR web app for AI-assistant token analytics (was a VSCode extension, retired). 100% TypeScript; SQLite store. Consumes the operational Lean4 axis. |
+| `monitoring/`  | Local-only Astro Node-SSR web app for AI-assistant token analytics (was a VSCode extension, retired). TypeScript throughout; SQLite store. Consumes the operational Lean4 axis. |
 | `appealing/`   | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub.                                                        |
 | `pleading/`    | Sibling of `appealing/` — trial-court / status-affidavit / addendum drafting.                                                                          |
 | `proving/`     | Lean4 axiomatic theorem-proving with LLM-backed predicate functions for the legal domain. Backs Qnarre.                                                |
@@ -461,7 +470,7 @@ analyzer-side tooling too.
 When two subprojects need the same data, the data lives at a
 canonical path under the shared-data hub (Parquet or JSON), with each
 subproject reading via a thin per-side loader. Subprojects do not
-import each other's code. Four examples currently:
+import each other's code. Examples:
 
 - A status-hub JSON slot per subproject, aggregated by `designing/`
   at build time.
@@ -562,8 +571,8 @@ monthly ledgers, and weekly digests are in the sibling repo
 `qdonating-public`.
 
 **Open to outside contributors.** The U.S. Code axiomatization program
-— Lean4 theorems backed by LLM-evaluated predicates over the full Code
-(~65,700 sections, all 54 titles) — is open to collaborators. It works
+— Lean4 theorems backed by LLM-evaluated predicates over the full Code,
+all 53 titles (appendix volumes excluded) — is open to collaborators. It works
 over public federal statutes only, so it carries no privacy-floor
 surface; it is the natural place to build the project in the open. The
 project today is a single developer working with AI assistance, now
@@ -573,7 +582,7 @@ and open an issue on that repo to claim a unit. It links a curated starter
 set of nine numbered tasks, each carrying acceptance criteria and the commands
 that re-derive its counts. Four of the nine (1, 2, 6, 8) were swept internally
 after first publication and are marked closed in place, keeping their numbers;
-the five still open were re-derived against the working tree on 2026-08-07.
+the five still open were re-derived against the working tree on 2026-08-14.
 The acceptance commands name a kernel and helper scripts that have not been
 dropped into the public clone yet — the roster file says so at the top rather
 than leaving you to discover it. Discussions are not enabled here, and the nine

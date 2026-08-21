@@ -8,7 +8,8 @@ private source.
 See the [umbrella README](../README.md) for the broader thesis; the
 session-lifecycle discipline is theme 4 (parallel sessions via worktrees)
 and the optimization discipline is theme 5 (context-window optimization).
-Sibling subtree: [`claude-md/`](../claude-md/).
+Sibling subtrees: [`claude-md/`](../claude-md/), [`memory/`](../memory/),
+[`memsearch/`](../memsearch/), [`specs/`](../specs/).
 
 ## What a skill is
 

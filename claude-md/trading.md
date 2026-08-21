@@ -12,27 +12,22 @@ Cross-project conventions live in the repo root `qagents/CLAUDE.md`. The canonic
 4. **Risk gate before execution.** Every equity ticket is cleared by `risk-analyzer`, every options ticket by `options-risk-analyzer` *and* `risk-analyzer`, before `trade-executor` places it.
 5. **Separate capital per PM.** The three PMs never share positions, cash, or Alpaca accounts. Each has its own paper key-pair, `portfolio.json`, strategy doc, and journal tree.
 6. **Journal before quitting.** A routine that places or modifies a position must append the reasoning to `journal/YYYY-MM-DD.md` before exiting. If journaling fails, treat the run as failed.
-7. **Stop-losses on every equity buy**, per each PM's `risk_policy.md`. Use bracket orders. **Coverage is a claim about the BROKER, not about the ticket** — `midday-review` verifies it every day via `python -m shared.lib.risk coverage --account <pm> --orders-file <orders> --orders-status all`, which compares held quantity against live sell-stop quantity. **Fetch with `--status all`, and `--orders-status` is required** (2026-08-07): a bracket's stop leg hangs off its parent, the parent is terminal once the entry fills, so `--status open` omits both and every bracket-protected position reads naked. Under any other fetch a naked reading is `verdict: unknown`, never a breach — and on a real breach the remedy is no longer "submit the stop NOW": a duplicate stop against a resting bracket cancels the live legs via OCO, which on 2026-08-05 destroyed two of aggressive's take-profit legs. **If the broker refuses, stop and re-verify — do not improvise around the refusal**; that is the route the 08-05 damage actually took. `portfolio.json`'s `bracket.stop_loss` is the stop the PM *intended*, never evidence of coverage (moderate's QQQ carried one through a 6h33m naked window on 2026-07-31). Incident detail: memory `project_trading_system` § Gate defects.
+7. **Stop-losses on every equity buy**, per each PM's `risk_policy.md`. Use bracket orders. **Coverage is a claim about the BROKER, not about the ticket** — `midday-review` verifies it every day via `python -m shared.lib.risk coverage --account <pm> --orders-file <orders> --orders-status all`, which compares held quantity against live sell-stop quantity. **Fetch with `--status all`, and `--orders-status` is required** (2026-08-07): a bracket's stop leg hangs off its parent, the parent is terminal once the entry fills, so `--status open` omits both and every bracket-protected position reads naked. Under any other fetch a naked reading is `verdict: unknown`, never a breach. On a real breach the remedy is NOT "submit the stop NOW" — a duplicate stop against a resting bracket cancels the live legs via OCO — and **if the broker refuses, stop and re-verify rather than improvise around the refusal**. `portfolio.json`'s `bracket.stop_loss` is the stop the PM *intended*, never evidence of coverage. Incident detail (the 08-05 OCO destruction, moderate's 6h33m naked QQQ): memory `project_trading_system` § Gate defects.
 8. **`risk_policy.md` is edited only during `monthly-retro`**, with the change justified in `retros/YYYY-MM.md`. **The retro fires INSIDE `close-journal` on the month's last session and nowhere else** — decide month-end with `python -m shared.lib.performance next-session` (`is_last_session_of_month`), never by a weekday proxy, and never defer to "tonight's retro": there is no such fire, and July 2026's moderate retro was lost exactly that way.
+9. **Concentration caps are enforced at TICKET time and re-checked NOWHERE at the close** (`ns:trading/31`, 2026-08-19). `max_single_position_pct` / `max_sector_pct` gate a *proposed* ticket via `risk-analyzer`; a held position that drifts through its cap on a price move passes every gate it is shown. `close-journal` step 7 runs `sync-managed`, which WRITES the managed form and never validates it — moderate closed 2026-08-19 at XLV **8.042%** against an 8.00% cap having correctly cleared 7.79% that same morning (+3.44% price move, qty unchanged). **Do not read "the book cleared risk-analyzer" as "the book is in policy."** Second-order: the pre-commit hook validates the whole `financial/portfolios/*.md` set, so a breaching book **freezes the hub mirror** — `analyzing/`/`accounting/`/`simulating/` keep reading the last in-policy snapshot and cannot see the breach. Rule numbers are append-only: they are cited by number across the journal/research record, so never renumber.
 
 ## Model assignment
 
-- PM-level reasoning (strategy, trade selection, retros): the **latest top-tier model**.
-- Sub-agents (tactical data pulls, order placement, risk math, journaling, news triage): cheaper models (sonnet/haiku split per root model policy) as pinned in each agent definition in `.claude/agents/`.
-- Never promote a sub-agent to the top tier without updating its agent definition and documenting the reason.
+Tiers are root `qagents/CLAUDE.md` § Model policy's: PM-level reasoning (strategy, trade selection, retros) on the **latest top-tier model**; sub-agents (data pulls, order placement, risk math, journaling, news triage) on the sonnet/haiku split, pinned per agent definition in `.claude/agents/`. Never promote a sub-agent without updating its definition and stating the reason.
 
-The sub-agent roster lives once at the project level in `.claude/agents/` and is shared by every PM (each PM's charter notes only its own usage emphasis):
-
-| Need | Sub-agent |
-|---|---|
-| Quotes, bars, options chains for specific tickers | `market-data-fetcher` |
-| Triage Alpaca news for a ticker list | `news-scanner` |
-| Deep, cited macro/sector/company research (overnight + monthly only) | `deep-researcher` |
-| Gate an equity or options ticket against risk policy | `risk-analyzer` |
-| Compute max-loss / Greeks for a proposed options structure | `options-risk-analyzer` |
-| Place a validated ticket on Alpaca paper | `trade-executor` |
-| Append a journal entry | `journal-writer` |
-| Daily / monthly performance report vs SPY | `performance-reporter` |
+Sub-agent roster — defined once at the project level in `.claude/agents/`, shared by
+every PM (each PM's charter notes only its own usage emphasis): `market-data-fetcher`
+(quotes, bars, options chains), `news-scanner` (Alpaca news triage for a ticker
+list), `deep-researcher` (deep cited macro/sector/company research — overnight +
+monthly only), `risk-analyzer` (gate an equity or options ticket against risk
+policy), `options-risk-analyzer` (max-loss / Greeks for a proposed structure),
+`trade-executor` (place a validated ticket on Alpaca paper), `journal-writer`,
+`performance-reporter` (daily / monthly report vs SPY).
 
 ## Per-PM layout
 
@@ -104,7 +99,7 @@ It must survive a **partial** close, or a half-closed collar reads as an
 uncovered short.
 
 **`python -m shared.lib.fills`** — per-PM append-only options premium ledger at
-`agents/<pm>/fills.jsonl` (`record`/`list`/`spend`/`structure`/`mint-id`).
+`agents/<pm>/fills.jsonl` (`record`/`list`/`spend`/`structure`/`mint-id`/`project`).
 Options only; R4 reads the share count from `positions[]` alongside the legs.
 Two properties that are not negotiable: **never pruned at position close** (a
 pruned ledger serves everything else and fails once, ~a year in, when
@@ -112,6 +107,12 @@ pruned ledger serves everything else and fails once, ~a year in, when
 malformed row makes `read_fills` **raise, not skip** (a skipped row lowers a
 spend figure, and a spend quietly too low clears a budget that was breached).
 Corrections are compensating rows, never edits.
+
+**Hub projection (`ns:trading/21`, built 2026-08-18):** `fills project
+--account <pm>` renders `financial/portfolios/fills/<fund>.jsonl` — header row
+(same-pass `shares_by_underlying`, R4) + every ledger row verbatim (R3 one
+layer up). Fired from `close-journal` step 7.5 after reconciliation.
+Governance + lock posture: `financial/portfolios/CLAUDE.md` § fills/.
 
 ## Journal entry schema
 
@@ -155,6 +156,11 @@ order_id          # Alpaca order id of the opening fill
 bracket           # { take_profit, stop_loss, ... }
 bracket_status    # optional free-form annotation
 pairing_id        # options only; minted at ticket time (§ Leg-pairing id)
+structure         # options only; the VALIDATED ticket's structure, stamped at
+                  #   fill time — never re-derived from the legs. The managed
+                  #   form's defined-risk mirror emits asset_class/structure/
+                  #   legs only when pairing_id AND structure are present and
+                  #   abstains on legacy null legs (ns:trading/29).
 entry_premium     # options only; SIGNED net premium of this leg at entry
                   #   (debit negative, credit positive) — a collar is a debit
                   #   OR a credit depending on strikes, and the max-loss
@@ -162,7 +168,7 @@ entry_premium     # options only; SIGNED net premium of this leg at entry
                   #   cannot serve. Fees included.
 ```
 
-`refresh_portfolio_from_alpaca` in `shared.lib.performance` overwrites the *live* fields (`qty`, `avg_entry_price`, `market_value`, `unrealized_pl`, `side`, `asset_class`, `current_price`, `unrealized_plpc`) and preserves the rest — `pairing_id` and `entry_premium` are PM-authored, never live, and survive every refresh. Field names are exact — never use `entry_date`, never carry the alpaca-py enum repr (`PositionSide.LONG` / `AssetClass.US_EQUITY`).
+`refresh_portfolio_from_alpaca` in `shared.lib.performance` overwrites the *live* fields (`qty`, `avg_entry_price`, `market_value`, `unrealized_pl`, `side`, `asset_class`, `current_price`, `unrealized_plpc`) and preserves the rest — `pairing_id`, `structure` and `entry_premium` are PM-authored, never live, and survive every refresh. Field names are exact — never use `entry_date`, never carry the alpaca-py enum repr (`PositionSide.LONG` / `AssetClass.US_EQUITY`).
 
 ## Scheduled routines
 
@@ -229,12 +235,11 @@ landed in `qagents-wt/trading-13/`, absent from the daily-promotion commit).
 ### Relocation lane — DONE, onto a laptop SEAT (not a LAN node)
 
 **Relocated 2026-07.** The cron lane runs on whichever macOS laptop
-`data/schedules/SEAT` names — never a headless herdr/EC2 node (qblk/qred cannot
-hold a seat). **Never name the host here: the seat MOVES** (qyel → qpur
-2026-08-07). Program + mechanism: `data/specs/node-return-lane-2026-07-14/`
-(seat gate, changeover discipline, S5 write-back); debate record
-`data/debates/trading-node-relocation-2026-07-14.md`. Driver, the dissolved
-Linux-target gates, and the herdr design record: memory
+`data/schedules/SEAT` names — never a headless node (qblk/qred cannot hold a
+seat). **Never name the host here: the seat MOVES.** Program + mechanism:
+`data/specs/node-return-lane-2026-07-14/` (seat gate, changeover discipline, S5
+write-back); debate `data/debates/trading-node-relocation-2026-07-14.md`;
+driver, the dissolved Linux-target gates and the herdr design record: memory
 `project_trading_system` § Relocation.
 
 **What still binds a session here:**
@@ -258,7 +263,7 @@ Linux-target gates, and the herdr design record: memory
 
 ## Monthly retro + leaderboard
 
-- **Monthly retro fires inside `close-journal` on the last trading day of the calendar month, never elsewhere.** First trading day of the next month must not re-trigger it. Premarket-briefs occasionally carry stale "monthly-retro <date>" forward-references the morning after a retro fired — ignore unless the hook itself misbehaved.
+- **Retro fire point is hard rule 8**; the first trading day of the next month must not re-trigger it. Premarket-briefs occasionally carry stale "monthly-retro <date>" forward-references the morning after a retro fired — ignore unless the hook itself misbehaved.
 - **Leaderboard artifact**: `financial/reports/leaderboard.md` is the source of truth. Column header is **"Fund return" = cumulative-since-seed**, not MTD. Routine chat summaries sometimes use "MTD" loosely; on the first/last trading day of a month the two values diverge from cum return — trust the artifact column.
 
 ## Session guard + write-fence (mechanical, not advisory)
@@ -298,10 +303,9 @@ degrades to a thin journal instead of none at all. **Wired into all five routine
   collapse it into `is_trading_session`.
 
 **A journal body must not repeat its own section heading** — `append_section` writes
-the `## <Section>`, strips a leading echo from the body, and folds any subtitle into
-the heading. The "already present" test is line-anchored, not a substring: `## Close`
-also matched `## Closed positions`, which would file a Close section as an `### Update`
-at end of file, under whatever section came last.
+the `## <Section>`, strips a leading echo, folds any subtitle into the heading, and
+line-anchors its "already present" test rather than substring-matching it (memory
+`project_trading_system` carries the `## Close` / `## Closed positions` instance).
 
 ## Cost accounting
 
@@ -315,27 +319,43 @@ python -m shared.lib.costs day  --account <pm>     # just report it
 ```
 
 The source is the `qagents-cost cost_usd=…` line that `run_routine.sh` appends to
-every per-run log. **A fire lands in exactly one of three buckets (`read_run`,
-2026-08-09) and the split is load-bearing:**
+every per-run log. **A fire *that ran* lands in exactly one of three buckets
+(`read_run`, 2026-08-09) and the split is load-bearing** — the qualifier is not
+decoration; see the fourth-bucket gap below:
 
 - `unpriced_runs` — no cost line **and** no refusal token: a crash, a cap kill, a
   pre-telemetry log. The only bucket that is a finding. Never counted as $0.
-- `declined_runs` — the wrapper refused **before dispatch** and spent nothing:
-  `exit=0 skipped=not-seat-holder`, `exit=75` changeover, `exit=76` session fence,
-  `exit=72/73` capability. The arm is conjunctive (structured exit token AND no cost
-  line), so it can never excuse a fire that started work.
+- `declined_runs` — refused **before dispatch**, spent nothing: `exit=0
+  skipped=not-seat-holder`, 75 changeover, 76 session fence, 72/73 capability.
+  Conjunctive (exit token AND no cost line), so it can never excuse a fire that
+  started work.
 - `errored_runs` — **billed and still produced nothing** (`is_error=True`). Invisible
   to both of the above: it prices normally and leaves `complete` true.
 
-Why the split exists: **a by-design refusal and a crash must not share a channel.**
-On 2026-08-04 fence refusals published the crash wording and `ns:trading/19` recorded
-the cause as a crash off it, so any proposal to escalate on `unpriced_runs` must
-post-date this split. Detail: memory `project_trading_system`.
+**A by-design refusal and a crash must not share a channel**, so any proposal to
+escalate on `unpriced_runs` must post-date this split. The 2026-08-04 instance that
+forced it (and that `ns:trading/19` then mis-recorded as a crash): memory
+`project_trading_system`.
 
-**The escalation and the failure share a host.** `costs fill`'s exit-10 refusal (below)
-runs inside `leaderboard`, itself subject to the seat gate and the session fence — on
-2026-08-07 `leaderboard` refused and the missing-summary detector never ran on the day
-it was most needed. Do not treat a silent `costs fill` as evidence a day was clean.
+**All three buckets are derived from logs that EXIST, so a fire that never STARTED
+lands in none of them** (`ns:trading/30`, 2026-08-19). `unpriced` needs a log with no
+cost line, `declined` a refusal token, `errored` `is_error=True`; a routine launchd
+never ran writes nothing, and `complete` — computed from `unpriced_runs` alone — reads
+`true`. Measured: `costs day --account aggressive --date 2026-08-12` returns two of
+five routines with all three buckets empty and `complete: true`. **Never read
+`complete: true` as "the day fired."** The missing arm must be **schedule-derived**
+(the `ROUTINES` array), never log-derived.
+
+**The escalation and the failure share a host — and so does every detector inside the
+same chain.** `costs fill`'s exit-10 refusal (below) runs inside `leaderboard`, itself
+subject to the seat gate and the session fence — on 2026-08-07 `leaderboard` refused
+and the missing-summary detector never ran on the day it was most needed. Do not treat
+a silent `costs fill` as evidence a day was clean. **Re-homing a detector to a SIBLING
+routine does not cure this**: `ns:trading/19` moved day-completeness off `leaderboard`
+onto `premarket-brief` step 0c to escape the fence, and on 2026-08-12/13 the whole day
+went dark and took `premarket-brief` with it — six missing `## Close`/summary pairs
+across all three PMs, unrecorded for a week. A detector must sit **outside the chain it
+grades** (`ns:managing/60` carries that half).
 
 **A missing summary on a SESSION day is a finding, not a no-op (exit 10, 2026-08-02).**
 `costs fill` used to return `written: false` with exit 0, which reads as success; it now
@@ -351,10 +371,8 @@ exists to prevent. Record the gap.
 
 Producer: `trading/scripts/status_emit.py` (system `python3`, no venv;
 `KIT_VERSION` pinned in-script — sweep with all pins on kit bumps,
-never restate the literal in prose): per-PM NAV +
-snapshot count + portfolio.json age + total NAV + leaderboard age,
-with a `pm-cohort` diagram (3 PMs → risk-analyzer / options-risk-analyzer
-→ trade-executor → Alpaca paper). `live.status` flips OK / DEGRADED /
-NOT_YET_LIVE on portfolio.json freshness (<72 h). Honors
-`QAGENTS_PENDING_ROOT` for the cron lane. Contract: root
-`qagents/CLAUDE.md` § "Status hub".
+never restate the literal in prose): per-PM NAV + snapshot count +
+portfolio.json age + total NAV + leaderboard age, plus a `pm-cohort`
+diagram. `live.status` flips OK / DEGRADED / NOT_YET_LIVE on
+portfolio.json freshness (<72 h). Honors `QAGENTS_PENDING_ROOT` for the
+cron lane. Contract: root `qagents/CLAUDE.md` § "Status hub".

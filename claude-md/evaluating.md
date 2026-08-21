@@ -231,15 +231,11 @@ Spec partitioning:
   the OPTIONS-RISK lock panel.
 - `theme.spec.ts` — M4 tri-state theme + the FINANCIALLY per-leg R-T2
   floors (§ 2), plus the **two-child flex-row gap sweep** (added
-  2026-08-01, ns:evaluating/14) — DISCOVERING, not a selector list, run at a
-  380px viewport. `space-between` is distribution, never spacing: pair it
-  with an explicit `gap`. Sweep mechanism, rationale (overlap is not
-  overflow), the both-apps cure roster, the witness discipline, and the
-  better narrow-leg idiom (reuse the `chromium-mobile` Playwright project
-  instead of the drifting 380px literal, as verifying did) are in
-  `[[project_qnarre_qresev_apps]]` § "Two-child flex-header zero-gap trap".
-  Verifying's extra offenders lived in its `web/public/graphs/pages.css`;
-  this mount's `pages.css` has zero `space-between` (checked 2026-08-05).
+  2026-08-01, ns:evaluating/14) — DISCOVERING, not a selector list.
+  `space-between` is distribution, never spacing: pair it with an explicit
+  `gap`. Sweep mechanism, narrow-viewport idiom, both-apps cure roster,
+  witness discipline: `[[project_qnarre_qresev_apps]]` § "Two-child
+  flex-header zero-gap trap".
 - `api.spec.ts` — live-only; `ALLOWED_IDS` mirrors `ALLOWED_EXAMPLE_IDS`
   in `server/main.py` AND `extending/servers/qresev-mcp/src/allowlist.ts` — a
   **triple** since extending landed 2026-07-04, all exhaustive by design; edit
@@ -287,35 +283,34 @@ the pushed binary itself); never join the two by field name (studying L-127;
 wording precedent: `studying/scripts/extract_signoff_facts.py` header).
 
 **Bind a GENERATED face NORMALIZED, never by raw sha256** (`do-signoff` SKILL
-§ 3.6, landed 2026-08-08 with both-direction witnesses): `write_record.sh
---json-face slot=data/status/accounting.json --strip-keys emittedAt,builtAt,…`
-makes the jq-canonical clock-stripped payload the condition while the raw byte
-hash stays as provenance — so the daily emit stops lapsing the grant on its
-granting day (the `ns:evaluating/29` failure) while a real tier/figure edit still
-does. **`--strip-keys` deletes RECURSIVELY BY KEY NAME, so the plain form cannot
-reach a clock value that shares its key with substantive values — and on the
-motivating slot it did not** (measured 2026-08-10: `emittedAt,builtAt,statusReason`
-still left `statCards[id=run-stats.latest].value` moving every emit, so the
-2026-08-08 cure would not have held the grant one day, while a bare `value` would
-have stripped every reviewed metric). Use the id-scoped entry form **`KEY@ID`** —
-`--strip-keys emittedAt,builtAt,statusReason,value@run-stats.latest` — which deletes
-`KEY` only from objects whose `.id == ID`. Three witnesses in `tests/run.sh` 8a′,
-and the load-bearing one is the **known-bad** arm asserting the unscoped form does
-NOT hold the pill: without it the fix is green on a fixture and still lapses in the
-field. A strip list is a standing blind spot — if a stripped field ever gains
-financial content, drop its entry in the same commit.
-**The PRODUCER half of the same problem has no cure:** a grant pinning a
-source FILE by raw sha256 breaks on comment edits — `84ffbf546` (do-retire S9)
-invalidated the accounting grant's producer face with two cite-repair comment
-lines and zero executable change, while `ns:designing/19` sat ready to deploy
-against it. A repo with a prose reaper will keep producing these.
+§ 3.6): `write_record.sh --json-face slot=… --strip-keys …` makes the jq-canonical
+clock-stripped payload the condition, raw hash as provenance — so a daily emit
+stops lapsing the grant on its granting day while a real tier/figure edit still
+does. **A strip list must reach EVERY clock, and twice it did not.** `--strip-keys`
+deletes recursively by key NAME, so it cannot reach a clock sharing its key with
+substantive values — use the id-scoped **`KEY@ID`** form (`value@run-stats.latest`;
+a bare `value` would strip every reviewed metric — `ns:evaluating/29`). And it must
+strip **BOTH halves of a derived pair**: `status_pill()` returns `(pill, reason)`,
+and stripping only the reason left the binding tracking the same clock through
+`live.status`, alternating red/green with the `[managing]` verify lane from the day
+after the re-bind (`ns:evaluating/36`). Each cure ships a **known-bad** arm
+(`tests/run.sh` 8a′/8a‴) asserting the insufficient form does NOT hold — without
+it a fix is green on a fixture and still lapses in the field. A strip list is a
+standing blind spot: if a stripped field gains financial content, drop its entry in
+the same commit. Converse ruling: run counts + the rolling runs window stay
+**BOUND** — activity is not clock, so the accounting slot re-arms on every run, and
+the consumer **cites the record** rather than re-verifying the live slot at deploy.
+**Two standing grantor rulings, both `do-signoff/SKILL.md` § 8:** a face edit
+DISCHARGING a hard pre-push condition of the same record does not re-arm it (else
+every prescriptive condition is self-defeating — `ns:evaluating/35`); and producer
+faces stay pinned RAW with false reds accepted, since a producer moves only when
+edited while a generated face moves daily (`ns:evaluating/29`). Cite SKILL.md § 8
+for the § 3.6 rules — the spec body is reaped, only `tests/` survives.
 
 **The `serving/scripts/upload-video.sh` release gate now ENFORCES THE RECORD —
-`ns:serving/82` landed, re-read 2026-08-10.** History matters here because this § has
-been wrong in both directions: it once claimed the gate "binds EVERY episode", was
-corrected 2026-08-07 to "ancestry only, any ancestor satisfies it", and is now
-corrected again because the hardening shipped. Read the script, not this paragraph,
-before relying on either.
+`ns:serving/82` landed, re-read 2026-08-10.** This § has been wrong about this gate
+twice before, in both directions. Read the script, not this paragraph, before
+relying on it.
 
 What it does today: on **any** `T<n>/` key it requires `CLEARANCE_COMMIT` to (a)
 resolve to a real commit, (b) **equal the `granting_commit` of an actual record with a
@@ -324,12 +319,9 @@ resolve to a real commit, (b) **equal the `granting_commit` of an actual record 
 registry is missing, and reading the disposition in the same pass so a BLOCK's commit
 can never satisfy a release — and only then (c) that it is an ancestor of HEAD.
 
-**This floors T1/T2, which is why `ns:evaluating/28`'s hole largely closed by a route
-none of its three candidate cures named.** The gate keys on the `T<n>/` key prefix and
-never consults `r2-scope-map.json`, so `requiredGates: []` on T1/T2 no longer means "no
-gate at the push": the un-forgettable half the map was reaching for turned out to be
-the catalog key itself. `requiredGates` still governs the *coverage proof*, where `[]`
-remains the correct § 3 scope statement.
+**This floors T1/T2.** The gate keys on the `T<n>/` key prefix and never consults
+`r2-scope-map.json`, so `requiredGates: []` there no longer means "no gate at the
+push" — see the standing ruling below, which owns the rest of this reasoning.
 The residual is the standing completeness caveat, not a T1/T2 one: an out-of-band
 `aws s3 cp` bypasses the chokepoint entirely, emits no push-ledger fact, and passes
 nothing (`managing`'s inventory diff carries that half).

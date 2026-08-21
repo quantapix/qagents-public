@@ -35,9 +35,10 @@ persisted under `data/summaries/open/`.
 
 The Outstanding rows are the candidate session agenda: section A (ready
 now) is highest priority; section B (gated on external) blocks unless the
-gate cleared; section C (cross-cutting with insight) is provisional. To
-preview just the briefing read without provisioning a worktree:
-`scripts/open.sh --next-steps <project>`.
+gate cleared. There is no third section — cross-cutting items live in the
+owning project's own slot, and recurring ones surface as ledger rows
+against their owner. To preview just the briefing read without
+provisioning a worktree: `scripts/open.sh --next-steps <project>`.
 
 ## Valid `<project>`
 

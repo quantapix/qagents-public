@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-07-31. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-08-21. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -11,10 +11,10 @@ to the [README](./README.md), not a substitute.
 
 **Product-focused cut, steadily widening.** This repo publishes the redacted
 AI-assistant working context behind the practice — the `CLAUDE.md` rule-set, the
-session-lifecycle skills, and (filling in) the memory + recall trees. The current
-round ships the redacted `CLAUDE.md` graph behind the two shipping products plus
-the core infrastructure surfaces; the memory and recall trees fill in on weekly
-refreshes.
+session-lifecycle skills, and the adopted contracts behind them. The current
+round ships the redacted `CLAUDE.md` graph plus the lifecycle skills; the memory
+and recall trees are allow-list pending and are on no refresh clock at all —
+that is a ruling, not a backlog, and it is stated in full below.
 
 ## What's live this round
 
@@ -36,43 +36,42 @@ refreshes.
   video-production chain, and the adversarial sibling all now publish their
   rule-sets. Three subprojects remain deferred and one is an open editorial
   call; the subtree README names each and why.
-- The `claude-md/` graph refreshed against a heavy week: twenty of the
-  twenty-one published rule-sets changed, several substantially (the
-  constellation watcher, the market-inspection surface, the kernel graphing
-  surface, and the operational-axis kernel most of all).
+- The `claude-md/` graph re-renders from the private rule-sets on every
+  refresh. This round most of the published set moved, several substantially;
+  the commit diff is the change record.
 
-## What changed since the last refresh (2026-07-24)
+## What changed since the last refresh (2026-08-14)
 
-- **A new subproject was created.** Deep agent-based market
-  simulation: an engine plus a local on-device model-fit lane and a local-only
-  UI that is never deployed. It reads promoted factor artifacts under a written
-  consumer contract rather than importing anything, and it is generative-
-  descriptive by charter — it models market structure, it does not forecast.
-  It carries the financial signoff floor from its first commit rather than
-  acquiring one later.
-- **The formal-kernel charter went from seven invariants to eight.** The new one
-  is proof-of-fire: every mechanical gate must ship a committed known-bad
-  witness that it demonstrably rejects. A gate that has never been observed to
-  fire is not evidence, however green it reads. Several existing gates were
-  re-examined against it in the same window.
-- **All three kernels ran waves.** The textual axis promoted two more statutory
-  chapters, one of them a second blind re-slice of a chapter it had already
-  covered, under a stricter evidence rule. The numerical axis landed a
-  tape-of-record pin — a host running against a stale market tape now fails
-  loudly instead of quietly comparing against a different one — and its
-  coverage rows gained a git-visible corpus identity. The operational axis
-  completed a four-theorem set about its own context operations.
-- **The launch-directory permission hole was closed.** A session launched from
-  an unexpected working directory could previously miss the deny rules that
-  scope its writes; the deny mirror and the agent-definition link are now
-  provisioned together when the session is created.
-- **The recall lane was repaired.** The vendored plugin was re-vendored and its
-  local patch set re-applied; one patch fixed a root-derivation bug that had
-  left semantic recall silently returning nothing. Writers had moved to a new
-  root convention months earlier and the reader had not followed — the lane was
-  green the whole time.
-- **The context-optimization pass shrank its own inputs.** A deferred-hint flush
-  consumed seven queued cross-subproject hint files in one pass.
+- **All three formal kernels pulled answer-shaped content out of their own
+  rule-files.** Each kernel's rule-file is injected into every subagent's
+  prompt, which means a sentence written there reaches a blind reviewer with
+  no read — and no blindness check grades a non-read. The legal-domain kernel
+  relocated its golden shapes (composite identifiers, field counts, which
+  composite a bridge targets) into a separate, reviewer-barred roster file;
+  the operational and financial kernels split their own answer keys out in the
+  same window. This is the earlier incorporation-by-reference split taken one
+  channel further: incorporation became injection-by-default.
+- **The legal-domain kernel gained another hand-built framework** — a federal
+  trafficking chapter, authored as a golden reference against which automated
+  encodings are scored.
+- **The publish lane grew an output assertion, not just more rules.** The
+  rule-set mirror already carried rewrite rules that strip barred tokens at
+  render time, but a rules-only guard is vacuous against a *new* sentence
+  nobody wrote a rule for. The renderer now asserts over its own rendered
+  output and hard-exits naming the offending line if a barred token survives.
+  Both arms of the proof-of-fire were witnessed: a clean source exits zero, an
+  injected unruled sentence exits non-zero.
+- **The published skill mirror was measured against its sources for the first
+  time.** It is hand-authored and had no drift check, so nothing detected when
+  a source moved out from under it. Four published claims were found stale and
+  are corrected in this round: a session-agenda section that no longer exists,
+  a gate's matching rule published in its pre-fix form, a model pin the source
+  had already removed, and a size cap attributed to the wrong gate. A witnessed
+  drift check — not a one-time re-render — is the actual fix, and it is not
+  built yet.
+- **The cross-subproject hint queue was flushed four times**, folding queued
+  implications from the financial, site-authoring, video-production and
+  simulation surfaces into the rule-sets that own them.
 
 ## What's not populated, and why that is a ruling
 

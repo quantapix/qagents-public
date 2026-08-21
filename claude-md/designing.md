@@ -169,15 +169,15 @@ content — derive it from the hub, never write the literal. A hardcoded literal
 survives the very deploy that changes the fact it states, and the page then
 **disagrees with itself**: one section contradicting another section of the
 same page is invisible to a diff review, which only ever sees the changed
-lines. Live 2026-08-07: `donate.astro:41/46/77` call Bucket 4 the "SCOTUS
-bucket" in three hardcoded strings while the buckets table rendered from
-`drive.buckets[3]` a few sections down reads "Federal docketing fees" —
-Bucket 4 was re-targeted away from any single anticipated filing on
-2026-07-31 and none of the three strings derives from the hub. Tracked at
-`ns:designing/18`; third instance of the class (the public contact email,
-2026-07-24, was the second — `donating/CLAUDE.md` § 3 records its three-layer
-shape). **Verification is a LIVE read of the rendered page, checked against
-the rest of that same page** — never a diff, never a deploy ID.
+lines. Three instances of the class to date, all cured: `/donate` Bucket 4
+named "SCOTUS" in three hardcoded strings against the `drive.buckets[3]`
+table (2026-08-07; fixed + deployed 2026-08-16 `91a069ade`/`298a6ff0a` —
+labels AND the window/channel status line now derive from `drive.json`,
+same-page consistency e2e in `site.spec.ts` guards both directions), and the
+public contact email (2026-07-24 — `donating/CLAUDE.md` § 3 records its
+three-layer shape). **Verification is a LIVE read of the rendered page,
+checked against the rest of that same page** — never a diff, never a deploy
+ID.
 
 ## 6. End-to-end tests (Playwright)
 
@@ -269,7 +269,7 @@ via `data/<topic>/<sub>.json`. Sole shared-code seam: `@qagents/diagram-kit`
 
 ## 9. Status page (`/status`) — implemented
 
-`/status` (index; 6 cards hidden — see "Hidden cards" below) +
+`/status` (index; see "Hidden cards" below) +
 `/status/<sub>/` (deep page, dynamic via `getStaticPaths`) are live and
 Playwright-verified. Build-time bake: the page reads
 `data/status/<sub>.json` slots through `src/lib/status-loader.ts` (Zod
@@ -362,12 +362,23 @@ staging sibling 2026-07-07 (content de-dup deferred). Records: debate record
 - **Thesis-steps animation (`/thesis`).** Touching `/thesis` or
   `public/thesis-steps/` → read memory `project_designing_web`
   § "Thesis-steps delivery module" (floors + byte-exact contract).
+- **Method-DAG drill-down (`/thesis`, W10 — live 2026-08-16).**
+  `public/graphs/` is a kit-mount host-copy set (root § Kit-mount pattern
+  applies): `kit.js` regen-wholesale from canonical
+  `visualizing/graphs/dist/kit-graphs.js` (rebuild dist first, grade by hash)
+  + `tokens-proof.css` as its LOCKSTEP token overlay + `kit.css`; authored
+  `hero-graph.json` (never regenerated) is the landing state,
+  `method-{legal,financial}.json` are wholesale re-copies of
+  `data/visualizing/` siblings (drill-down states); `loader.js` is the
+  app-owned never-fold side-car. Chrome strings in `copy.ts thesis.methodGraph`
+  (claim-free vocabulary). E2e: `interactivity.spec.ts` "Method DAG" block
+  incl. the per-sheet token guard.
 - **Tokens.** § 2/§ 3 apply (byte-identical brand-SoT copy, incl. lint
   rule 4). LOUD-only raw values live in `tokens-next.css` (pure
   `var()`/`color-mix`, no hex); mask gradients use the `black` keyword to
   clear the hex lint; the composed lint conf (`web/lint-tokens.conf`) carries
-  `EXCLUDE_DIRS=(thesis-steps)` (the delivery-module mount with its own
-  token-definition file).
+  `EXCLUDE_DIRS=(thesis-steps graphs)` (host-copied mounts with their own
+  token-definition files).
 - **Background variant** is **glass** (operator-chosen 2026-06-21): dark wash
   + breathing teal/amber blobs (`Ground`) + gradient-shimmer numerals
   (`StatStrip`). NB the fixed `Ground` (`z-index:-1`) needs the base canvas bg

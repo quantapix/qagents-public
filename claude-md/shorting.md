@@ -24,10 +24,9 @@ case for the short).
 - Reads the whole qagents tree (every subproject + `data/` + `code/` +
   `lib/` + `legal/`).
 - Writes only its own subtree — `shorting/positions/`,
-  `shorting/shorten/` (the do-shorten lane, § 4a) and `shorting/share/`
-  (the do-share lane, § 4b); `shorting/spread/` is FROZEN history (the
-  do-spread lane was absorbed into `qagents/optimization` § 2.12 as the dco
-  SPREAD-OP, spread-merge-2026-08-09 — § 4c) — plus the status-hub
+  `shorting/shorten/` (RETIRED lane, § 4a) and `shorting/share/` (the sole
+  live lane, § 4b); `shorting/spread/` is FROZEN history (§ 4c) — plus the
+  status-hub
   emit (`scripts/status_emit.mjs`, root-conventions pending lane) and the
   ONE chartered parent-session-only ROUTING exception
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
@@ -129,7 +128,7 @@ The voice override (hostile-but-precise) is session-scoped to
 shorting/
   CLAUDE.md
   positions/<target>/<YYYY-MM-DD>.md   one file per run; never overwritten
-  shorten/<YYYY-MM-DD>/                do-shorten lane (§ 4a)
+  shorten/<YYYY-MM-DD>/                RETIRED do-shorten lane (§ 4a)
   share/<YYYY-MM-DD>/                  do-share lane (§ 4b)
   spread/<YYYY-MM-DD>/                 FROZEN do-spread history (§ 4c; live lane: data/summaries/spread/)
   scripts/                             status_emit.mjs
@@ -155,12 +154,10 @@ KEEP-RULE artifacts). An operator may still direct a scoped run of the
 charter shape while the artifacts exist (2026-08-08 precedent), but that is
 an explicit per-run revival, not a standing offer.
 
-Constellation-wide charter + spec coherency/conciseness review (first run
-2026-07-02): clean-context unit reviewers + a synthesis pass emit per-unit
-reports, a consolidated `BLUEPRINT.md`, and an `apply-shorten.md` action
-prompt. Same observe-only governance + managing-routing as `positions/`.
-Skill `/do-shorten`. Normative:
-`data/charters/shorting/review-lanes/CHARTER.md` § lane-shorten; absorbed
+Lane mechanism is not restated here — normative:
+`data/charters/shorting/review-lanes/CHARTER.md` § lane-shorten (subject,
+scope, partition, reviewer brief, output layout, skill contract, gotchas).
+Same observe-only governance + managing-routing as `positions/`; absorbed
 anchor `data/charters/shorting/specs/do-shorten-2026-07-02/SPEC.md`.
 
 ### 4b. do-share lane — `shorting/share/<date>/`

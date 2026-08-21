@@ -112,9 +112,12 @@ slot. Whole-repo closes fan out via the status orchestrator.
 project's `next-steps` slot: when commit messages in the merge range cite
 item N, that item must be deleted from the slot file. The script scans
 `<merge-base>..HEAD` for cites of the form
-`(closes|resolves|completes)? (next-steps item|ns-item) N(, M)*`
-(case-insensitive); bare `item N` is rejected. If the session resolved no
-items, the gate skips with exit 0.
+`(closes|resolves|completes) (next-steps item|ns-item) N(, M)*`
+(case-insensitive). The resolution verb is **required**: an earlier form
+made it optional, and a commit that merely *mentioned* an item
+("next-steps item 41 amended") fired the gate and demanded the item's
+deletion. A bare `item N` is rejected for the same reason. If the session
+resolved no items, the gate skips with exit 0.
 
 | Exit | Phase | Claude action |
 |---|---|---|

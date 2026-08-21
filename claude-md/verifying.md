@@ -235,21 +235,16 @@ pane, never an error. e2e: the `navigator pane` describe in
 `[[feedback_layout_head_slot_for_per_page_links]]`.
 
 **This mount is DARK-ONLY and owes NO light overlay (operator-ruled
-2026-08-07).** The kit ships `tokens-{lattice,proof}-light.css` and
-`ns:visualizing/7` has twice listed them as owed here; they are not. R-T2 (§ 3)
-is the rule — kit canvas + overlays stay DARK in both legs, only page chrome
-flips — and `theme.spec.ts` enforces it (`.zone-canvas` kernel-dark under
-`colorScheme: 'light'`). Copying a light overlay in would land a tracked file
-nothing links and R-T2 forbids linking: the inert-overlay hazard inverted,
-silent, every gate green. The remaining light-leg debt is **evaluating's alone**.
-Correcting reciprocal: `ns:visualizing/51`. Re-propose only by re-opening R-T2
-itself, which is a debate-lane change touching § 3, `theme.spec.ts` and
-evaluating's twin — never a "for parity" copy.
-
-**No `tokens-chart.css` here is deliberate**, not a third missing overlay:
-`kit.js` carries the `QViz.charts.*` namespace for the C3 `/lattice` panel, and
-charts resolves `s.tok(…) || DEFAULT_TOKENS[…]`, so the panel self-themes dark
-by design.
+2026-08-07)**, and **no `tokens-chart.css` here is deliberate** — R-T2 (§ 3)
+keeps kit canvas + overlays DARK in both legs (`theme.spec.ts` asserts
+`.zone-canvas` kernel-dark under `colorScheme: 'light'`), and charts
+self-themes via `s.tok(…) || DEFAULT_TOKENS[…]`. Copying either in would land
+a tracked file nothing links. `ns:visualizing/7` has twice listed light
+overlays as owed here; the remaining light-leg debt is **evaluating's alone**
+(correcting reciprocal `ns:visualizing/51`). Re-propose only by re-opening
+R-T2 itself — never a "for parity" copy. Full record: memory
+`project_proof_graph_kit_mount_pattern` § "verifying's mount is DARK-ONLY by
+rule (R-T2)".
 
 **Re-sync from a rebuilt kit** (run from the repo root):
 
@@ -262,13 +257,26 @@ by design.
 4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs/`
 5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
 
-**Steps 3 and 4 are a lockstep pair — never one without the other.** The
-overlay and the bundle drift independently: a token added to
-`tokens-*.css` does nothing until `kit.js` is re-copied from a fresh
-canonical `dist/` (`colorTok(tok, '--edge-feedback', '--edge')` fails SOFT
-to the fallback — no error, no lint, no failing test; bitten 2026-07-14).
-After any token lift, grep the mounted `kit.js` (`grep -a`) for the new
-token name before treating the lift as landed.
+**Steps 3 and 4 are a lockstep pair — never one without the other**; after any
+token lift, grep the mounted `kit.js` (`grep -a`) for the new token name before
+treating the lift as landed. Rule + `grep -a` trap: root CLAUDE.md § Kit-mount
+pattern; the 2026-07-14 `colorTok` fail-soft witness: memory
+`project_proof_graph_kit_mount_pattern` § "A token lift is INERT until the
+consumer's kit.js is re-copied".
+
+**Mechanized since 2026-08-16** at `web/tests/e2e/proof-graph.spec.ts`,
+describe `kit-token lockstep guard (per sheet + anti-vacuity)`: it harvests
+every custom property the loaded `tokens-*.css` sheets declare (unfiltered
+by prefix — the kit namespace is per-family, so a guessed prefix harvests
+nothing and passes, which is what the `total > 0` arm catches) and asserts
+each resolves on `:root` on the live mount. **Per PAGE CLASS, not
+per-sheet-within-a-page** — this mount links exactly ONE overlay per page
+(`tokens-proof.css` on proof pages, `tokens-lattice.css` on `/lattice`), so
+evaluating's two-sheets-one-page shape in
+`evaluating/web/tests/e2e/strategy-chart.spec.ts` degenerates here to the
+union assert it exists to replace. Do not port it verbatim; keep the route
+table. Proof-of-fire: emptying `tokens-lattice.css` reds `/lattice` while
+both `/proof-graph/*` arms stay green.
 
 **Empty-state overlay pointer-trap (check on any mount edit).** Scope the
 overlay to `.empty:not([hidden])` — a bare `.empty{display:flex}` defeats the
@@ -325,6 +333,10 @@ Spec partitioning:
   (mirrors `isPublicWorkedRun` in `web/src/lib/public-runs.ts`). Every
   replay-API-servable non-RICO id belongs in that list — API-servable and
   publicly-worked are different floors, and only the second is F1-gated.
+  Also carries the **kit-token lockstep guard** (§ 8) over three routes —
+  two `tokens-proof.css` pages + `/lattice`; the route table is the
+  per-sheet unit here, so adding a page class that links a new overlay
+  means adding a row.
 - `app.spec.ts` — `client:only` island hydration, chip set + click behaviour,
   plus the F1 floor: RICO-only demoed (default chip), non-demoed chips render
   "encoded · not demoed" with no verdict/Boolean, the synthetic demo ends

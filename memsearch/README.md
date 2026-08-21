@@ -6,8 +6,8 @@ quarterly batch publish. Most days are not here — most days are too
 thin to publish.
 
 See the [umbrella README](../README.md) for the broader thesis.
-Sibling subtrees: [`claude-md/`](../claude-md/),
-[`memory/`](../memory/).
+Sibling subtrees: [`claude-md/`](../claude-md/), [`skills/`](../skills/),
+[`memory/`](../memory/), [`specs/`](../specs/).
 
 ## What memsearch is
 
@@ -75,9 +75,9 @@ subproject. The rest stay private — they served their purpose during
 the quarter (the assistant searched them, found context, used the
 context) and don't need to live in the public mirror.
 
-Steady state: roughly 10 subprojects × 5 memos per quarter × four
-quarters per year ≈ 200 published memos at the end of a full year,
-pruned to ~50 in the steady-state aggressive-prune view.
+Steady state: a handful of memos per subproject per quarter,
+aggressively pruned — the collection is meant to stay small enough to
+read, not to be complete.
 
 A memo's publication is not permanent. If a later sweep judges that
 a previously published memo no longer tells a useful story
@@ -110,11 +110,11 @@ marks the publishable ones with `<!-- publish: yes -->`, runs the
 sync script (which copies marked memos + runs the redaction sweep),
 and promotes via the push wrapper.
 
-This is the slowest of the three subtree cadences. The
-`claude-md/` and `memory/` subtrees refresh weekly because they
-mirror state that changes weekly; the daily memos either turn out
-to be worth publishing or they don't, and that judgement is easier
-to make in a batch than in real time.
+This is the slowest cadence in the repo. The rule-set mirror refreshes
+weekly because it mirrors state that changes weekly; the memory mirror
+is allow-list pending and on no clock at all; the daily memos either
+turn out to be worth publishing or they don't, and that judgement is
+easier to make in a batch than in real time.
 
 ## How to read
 

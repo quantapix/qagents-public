@@ -7,7 +7,7 @@ published `CLAUDE.md`, refreshed weekly from the private source.
 See the [umbrella README](../README.md) for the broader thesis.
 Sibling subtrees: [`skills/`](../skills/) (the session-lifecycle + optimization
 skill bodies + their adopted specs), [`memory/`](../memory/),
-[`memsearch/`](../memsearch/).
+[`memsearch/`](../memsearch/), [`specs/`](../specs/).
 
 ## What a `CLAUDE.md` is
 

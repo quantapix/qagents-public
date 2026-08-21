@@ -5,8 +5,8 @@ topic files the assistant writes during sessions and loads back across
 sessions to stay coherent.
 
 See the [umbrella README](../README.md) for the broader thesis.
-Sibling subtrees: [`claude-md/`](../claude-md/),
-[`memsearch/`](../memsearch/).
+Sibling subtrees: [`claude-md/`](../claude-md/), [`skills/`](../skills/),
+[`memsearch/`](../memsearch/), [`specs/`](../specs/).
 
 ## Status — placeholder, not yet populated
 

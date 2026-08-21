@@ -1,6 +1,6 @@
 ---
 name: do-claude-optimizations
-description: Memory + CLAUDE.md optimization pass across the entire qagents constellation. Fans out one digester subagent per CLAUDE.md (every subproject + root) plus a memory-index digester and a recall-memo digester — one per roster slug, in parallel — then one sequential cross-cutting digester, merges their digests into a single apply-plan, and trims stale content under both the data write-lock and the dot-claude sentinel. The scheduled/programmatic lane is parked; the standing path is the operator-run interactive variant. Keeps the memory index under the load-truncation cap and every CLAUDE.md under the size warn caps. Companion to /open, /close, /do-claude-updates.
+description: Memory + CLAUDE.md optimization pass across the entire qagents constellation. Fans out one digester subagent per CLAUDE.md (every subproject + root) plus a memory-index digester and a recall-memo digester — one per roster slug, in parallel — then one sequential cross-cutting digester, merges their digests into a single apply-plan, and trims stale content under both the data write-lock and the dot-claude sentinel. The scheduled/programmatic lane is parked; the standing path is the operator-run interactive variant. Keeps the memory index under the load-truncation cap and every project rule file under its soft size target, which sits deliberately below the warn cap the close gate enforces. Companion to /open, /close, /do-claude-updates.
 ---
 
 # do-claude-optimizations (alias: `/dco`)
@@ -32,7 +32,7 @@ branches, and no pre-existing FAILED marker from a prior run.
 write-lock followed by the dot-claude sentinel; both held for the entire
 run. Exit 13 → a pre-existing FAILED marker; operator investigates first.
 
-### 2. Fan-out (Opus subagent invocation)
+### 2. Fan-out (subagents inherit the orchestrator's model)
 
 Spawn the parallel digesters: one `dco-subproject` per subproject, one more
 parameterized for the root CLAUDE.md, one `dco-memory` for the memory index +
@@ -44,6 +44,10 @@ After the parallel fan-out completes, spawn one sequential `dco-cross`: it
 reads every per-sub digest + the cross-cutting memory file list and produces
 an authoritative cross-cutting digest resolving per-sub conflicts on shared
 memory files.
+
+No digester carries a model pin; the fleet inherits the model the
+orchestrator was invoked with, so quota is managed by choosing the
+orchestrator's model at invocation.
 
 ### 3. Apply (mechanical)
 
