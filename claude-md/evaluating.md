@@ -93,8 +93,8 @@ travels with the verdict.
 Preserve this on any REPORT-zone edit (`app.spec.ts` asserts it). § 11.6:
 the `financialRider` is the operator/evaluating+accounting track, NOT
 pleading's gate — and as of 2026-06-24 `evaluating/` **owns** that track
-(§ 9, the FINANCIALLY-CLEARED gate). Cure: Round 03 T3 + cure 5,
-`debate record `quantapix-thesis-public-pages-2026-06-23` (data/debates/, HELD lane)`.
+(§ 9, the FINANCIALLY-CLEARED gate). Origin: Round 03 T3 + cure 5,
+`data/debates/quantapix-thesis-public-pages-2026-06-23.md` (HELD lane).
 
 ## 4. Defined-risk options — non-negotiable
 
@@ -239,7 +239,10 @@ Spec partitioning:
 - `api.spec.ts` — live-only; `ALLOWED_IDS` mirrors `ALLOWED_EXAMPLE_IDS`
   in `server/main.py` AND `extending/servers/qresev-mcp/src/allowlist.ts` — a
   **triple** since extending landed 2026-07-04, all exhaustive by design; edit
-  in lockstep (the extending parity test fails until all three match).
+  in lockstep. **Only the server↔extending leg is machine-guarded** —
+  `extending/servers/qresev-mcp/test/parity.test.ts` reads `server/main.py` and
+  nothing else, so THIS mirror drifts silently (verified 2026-08-27;
+  `extending/CLAUDE.md` § 3 carries the failure direction).
 
 **EC2 server deploy** — `aws-vault exec qagents-deploy -- bash
 serving/scripts/deploy-app.sh qresev`. Tarball = `evaluating/server/` +
@@ -307,24 +310,20 @@ faces stay pinned RAW with false reds accepted, since a producer moves only when
 edited while a generated face moves daily (`ns:evaluating/29`). Cite SKILL.md § 8
 for the § 3.6 rules — the spec body is reaped, only `tests/` survives.
 
-**The `serving/scripts/upload-video.sh` release gate now ENFORCES THE RECORD —
-`ns:serving/82` landed, re-read 2026-08-10.** This § has been wrong about this gate
-twice before, in both directions. Read the script, not this paragraph, before
-relying on it.
+**The `serving/scripts/upload-video.sh` release gate now ENFORCES THE RECORD
+(`ns:serving/82`, re-read 2026-08-10). This § has been wrong about it twice, in
+both directions — read the script, never this paragraph.** As of that read: on
+**any** `T<n>/` key, `CLEARANCE_COMMIT` must equal the `granting_commit` of a
+`CLEARED*` record under the registry-resolved `record-location` and be an
+ancestor of HEAD. Both prior mis-readings + the refusal detail:
+`[[project_signoff_framework]]` § "THE UPLOAD GATE".
 
-What it does today: on **any** `T<n>/` key it requires `CLEARANCE_COMMIT` to (a)
-resolve to a real commit, (b) **equal the `granting_commit` of an actual record with a
-`CLEARED*` disposition** under the gate's `record-location` — resolved from
-`.claude/skills/do-signoff/registry.tsv`, refusing rather than falling back if the
-registry is missing, and reading the disposition in the same pass so a BLOCK's commit
-can never satisfy a release — and only then (c) that it is an ancestor of HEAD.
-
-**This floors T1/T2.** The gate keys on the `T<n>/` key prefix and never consults
+**This floors T1/T2** — the gate keys on the `T<n>/` prefix and never consults
 `r2-scope-map.json`, so `requiredGates: []` there no longer means "no gate at the
-push" — see the standing ruling below, which owns the rest of this reasoning.
-The residual is the standing completeness caveat, not a T1/T2 one: an out-of-band
-`aws s3 cp` bypasses the chokepoint entirely, emits no push-ledger fact, and passes
-nothing (`managing`'s inventory diff carries that half).
+push"; the standing ruling below owns the rest. The residual is the standing
+completeness caveat, not a T1/T2 one: an out-of-band `aws s3 cp` bypasses the
+chokepoint, emits no push-ledger fact, and passes nothing (`managing`'s inventory
+diff carries that half).
 
 **Standing ruling — do NOT widen `data/publishing/r2-scope-map.json` T1/T2 to
 `["FINANCIALLY"]`** (operator 2026-08-07; re-affirmed on narrowed grounds 2026-08-10,

@@ -81,13 +81,12 @@ this § 3 is authoritative.
   `usc_to_catalog.py` (legal, built); `accounting_to_catalog.py` (financial,
   built 2026-08-01 — walks `Universe/S<code>/<Axis>/` + `coverage.json`;
   the symbol→(sector,axis) coverage fold spec lives in its docstring).
-  The § 11.0a certification seam is BUILT (2026-08-10): the scorer
-  `code/lean_tools/score_bridge.py` (NOT `proving/scripts/` — C19 moved it)
-  emits a **`qcert/1`** record via `--out` (pass or fail), and the extractor
-  reads it via `--cert` — certified theorems override the naming heuristic, a
-  FAILED certification renders `agreement:"diverge"` (never silence); no
-  artifact → naming heuristic + `tier:"unknown"` cells, unchanged. proving
-  commits `proving/certs/`; accounting ruled none — item 17.
+  The § 11.0a certification seam is BUILT: `code/lean_tools/score_bridge.py`
+  (NOT `proving/scripts/` — C19 moved it) emits a **`qcert/1`** record via
+  `--out`, the extractor reads it via `--cert`. proving commits
+  `proving/certs/`; accounting ruled none — item 17. Join rule, the
+  FAILED-renders-`diverge` invariant, the no-artifact fallback, gates:
+  SPEC § 11.0a (verbatim there — do not re-state here).
   Stays top-level: `catalog.json` feeds **every** modality, not just `graphs/`.
 - `rounds/` — the **qrounds/1 two-sided rounds contract** (custody ruled to
   visualizing, do-share P0-8 2026-07-18): `qrounds.schema.json` +
@@ -98,14 +97,11 @@ this § 3 is authoritative.
   without overwriting it and **the base is not reapable**; the JSON-Schema
   subset is CLOSED and self-enforcing (exit 2 on any keyword `_check` does not
   implement), so widening it is a three-part change — interpreter arm +
-  `_UNDERSTOOD` entry + known-bad witness. Two owner amendments extend the
-  record without retyping it, both optional-additive and both REFUSING the enum
-  widening their filing proposed: typed join siblings `establishes`/`refutes`
-  (2026-08-12) and `concessions[]` + the fold's `acceptedFindings[]`
-  (2026-08-16; studying's fold reads it since `619b2bbd9`) — a concession
-  joining no adversarial move convicts at exit 5, the only shape here that can
-  SHRINK a published adversarial figure. Retention ruling, `_target_stems`
-  diff-lock, exit codes, fixtures: `rounds/README.md`.
+  `_UNDERSTOOD` entry + known-bad witness. Owner amendments extend the record
+  optional-additively and REFUSE the committed-enum widening their filings
+  propose. Amendment log (typed joins, `concessions[]`/`acceptedFindings[]`),
+  retention ruling, `_target_stems` diff-lock, exit codes, fixtures:
+  `rounds/README.md`.
 - `specs/` — the three POC extraction specs (provenance for the consolidated
   spec's appendix). `shared/INPUTS.md` — pointers to the axiomatized data.
 
@@ -211,9 +207,9 @@ Phases 0–3 ✅; **Phase 4 RE-SCOPED → built from scratch as the kit** (G0–
 + gated + MOUNTED; single cytoscape-fcose backend, § 3 +
 `graphs-2026-07-02/SPEC.md`). Implementation/gate detail lives in
 `graphs/README.md` + `project_visualizing_subproject`.
-**Phase 5** (next): replay animation + `explaining/` frame export on the
-cytoscape capture path (settle-based determinism — seeded fcose + constraints;
-raster acceptance = SSIM, never byte-equality).
+**Phase 5** (next): the `scenes/` replay + frame export of § 3 — settle-based
+determinism (seeded fcose + constraints); raster acceptance = SSIM, never
+byte-equality.
 
 ## 4.1 Standing kit contracts (easy to break silently)
 
@@ -237,9 +233,8 @@ raster acceptance = SSIM, never byte-equality).
   (constellation cluster-lens + picture-floor knobs, § 3 — shipped
   2026-06-14..17), `mixed3d` M1 (surfacegrid kit, § 3 — shipped 2026-07-05/06),
   and `code/web` M1 (web-unification, not visualizing-owned). A bare "M1
-  prettiness floor" once gated two subprojects' items for weeks, reading as
-  mixed3d M1 while the graphs M1 it meant had shipped. Write "graphs M1" /
-  "mixed3d M1", never bare.
+  prettiness floor" once gated two subprojects' items for weeks. Write
+  "graphs M1" / "mixed3d M1", never bare.
 - **Declared-token gate (the third gate class, 2026-07-20).** The parity gates
   compare the two DECLARED mirrors; they cannot see a token the CODE reads that
   neither declares (`--chart-pane-h` shipped that way — read at the LW backend,
@@ -365,8 +360,7 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
 - **T10 deviations seat = `rendering/designs/visualizing-lattice/manifest.json`,
   key `deviations` — NOT `sanctioned_deviations`.** That bundle seats the WHOLE
   kit family (charts · mixed3d · graphs), so its `deviations[].file` paths point
-  outside it. The wrong key greps clean and reads as "not declared" — it held
-  ns:visualizing/5 gated for seven weeks past its trigger
+  outside it. The wrong key greps clean and reads as "not declared"
   (`feedback_gate_must_name_the_right_subsystem` case 5). Declared:
   `DEFAULT_TOKENS`, `DEFAULT_TOKENS_3D`, `--font-mono`.
   `managing/scripts/brand-drift.sh` gates the first two; the third is uncovered

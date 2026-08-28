@@ -246,18 +246,11 @@ R-T2 itself — never a "for parity" copy. Full record: memory
 `project_proof_graph_kit_mount_pattern` § "verifying's mount is DARK-ONLY by
 rule (R-T2)".
 
-**Re-sync from a rebuilt kit** (run from the repo root):
+**Re-sync from a rebuilt kit**: the full 5-step sequence (typecheck+gates →
+build → lockstep js+css copies → verify+e2e) lives in memory
+`project_proof_graph_kit_mount_pattern` § "A token lift is INERT" re-copy recipe.
 
-1. `pnpm -C visualizing/graphs typecheck && pnpm -C visualizing/graphs gates`
-2. `node visualizing/graphs/kit/build.mjs` — always run it (canonical `dist/` is
-   gitignored and lags `src/`), but **grade staleness by `md5`, never by mtime**
-   (root CLAUDE.md § Kit-mount pattern owns the rule + the 2026-08-07 witness):
-   a newer `visualizing/graphs` commit does NOT imply a stale bundle.
-3. `cp visualizing/graphs/dist/kit-proof.js verifying/web/public/graphs/kit.js`
-4. `cp visualizing/graphs/kit/{kit.css,tokens-proof.css,tokens-lattice.css} verifying/web/public/graphs/`
-5. `pnpm -C verifying/web verify` + `pnpm -C verifying/web test:e2e`.
-
-**Steps 3 and 4 are a lockstep pair — never one without the other**; after any
+**The js and css copies are a lockstep pair — never one without the other**; after any
 token lift, grep the mounted `kit.js` (`grep -a`) for the new token name before
 treating the lift as landed. Rule + `grep -a` trap: root CLAUDE.md § Kit-mount
 pattern; the 2026-07-14 `colorTok` fail-soft witness: memory
@@ -311,15 +304,10 @@ Spec partitioning:
 
 - `site.spec.ts` — routes / brand / 404 / nav / external-link safety / PII
   blacklist (retired brand names, operator address/phone/email), plus the **flex-row
-  spacing floor**: a DISCOVERING sweep (not a selector list) over every
-  `display:flex` + `justify-content:space-between` row on 8 routes — the three
-  static pages, `/app` hydrated, and the kit mounts — asserting `b.left -
-  a.right >= 4px` between same-line children and that no child escapes a
-  non-scrollable parent. `space-between` is distribution, never spacing: with
-  no `gap` two grown children degenerate to 0px and read as overlapping text
-  while every overflow gate stays green, because **overlap is not overflow**.
-  Witness (keep it working): removing the `.stream-head` gap must red at phone
-  width with `stream-head: gap 0.0px between children 0 and 1`.
+  spacing floor** — a DISCOVERING sweep over every space-between row; sweep
+  shape + the "overlap is not overflow" reasoning: memory
+  `project_playwright_e2e_stack` § "Flex-row spacing floor". Witness (keep it
+  working): removing the `.stream-head` gap must red at phone width.
 - `frameworks.spec.ts` — locks the proving/-derived 3-row taxonomy
   contract. `EXPECTED_FRAMEWORKS` here mirrors `FRAMEWORK_META` in
   `web/src/lib/frameworks.ts` — edit both in lockstep when a statute lands.
@@ -333,10 +321,8 @@ Spec partitioning:
   (mirrors `isPublicWorkedRun` in `web/src/lib/public-runs.ts`). Every
   replay-API-servable non-RICO id belongs in that list — API-servable and
   publicly-worked are different floors, and only the second is F1-gated.
-  Also carries the **kit-token lockstep guard** (§ 8) over three routes —
-  two `tokens-proof.css` pages + `/lattice`; the route table is the
-  per-sheet unit here, so adding a page class that links a new overlay
-  means adding a row.
+  Also carries the **kit-token lockstep guard** (§ 8, which owns the
+  per-page-class route-table rule).
 - `app.spec.ts` — `client:only` island hydration, chip set + click behaviour,
   plus the F1 floor: RICO-only demoed (default chip), non-demoed chips render
   "encoded · not demoed" with no verdict/Boolean, the synthetic demo ends

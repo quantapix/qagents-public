@@ -1,9 +1,18 @@
 # memsearch/
 
 A curated selection of daily engineering memos that the AI assistant
-writes alongside the auto-memory tree. Per-subproject, opt-in,
-quarterly batch publish. Most days are not here — most days are too
-thin to publish.
+writes alongside the auto-memory tree. Per-subproject and **opt-in**: a
+memo reaches this subtree only because its author marked it publishable,
+one memo at a time.
+
+**This subtree is empty, and that is the expected state rather than a
+backlog.** The opt-in marker is the only way in, and nothing has been
+opted in. The design is deliberate: a deny-sweep over a private memo tree
+is the wrong mechanism for this material, because a memo whose *subject*
+is a redaction bar cannot be scrubbed of it and stay useful. Until an
+author opts a memo in, the correct size of this directory is zero. The
+shape below documents what it would look like if that changes; it is not
+a promise about a schedule.
 
 See the [umbrella README](../README.md) for the broader thesis.
 Sibling subtrees: [`claude-md/`](../claude-md/), [`skills/`](../skills/),
@@ -70,14 +79,9 @@ subproject with zero opt-ins simply has no directory.
 
 ## Lifecycle
 
-A quarterly sweep promotes that quarter's best ~5 memos per
-subproject. The rest stay private — they served their purpose during
-the quarter (the assistant searched them, found context, used the
-context) and don't need to live in the public mirror.
-
-Steady state: a handful of memos per subproject per quarter,
-aggressively pruned — the collection is meant to stay small enough to
-read, not to be complete.
+Memos that are not opted in stay private — they served their purpose
+when they were written (the assistant searched them, found context, used
+the context) and do not need to live in the public mirror.
 
 A memo's publication is not permanent. If a later sweep judges that
 a previously published memo no longer tells a useful story

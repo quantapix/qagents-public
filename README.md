@@ -1,9 +1,9 @@
 # qagents-public
 
 > The redacted mirror of the AI-assistant working context behind the
-> Quantapix engineering practice — `CLAUDE.md` rule-set + auto-memory
-> topic files + selected memsearch daily memos, refreshed weekly from
-> the private working tree.
+> Quantapix engineering practice — the `CLAUDE.md` rule-set and the
+> session-lifecycle skills, refreshed weekly from the private working
+> tree.
 
 A weekly-refreshed window into how a sole developer plus an expert AI
 assistant collaborate inside a single monorepo of sibling subprojects
@@ -259,16 +259,19 @@ assistants inspecting each other's work:
 5. **An adversarial sibling** runs on demand in two shapes. The first
    is the per-target positions lane: one subagent per target produces
    ten numbered findings written from the position of someone who
-   *wants* the system to fail. The second is a set of three chartered
+   *wants* the system to fail. The second is a pair of chartered
    review fleets — one that pressures the charter and spec corpus for
    coherency and concision, one that reviews the formal-kernel program
-   across all three axes for shared machinery and cross-axis learnings,
-   and one that acts as the counterweight to the shrink pass: before
-   anything is trimmed, its content must be *spread* down the
-   disclosure ladder rather than discarded. Every fleet is
-   observe-only — it writes a blueprint and an action prompt, and the
-   actual edits happen out of band in a session that holds the
-   write-lock.
+   across all three axes for shared machinery and cross-axis learnings.
+   Both are observe-only: each writes a blueprint and an action prompt,
+   and the actual edits happen out of band in a session that holds the
+   write-lock. A third lane, the counterweight to the shrink pass —
+   before anything is trimmed, its content must be *spread* down the
+   disclosure ladder rather than discarded — was absorbed into the
+   optimization pass itself, where it now fires inside the same run
+   rather than as a separate adversarial review. Relocation runs before
+   shrinking, in one pass, which is the ordering the two lanes were
+   always meant to have.
 6. **Cloud multi-agent review** is operator-fired and aggregates
    findings from multiple independent reviewer agents on the current
    branch or a pull request.
@@ -319,8 +322,8 @@ factual claim has to reduce to a verifiable predicate; every
 predicate has to be backed by a quoted source; every theorem is
 checked by a kernel that does no I/O. Lean4 enforces this for the
 legal-domain kernel; the same pattern enforces it for the
-financial-domain kernel (five frameworks: TREND / MOMENTUM /
-OPTIONS-RISK / SECTOR / DRAWDOWN). A third kernel now applies the same
+financial-domain kernel over a chartered framework roster. A third kernel
+now applies the same
 pattern to the *operational* domain — axiomatizing the version-control
 conventions the constellation itself runs on (the branch-as-write-lock
 rule of theme 4 is its first proved theorem). Its consumer is the
@@ -361,26 +364,15 @@ qagents-public/
   skills/                         session-lifecycle + optimization skills
     open/close/do-claude-updates/do-claude-optimizations/SKILL.md
     specs/                        the adopted specs those skills cite
-  memory/                         redacted topic-file mirror
-    MEMORY.md                     redacted index
-    feedback_*.md                 engineering / authorship discipline
-    project_*.md                  subproject snapshots
-    reference_*.md                public-facing pointers
-  memsearch/                      curated daily memos
-    <sub>/YYYY-MM-DD.md           one per opt-in publishable day
+  memory/                         (README only — see STATUS.md)
+  memsearch/                      (README only — see STATUS.md)
   specs/                          condensed public-safe renderings of adopted specs
     <name>.md                     one per spec cleared for the umbrella
 ```
 
-This first cut is **product-focused**: the `CLAUDE.md` mirrors and
-session-lifecycle skills behind the two shipping products plus the core
-infrastructure, not yet the full graph. The `claude-md/` and `skills/`
-subtrees are live; `memory/` and `memsearch/` carry their READMEs and nothing
-else — a ruling rather than a backlog, restated below. Formerly described as
-filling in on
-later weekly refreshes. At steady state the graph runs to a few hundred
-files (the full subproject + infrastructure `CLAUDE.md` set, ~200–250 memory
-topic files, and ~50 aggressively-pruned memsearch daily memos). See
+The `claude-md/` and `skills/` subtrees are live and carry most of the
+graph. `memory/` and `memsearch/` carry their READMEs and nothing else —
+a ruling rather than a backlog, restated below. See
 [`claude-md/README.md`](./claude-md/README.md) for exactly which
 subprojects publish this round and which are deferred.
 
@@ -398,7 +390,7 @@ drift, even redacted.
 | `appealing/`   | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub.                                                        |
 | `pleading/`    | Sibling of `appealing/` — trial-court / status-affidavit / addendum drafting.                                                                          |
 | `proving/`     | Lean4 axiomatic theorem-proving with LLM-backed predicate functions for the legal domain. Backs Qnarre.                                                |
-| `accounting/`  | Lean4 + LLM-predicates for the financial domain (five frameworks: TREND / MOMENTUM / OPTIONS-RISK / SECTOR / DRAWDOWN). Backs Qresev.                  |
+| `accounting/`  | Lean4 + LLM-backed predicates for the financial domain. The framework roster is chartered and has expanded since launch — trend, momentum, options-risk, sector and drawdown were the founding set, with regime, breadth, mean-reversion, exit-discipline, hedging and a factor lane chartered since. The published rule-set mirror carries the current roster; this README does not restate it. Backs Qresev. |
 | `verifying/`   | Astro + React shell + FastAPI server for **Qnarre**, the legal-complaint verifier UI. Streams events from `proving/` over SSE.                         |
 | `evaluating/`  | Sibling of `verifying/` for **Qresev**, the stock/portfolio evaluator UI. Streams events from `accounting/` over SSE.                                  |
 | `visualizing/` | Graphing surface for the formal kernels — renders the cross-domain lattice + a proof-DAG; mounted into both product UIs via the kit-mount pattern.     |
@@ -413,7 +405,7 @@ drift, even redacted.
 | `shorting/`    | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher.                   |
 | `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
 | `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
-| `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images live, video next) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
+| `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images and video both live; the video engine drives cue rendering for the explainer chain) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
 | `extending/`   | Desktop-assistant extensions + adoption enablement. Ships thin stdio MCP servers that proxy the two product surfaces (allow-listed replay, kernel refusal rules mirrored, never an additional kernel consumer), packaged through the release lane. |
 | `developing/`  | Native macOS (and next iOS) SwiftUI clients for the two products. A generated-project + package-manager monorepo; never an additional kernel consumer — future live wiring rides the existing product seams. |
 | `simulating/` | Deep agent-based market simulation — a Python engine plus a local on-device LLM fit lane, with a local-only web UI that is never deployed. Reads promoted factor artifacts under a written consumer contract as the licensed second reader; the fourth consumer of the market-tape hub. Never an additional kernel consumer. Generative-descriptive by charter — it models market structure, it does not forecast and is not an alpha engine — and it carries the financial-domain signoff floor from birth. |
@@ -538,18 +530,18 @@ session's window.
 
 ## Cadence
 
-Refreshed weekly from five private sources:
+Refreshed weekly from three private sources:
 
 - The root + per-subproject `CLAUDE.md` graph → `claude-md/`.
 - The `open` / `close` / `do-claude-updates` / `do-claude-optimizations`
   skill bodies + their adopted specs → `skills/`. These are the
   executable shape of the session-lifecycle (theme 4) and
   context-optimisation (theme 5) disciplines this README describes.
-- The auto-memory topic-file tree → `memory/`.
-- Selected daily memsearch memos opted in by the operator →
-  `memsearch/` (quarterly batch sweep).
 - Condensed renderings of adopted specs cleared for this repo →
   `specs/`, refreshed when the source spec changes.
+
+Two further subtrees are chartered but unpopulated by ruling — see
+[STATUS.md](./STATUS.md).
 
 Re-rankings, new subprojects, and new cross-subproject conventions
 are committed as ordinary diffs — the commit log is the change
@@ -561,18 +553,36 @@ the public-repo roster, or the contact channel changes.
 The framework's six-month public donation drive runs 2026-06-01 →
 2026-12-01, with Open Source Collective as the intended fiscal sponsor.
 Four exclusive-use buckets: the AI-assistant subscription, a third-party
-MCP service line, AWS, and a federal court docketing-fee bucket. Public
-ledger at <https://opencollective.com/qagents>. The first
-fiscal-sponsorship application (submitted 2026-05-23) was declined
-2026-06-03: the host's model is built for projects with community
-involvement, which the project did not yet have. No re-application is
-pending. The drive's work continues on schedule regardless; details,
-monthly ledgers, and weekly digests are in the sibling repo
-`qdonating-public`.
+service line, cloud hosting, and a court-fee bucket.
+
+**The channel is not receiving funds, and the reason is upstream of the
+fiscal sponsor.** The first fiscal-sponsorship application (submitted
+2026-05-23) was declined 2026-06-03 — the host's model is built for
+projects with community involvement, which the project did not yet have,
+and the decline came with an invitation to re-apply. That ruling stopped
+being the operative constraint on 2026-06-16. A fiscal sponsor holds and
+disburses funds at the platform level, but it cannot supply the
+beneficiary with a lawful *receiving* instrument at the disbursement
+boundary; every such instrument requires a government ID the developer is
+presently refused. So a re-application is not something that can lawfully
+be completed today, and an approval would leave approved funds with no
+compliant channel to reach the project.
+
+What follows from that, stated plainly because a donation page is the
+wrong place for an inference: **no donor is or will be charged while this
+holds.** The collective page at <https://opencollective.com/qagents>
+exists and is the public accounting surface; it is not currently a working
+payment channel. The monthly ledger reports $0 inflow for the documented
+reason. The bucket structure, the amounts, and the floor are unchanged —
+what is presently impossible is *receipt*, not the drive's definition. The
+drive's work — the open-source repos, the statutory axiomatization, the
+weekly and monthly accountability cadence — began 2026-06-01 and continues
+on schedule. Details, monthly ledgers, and weekly digests are in the
+sibling repo `qdonating-public`.
 
 **Open to outside contributors.** The U.S. Code axiomatization program
 — Lean4 theorems backed by LLM-evaluated predicates over the full Code,
-all 53 titles (appendix volumes excluded) — is open to collaborators. It works
+every non-appendix title of the U.S. Code — the denominator is derived from the categorization data, never restated as prose here — is open to collaborators. It works
 over public federal statutes only, so it carries no privacy-floor
 surface; it is the natural place to build the project in the open. The
 project today is a single developer working with AI assistance, now
@@ -582,7 +592,8 @@ and open an issue on that repo to claim a unit. It links a curated starter
 set of nine numbered tasks, each carrying acceptance criteria and the commands
 that re-derive its counts. Four of the nine (1, 2, 6, 8) were swept internally
 after first publication and are marked closed in place, keeping their numbers;
-the five still open were re-derived against the working tree on 2026-08-14.
+the five still open were re-derived against the working tree on the date
+stated at the top of that roster.
 The acceptance commands name a kernel and helper scripts that have not been
 dropped into the public clone yet — the roster file says so at the top rather
 than leaving you to discover it. Discussions are not enabled here, and the nine

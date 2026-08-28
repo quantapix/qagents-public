@@ -14,7 +14,7 @@ Cross-project conventions live in the repo root `qagents/CLAUDE.md`. The canonic
 6. **Journal before quitting.** A routine that places or modifies a position must append the reasoning to `journal/YYYY-MM-DD.md` before exiting. If journaling fails, treat the run as failed.
 7. **Stop-losses on every equity buy**, per each PM's `risk_policy.md`. Use bracket orders. **Coverage is a claim about the BROKER, not about the ticket** — `midday-review` verifies it every day via `python -m shared.lib.risk coverage --account <pm> --orders-file <orders> --orders-status all`, which compares held quantity against live sell-stop quantity. **Fetch with `--status all`, and `--orders-status` is required** (2026-08-07): a bracket's stop leg hangs off its parent, the parent is terminal once the entry fills, so `--status open` omits both and every bracket-protected position reads naked. Under any other fetch a naked reading is `verdict: unknown`, never a breach. On a real breach the remedy is NOT "submit the stop NOW" — a duplicate stop against a resting bracket cancels the live legs via OCO — and **if the broker refuses, stop and re-verify rather than improvise around the refusal**. `portfolio.json`'s `bracket.stop_loss` is the stop the PM *intended*, never evidence of coverage. Incident detail (the 08-05 OCO destruction, moderate's 6h33m naked QQQ): memory `project_trading_system` § Gate defects.
 8. **`risk_policy.md` is edited only during `monthly-retro`**, with the change justified in `retros/YYYY-MM.md`. **The retro fires INSIDE `close-journal` on the month's last session and nowhere else** — decide month-end with `python -m shared.lib.performance next-session` (`is_last_session_of_month`), never by a weekday proxy, and never defer to "tonight's retro": there is no such fire, and July 2026's moderate retro was lost exactly that way.
-9. **Concentration caps are enforced at TICKET time and re-checked NOWHERE at the close** (`ns:trading/31`, 2026-08-19). `max_single_position_pct` / `max_sector_pct` gate a *proposed* ticket via `risk-analyzer`; a held position that drifts through its cap on a price move passes every gate it is shown. `close-journal` step 7 runs `sync-managed`, which WRITES the managed form and never validates it — moderate closed 2026-08-19 at XLV **8.042%** against an 8.00% cap having correctly cleared 7.79% that same morning (+3.44% price move, qty unchanged). **Do not read "the book cleared risk-analyzer" as "the book is in policy."** Second-order: the pre-commit hook validates the whole `financial/portfolios/*.md` set, so a breaching book **freezes the hub mirror** — `analyzing/`/`accounting/`/`simulating/` keep reading the last in-policy snapshot and cannot see the breach. Rule numbers are append-only: they are cited by number across the journal/research record, so never renumber.
+9. **Concentration caps are enforced at TICKET time; a held position can drift THROUGH its cap without ever being shown a gate**. `max_single_position_pct` / `max_sector_pct` gate a *proposed* ticket via `risk-analyzer` — moderate closed 2026-08-19 at XLV **8.042%** against an 8.00% cap having correctly cleared 7.79% that same morning (+3.44% price move, qty unchanged all day). **Do not read "the book cleared risk-analyzer" as "the book is in policy."** Since 2026-08-27 `close-journal` step 7 runs `python -m shared.lib.portfolios validate --slug <slug>` right after `sync-managed` (which WRITES the managed form and never grades it) and puts any `valid: false` into that day's `## Owed` block for the next `premarket-brief` step 0c to discharge. **That arm REPORTS; it does not cure** — a cap breach is fixed by a ticket at the next open, never by a close-time trade. Second-order, still unresolved: the pre-commit hook validates the whole `financial/portfolios/*.md` set, so a breaching book **freezes the hub mirror** — `analyzing/`/`accounting/`/`simulating/` keep reading the last in-policy snapshot and cannot see the breach (open ruling: `ns:trading/33`). Rule numbers are append-only: they are cited by number across the journal/research record, so never renumber.
 
 ## Model assignment
 
@@ -108,7 +108,7 @@ malformed row makes `read_fills` **raise, not skip** (a skipped row lowers a
 spend figure, and a spend quietly too low clears a budget that was breached).
 Corrections are compensating rows, never edits.
 
-**Hub projection (`ns:trading/21`, built 2026-08-18):** `fills project
+**Hub projection (built 2026-08-18):** `fills project
 --account <pm>` renders `financial/portfolios/fills/<fund>.jsonl` — header row
 (same-pass `shares_by_underlying`, R4) + every ledger row verbatim (R3 one
 layer up). Fired from `close-journal` step 7.5 after reconciliation.
@@ -266,46 +266,7 @@ driver, the dissolved Linux-target gates and the herdr design record: memory
 - **Retro fire point is hard rule 8**; the first trading day of the next month must not re-trigger it. Premarket-briefs occasionally carry stale "monthly-retro <date>" forward-references the morning after a retro fired — ignore unless the hook itself misbehaved.
 - **Leaderboard artifact**: `financial/reports/leaderboard.md` is the source of truth. Column header is **"Fund return" = cumulative-since-seed**, not MTD. Routine chat summaries sometimes use "MTD" loosely; on the first/last trading day of a month the two values diverge from cum return — trust the artifact column.
 
-## Session guard + write-fence (mechanical, not advisory)
-
-Two hard rules are enforced in `shared/lib/`, not by prompt discipline — both after
-the 2026-07-14 audit found them already breached in committed artifacts:
-
-- **Write-fence.** A PM writes only its own tree. `_common.assert_account_matches_cwd`
-  refuses (exit 7) any `--account` that disagrees with the `agents/<pm>` directory the
-  routine is running in; it guards `write_portfolio`, `journal append/open/summary` and
-  `costs fill`. **No env override, by design** — a var a prompt can `export` is no
-  fence (the hatch was removed 2026-07-14). Cross-PM *reads* go through the unfenced
-  `read_portfolio`; a cross-PM write would need an explicit function.
-- **Session calendar.** `performance.is_trading_session` (Alpaca's calendar,
-  fails closed) gates `snapshot` and `daily`. **A closed day produces no NAV mark, no
-  day-return, no alpha, and no model spend.** Marking a shut tape produced the
-  phantom-alpha and fabricated-session incidents (`ns:trading/18`). Check first:
-  `python -m shared.lib.performance is-session --date <d>`; backfilling a day the
-  calendar is genuinely wrong about needs an explicit `--allow-closed`.
-
-**Every routine opens its journal before it starts spending** —
-`python -m shared.lib.journal open --account <pm> --date <today>`. A mid-run kill then
-degrades to a thin journal instead of none at all. **Wired into all five routines since
-2026-08-02.** Two consequences now mechanical:
-
-- **`overnight-research` uses `--next-session`, never `--date <today>`.** It fires
-  22:00–23:00 ET the night *before* the session it serves, so "today" is the wrong
-  day and on a Sunday is not a session at all. **Research is dated the night it runs;
-  only the journal takes the session it serves** — a journal dated to a shut exchange
-  asserts a session that did not exist (same class as the fabricated NAV marks,
-  `ns:trading/18`; the two 2026-07 Sunday stubs were deleted 2026-08-09).
-- **`journal open` refuses a non-session date (exit 9)**, `--allow-closed` to
-  backfill. Note the deliberate asymmetry with `append_snapshot`: that guard fails
-  CLOSED (unknown calendar ⇒ no mark, because it writes a derived number), this one
-  fails OPEN (unknown ⇒ create it, because an empty file is harmless and a refused
-  real session is not). `performance.session_state` is the tri-state read; don't
-  collapse it into `is_trading_session`.
-
-**A journal body must not repeat its own section heading** — `append_section` writes
-the `## <Section>`, strips a leading echo, folds any subtitle into the heading, and
-line-anchors its "already present" test rather than substring-matching it (memory
-`project_trading_system` carries the `## Close` / `## Closed positions` instance).
+## Session guard + write-fence — moved verbatim to `shared/CLAUDE.md` § "Session guard + write-fence (mechanical, not advisory)"
 
 ## Cost accounting
 
@@ -318,54 +279,7 @@ python -m shared.lib.costs fill --account <pm>     # writes the line
 python -m shared.lib.costs day  --account <pm>     # just report it
 ```
 
-The source is the `qagents-cost cost_usd=…` line that `run_routine.sh` appends to
-every per-run log. **A fire *that ran* lands in exactly one of three buckets
-(`read_run`, 2026-08-09) and the split is load-bearing** — the qualifier is not
-decoration; see the fourth-bucket gap below:
-
-- `unpriced_runs` — no cost line **and** no refusal token: a crash, a cap kill, a
-  pre-telemetry log. The only bucket that is a finding. Never counted as $0.
-- `declined_runs` — refused **before dispatch**, spent nothing: `exit=0
-  skipped=not-seat-holder`, 75 changeover, 76 session fence, 72/73 capability.
-  Conjunctive (exit token AND no cost line), so it can never excuse a fire that
-  started work.
-- `errored_runs` — **billed and still produced nothing** (`is_error=True`). Invisible
-  to both of the above: it prices normally and leaves `complete` true.
-
-**A by-design refusal and a crash must not share a channel**, so any proposal to
-escalate on `unpriced_runs` must post-date this split. The 2026-08-04 instance that
-forced it (and that `ns:trading/19` then mis-recorded as a crash): memory
-`project_trading_system`.
-
-**All three buckets are derived from logs that EXIST, so a fire that never STARTED
-lands in none of them** (`ns:trading/30`, 2026-08-19). `unpriced` needs a log with no
-cost line, `declined` a refusal token, `errored` `is_error=True`; a routine launchd
-never ran writes nothing, and `complete` — computed from `unpriced_runs` alone — reads
-`true`. Measured: `costs day --account aggressive --date 2026-08-12` returns two of
-five routines with all three buckets empty and `complete: true`. **Never read
-`complete: true` as "the day fired."** The missing arm must be **schedule-derived**
-(the `ROUTINES` array), never log-derived.
-
-**The escalation and the failure share a host — and so does every detector inside the
-same chain.** `costs fill`'s exit-10 refusal (below) runs inside `leaderboard`, itself
-subject to the seat gate and the session fence — on 2026-08-07 `leaderboard` refused
-and the missing-summary detector never ran on the day it was most needed. Do not treat
-a silent `costs fill` as evidence a day was clean. **Re-homing a detector to a SIBLING
-routine does not cure this**: `ns:trading/19` moved day-completeness off `leaderboard`
-onto `premarket-brief` step 0c to escape the fence, and on 2026-08-12/13 the whole day
-went dark and took `premarket-brief` with it — six missing `## Close`/summary pairs
-across all three PMs, unrecorded for a week. A detector must sit **outside the chain it
-grades** (`ns:managing/60` carries that half).
-
-**A missing summary on a SESSION day is a finding, not a no-op (exit 10, 2026-08-02).**
-`costs fill` used to return `written: false` with exit 0, which reads as success; it now
-refuses loudly so the non-zero exit reaches managing checker commitment #6 (the
-2026-07-29 aggressive gap it was built for: memory `project_trading_system`).
-Closed/unknown days keep the quiet return. **The cost is never lost** — `costs day`
-reconstructs it from the logs; the refusal is about the absent artifact. **Do not
-backfill the narrative**: a Close section written days later is not a contemporaneous
-record, and manufacturing one is the same failure class the session-calendar guard
-exists to prevent. Record the gap.
+Run-bucket doctrine (the three log-derived buckets, `missing_runs`/`pending_runs`, the `complete` contract with its known-bad witness, detector siting, exit 10) — moved verbatim to `shared/CLAUDE.md` § "Run buckets".
 
 ## Status emit (`data/status/trading.json`)
 

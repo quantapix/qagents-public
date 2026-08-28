@@ -154,8 +154,7 @@ git-diffable (vs the opaque `.blend`), drive the `blending/diagrams/`
 force graphs, compose from primitives without Blender-UI re-authoring,
 and validate cycles + socket types client-side (`GraphCycleDetected` /
 `SocketTypeMismatch`) **before** the translator runs — Blender crashes
-are not an allowed failure mode. Full rationale: spec family
-`data/specs/blendr-2026-05-10/`.
+are not an allowed failure mode. Spec pointer: § 9.
 
 Naming convention: GN node names use ASCII identifiers
 (`escher_tess_p4m`, `penrose_stairs_loop4`), not Blender's default
@@ -205,21 +204,17 @@ blending never computes domain values); `loop: true` renders must be
 seamless (first/last-frame delta gate); deliverable kinds are
 `still | loop | clip` (MANIFEST column); scene renders stay
 **verdict-free** (no `⊢`/verdict/rider tokens baked into Blender
-output — those live on downstream card layers). Consumption-contract
-family: `data/specs/resolving-2026-05-26/` (subspec slug
-`blender-compose-2026-07-04`, body reaped at S9); live seam =
-`resolving/skills/compose-blender-scene/SKILL.md`.
+output — those live on downstream card layers). Consumption contract:
+`resolving/skills/compose-blender-scene/SKILL.md` — the
+`blender-compose-2026-07-04` subspec dir was reaped whole (do-retire S9).
 
 ## 7. Output → explaining/ pipeline
 
 Renders land in `blending/renders/<motif>/<spec_hash>/render.png`
 (still) or `frame_NNNN.png` (animation), gitignored, with
-`result.json` alongside. As large canonical-only ground truth,
-`renders/` is symlinked-from-canonical into every worktree via
-`blending/.worktree-links` (`scripts/open.sh`, spec
-`data/charters/qagents/session-lifecycle/CHARTER.md` § 2.4) — so plates survive
-worktree teardown and a worktree shares canonical's copy. They ride to
-S3 via the
+`result.json` alongside. `renders/` is declared canonical-shared in
+`blending/.worktree-links` (root § session-lifecycle, charter § 2.4).
+They ride to S3 via the
 `data/renders/<sub>-design/` manifest pattern only when an
 `explaining/` per-video bundle calls them B-roll plates. The seam is
 two things:
@@ -267,8 +262,9 @@ matching, linear-RGB base_color) is pinned in memory
 
 ## 9. Pointers
 
-- Authoritative spec family: `data/specs/blendr-2026-05-10/`
-  (companion tests at `data/specs/blendr-2026-05-10/tests/`).
+- Spec family `data/specs/blendr-2026-05-10/`: SPEC.md body reaped
+  (do-retire S9 2026-08-08; git or `retire.sh --restore`). Live
+  contract = its `tests/` + §§ 3–6.5 here.
 - Anti-Escher copyright check: `reference_escher_relativity_rights.md`
   (user memory).
 - Pattern reference: `resolving/CLAUDE.md` (same shape, different host

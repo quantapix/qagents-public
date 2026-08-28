@@ -23,10 +23,9 @@ case for the short).
 
 - Reads the whole qagents tree (every subproject + `data/` + `code/` +
   `lib/` + `legal/`).
-- Writes only its own subtree — `shorting/positions/`,
-  `shorting/shorten/` (RETIRED lane, § 4a) and `shorting/share/` (the sole
-  live lane, § 4b); `shorting/spread/` is FROZEN history (§ 4c) — plus the
-  status-hub
+- Writes only its own subtree — `shorting/positions/`, `shorting/shorten/`
+  (RETIRED, § 4a), `shorting/share/` (the sole live do-* lane, § 4b) and
+  `shorting/spread/` (FROZEN history, § 4c) — plus the status-hub
   emit (`scripts/status_emit.mjs`, root-conventions pending lane) and the
   ONE chartered parent-session-only ROUTING exception
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
@@ -131,6 +130,10 @@ shorting/
   shorten/<YYYY-MM-DD>/                RETIRED do-shorten lane (§ 4a)
   share/<YYYY-MM-DD>/                  do-share lane (§ 4b)
   spread/<YYYY-MM-DD>/                 FROZEN do-spread history (§ 4c; live lane: data/summaries/spread/)
+  reviews/<slug>-<YYYY-MM-DD>/         operator-directed one-off review reports (not a chartered
+                                       lane; each pairs with a data/debates/<slug>-<date>.md
+                                       ratification record — first use 2026-08-21, three-axis
+                                       overhaul reviews; v2-post-debate is the standing artifact)
   scripts/                             status_emit.mjs
   .claude/                             settings.json; skills → ../../.claude/skills
 ```
@@ -142,17 +145,14 @@ per run, likewise never overwritten.
 
 ### 4a. do-shorten lane — `shorting/shorten/<date>/` — **RETIRED 2026-07-28**
 
-**Not a live lane.** `/do-shorten` was retired by `/do-retire` ruling **R-3**
-(`data/specs/do-retire-2026-07-26/` — "uncontested by its
-own counsel"; Exhibit A § 1.1: the 07-25 run read 83,242 prose lines and
-emitted 1.82 MB to propose a −12.3 % reduction, and the apply session closed
-with no commits). R-4 purged the run artifacts. The skill
-(`.claude/skills/do-shorten/`) and charter § lane-shorten survive on disk
-**until P5 fires** — spec § 5.4 schedules both for deletion under R-3, and
-R-18 confirms the deletion stands (R-6 protects code and tests, not these
-KEEP-RULE artifacts). An operator may still direct a scoped run of the
-charter shape while the artifacts exist (2026-08-08 precedent), but that is
-an explicit per-run revival, not a standing offer.
+**Not a live lane.** Retired by `/do-retire` ruling **R-3**; R-4 purged the
+run artifacts. Rationale, Exhibit A, and the R-18 confirmation:
+`data/specs/do-retire-2026-07-26/` + memory `project_do_retire_spec.md`
+(whose § 5.4-vs-§ 4a disposition is a CONTESTED operator REQUEST). The skill
+and charter § lane-shorten survive on disk **until P5 fires**. An operator
+may still direct a scoped run of the charter shape while the artifacts
+exist (2026-08-08 precedent), but that is an explicit per-run revival, not
+a standing offer.
 
 Lane mechanism is not restated here — normative:
 `data/charters/shorting/review-lanes/CHARTER.md` § lane-shorten (subject,
@@ -167,7 +167,12 @@ Cross-axis sharing + learnings review of the axiomatize program
 investigator per axis + a cross-axis unit over specs AND implementations
 AND tests; emits per-unit reports, `BLUEPRINT.md`, `apply-share.md`. The
 apply sessions it prompts maintain the `axiomatize-shared` subspec, the
-cross-axis LEARNINGS ledger, and the G1–G7 conformance matrix. Same
+cross-axis LEARNINGS ledger, and the G1–G7 conformance matrix. Since
+2026-08-23 the lane also re-grades the **overhaul-compliance matrix**
+(needs × axes, seeded from the three 2026-08-21 v2 overhaul reports) every
+run, pins an adjudication snapshot at step 1, and treats ratified
+reviews/debates since the prior run as primary intake — all normative at
+§ lane-share. Same
 governance as 4a. Skill `/do-share`. Normative: § lane-share; absorbed
 anchor `data/charters/shorting/specs/do-share-2026-07-04/SPEC.md`.
 

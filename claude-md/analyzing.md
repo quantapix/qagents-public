@@ -5,22 +5,26 @@ Market-inspection tooling (TypeScript; local-only viewer): DuckDB + Parquet, lig
 ## Charter — two roles (spec family: `data/specs/analyzing-charter-2026-07-01/`)
 
 Ratified by a 7-delegate cross-qagent debate (2026-07-01); all amendment
-phases have shipped and the SPEC bodies were reaped. Live subspec dirs:
-`tape-provenance-2026-07-11/`, `ta-schema-v2-2026-07-12/` (absorbed — next
-paragraph), `workflow-coverage-2026-07-13/` + `workflow-ui-2026-07-13/`,
-`tape-cron-2026-08-09/`. The web-ui-trio (role (b) widening; P4 host
+phases have shipped and the SPEC bodies were reaped. Subspec dirs:
+`tape-provenance-2026-07-11/` + `ta-schema-v2-2026-07-12/` (both absorbed —
+next paragraph), `workflow-coverage-2026-07-13/` + `workflow-ui-2026-07-13/`
+(live, viewer), `tape-cron-2026-08-09/` (live — lane registration / enable;
+its exit contract binds in the tape-supply charter). The web-ui-trio (role (b) widening; P4 host
 `analyzing/web/`) + factor-overlay (FV1–FV4) amendments have NO subspec dir —
 record: `data/debates/adopted/factor-overlay-2026-07-27.md`.
 
-**Tape *shape* is chartered (2026-07-16):**
-`data/charters/analyzing/tape-schema/CHARTER.md` is the single normative
-source for the tape's shape (frozen-14 prefix, consumer-backed tiers,
-aggregate/breadth/indices lanes) — cite it, never the absorbed `ta-schema-v2`
-subspec. The supplier machinery (INV-H, INV-U, freshness manifest, provenance)
-stays in `analyzing-charter-2026-07-01/` until it settles into the deferred
-conditional `tape-supply` charter (ruling R2, debate record
-`analyzing-charter-consolidation-2026-07-16` — `data/debates/`, HELD lane;
-mint conditions tracked at ns:analyzing/14).
+**Two charters, both single normative sources — cite them, never the
+absorbed subspecs:**
+- **Tape *shape*** (2026-07-16): `data/charters/analyzing/tape-schema/CHARTER.md`
+  — frozen-14 prefix, consumer-backed tiers, aggregate/breadth/indices lanes.
+- **Tape *supply*** (scope-minted 2026-08-21 under R2's conditional mint, the
+  2026-08-18 a2 ruling): `data/charters/analyzing/tape-supply/CHARTER.md` —
+  INV-H (incl. the `reconciled` tier + the CLOSED-at-five partition), INV-U,
+  the P2 freshness manifest, P8 provenance, the refresh lane's exit contract.
+  Deliberately EXCLUDED (the options-chain/D-1 dataset LANDED 2026-08-25 —
+  contract + activation state: `data/charters/analyzing/tape-schema/options-chain-d1.md`;
+  recorder `analyzing/scripts/options_chain.py`) and still living here + in the spec family: INV-W /
+  the whole sub-daily lane (§ below) and the options-chain/D-1 dataset.
 
 - **(a) Market-data supplier.** Named owner/producer of the historical
   aggregate tape — `financial/parquet/ohlcv-equities/` (`ingest.py --flat`) +
@@ -133,7 +137,10 @@ we chose, at exit 3. The tell does not look like the cause, so the window is
 checked before the fetch and the refusal carries its own arithmetic.
 
 `--rolling` computes a servable window (`ROLLING_SPAN_DAYS`, deliberately below
-the hard limit so a wake-coalesced late fire still lands in-window). **The
+the hard limit so a wake-coalesced late fire still lands in-window); its
+ANCHOR is the chain's `resolve_end` via `--rolling-anchor` (b71c79064) —
+without it every post-close fire stopped one session short (vendor
+end-exclusive) and the dataset-uniform lag read green on every arm. **The
 retention wall bounds the REQUEST, not the tape:** INV-H's merge leaves bars
 older than `--start` as `E_out`, so a repeatedly-fired lane accumulates
 indefinitely — verified live (two runs, 08-03..08-06 then 08-05..08-10 → 5
@@ -186,43 +193,40 @@ sidecar — see `financial/parquet/CLAUDE.md` § "Freshness sidecar") and,
 given `--refresh-summary`, emits the P8 provenance events. Batch mode
 prints one summary JSON on stdout — the key set (and the `pre_sha` /
 `post_sha` / `backup_path` fields non-clean entries carry) is pinned by
-`tape-provenance-2026-07-11/`, which is exactly what
+the tape-supply charter § provenance (absorbed from
+`tape-provenance-2026-07-11/`), which is exactly what
 `--refresh-summary` replays — plus ndjson per-symbol on stderr.
 
-## History preservation (INV-H) + Universe membership (INV-U) → `tape-guards.md`
+## History preservation (INV-H) + Universe membership (INV-U) → the tape-supply charter
 
-Both guard corpora moved verbatim (spread 2026-08-17 M-Y1): INV-H's
-window-scoped merge + per-symbol verdicts (the compositional restatement
-classification, the CLOSED-at-four component ruling, the OBV materiality
-measurement, the per-symbol `--allow-history-rewrite` record), the P8
-provenance pins, the cron-lane exit contract, INV-U's monotone
-membership + the THREE-step universe lane + ∅-held = UNKNOWN (exit 4).
-Read `analyzing/tape-guards.md` before touching `history_guard.py`,
-`universe_guard.py`, `ingest.py` write paths, accepting a rewrite, or
-diagnosing an exit 3. Exit codes: `0` all written · `1` all failed · `3`
-≥ 1 symbol blocked by the guard.
+Both guard corpora are chartered (folded 2026-08-21 from the interim
+`analyzing/tape-guards.md`, now a pointer): INV-H's window-scoped merge +
+per-symbol verdicts (the compositional restatement classification, the
+CLOSED-at-five partition with its amendment record + falsifier, the
+`reconciled` tier, the OBV materiality measurement, the per-symbol
+`--allow-history-rewrite` record), the P8 provenance pins, the cron-lane exit
+contract, INV-U's monotone membership + the THREE-step universe lane + ∅-held
+= UNKNOWN (exit 4). Read `data/charters/analyzing/tape-supply/CHARTER.md`
+§§ 2.1–2.5 before touching `history_guard.py`, `universe_guard.py`,
+`ingest.py` write paths, accepting a rewrite, or diagnosing an exit 3. Exit
+codes: `0` all written · `1` all failed · `3` ≥ 1 symbol blocked by the guard.
 
-**Vendor-attrition class (opened 2026-08-16, RULED 2026-08-18).** `blocked[]`
-ran 1 → 5 → 31 → 76 → 88 → **100** over the 08-11..08-18 fires. The lost DATE
-set is closed at three (2026-07-21/22/31) and 98 of 100 lose a subset of
-exactly those; what grew was the SYMBOL set. **Most of it was FETCH TIME, not
-deletion:** the 04:30 comparison re-run at 16:30 on the same window turned 61
-of 100 refusals into clean/restated writes, and the same fire had left `c`/`adj_c`
-NaN at the frontier for **425 of 527** symbols (→ 32 of 55 ta-reference columns
-NaN, reported by nothing — `as_of` and `lockstep` both read healthy) against
-1 of 100 on the re-fetch. Two rulings landed (`c41c31457`): the lane moved
-**post-close, 18:00 ET** (`late_fire` is now a session window, refusing only
-inside [09:25, 16:45) ET; a post-close fire ADVANCES `--end` to tomorrow via
-`resolve_end`, so it captures the current session's settled bar — a pre-open
-fire still stops at today, and without that arm the move would have cost the
-05:25/06:00 readers a session), and INV-H gained the **`reconciled` tier** — a small loss is
-preserved and written as `E ∪ I` instead of refused (§ tape-guards.md).
-99 of 100 re-grade as `reconciled`; SATS and a repoint still refuse.
-**The plist still carries 04:30 until `install.sh --enable` is re-run from
-canonical on both seat hosts** — a green tree proves nothing about the running
-lane here. Watch `behind_frontier.count` (101 of 527 on 08-18) and the
-warn-level `reconciled[]` bucket: a tape whose gaps are papered over daily must
-not read as clean. `ns:analyzing/43`.
+**Vendor-attrition class — RULED 2026-08-18, CLOSED 2026-08-25.** `blocked[]`
+climbed 1 → 100 over the 08-11..08-18 fires and most of it was FETCH TIME, not
+deletion; the forensics (the closed lost-DATE set, the 61-of-100 re-fetch, the
+425-of-527 NaN frontier that `as_of` and `lockstep` both read healthy) are in
+`data/summaries/close/2026-08-18T1731-analyzing.md`. Both rulings it produced
+(`c41c31457`) are charter content now — the post-close 18:00 ET lane with its
+`late_fire` session window (§ exit-contract) and INV-H's `reconciled` tier
+(§ inv-h). DEPLOYED on both seat hosts 2026-08-25 and the fetch-time hypothesis
+CONFIRMED: the first post-close fire wrote 523 clean, `blocked[]` runs 2–3/fire
+since. The residue is individual symbol facts, watched at `ns:analyzing/50`
+(EQR vendor degradation; ^VIX3M re-frozen 888→1 since ≤08-21 — a true vendor
+outage this time, not our artifact; reads arm 2026-09-08). EA is
+retired-in-place (`sp500-retired.txt`) — its 08-04 frontier is expected. Watch
+`behind_frontier.count` and the warn-level `reconciled[]` bucket: a tape whose
+gaps are papered over daily must not read as clean. `ns:analyzing/43` retired
+2026-08-25.
 
 ## Web viewer — `analyzing/web/` (P4 host, role (b))
 

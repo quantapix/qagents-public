@@ -80,6 +80,17 @@ canonical-vs-worktree divergence — with git's semantics as the axiom layer
 beneath them. Proofs are driven by the coding-v.-testing `/dao` debate lane
 (manual-interactive first: `/dao-manual`), never manually.
 
+**The provable-guard kernel (`Operating/Guards/`) is AUTHORIZED and UNSTARTED —
+do not import it, and do not wire `--pre-wave-gate`, until P1 lands.** The
+structural-guards § 5 layer was BOUND until 2026-08-26, when studying minted the
+subspec that clears SK-1…SK-7 (`guards-kernel-2026-08-26`, a child of the
+lean4-charter family). Minting IS the build authorization; it grants none of the
+parent's charter-ruling requests, and the build (P1–P4) is dedicated-session
+work owned by no ns item. The mint's own suite asserts the "no lane depends yet"
+obligation and is written to RED the moment `Operating/Guards/` appears — so the
+first build session must rewrite that case to the real witness roster rather than
+let it quietly stop grading anything.
+
 **HARD RULE — adversarial independence is the ONLY oracle.** A parried attack is
 evidence *only* if the attacker did not know the proof and the proof was not
 pre-hardened against the attack list. Closing one leak channel buys nothing —
@@ -126,15 +137,23 @@ system-context payload, which is why the authoring rule above is a discipline an
 not a gate.
 
 **Daily unit = the SENTINEL, seated at `studying:dao-state` 07:45 daily**
-(`ns:studying/91`; six-part registration 2026-08-16). 07:45 is ORDERED — arm (e)
-reads managing's 06:00 report, the opposite ordering from `proving:axiom-state`
-05:10 whose output managing scans. DARK until the operator runs `install.sh
---enable` on BOTH seats (qyel + qpur — studying's archives are host-split); row
-in `data/schedules/pending-enable.md`. Until then, fire it by hand at session
-open. **The host-relative census arm that held this enable back is now measured
-GREEN on both seats (2026-08-20, `ns:studying/154`)** — the doctrine, the
-mechanism and the measurement live in the orchestrator-facing evidence-archive
-document, not here.
+(`ns:studying/91`). 07:45 is ORDERED — arm (e) reads managing's 06:00 report,
+the opposite ordering from `proving:axiom-state` 05:10, whose output managing
+scans. LIVE on qpur; qyel still awaits `install.sh --enable` — studying's
+archives are host-split, so one seat enabled leaves the other's rounds
+un-surveilled; row in `data/schedules/pending-enable.md`. **The per-axis
+sentinel class is SEAT-EXEMPT** (a sentinel reads host-LOCAL archives, so a
+seat-holder fire cannot see the peer's rounds); the `run_routine.sh`
+sentinel-class carve is landed (witness `t_32`) and `dao_state_check.sh` stamps
+`host=` on every emit, so that enable is now sufficient on its own. Standing
+conditions: an unstamped sentinel emit is inadmissible, and no sentinel emit
+may claim a class-wide number — exempting the gate multiplies the seats, it
+does not merge them (`ns:studying/91`). **Read the fire evidence at
+`data/schedules/launchd/logs/`, never `pending/logs/`, and never off `runs`**
+(`project_mobile_cron_seat`: `runs=0` is not a tell) — both wrong places to look
+report a live lane as dark. The host-relative census arm that held this enable
+back measured GREEN (`ns:studying/154`); its doctrine, mechanism and measurement
+live in the orchestrator-facing evidence-archive document, not here.
 
 ## 4. Guide-rails — `hub/` governance
 
@@ -154,7 +173,35 @@ skew note — not restated here). Any bump moves all three and replays each kern
 example proofs (`feedback_lean_toolchain_bump_verify_example_proofs`). **Studying
 carries TWO pins**, not one: `studying/lean-toolchain` *and*
 `studying/Operating/lean-toolchain` (the Operating package is the actual kernel) —
-both move together or `elan` resolves differently depending on cwd. **"One commit"
+both move together or `elan` resolves differently depending on cwd. **The two pins
+also DISAMBIGUATE a coordinate, and getting that wrong cost a ratified close gate
+its whole life (2026-08-25).** Anything that hashes "the kernel" — the lean_graph
+`input_digest` and every reader of it — is rooted at the LAKE PACKAGE
+`studying/Operating`, so its population is `Operating/**/*.lean` *relative to that
+root* plus the PACKAGE's pin. Rooting one level up at `studying/` instead sweeps
+every `Operating/examples/**` debate artifact into the population AND reads the
+other pin, so the recompute can never equal the stamp and every `/dao` round moves
+it. The writer's config is the authority (`code/lean_graph/.../axes.py`, whose own
+doc-comment says "Rel-to-root (studying/Operating)"); derive the population from
+it, never by re-spelling the paths. **FOUR call sites must agree, and the fourth
+is not ours** (2026-08-26, `ns:studying/190`):
+`code/lean_graph/.../extract.py::input_digest` (writes the stamp),
+`code/substrate/src/close/studying_gate.rs` (close exit 32),
+`studying/scripts/lean_graph_freshness.mjs` (the `/status` reader) and
+`proving/scripts/status_emit.py::_live_input_digest` — a byte-for-byte
+re-implementation on the TEXTUAL axis (its emitter runs system `python3` with no
+venv while the writer's package pulls networkx), pinned to a live recompute by
+`proving/scripts/test_status_emit_digest.py`. **The same coordinate governs the
+DRIFT arm, and it is why studying's was self-poisoning where proving's was not:**
+a `git diff <rev>..HEAD` filtered to the LAKE ROOT `Operating/` contains the
+emit's own outputs at `Operating/emits/lean_graph/`, so a description could not
+falsify its own currency; proving's filter is the KERNEL TREE `Proving/`, which
+excludes its emit by construction, so the identical-sounding claim is FALSE there
+(measured 2026-08-26, `ns:studying/190`). Before calling any drift arm
+self-poisoning, resolve its PATHSPEC — one level of root separates the two
+outcomes. Consequence for the steward:
+**changing the digest algorithm now reds a consumer's suite on another axis** —
+intended, and a fourth site to move. **"One commit"
 is not always achievable — record the deviation:** when each axis is held by its
 own open session the bump lands one commit per branch, in lockstep in time, each
 independently verified. Say so; never let the three drift across a day.
@@ -165,6 +212,25 @@ dir, `/tmp`) silently falls back to elan's **default** toolchain — it voided r
 textual-axis work (anatomy: `reference_lean_isolation_probe_full_path_imports`).
 Always `lake env` from the package root, or `elan run leanprover/lean4:<pin> lean`. A
 file-in-the-root is not a pin for any process whose cwd is elsewhere.
+
+**SUITE AUTHORING — the assertion libs are NOT interchangeable, and the wrong one
+FAILS OPEN (measured 2026-08-26).** The lean4-charter family lib
+(`specs/lean4-charter-2026-06-10/tests/lib/lib.sh`) exports an ABORTING `_fail`
+and defines no `fail`; the `signoff-verification` suite exports a COUNTING
+`fail`/`pass` pair. Write `fail` in a family-lib case and bash prints
+`command not found`, returns non-zero from a statement whose value nothing reads,
+and the case runs on to its `echo OK` and **exits 0 — the suite reports PASS over
+a failed assertion.** Read which lib a case sources before writing its failure
+call. Two standing consequences: every new case carries a proof-of-fire arm that
+reds if its own matcher stops being able to fail (charter inv proof-of-fire, and
+this is the cheapest instance of it); and prose assertions over a wrapped
+markdown subject normalise the file to one whitespace-collapsed line first — a
+line-based grep reads a required phrase split across a line break as ABSENT.
+**A tests/lib symlink is RELATIVE, never absolute:** an absolute one commits the
+minting worktree's path, dangles everywhere else, and dangles SILENTLY because
+`run.sh`'s own `ln -sf` recreates it correctly wherever it next runs while the
+committed artifact stays broken. Sweep with `find data/charters/studying/specs
+-type l ! -exec test -e {} \; -print` after any spec-tree work.
 
 ## 6. Source authority
 
@@ -218,8 +284,7 @@ standing ruling that governs quoting an adjudication figure on a public surface
 live in the orchestrator-facing gate/instrument document** (§ 3 names the
 find-by-behaviour rule). They are deliberately not restated here and **no figure
 appears here**: a count a cell could recognise as a verdict is exactly the
-payload the § 3 authoring rule excludes, and this section carried the largest
-such payload in the file until 2026-08-20. Read that document before quoting
+payload the § 3 authoring rule excludes. Read that document before quoting
 `theoremsProved`, any round count, or any adjudication pair — each carries stamp
 obligations that make the difference between an honest figure and a withdrawn
 one.

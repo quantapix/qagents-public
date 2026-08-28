@@ -40,9 +40,9 @@ claude-md/
 
 ## Which subprojects publish
 
-This first cut is **product-focused** — the subprojects behind the two
-shipping products plus the core infrastructure they ride on. The rest of
-the publishable graph lands in later weekly refreshes.
+Most of the publishable graph is here. The list below is split by when
+each file joined, because the reasons the remainder is held back are more
+interesting than the roster itself.
 
 Published this round:
 

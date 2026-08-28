@@ -60,16 +60,23 @@ cites #6, and `dco-manual` cites the checker's #7.
    daily fire ITSELF stopped — `scripts/watcher-liveness.sh`), S5-scan
    (verifier FINDING lines + per-axis `coverage-diff`, REPORT-only), and
    memsearch Stop-hook health; their hits rank **functionality**, not
-   spec-hygiene correctness. Full row text — section semantics, the
-   exit-75/76 collapse rules, the trading-chain and artifact-existence
-   arms, the carve-out registry, the S8 `retire` relays, the `dco-verify`
-   marker rule, and the walk scope — lives ONLY in `checker.md` #6
-   (ns:managing/49) + memory `project_managing_subproject` commitment 6.
+   spec-hygiene correctness. Full row text: `checker.md` #6 (ns:managing/49)
+   + memory `project_managing_subproject` commitment 6.
    Thresholds mirror `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
    `data/charters/qagents/spec-lifecycle/CHARTER.md` and move in lockstep
    (script + `checker.md` #6 + this roster land in ONE change —
    data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16 § 6.1
    for the multi-root + DEBATES/TODOS arms).
+   **A watcher inside its subject's failure domain buys nothing** — moving a
+   detector onto a SIBLING routine cures only the correlation it names; the
+   cure is a different failure domain, which is what watcher-liveness is for.
+   And **the detector's input must be SCHEDULE-derived** (what SHOULD have
+   fired), never log-derived, because the interesting failure writes no log.
+   Landed 2026-08-25 as `scripts/trading-day-artifacts.sh` (#6's
+   trading-chain arm, witness `t_21_trading_day_artifacts.sh`); the
+   `ns:trading/19` → 08-12/13 instance is in memory `project_trading_system`
+   § "Detectors inside the chain they grade".
+
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
    (regenerate via `scripts/claude-settings/build.py`). Hand-edit drift only;
@@ -80,9 +87,7 @@ cites #6, and `dco-manual` cites the checker's #7.
    pins, overlay byte-mirror parity, and the sanctioned-deviation premise
    (**a premise is not a mirror** — `cmp` cannot decide it, so it expires
    with the other two green). `premise UNKNOWN` is always a finding, never
-   clean. Full row text — the three arms, the mirror pairs, the
-   `UNREGISTERED` sweep, the headless literal maps — lives ONLY in
-   `checker.md` #8 (ns:managing/49) + memory
+   clean. Full row text: `checker.md` #8 (ns:managing/49) + memory
    `feedback_two_token_mirrors_ship_two_palettes`.
 9. **Cron-seat capability + roster + posture + flip + peer-dark + unloaded +
    pending-enable.** `scripts/seat-drift.sh` is the source of truth (wraps
@@ -94,21 +99,18 @@ cites #6, and `dco-manual` cites the checker's #7.
    `posture=OFF-POSTURE-STALE` (≥ 7d), `peerdark=DARK` (one per NAMED entry),
    `pending-enable=<n>-AGED` (≥ 7d) → **correctness**; every `UNKNOWN` /
    `no-peer` is tally-only but **never** reads clean, and `PEER-AGE` is graded
-   every compare. managing REPORTS these rows, never edits them. Full row text
-   — thresholds, rationale, landing-line forms, the exclusivity ≠ capability
-   argument, the `monitoring:archive-scan` and 2026-08-11 qpur `loaded=0`
-   instances — lives ONLY in `checker.md` #9, the copy the daily fleet reads
-   (roster-ization, ns:managing/49). Memory `project_mobile_cron_seat`; spec
-   family `data/specs/node-return-lane-2026-07-14/`. Three-file lockstep:
-   script + `checker.md` #9 + this row move in ONE change.
+   every compare. managing REPORTS these rows, never edits them. Full row
+   text: `checker.md` #9 (ns:managing/49), the copy the daily fleet reads.
+   Memory `project_mobile_cron_seat`; spec family
+   `data/specs/node-return-lane-2026-07-14/`. Three-file lockstep: script +
+   `checker.md` #9 + this row move in ONE change.
 10. **Node-PR staleness.** `scripts/node-pr-staleness.sh` is the source of
    truth (observe-only; never fetches). `stale=YES` (unmerged node PR > 7d) →
    **consistency** — a waiting contributor, not a broken system; everything
    else tally-only. Same lane, no new number: `scripts/node-pr-gate.sh`
    `verdict=BLOCK` → **correctness**, surfaced verbatim; that PR must not
-   merge until amended or ruled. Full row text — the declared-surface
-   allow-list (closed set, no auto-widening), the answer path, and the spec
-   families — lives ONLY in `checker.md` #10 (ns:managing/49).
+   merge until amended or ruled. Full row text: `checker.md` #10
+   (ns:managing/49).
 
 11. **Flow-clause hygiene (tree-wide safety net).** `scripts/flow-lint.sh` is
    the source of truth. Any HARD line → **correctness**; the load-bearing
@@ -123,22 +125,15 @@ cites #6, and `dco-manual` cites the checker's #7.
    dco-spread apply item …` rows, the R6 `STALE no shrink pass …` row, and
    `fail_headroom min < 2500` B (distance-to-fail, graded instead of the
    breach count — I-7) are **correctness** findings; UNKNOWN rows are
-   findings, never clean.
-   Triage routes to `data/next-steps/qagents.md`. Full row text — thresholds,
-   the two run-dir homes, the purge-vs-disuse `no-runs` reading, and the
-   2026-08-16 SLA-lineage + p0 re-key (ns:managing/48) — lives ONLY in
-   `checker.md` #12 (ns:managing/49).
+   findings, never clean. Triage routes to `data/next-steps/qagents.md`.
+   Full row text: `checker.md` #12 (ns:managing/49).
 13. **Spec-family test-battery health.** `scripts/spec-battery.sh` is the
    source of truth — the tree-wide aggregating runner over every spec-family /
    charter / subproject-harness `run.sh`. `FAIL` / `TIMEOUT` /
    `SKIPPED-OVERSIZE` rows → **correctness**; a sweep with no trailing
-   `suites=…` summary is UNKNOWN, never a clean count. Full row text — the
-   background-invocation + `--out` discipline, the 600 s ceiling and the
-   OVERSIZE carve, the post-sweep `git status` spillage check (an aggregating
-   READER must never need a write lock —
-   `feedback_test_suite_shared_hub_spillage`), the run-length rule for
-   standing reds, and the `store-durability` honest-red carve — lives ONLY in
-   `checker.md` #13 (ns:managing/49).
+   `suites=…` summary is UNKNOWN, never a clean count. An aggregating READER
+   must never need a write lock (`feedback_test_suite_shared_hub_spillage`).
+   Full row text: `checker.md` #13 (ns:managing/49).
 14. **Blind-metric provenance on published figures.**
    `scripts/blind-metric-drift.sh` is the source of truth. A changed
    coverage/tier figure on a public status slot whose minting wave +
@@ -164,12 +159,8 @@ cites #6, and `dco-manual` cites the checker's #7.
    channel and this is the fire-to-fire DIFF that replaces it. Classes:
    `NEW-RED` → **functionality**; `COVERAGE-REGRESSION` → **correctness**;
    `UNKNOWN` → tally-only but **never green**. Observe-only; route fixes to
-   serving. Full row text — the three state definitions, the 2026-07-26
-   three-day instance, the `PG_HEALTH_ARM_VERDICTS=1` + seat-holder
-   host-scoping caveats, and the reciprocal cites (ns:serving/80 →
-   ns:managing/44) — lives ONLY in `checker.md` #16, which is the copy the
-   daily fleet reads (roster-ization, ns:managing/49). Three-file lockstep:
-   the script + `checker.md` #16 + this row move in ONE change.
+   serving. Full row text: `checker.md` #16 (ns:managing/49). Three-file
+   lockstep: the script + `checker.md` #16 + this row move in ONE change.
 
 Subagent prompts under `.claude/agents/` encode these commitments verbatim —
 keep them in sync when a threshold changes.
@@ -217,11 +208,8 @@ exact output path to write — they never negotiate scope at runtime.
 - Spec hygiene — § 1.1 commitment 6 (`scripts/specs-audit.sh` finding set).
 
 **Functionality** (live system state, *highest priority*) — the weighted probe
-pool: live route fetch (femfas.net / quantapix.com), single-spec Playwright
-replay, status-hub freshness, public-org Actions runs, legal-corpus cite
-integrity, shipped-ruling regression. Families, weights, and pass/fail
-predicates are owned by `managing/probes.md` (P1..P7, § 4) — never restated
-here; the pinned commitments (§ 1.1) carry the rest.
+pool, owned by `managing/probes.md` (P1..P7; § 4) and never restated here; the
+pinned commitments (§ 1.1) carry the rest.
 
 A functionality failure is the day's top issue, full stop. Consistency and
 correctness fill the remaining 4 slots, ranked by blast radius (legal-record
@@ -249,10 +237,8 @@ fallback; no GNU shuf dep), seeded `date +%j` — deterministic per day, varied
 across days.
 
 **A gate cross-checking a human-authored free-text field must match on the
-FACT, never on the FORMATTING** — if the shape of the prose is load-bearing to
-a gate, the gate is reading the wrong surface. Worked instance (the coherency
-warn-cap arm reporting a genuinely filed breach as unfiled, daily, until
-2026-08-07) + the relax-and-re-pin rule: memory
+FACT, never on the FORMATTING** — a gate to which prose shape is load-bearing
+is reading the wrong surface. Instance + the relax-and-re-pin rule: memory
 `feedback_data_structure_over_brittle_code` § Corollary.
 
 ## 5. Boundaries
@@ -360,22 +346,18 @@ entry `managing:daily:06:00:0,1,2,3,4,5,6` in
 coordinator prompt at `managing/.claude/coordinator-prompt.txt`, piped to
 `claude --print` by `data/schedules/launchd/run_routine.sh`; it runs the
 four subagents in parallel and exits, runtime budget **≤ 25 min (ruled
-2026-08-18, `data/debates/operator-sittings-2026-08-18.md` § A** — raised from
-10 min because the checker's measured wall clock is 14–21 min against the
-`claude --print` 600 s background-wait default, which killed the fan-out on
-08-16 and 08-18). The raise is delivered by a `managing:daily`-scoped
+2026-08-18, `data/debates/operator-sittings-2026-08-18.md` § A)** — the
+checker's measured wall clock is 14–21 min, over `claude --print`'s 600 s
+background-wait default. LANDED as a `managing:daily`-scoped
 `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS` export in `run_routine.sh`
-(`ns:serving/99`); **until that lands, the fan-out still terminates at 600 s**
-with "Background tasks still running" and the checker's work is lost. The
-budget stays a hard CEILING, not a target: any arm added here is spending a
-fixed pot — cost the wall clock before adding one. **The seat host must not
-SLEEP inside that window** — the host-config half is cured (qpur `pmset` reads
-`sleep=0` on AC since ≥ 08-17); the repo-level sleep assertion stays open as
-the battery arm (`ns:serving/97`). A fire that stops with NO exit line is one
-of those two classes, never a budget kill (a budget kill is *distinguishable*:
-exit 4 + `Error: Exceeded USD budget` verbatim); do not diagnose it from one
-day's log — `ns:managing/52` decomposed into four mechanisms across nine days,
-detail in memory `project_managing_subproject`.
+(`ns:managing/52` retired 2026-08-25). The budget is a hard CEILING, not a
+target: any arm added here spends a fixed pot — cost the wall clock first.
+**The seat host must not SLEEP inside that window** — host config is cured
+(qpur `pmset` `sleep=0` on AC); the repo-level sleep assertion stays open as
+the battery arm (`ns:serving/97`). A fire that stops with NO exit line is a
+ceiling or sleep kill, never a budget kill (that is *distinguishable*: exit 4
++ `Error: Exceeded USD budget` verbatim); the nine-day decomposition is in
+memory `project_managing_subproject`.
 Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`,
 paired with `routine_policy_model` so a routine's tier and its funding cannot
 drift apart — read `daily`'s figure from that function, never from a copy

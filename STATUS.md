@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-08-21. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-08-28. Refreshed weekly (Fridays) during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -40,38 +40,54 @@ that is a ruling, not a backlog, and it is stated in full below.
   refresh. This round most of the published set moved, several substantially;
   the commit diff is the change record.
 
-## What changed since the last refresh (2026-08-14)
+## What changed since the last refresh (2026-08-21)
 
-- **All three formal kernels pulled answer-shaped content out of their own
-  rule-files.** Each kernel's rule-file is injected into every subagent's
-  prompt, which means a sentence written there reaches a blind reviewer with
-  no read — and no blindness check grades a non-read. The legal-domain kernel
-  relocated its golden shapes (composite identifiers, field counts, which
-  composite a bridge targets) into a separate, reviewer-barred roster file;
-  the operational and financial kernels split their own answer keys out in the
-  same window. This is the earlier incorporation-by-reference split taken one
-  channel further: incorporation became injection-by-default.
-- **The legal-domain kernel gained another hand-built framework** — a federal
-  trafficking chapter, authored as a golden reference against which automated
-  encodings are scored.
-- **The publish lane grew an output assertion, not just more rules.** The
-  rule-set mirror already carried rewrite rules that strip barred tokens at
-  render time, but a rules-only guard is vacuous against a *new* sentence
-  nobody wrote a rule for. The renderer now asserts over its own rendered
-  output and hard-exits naming the offending line if a barred token survives.
-  Both arms of the proof-of-fire were witnessed: a clean source exits zero, an
-  injected unruled sentence exits non-zero.
-- **The published skill mirror was measured against its sources for the first
-  time.** It is hand-authored and had no drift check, so nothing detected when
-  a source moved out from under it. Four published claims were found stale and
-  are corrected in this round: a session-agenda section that no longer exists,
-  a gate's matching rule published in its pre-fix form, a model pin the source
-  had already removed, and a size cap attributed to the wrong gate. A witnessed
-  drift check — not a one-time re-render — is the actual fix, and it is not
-  built yet.
-- **The cross-subproject hint queue was flushed four times**, folding queued
-  implications from the financial, site-authoring, video-production and
-  simulation surfaces into the rule-sets that own them.
+- **All three formal kernels finished pulling answer-shaped content out of
+  their own rule-files, and one of them found the same leak on a second
+  channel.** A kernel's rule-file is injected into every subagent's prompt, so
+  a sentence written there reaches a blind reviewer with no read — and no
+  blindness check grades a non-read. Each kernel's reference material now lives
+  behind a reviewer bar rather than in the injected file. What is publishable
+  is the bar and the reason a split beats a banner: a banner asks a reader not
+  to look at something it has already shown them. What is not publishable is
+  the filename, any section inside it, or an inventory of what a reader would
+  find there — this status file said too much on that last point in the
+  previous round and the sentence has been removed rather than softened.
+- **The same class turned up on a live channel, not just in a file.** The
+  financial kernel's blind-cell harness was found publishing each cell's live
+  transcript to a surface the cells were barred from, and a gate wired only
+  into the acting verb let the reading verbs route around refused state. The
+  rule that came out of it generalises past this lane: gate the read verb, not
+  only the act verb.
+- **A one-week regression proved that a render-time assertion is not a source
+  guard.** The output assertion added last round — the renderer refuses to emit
+  a mirror still carrying a barred token, naming the offending line — fired this
+  round on a rule-file that had been cured seven days earlier. An unrelated
+  maintenance pass had written the barred form back in while documenting the
+  bar, which is exactly the context the previous round identified as the
+  dangerous one. The assertion did its job and the publish stopped. The finding
+  is that the only thing standing between the two events was a weekly manual
+  run in a different scope.
+- **The hand-authored surfaces in this repo have no equivalent of that
+  assertion, and six claims were found that were true when written and are false
+  now.** A framework roster that had expanded twice; a review-fleet count that
+  had gone from three to two when one lane was absorbed into another pass; a
+  capability described as forthcoming that had shipped; a front-matter promise
+  of two subtrees this repo does not contain; a curation process described in
+  the present tense that has never once run; and a prose count of statutory
+  titles that the source kernel had ruled must never be stated as prose. None is
+  a redaction failure and no blocklist could see any of them: a blocklist tests
+  an artifact against a token list, and this class needs the artifact tested
+  against the world. All six are corrected in this round.
+- **A per-item audit measures diligence, not control of the generator.** The
+  operational kernel swept its own taxonomy this round: most members held, a
+  handful were demoted, and three escapees turned up in shapes the taxonomy has
+  no slot for. The conclusion recorded was to grade the next artifact produced
+  rather than the size of the sweep — a sweep that finds new shapes has
+  measured its author's diligence, not the generator's behaviour.
+- **The cross-subproject hint queue was flushed and a capacity-review pass ran
+  out of band**, folding queued implications back into the rule-sets that own
+  them.
 
 ## What's not populated, and why that is a ruling
 
@@ -111,6 +127,11 @@ surface in this organisation; the organisation page is the sole contact channel,
 so questions are answered in public. A collateral federal-appeal docket number
 was added to the hard-blocked set on 2026-07-31; the spelled-out court name
 without the number remains publishable.
+
+A fourth kind of guard sits inside the renderer rather than at the gate: it
+asserts over its own rendered output and hard-exits, naming the line, if a
+barred form survives. Rewrite rules alone are silent against a sentence nobody
+wrote a rule for; an assertion on the output is not.
 
 ## Cadence
 
