@@ -121,8 +121,8 @@ resolved no items, the gate skips with exit 0.
 
 | Exit | Phase | Claude action |
 |---|---|---|
-| 24 | missing-slot-file | Cites items but the slot file doesn't exist. Bootstrap from the slot template; list cited items; delete the just-cited ones; re-stage; re-run. |
-| 25 | items-not-deleted | Cited items still present. Delete each (do NOT renumber survivors — gaps anchor commit-message audit trails); re-stage; re-run. |
+| 24 | missing-slot-file | Cites items but the slot file doesn't exist. The slot is a GENERATED render, so bootstrap it by rendering it — never by hand-authoring the file. |
+| 25 | items-not-deleted | Cited items are still live in the store. Resolve each through the ledger's resolution verb and re-render the slot. **Do not hand-edit the render**: the slot is a single-writer generated projection, and the first check this gate runs refuses a hand-edited render outright — so editing the file to satisfy the gate is the act that fires it. Survivors are never renumbered; the gaps anchor commit-message audit trails. |
 
 ### 6. Commit session work (judgment writes the message)
 

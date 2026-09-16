@@ -192,8 +192,8 @@ swappable: yes".
 registered via its own `scenes/_cli.py` bridge) owns **full shots** —
 geometry/GN + materials + lighting + camera path + keyframed animation
 + optional compositor look pass — vs motifs' background-plate
-geometry. Locked in `data/specs/blending-scenes-2026-07-04/`:
-custom-generated scripts
+geometry. Locked in `data/specs/blending-scenes-2026-07-04/` (SPEC.md
+body reaped; live contract = § 6.5 here): custom-generated scripts
 are the *authoring* path only, production always goes through a
 registered builder + JSON spec (a per-episode variation is a param or
 a `data` file, never a forked `.py`); blendr renders image sequences

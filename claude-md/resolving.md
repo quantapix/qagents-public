@@ -30,14 +30,12 @@ wrapper — the wrapper is one component among several. The full scope:
   primitives, keyframes, `.setting` I/O + golden normaliser) is its own
   documentation: `davinci/docs/api.md` + `davinci/docs/gotchas.md`.
 
-**The founding spec is REAPED — do not re-cite it.** do-retire S9
-(2026-08-08, `84ffbf546`) deleted the `resolving-2026-05-26` family's
-SPEC.md body and its `fusion-scripting-2026-05-27`,
-`blender-compose-2026-07-04` and `skills-lift-2026-05-15` subspec bodies
-(recoverable via `archive.blob` + `retire.sh --restore`); only `tests/`
-dirs survive. Surviving
-obligations promoted to `data/charters/resolving/headless-decoration/`
-and to this file.
+**The founding `resolving-2026-05-26` spec family is REAPED — never
+re-cite it** (do-retire S9, 2026-08-08 `84ffbf546`; only `tests/` dirs
+survive). Surviving obligations live at
+`data/charters/resolving/headless-decoration/` and in this file; the
+reaped-subspec roster + `retire.sh --restore` recipe:
+`project_resolving_subproject`.
 
 **Ratified hybrid** (debate `resolving-tooling-2026-06-30`, ADOPT-AMEND;
 digest `data/debates/adopted/`). Resolve = **assembler + caption-bake +
@@ -100,8 +98,6 @@ timeline + through Fusion + out as an MP4. The split is:
   `data/charters/explaining/specs/production-phasing-2026-05-19/SPEC.md`).
 - `resolving/skills/` + `resolving/davinci/` — the verbs those drivers
   call.
-- per-skill `SKILL.md` + `diagram.svg` (whole-pipeline `diagrams/` is
-  P6) — the human-readable map of the verb space.
 
 If a per-video need turns out to be reusable, lift the verb into a
 skill or wrapper helper here; don't fork it across `<n.m>-<slug>/`

@@ -2,7 +2,7 @@
 
 The redacted mirror of the `CLAUDE.md` graph that governs every
 AI-assistant session inside the qagents working tree. One file per
-published `CLAUDE.md`, refreshed weekly from the private source.
+published `CLAUDE.md`, refreshed per release run from the private source.
 
 See the [umbrella README](../README.md) for the broader thesis.
 Sibling subtrees: [`skills/`](../skills/) (the session-lifecycle + optimization

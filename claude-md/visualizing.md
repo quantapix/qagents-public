@@ -92,16 +92,13 @@ this § 3 is authoritative.
   visualizing, do-share P0-8 2026-07-18): `qrounds.schema.json` +
   `qrounds-standing.schema.json` + the `qblindness{,-corrected}.schema.json`
   pair (do-share run 7 R-3, 2026-08-04) + `validate_rounds.py` (stdlib,
-  exit-coded 0/2/4/5) over each axis's `…/examples/*/rounds/`. Two invariants a
-  session must not break: a `#corrected` blindness record supersedes its base
-  without overwriting it and **the base is not reapable**; the JSON-Schema
-  subset is CLOSED and self-enforcing (exit 2 on any keyword `_check` does not
-  implement), so widening it is a three-part change — interpreter arm +
-  `_UNDERSTOOD` entry + known-bad witness. Owner amendments extend the record
-  optional-additively and REFUSE the committed-enum widening their filings
-  propose. Amendment log (typed joins, `concessions[]`/`acceptedFindings[]`),
-  retention ruling, `_target_stems` diff-lock, exit codes, fixtures:
-  `rounds/README.md`.
+  exit-coded 0/2/4/5) over each axis's `…/examples/*/rounds/`. Owner amendments
+  extend the record optional-additively and REFUSE the committed-enum widening
+  their filings propose. The two invariants a session must not break (a
+  `#corrected` base is superseded, never overwritten, and is not reapable; the
+  JSON-Schema subset is CLOSED — widening it is a three-part change), the
+  amendment log, retention ruling, `_target_stems` diff-lock, exit codes and
+  fixtures: `rounds/README.md`.
 - `specs/` — the three POC extraction specs (provenance for the consolidated
   spec's appendix). `shared/INPUTS.md` — pointers to the axiomatized data.
 
@@ -170,12 +167,9 @@ the charts SPEC's ledger** — trust the SPEC rows, not this line.
 **M0 node-link reader (2026-06-17).** Adapter internals (`fromNodeLink`/`mountNodeLink`; monitoring mounts live, verifying uscode = M2) → `graphs/README.md` § "M0 node-link reader" (relocated apply-spread 2026-07-28).
 
 **Method-DAG hero (designing `/thesis`).** An authored interactive INDUCTIVE DAG
-exercising three general, byte-compat node-link capabilities: cluster-as-node
-edges (`nodelink.ts`), expansion-state merge (`core/merge.ts`), inductive
-clusters (`core/inductive.ts`) + role→shape + `MountKitOpts` knobs; authored
-`etype ∈ {flow,use,feedback,veto}` (`method.ts`/`elements.ts`). Encoding +
-standing graph-def grammar + the W7 constraint mechanism live in **parent SPEC
-§ 15** (firewall A-ONLY, merged `S→T` forbidden; regression bed
+over three general, byte-compat node-link capabilities. Encoding, the standing
+graph-def grammar and the W7 constraint mechanism live in **parent SPEC § 15**
+(firewall A-ONLY, merged `S→T` forbidden; regression bed
 `graphs/test/flow-constraints.test.ts`, `sandbox/w7-check.mjs`). **Single
 render** — one cytoscape-fcose source (`hero-graph.json` + `loader.js`) serves
 both the silent hero video and designing's `/thesis` mount; 7-chapter animation
@@ -185,9 +179,9 @@ the MP4-deferral premise is dead). **W6 method-projection producer SHIPPED
 2026-08-06**: `extractor/method_projection.py` + `validate_method.py` emit + gate
 `data/visualizing/method-{legal,financial}.json` (hero NEVER regenerated; zero
 kit changes). Build record, G1–G5, the 10 known-bad witnesses, the § 6 amendment
-and the two standing findings it left (nested merge groups vs the mount's
-variant-composition contract → ns:visualizing/50; the TOKEN-based financial
-directional gate): `…/visualizing-2026-06-03/method-projection-2026-08-06/SPEC.md`.
+and the one standing finding it left (the TOKEN-based financial directional
+gate; the nested-merge-group hardening landed `9b8e1b0fc`, `core/merge.ts`):
+`…/visualizing-2026-06-03/method-projection-2026-08-06/SPEC.md`.
 
 **Constellation modality (M) + cluster-lens.** studying's SECOND operational
 input — the qagents monorepo + `~/.claude` memory as one non-hierarchical graph
@@ -243,15 +237,13 @@ byte-equality.
   declared token (DEFAULT_TOKENS[_3D] ∪ SERIES_TOKENS; family prefixes admitted
   iff members are declared). A px dimension is never an overlay token — the
   pane-h read was deleted, not declared.
-- **The proof conformance anchor is SYNTHETIC and stays that way.**
-  `graphs/test/fixtures/graph-v1-doe_acme.json` = proving's real `sample` (Doe v.
-  Acme) emit + an authored § 1961(1) refusal (`sandbox/gen-doe-acme-fixture.py`); it
-  replaced an earlier real-matter fixture 2026-07-13. This tree is a
-  publish candidate — **no real docket matter (evidence quotes, party names) may
-  land in it.** The synthetic proving examples all carry `failures: 0`, which is why the
-  refusals are injected; if proving ever
-  emits a genuinely refusing synthetic, adopt its `graph.json` and delete the
-  injection.
+- **The proof conformance anchor is SYNTHETIC and stays that way.** This tree is
+  a publish candidate — **no real docket matter (evidence quotes, party names)
+  may land in it**; `graphs/test/fixtures/graph-v1-doe_acme.json` carries an
+  authored refusal because every failure-bearing proving example is drawn from
+  live matter.
+  Provenance, regeneration and the adopt-a-refusing-synthetic exit:
+  `graphs/README.md` § "Test / typecheck / gates".
 - **Cluster-naming contract (W3) — a producer obligation that FAILS SILENTLY.** A
   method wire's LLM compound MUST end in `.LLM` and its kernel compound in `.Kernel`
   (suffix-matched; `LLM_SUFFIX`/`KERNEL_SUFFIX`/`isLlmCluster` in `core/method.ts`).
@@ -277,8 +269,8 @@ byte-equality.
   furniture token, and never add a colour by handing hosts a raw token name — add
   a role.** `seriesColor()` is role-first with a legacy-`styleRef` fallback; an
   *undeclared* series never defaults into the ramp. Palette (rendering-owned) +
-  the `lintSeriesTokens()` palette-SET gate:
-  the retired `charts-role-palette-2026-07-14` family, next-steps item 26.
+  the `lintSeriesTokens()` palette-SET gate: the retired
+  `charts-role-palette-2026-07-14` family.
 
 ## 5. Seam discipline — JSON only
 
@@ -364,7 +356,7 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
   (`feedback_gate_must_name_the_right_subsystem` case 5). Declared:
   `DEFAULT_TOKENS`, `DEFAULT_TOKENS_3D`, `--font-mono`.
   `managing/scripts/brand-drift.sh` gates the first two; the third is uncovered
-  and its sanction rests on a premise no gate watches — ns:managing/34.
+  and its sanction rests on a premise no gate watches.
 
 ## 7. rendering/ seam (rendering-spec debate, Round 01 — 2026-06-09)
 

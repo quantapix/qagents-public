@@ -67,15 +67,8 @@ cites #6, and `dco-manual` cites the checker's #7.
    (script + `checker.md` #6 + this roster land in ONE change —
    data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16 § 6.1
    for the multi-root + DEBATES/TODOS arms).
-   **A watcher inside its subject's failure domain buys nothing** — moving a
-   detector onto a SIBLING routine cures only the correlation it names; the
-   cure is a different failure domain, which is what watcher-liveness is for.
-   And **the detector's input must be SCHEDULE-derived** (what SHOULD have
-   fired), never log-derived, because the interesting failure writes no log.
-   Landed 2026-08-25 as `scripts/trading-day-artifacts.sh` (#6's
-   trading-chain arm, witness `t_21_trading_day_artifacts.sh`); the
-   `ns:trading/19` → 08-12/13 instance is in memory `project_trading_system`
-   § "Detectors inside the chain they grade".
+   Arm rationale (own-failure-domain, SCHEDULE-derived input) + the 08-12/13
+   trading-chain instance: `checker.md` #6 + memory `project_trading_system`.
 
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
@@ -308,6 +301,18 @@ TERMINATES the fire, so a commit gated on the slowest subagent inherits that
 subagent's failure rate; the script's lanes filter to new/modified files, so the
 second run is additive). Audit signal: `git log --grep "^\[managing\] verify"`.
 
+⚠ **`pending/` is PER-HOST, and only the SEAT's buffer is ever drained.** The
+path is identical on every machine but the verifier fires only on the seat
+holder (§ 7.1), so off-seat the buffer accumulates forever and a daily report's
+pass-list describes ANOTHER TREE — measured 2026-09-13: the 09-12 sidecar
+described qpur's tree while this host's buffer had been frozen since the
+2026-08-07 seat flip. **Stamp the host on the pending section exactly as the
+launchd-logs section already does**, and resolve `hostname` against
+`data/schedules/SEAT` before reading any `pending/` figure or WARN as
+actionable. `pending/logs/` is in NO host's promotion lane (it is a
+`/do-retire` lane, fed off-seat by interactive `/open`+`/close`) — a separate
+finding, never this one.
+
 Script mechanics — manual `--force`, `prune_stale_fails`, the S5 write-back
 + the `push_to_authority` silent-SPOF rule: `data/schedules/CLAUDE.md`
 § "`verify-pending.sh` — script mechanics".
@@ -348,10 +353,10 @@ coordinator prompt at `managing/.claude/coordinator-prompt.txt`, piped to
 four subagents in parallel and exits, runtime budget **≤ 25 min (ruled
 2026-08-18, `data/debates/operator-sittings-2026-08-18.md` § A)** — the
 checker's measured wall clock is 14–21 min, over `claude --print`'s 600 s
-background-wait default. LANDED as a `managing:daily`-scoped
-`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS` export in `run_routine.sh`
-(`ns:managing/52` retired 2026-08-25). The budget is a hard CEILING, not a
-target: any arm added here spends a fixed pot — cost the wall clock first.
+background-wait default, raised by a `managing:daily`-scoped
+`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS` export in `run_routine.sh`. The budget
+is a hard CEILING, not a target: any arm added here spends a fixed pot — cost
+the wall clock first.
 **The seat host must not SLEEP inside that window** — host config is cured
 (qpur `pmset` `sleep=0` on AC); the repo-level sleep assertion stays open as
 the battery arm (`ns:serving/97`). A fire that stops with NO exit line is a

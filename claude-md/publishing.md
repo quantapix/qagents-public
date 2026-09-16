@@ -64,8 +64,8 @@ No cron lane — the drive cadence (weekly Fridays) is operator-run via
 
 ## 5. Redaction is a hard gate, not advisory
 
-A HARD blocklist hit (the private-address family + the SOFT opposing-party /
-counsel / docket / agency-PII set) anywhere in the candidate tree **aborts**
+A blocklist hit (the private-address family + the opposing-party / counsel /
+docket / agency-PII set) anywhere in the candidate tree **aborts**
 the compile/push. `publishing/` inherits `documenting/`'s redaction rules
 (`documenting/letters/REDACTION.md` + the `HARD_PATTERNS`/`SOFT_PATTERNS` in
 `documenting/scripts/check_redactions.py`); it invents none and relaxes none —
@@ -90,21 +90,40 @@ emit a mirror still carrying a per-source barred token — the only lever that
 reaches the gate-(1e)-excluded `claude-md/` subtree, and the only one that sees a
 token arriving in a sentence no `REWRITES` rule was written for.
 
+**Two arms landed 2026-09-15 (Round 05 L-B1/L-B2, `ns:publishing/77`+`/78`).**
+(i) The content sweep reads the ONE admitted `.lean` location as well as `*.md`,
+and the path rule bars a live-matter example id in the path — each catches a
+case the other structurally cannot (measured: 20 of 876 example `.lean` carry a
+barred token, 19 of them under such an id and **one** with a clean path). `t_23`.
+(ii) Stage 2's prefix rules scrub the BARE form for the private-hub family and
+deliberately KEEP it for the subproject / public-hub names, which already ship;
+the keep set is declared, so an unconsidered new prefix defaults to the private
+direction. Reader `sync_mirror.py --check-path-subs` plants every prefix in BOTH
+polarities; `t_24`. **Only a two-polarity test can say a cure went too far** —
+a uniform sweep here would have rewritten 26 engineering references into
+redaction phrases. The collateral-docket bar (above) also gained a generic form
+arm so a NEW number fails closed, still narrow to that family.
+
 **Gate (1e) — the SCOPE is the guard (2026-08-14).** Two measured narrowings
 (PATH scope excludes `claude-md/` + `github-metadata.json`; REGEX scope is
 anchored on subproject + hub names, never "any rooted path"), asserted as
 behaviour with an anti-vacuity arm by `t_21`. Full derivation, the
 case-sensitivity carve, and the excluded-subtree consequence are recorded in
-the committed, never-published gate-forensics file described below (its name is
-withheld here for the same reason) — read that file's gate-(1e) section before
-editing the gate's PATH/REGEX scope or `t_21`. **Standing rule, and it
+the never-published forensics file described later in this § — read its
+gate-(1e) section before editing the gate's PATH/REGEX scope or `t_21`.
+**Standing rule, and it
 binds EVERY source in `sync_mirror.py`'s `PUBLISHED_CLAUDE_MD` roster, not just
 this file: describe a restriction, never name the restricted file** — the mirror
 ships whatever the source says, and documenting a bar is exactly the context in
 which a barred file gets named. A source that acquires such a mention needs its
 own `OUTPUT_BARS` key: keying the bar to one source made it a guard narrower
 than its grant (2026-08-21), and a REWRITES rule alone is silent against a NEW
-unruled sentence.
+unruled sentence. A third source was keyed 2026-09-15 (`ns:publishing/78`) after
+its claim rode at least three pushes unseen — the 2026-08-21 widening had added
+the one source that had been CAUGHT, not the class, which is the same defect one
+level up. **When the bar protects a person rather than a file, bar the COUPLING
+and not the name**: a deliberately public name must SURVIVE the render, so the
+pinning test (`t_25`) asserts both directions and an over-broad cure reds.
 
 **A mirror-side cure is a SUBSCRIPTION, not a fix.** The collector can rewrite
 the mirror copy of a barred form, and does — but when the form is minted by a
@@ -119,6 +138,22 @@ cleanup, so the population is named at the owner's slot rather than swept, and
 the collector should not read a hit in those files as a fresh regression; and a
 boilerplate HEADER line repeated across a whole artifact series is the same
 class at series scale, cured only from the series' template forward.
+**Scope it to HAND-AUTHORED PUBLIC surfaces — `ns:donating/19` was wrong on
+both counts and is the worked case.** An INTERNAL accountability record
+legitimately names the code it reports on; the public slice is authored FROM it
+by `publish-collector`, whose brief already requires "path-free past subproject
+names", so translating path→name is the COLLECTOR's job and (1e) is the
+fail-closed backstop, not a source-conformance rule (re-derived 2026-08-28: 117
+source occurrences, 0 in the compiled mirror).
+**Never file rooted paths in a source subproject's internal records as that
+subproject's defect** — the correct output is a translated slice; escalate only
+where the collector CANNOT translate. What IS owed at source: no live artifact
+may *instruct* a future author to use the barred form. Two minting engines were
+cured donating-side (a posted digest's handoff line telling the collector to
+cite "by directory"; the weekly TEMPLATE's § 3 example demonstrating the shape
+its own § 6 barred) — **a template that bars a form in one § and demonstrates it
+in another keeps minting it, so when a publish bar changes sweep the EXAMPLES in
+every authoring template, not just the prose stating the rule.**
 
 **A blocklist gate is necessary and never sufficient.** Every gate here is
 token-scoped, not semantic, and that cuts two ways. Against *barred* content a
@@ -134,8 +169,7 @@ Commit **metadata** stays outside every content gate
 pinned by `t_20_sync_commit_identity.sh`.
 Per-incident gate forensics + the token/exclusion rulings live in a committed,
 **never-published** forensics file — path rule (C2) fail-closes any staged tree
-carrying it; its NAME is withheld here under the standing rule above
-(`feedback_gate_covers_payload_not_envelope`).
+carrying it; its NAME is withheld here under the standing rule above.
 
 **Four rules for any source→artifact seam** — mechanism-over-instruction ·
 assert on the OUTPUT never the source · never spell a delimiter inside the
@@ -157,11 +191,11 @@ case.** Raster and look, or state explicitly that the gate covers text only.
 **The candidate tree is markdown, so the gate scans markdown.**
 `publishing/scripts/sync_mirror.py` Stage 3 applies the blocklist patterns as
 it renders each CLAUDE.md / memory mirror. `publish.sh` runs
-`sync_mirror.py --scan-tree <tree>` as the PRIMARY gate — a HARD+SOFT sweep
-over **every `*.md`** under the candidate tree (the hand-authored READMEs,
+`sync_mirror.py --scan-tree <tree>` as the PRIMARY gate — a HARD-only sweep
+(the markdown gate's SOFT class is empty: every pattern aborts) over **every `*.md`** under the candidate tree (the hand-authored READMEs,
 `STATUS.md` files, and the `skills/` subtree included), and it *refuses to pass
 over an empty tree*. It skips `CLAUDE.md`-named files (staging governance — not
-pushed; the bridge `--exclude='CLAUDE.md'`s them) and carves out the
+pushed; `github_meta.py sync` excludes them) and carves out the
 developer's own public name via `sync_mirror.py` `ALLOW_PHRASES` while keeping
 the litigation linkage HARD-blocked. The `check_redactions.py --tree` PDF gate
 stays wired after it as defense-in-depth (stray `*.pdf`). The resume tree
@@ -190,6 +224,29 @@ Qresev YouTube payload. `github_meta.py`'s `description`-strip thesis-floor lint
 the cross-repo half of the rider byte-equality check. Gate registry:
 `.claude/skills/do-signoff/registry.tsv` (FINANCIALLY row); floor detail:
 `evaluating/CLAUDE.md` §§ 4, 9.
+
+**The hub-goldens month (2026-09-09 → the reply-brief cycle) adds a publication
+BOUND, and a gate that carries it.** The Lean axes are building kernel material
+grounded in the operator's live state appeals, so: **nothing axiomatize-shaped
+about those appeals publishes before the paired appellate panel rules** — no
+kernel module, no theorem statement or predicate spec shaped to one of the new
+frameworks, no synthetic twin cut to their shape. Captioning cures REDACTION,
+not this. The bar reads on **names**: the namespace supplies the jurisdiction,
+the public pages supply the litigant, and the module name supplies the theory,
+so a reader holding only the public artifact can infer a live appellate
+argument — which is why a content-only rule cannot close it. What MAY publish,
+on `pleading/`'s conditions: the primary-law corpus subset already carried by a
+FILED addendum (or an announced chapter taken whole from the official source),
+counts with their POPULATION stated, and a method note naming corpus units.
+Mechanism over instruction: the Stage-4 path rule admits `.lean` under an
+`examples/` segment **only** and refuses it everywhere else, so a kernel file
+nobody thought about fails CLOSED (over-refusing costs a missing file;
+under-refusing publishes an appellate theory); the content twins bar every
+Mass. App. Ct. docket form — generic, because an enumeration of live dockets
+fails open on the next one — and the axis's state-law kernel namespace. Pinned
+by `t_23`. Re-opening any of this is a publishing-convened, `pleading/`-gated
+round, not before the reply cycle closes; the standing convening record is
+`shorting/reviews/axiomatize-hub-goldens-2026-09-09/PLAN.md` § 7.2.
 
 ## 6. Write-lock & session model
 
@@ -362,10 +419,8 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   required**, not merely good practice.
   **This paragraph has been wrong in BOTH directions across three corrections, so
   the standing advice is the one evaluating adopted: read the script, not this
-  paragraph.** The ancestry-only era's permanently-uncovered coverage hole (4 of
-  the 5 pushed T1/T2 episodes, measured 2026-08-07 against
-  `data/publishing/push-ledger.jsonl`) is enumerated at `ns:publishing/46` —
-  history, never a statement of what the gate allows today.
+  paragraph.** The ancestry-only era's coverage hole is history, enumerated at
+  `ns:publishing/46` — never a statement of what the gate allows today.
   Authoritative contract family: `data/specs/serving-2026-05-26/`
   (serving owns the script + the gate); this bullet is the
   publishing-side pointer the script's error message cites.

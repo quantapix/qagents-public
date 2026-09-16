@@ -21,6 +21,17 @@ absorbed subspecs:**
   2026-08-18 a2 ruling): `data/charters/analyzing/tape-supply/CHARTER.md` —
   INV-H (incl. the `reconciled` tier + the CLOSED-at-five partition), INV-U,
   the P2 freshness manifest, P8 provenance, the refresh lane's exit contract.
+  ⚠ **The tape's ~3.6-year floor is OUR line, not a vendor limit** —
+  `scripts/tape_refresh.py:84` `START = "2023-01-01"` (520 of 527 symbols start
+  2023-01-03; the other 7 later, never earlier). Its comment calls that a
+  "full-history window, never rolling", which it is not. Two separate sessions
+  have now reasoned from "the tape cannot reach 2011" as if it were imposed;
+  moving the floor is a decision, not a request to a vendor.
+  ⚠ **INV-H does not generalise to a coverage floor:** it is monotone in
+  coverage — a relation between successive writes — so a two-row series passes
+  it forever. An external-floor refusal ("the series must reach date D") needs
+  its own invariant and its own known-bad; routing one through
+  `history_guard.py` would read as satisfied.
   Deliberately EXCLUDED (the options-chain/D-1 dataset LANDED 2026-08-25 —
   contract + activation state: `data/charters/analyzing/tape-schema/options-chain-d1.md`;
   recorder `analyzing/scripts/options_chain.py`) and still living here + in the spec family: INV-W /
@@ -154,7 +165,7 @@ to invert the arm from fail-closed to fail-open), and evidence labels
 (`lost_first`/`restated_first`/…) keep time-of-day, because `tape_refresh`'s
 expected-blocked signature keys on them and date-truncated labels let two
 different same-day gaps share one key. Tests: `scripts/test_intraday_guard.py`
-(17 witnesses; the four load-bearing arms each observed RED via sabotage).
+(the four load-bearing arms each observed RED via sabotage).
 
 **SHIPPED 2026-08-10** (operator ruling; named consumer **`simulating/`**, in
 flight — the ruling to land ahead of it is recorded in the tape-schema charter

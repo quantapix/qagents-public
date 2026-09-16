@@ -97,6 +97,36 @@ pre-hardened against the attack list. Closing one leak channel buys nothing —
 the doctrine is protect-all-or-nothing, and the channel roster is not enumerated
 here (see the pointer two paragraphs down).
 
+**THE gate-convicts-MANDATED FAMILY — as steward, hold the roster; its members
+have NO detector rather than a mis-firing one.** A MANDATED cell input can carry
+an answer-shaped disclosure past every channel: a per-axis briefing named a
+golden composite three times inside a worked statutory example, and no
+instrument reaches it — C5's unit is the shared namespace, C3's the sibling
+out-dir, C1's the scratchpad, C7 grades a read of a doc a contract names BY
+PATH, and the path-token screen sees prose with no path. **A gate here must
+never be built: it would convict every COMPLIANT cell for a mandated read** —
+the cure is briefing surgery plus a rephrased-briefings probe. It was found by
+reading a wave's frozen transcripts by hand, looking for something else
+(`ns:proving/221`, seq 341; third recorded member of the family). A seventh leak
+channel of a DIFFERENT predicate is also measured and unowned: the harness
+itself publishes every blind cell's LIVE transcript into a directory the
+firewall's own `DEFAULT_SHARED_GLOBS` bans — for each `Agent` spawn a symlink at
+`/private/tmp/claude-<uid>/<slug>/<session>/tasks/<agent-id>.output` resolving to
+that subagent's canonical JSONL, readable WHILE written — measured mid-fan-out,
+figures at `ns:studying/200`.
+Channels (a)–(f) grade a READ BY AN AGENT; this one is about the surface being
+POPULATED BY CONSTRUCTION, so it may warrant its own class rather than a (g)
+bullet. **It voids no archived wave — but it changes what a verdict attests:
+`certified_blind` means no cell was OBSERVED to take the channel, never that the
+channel was closed.** Amending § 4a of `axiomatize-shared-2026-07-04/SPEC.md` is
+the steward's call (`ns:accounting/175`, seq 338, all three axes owed); the
+channel COUNT is the part that goes stale, so state the sentence, not a number.
+⚠ Those entries are SYMLINKS, so an orchestrator hygiene `rm` on the shared root
+removes only the link — accounting's breached-wave evidence survived one. **Do
+not generalise that:** had they been real files the same sweep would have
+destroyed the only re-gradable record, and nothing in the filename says which
+case you are in.
+
 **THIS FILE IS A LEAK SURFACE NO INSTRUMENT CAN GRADE, and a SPLIT is the only
 cure that reaches it — landed 2026-08-20 (`ns:studying/160`, off ledger L-278).**
 A subproject `CLAUDE.md` is delivered to every subagent in SYSTEM CONTEXT, which
@@ -221,11 +251,16 @@ and defines no `fail`; the `signoff-verification` suite exports a COUNTING
 `command not found`, returns non-zero from a statement whose value nothing reads,
 and the case runs on to its `echo OK` and **exits 0 — the suite reports PASS over
 a failed assertion.** Read which lib a case sources before writing its failure
-call. Two standing consequences: every new case carries a proof-of-fire arm that
+call. Three standing consequences: every new case carries a proof-of-fire arm that
 reds if its own matcher stops being able to fail (charter inv proof-of-fire, and
-this is the cheapest instance of it); and prose assertions over a wrapped
+this is the cheapest instance of it); prose assertions over a wrapped
 markdown subject normalise the file to one whitespace-collapsed line first — a
-line-based grep reads a required phrase split across a line break as ABSENT.
+line-based grep reads a required phrase split across a line break as ABSENT;
+and **an arm that can only ever REJECT is a bar on the change it guards, not a
+guard on its coherence** — a case asserting that two surfaces agree ships a
+POSITIVE control (the coherent amendment must PASS) beside its negatives, or
+the suite cannot distinguish "these disagree" from "this arm refuses
+everything", and the amendment it was built to protect reds on arrival.
 **A tests/lib symlink is RELATIVE, never absolute:** an absolute one commits the
 minting worktree's path, dangles everywhere else, and dangles SILENTLY because
 `run.sh`'s own `ln -sf` recreates it correctly wherever it next runs while the

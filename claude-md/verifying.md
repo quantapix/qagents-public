@@ -96,16 +96,32 @@ thesis floor: `{sample, titlevi_sample, titlevii_fedsector_refused}`. No
 The static public build is stricter still — RICO-synthetic only
 (`web/src/lib/public-runs.ts`); the replay API also serves the synthetic
 Title VI sample and the synthetic Title VII federal-sector example
-(`titlevii_fedsector_refused`, added 2026-08-01 — the first GENUINELY
-refusing example: real predicate Falses on the exhaustion family, kernel
-REJECTED at locus `h_federal_administrative_exhaustion`, so the API can
-serve a true kernel refusal rather than the kit's injected-refusal
-rendering fiction; proving mirrors the id into `status_emit.py`
-`PUBLIC_EXAMPLE_IDS` SECOND, never first — ns:proving/40).
+(`titlevii_fedsector_refused`, added 2026-08-01 — a true kernel REJECT at
+locus `h_federal_administrative_exhaustion`, not the kit's injected-refusal
+rendering; proving mirrors the id into `status_emit.py` `PUBLIC_EXAMPLE_IDS`
+SECOND, never first — ns:proving/40).
 Edit `ALLOWED_EXAMPLE_IDS` (`server/main.py`),
 `ALLOWED_IDS` (`api.spec.ts`), AND `extending/servers/qnarre-mcp/src/allowlist.ts`
 in lockstep — a **triple** since extending landed 2026-07-04; the extending
 parity test fails until all three match (§ 9.5).
+
+**The allow-list in SOURCE is not the allow-list IN FORCE (incident
+2026-09-11, closed 2026-09-15).** The triple above was correct for 84 days
+while the deployed build predated it and served live-matter runs publicly and
+unauthenticated for 115. Deploy staleness is invisible to every repo-side gate
+— they all read a staged tree, and a running service is a public surface with
+no gate pointed at it. So any claim that this API is restricted is worth only
+as much as a LIVE read. The instrument is
+`serving/scripts/probe-api-surface.sh` (off-host, numbers-only, never a body),
+and its shape is the point: an edge block and this allow-list BOTH answer 404,
+so a refusal-only record is a check that cannot fail. A reading is an
+allow-list reading only when a SYNTHETIC id still answers 200 beside the
+filtered listing count. Probe all four per-run routes (`POST /api/runs`,
+`/stream`, `/report`, `/graph`), never just one — they do share
+`_resolve_run_dir`, but a filtered index over an unfiltered fetch route is the
+vacuity shape. Nothing schedules that read yet (`ns:serving/108`);
+`api.spec.ts` carries the assertion but is `PW_BASE_URL`-gated, so it fires
+only on a human decision, which is not a running guard.
 The adapter shells `extract_facts.py --reuse-facts --build` against
 `proving/examples/<id>/`, overwriting `{report,graph,loci}.json` in
 place. No predicate sub-agent calls (committed `facts.json` is the
@@ -155,22 +171,17 @@ backs Qresev's strategy mount — visualizing spec
   **C3 rollups + trends panel** (see below).
 
 **C3 aggregate charts panel (charts-2026-07-02 § 7.1, ns verifying/7).** A
-toggle-opened overlay panel ON `/lattice` (no new route — a new route enters
-the F1 leak-guard sweep and buys nothing). The `rollups` status-bar button
-paints corpus-level rollups (`QViz.charts.fromCatalog` → tier distribution /
-axis coverage / agreement, 3 SVG bar charts) + trends (`fromCatalogTrend` over
-`data/visualizing/legal-catalog-trend.jsonl`). The charts SVG surface rides
-`kit.js` (the `QViz.charts.*` namespace in `dist/kit-proof.js`; `charts.*`
-because the flat global already carries graphs' `fromCatalog`); it self-themes
-dark like the DAG canvas (kit defaults — no `--chart-*` overlay copied). Panel
-chrome is app-owned in `pages.css` (`.rollups-panel`/`.chart-cell`, display
-scoped to `:not([hidden])`). **Degenerate-trend guard is host-side** (`trend.ts`
-delegates it): the trend half stays empty-state until ≥ 2 trend records exist
-AND a dimension has moved — today 1 emit (all `tier:unknown`) → empty-state, so
-a flat 100%-unknown line never ships next to the F1 language. Inherits
-`/lattice`'s F1/named-never-worked posture verbatim + the PLEADING-REVIEW
-binding; catalog cells are corpus-level (no `<live-matter>_*`). e2e: the `C3 rollups`
-describe in `proof-graph.spec.ts`.
+toggle-opened overlay panel ON `/lattice` — **no new route** (a new route
+enters the F1 leak-guard sweep and buys nothing). Inherits `/lattice`'s
+F1/named-never-worked posture verbatim + the PLEADING-REVIEW binding;
+catalog cells are corpus-level (no `<live-matter>_*`). **Degenerate-trend guard is
+host-side** — the trend half stays empty-state until ≥ 2 trend records exist
+AND a dimension has moved, so a flat 100%-unknown line never ships next to
+the F1 language. The `QViz.charts.*` namespace, the dark self-theming (no
+`--chart-*` overlay copied) and the app-owned `pages.css` chrome: memory
+`project_proof_graph_kit_mount_pattern` § "verifying graphs2→graphs rename +
+navigator P4 + C3 charts panel (2026-07-22)". e2e: the `C3 rollups` describe
+in `proof-graph.spec.ts`.
 
 **F1 thesis-floor gate (named-never-worked).** The textual axis is *named,
 never worked* in any public material, and no public worked example is drawn
@@ -246,30 +257,22 @@ R-T2 itself — never a "for parity" copy. Full record: memory
 `project_proof_graph_kit_mount_pattern` § "verifying's mount is DARK-ONLY by
 rule (R-T2)".
 
-**Re-sync from a rebuilt kit**: the full 5-step sequence (typecheck+gates →
-build → lockstep js+css copies → verify+e2e) lives in memory
-`project_proof_graph_kit_mount_pattern` § "A token lift is INERT" re-copy recipe.
-
-**The js and css copies are a lockstep pair — never one without the other**; after any
-token lift, grep the mounted `kit.js` (`grep -a`) for the new token name before
-treating the lift as landed. Rule + `grep -a` trap: root CLAUDE.md § Kit-mount
-pattern; the 2026-07-14 `colorTok` fail-soft witness: memory
-`project_proof_graph_kit_mount_pattern` § "A token lift is INERT until the
-consumer's kit.js is re-copied".
+**Re-sync from a rebuilt kit** — **the js and css copies are a lockstep pair,
+never one without the other**; after any token lift grep the mounted `kit.js`
+with `grep -a` for the new token before treating the lift as landed. The full
+5-step sequence + the 2026-07-14 `colorTok` fail-soft witness: memory
+`project_proof_graph_kit_mount_pattern` § "A token lift is INERT"; rule +
+`grep -a` trap: root CLAUDE.md § Kit-mount pattern.
 
 **Mechanized since 2026-08-16** at `web/tests/e2e/proof-graph.spec.ts`,
-describe `kit-token lockstep guard (per sheet + anti-vacuity)`: it harvests
-every custom property the loaded `tokens-*.css` sheets declare (unfiltered
-by prefix — the kit namespace is per-family, so a guessed prefix harvests
-nothing and passes, which is what the `total > 0` arm catches) and asserts
-each resolves on `:root` on the live mount. **Per PAGE CLASS, not
-per-sheet-within-a-page** — this mount links exactly ONE overlay per page
-(`tokens-proof.css` on proof pages, `tokens-lattice.css` on `/lattice`), so
-evaluating's two-sheets-one-page shape in
-`evaluating/web/tests/e2e/strategy-chart.spec.ts` degenerates here to the
-union assert it exists to replace. Do not port it verbatim; keep the route
-table. Proof-of-fire: emptying `tokens-lattice.css` reds `/lattice` while
-both `/proof-graph/*` arms stay green.
+describe `kit-token lockstep guard (per sheet + anti-vacuity)`: **per PAGE
+CLASS, not per-sheet-within-a-page** — this mount links exactly ONE overlay
+per page (`tokens-proof.css` on proof pages, `tokens-lattice.css` on
+`/lattice`), so evaluating's two-sheets-one-page shape does NOT port
+verbatim; keep the route table. Harvest-unfiltered rule, the `total > 0`
+anti-vacuity arm and the proof-of-fire: memory
+`project_proof_graph_kit_mount_pattern` § "The per-sheet token guard does
+NOT port verbatim between mounts".
 
 **Empty-state overlay pointer-trap (check on any mount edit).** Scope the
 overlay to `.empty:not([hidden])` — a bare `.empty{display:flex}` defeats the

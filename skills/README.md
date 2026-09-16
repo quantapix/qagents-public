@@ -2,7 +2,7 @@
 
 The session-lifecycle + context-optimization skills that govern every
 AI-assistant session inside the qagents working tree, plus the adopted
-specs they implement. Redacted public mirror, refreshed weekly from the
+specs they implement. Redacted public mirror, refreshed per release run from the
 private source.
 
 See the [umbrella README](../README.md) for the broader thesis; the

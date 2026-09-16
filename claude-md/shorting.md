@@ -30,6 +30,15 @@ case for the short).
   ONE chartered parent-session-only ROUTING exception
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
   I1): § 3-class charter todos under `data/charters/<scope>/todos/`.
+- Writes **its own charter tier** — `data/charters/shorting/**` — under the
+  shared `.data-write-lock`, for ratified amendments only (the
+  `data/charters/CLAUDE.md` § Amendment lane: a `data/tmp/` draft, ratified
+  by debate or operator ruling, applied by the owner scope's session).
+  **Amending one's own charter is not "routing"** and was never covered by
+  the exception above: LEDGER 15 landed this way on 2026-09-10 and LEDGER 16
+  on 2026-09-15 before anyone noticed the enumeration did not name the
+  surface. Operator ruling 2026-09-15. Observe-only is unchanged — this is a
+  write to shorting's OWN governance, never to a target's.
   Warn-cap `spread-review owed` items now file to the **qagents** slot
   (session-lifecycle § 2.8 E4 as re-pointed; shorting sessions are no
   longer the warn-cap scribe). A debate this subproject convenes
@@ -131,10 +140,21 @@ shorting/
   share/<YYYY-MM-DD>/                  do-share lane (§ 4b)
   spread/<YYYY-MM-DD>/                 FROZEN do-spread history (§ 4c; live lane: data/summaries/spread/)
   reviews/<slug>-<YYYY-MM-DD>/         operator-directed one-off review reports (not a chartered
-                                       lane; each pairs with a data/debates/<slug>-<date>.md
-                                       ratification record — first use 2026-08-21, three-axis
-                                       overhaul reviews; v2-post-debate is the standing artifact)
-  scripts/                             status_emit.mjs
+                                       lane). Two shapes so far. (a) RATIFIED: pairs with a
+                                       data/debates/<slug>-<date>.md record — 2026-08-21 three-axis
+                                       overhaul reviews (v2-post-debate is the standing artifact),
+                                       2026-09-09 hub-goldens plan. (b) PROGRESS: units + FINDINGS.md
+                                       of rulable recommendations, no debate — 2026-09-15 hub-goldens
+                                       (rulings taken in-session, recorded at RULINGS.md in the run
+                                       dir). Either shape: § adversarial binds it (§ 2.1a), a unit
+                                       writes one report and nothing else, and no ns-* write verb runs
+  appeals/<docket>/                    operator-directed adversarial-brief loop (not a chartered
+                                       lane; four iterations 2026-09-05 → 09-07, CLOSED; § 4d)
+  scripts/                             status_emit.mjs; quoted_string_check.py (re-verifies every
+                                       quoted record passage against its pinned page — the one check
+                                       that catches a brief quoting text the filed appendix no longer
+                                       shows while the pin still resolves; five triage classes in its
+                                       header, earned by five of its own bugs)
   .claude/                             settings.json; skills → ../../.claude/skills
 ```
 
@@ -188,6 +208,53 @@ run dirs land at `data/summaries/spread/<ISO>/`; the skill retired (invoke
 `data/charters/shorting/specs/do-spread-2026-07-04/SPEC.md` is the history
 rendering. Adversarial review of the merged machinery is now the positions
 lane's named target (§ 2.1).
+
+### 4d. appeals lane — `shorting/appeals/<docket>/` — CLOSED 2026-09-07
+
+Operator-directed adversarial-brief loop over the operator's own appellate
+briefs. **Not a chartered lane**: the § 2.1 legal exclusion was waived by
+explicit direction, substance is routed to `appealing/` and never filed from
+here, and the operator's `new-evidence-for-RA/` drops are not lane output.
+Four iterations ran 2026-09-05 → 09-07; the loop is CLOSED on shorting's side.
+**Bounded per-run revival, operator-ruled 2026-09-09 (P0-8 of
+`data/debates/axiomatize-hub-goldens-2026-09-09.md`; the § 4a-style
+per-run shape):** exactly two runs — (1) one v5 adversary simulation
+against the 1152 brief **as filed**
+(the private filing hub — what the
+appellees actually have). ⚠ The "every MA paper is pending, read the OPERATIVE
+set" clause is SUPERSEDED (SPEC § 3 R-2): **all 30 submissions were DOCKETED
+9/10** — 1224's #7–#9 stamped on every page, 1152's #16–#42 by manual clerk
+entry and labelled "Proposed" pending RE#16, with 0 of 214 pages stamped and no
+stamped copy that will ever arrive. So the filed PDF IS the operative text here;
+for 1152, state (ii) is the docket label on RE#16, not a document.
+**Run 1 is `harvest_lint`- and RE#16-gated, never dated** (R-3; a simulated
+appellee brief that argues from a withdrawal tests nothing), runs in
+`/open shorting` after B12 (review-lanes § 2.1a, P0-16), and is preceded by the
+operator's morning docket check. (2) The day-of their-pin verification arm
+(`scripts/quoted_string_check.py` over the REAL appellee briefs) is **keyed on
+SERVICE, never on a docketed due date**: earliest possible service 10/8, the
+clerk's due date 10/16, and RE#16's disposition can re-key it. No interview, no
+revision map, no filing; outputs under `appeals/`; substance routes to
+`appealing/` as before. The lane closes again after the 1152 reply files —
+**earliest 10/22, ≈ 10/30 on the docketed date, ≤ 11/2 if mailed**.
+Per-iteration method and the record lessons: memory
+`project_shorting_subproject` (§§ 2026-09-05 … appeals iteration 4) +
+`project_appealing_subproject__log_2026_09`; the lane's own artifacts
+(`00-Correction-Ledger-<date>.md`, `00-Operator-Theory-<date>.md` — the
+drafting floor, `replies-v*/`, `responses-v4/`, `research-v*/`) stay in tree.
+
+Four standing rules bind any adversarial pass over a subject its owner is
+still writing, this lane's history being where they were earned:
+**`data/charters/shorting/review-lanes/CHARTER.md` § 2.1a (§ adversarial)**
+— the ratchet (a finding demands RESTATEMENT; only the owner withdraws an
+assertion), symmetric verification (audit from iteration 1; grade the
+argument, not the pin count), one copy with history as a git lookup, and the
+extract rule. Granted 2026-09-15 as LEDGER 16 on operator ruling P0-16, which
+also ruled the section binds the **positions** lane. The charter is the sole
+copy; this § registers the lane and does not restate the rules. The
+per-iteration method and the record lessons stay at memory
+`project_shorting_subproject` (§§ 2026-09-05 … appeals iteration 4) +
+`project_appealing_subproject__log_2026_09`.
 
 ## 5. Hand-off to `managing/`
 

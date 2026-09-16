@@ -2,10 +2,10 @@
 
 > The redacted mirror of the AI-assistant working context behind the
 > Quantapix engineering practice — the `CLAUDE.md` rule-set and the
-> session-lifecycle skills, refreshed weekly from the private working
+> session-lifecycle skills, refreshed per release run from the private working
 > tree.
 
-A weekly-refreshed window into how a sole developer plus an expert AI
+A regularly refreshed window into how a sole developer plus an expert AI
 assistant collaborate inside a single monorepo of sibling subprojects
 (the roster is the table below). The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
@@ -530,7 +530,7 @@ session's window.
 
 ## Cadence
 
-Refreshed weekly from three private sources:
+Refreshed per release run from three private sources:
 
 - The root + per-subproject `CLAUDE.md` graph → `claude-md/`.
 - The `open` / `close` / `do-claude-updates` / `do-claude-optimizations`

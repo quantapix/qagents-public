@@ -1,6 +1,6 @@
 # CLAUDE.md — explaining/
 
-Project-specific rules for the Quantapix video-explainer arc. Assumes Claude Code's default guidance and the repo-root `qagents/CLAUDE.md`.
+Project-specific rules for the Quantapix video-explainer arc.
 
 ## 1. Purpose
 
@@ -65,14 +65,14 @@ explaining/
     <slug>/long/{takes,auditions,cuts,cues,captions}/  per-episode long binaries (mp4/mov/wav/srt gitignored)
     <slug>/long/markers.{csv,md}                       tracked word-boundary ground truth (under the variant dir)
     <slug>/short/{takes,cuts,captions}/                dedicated short binaries (takes/short/ = the 9:16 short take)
-  avatar/                   real-Janet HeyGen production set (LOCKED 2026-05-11): README.md registry (image ↔ avatar_id cross-link + pose-rotation policy) + 3 trained source stills + Janet-1.jpg identity reference — detail in § "Janet identity" below
+  avatar/                   locked HeyGen presenter set (LOCKED 2026-05-11): README.md registry (image ↔ avatar_id cross-link + pose-rotation policy) — detail in § "Presenter identity" below
   voice/                    superseded AI-generated masters kept for provenance (build chain v2 → v3 → v3.1 incl. Gemini/Firefly audit trail; lineage in voice/janet/master-meta.json)
     janet/                  channel-wide voice config (master-meta.json § lineage + heygen-config.md)
 ```
 
 The `.mp4`/`.mov`/`.wav`/`.srt` patterns under `videos/*/{long,short}/{takes,auditions,cuts,cues,captions}/` are gitignored render outputs. Worktrees symlink these leaf dirs via `explaining/.worktree-links` (session-lifecycle CHARTER § 2.4). **Only `markers.csv`/`markers.md` under `<slug>/long/` stay tracked** — the git-durable word boundaries the Remotion `.tsx` ports anchor to. HeyGen `get_video` recovery viable ~7 days post-render; `.close-protected-paths` backs up a brand-new slug. Pinned in `feedback_git_worktree_remove_wipes_gitignored`.
 
-**Cue/take outputs are NOT durable, and the symlink model is not protection** — the symlink defeats *teardown* and nothing else. The `videos/*/long/{takes,auditions,cues,cuts,captions}` tree lives at canonical behind a symlink that `.worktree-links` plants in EVERY worktree regardless of subproject, so any session's file operation reaches it and no gate, cron, or producer watches. Treat the S3 backup below and `markers.csv` as the retention, never the working tree; the 2026-08-01 45-cue loss (re-bake on `ns:explaining/30`, deleter UNCONFIRMED at `ns:qagents/123`) and its forensic signature are in `feedback_git_worktree_remove_wipes_gitignored`. **Second, git-durable path** (R-22, since 2026-08-08): `retire.sh --archive '<lane>'` sweeps a keep-product lane's UNTRACKED half into the store as `archive.blob` — archival, never a reap license. `explaining/videos/*` is `durability=none` in `lanes.tsv` and qyel's 1.2/3.1 cue trees are the only copies anywhere, so they are the first sweep owed; per-file gzip-bytea cost + sizing discipline: `project_do_retire_spec`.
+**Cue/take outputs are NOT durable, and the symlink model is not protection** — the symlink defeats *teardown* and nothing else. The `videos/*/long/{takes,auditions,cues,cuts,captions}` tree lives at canonical behind a symlink that `.worktree-links` plants in EVERY worktree regardless of subproject, so any session's file operation reaches it and no gate, cron, or producer watches. Treat the S3 backup below and `markers.csv` as the retention, never the working tree; the 2026-08-01 45-cue loss (re-bake on `ns:explaining/30`, RELEASED 2026-08-08; deleter never identified); signature in `feedback_git_worktree_remove_wipes_gitignored`. **Second, git-durable path** (R-22, since 2026-08-08): `retire.sh --archive '<lane>'` sweeps a keep-product lane's UNTRACKED half into the store as `archive.blob` — archival, never a reap license. `explaining/videos/*` is `durability=none` in `lanes.tsv` and qyel's 1.2/3.1 cue trees are the only copies anywhere, so they are the first sweep owed; per-file gzip-bytea cost + sizing discipline: `project_do_retire_spec`.
 
 **Gitignored-binary S3 backup** (`backup-cues.sh`; `SHOOTING.md` gate before takes-complete). Spec `clips-backup-s3-2026-05-24`.
 
@@ -101,7 +101,7 @@ ElevenLabs deferred — see `reference_janet_video_stack`. **Subtitles render fr
 
 **Release record is explaining-owned — write it from `/open explaining`, never from publishing (binds all 50; standing rule 2026-06-30).** Once a variant is CDN-published, the **explaining** session records it into the episode's `meta.json`: `variants.<long|short>.produced: true` + a `released` block (`date`, `cdn_key`, `url`) mirroring the immutable CDN key. Publishing mints+gates+uploads the key and hands it back, never edits `meta.json` — a sibling-tree write trips the canonical-edit hook + close exit-14 (§ 3 / worktree-path discipline). Mirror for the short variant when its cut ships.
 
-**Short in-feed thumbnail = a video frame, not the custom thumb.** When **producing a Short**, bake the thumbnail design as a ~0.5 s opening hold at the head of the cut (Shorts feed/shelf ignore `thumbnails.set`); still set the 16:9 thumb for search/shares. Detail: shorts spec `explaining-shorts-social-2026-06-15` § 2.7.
+**Short in-feed thumbnail = a video frame, not the custom thumb.** When **producing a Short**, bake the thumbnail design as a ~0.5 s opening hold at the head of the cut (Shorts feed/shelf ignore `thumbnails.set`); still set the 16:9 thumb for search/shares.
 
 **Two B-roll lanes (locked 2026-05-15).** Graphics are predominantly Remotion-authored (stage 3); a bundle MAY declare ONE Blender plate slot — **commit `blender_plate.json` (sibling to `design.md`) early, even as a stub**, so blending's `status_emit` sees demand. Contract detail: `data/charters/blending/specs/blending-motif-wave2-2026-06-08/SPEC.md` § 3.3.
 
@@ -111,7 +111,7 @@ ElevenLabs deferred — see `reference_janet_video_stack`. **Subtitles render fr
 
 **Opening sequence — thumbnail flash → established cold open (channel-wide; 2026-06-26).** Episode opens on its 16:9 thumbnail as a ~0.5s opaque full-frame branded flash (Janet + title, no PIP; narration under it; covers the frame-0 gap), hard cut to the cold open on ESTABLISHED content (`OPEN_HOLD` → `_assemble.deintro_cue` freeze-hold). Mechanics + idempotence: `reference_explaining_render_silent_master`.
 
-**Brand fonts + wordmark lockup (channel-wide; 2026-06-26/29).** Cards render Space Grotesk via `FONT.display`; `phase3_outro.py` draws the Q-glyph + "Quantapix" lockup. The faces are REAL only because a **SHARED loader** (`code/remotion/src/fonts.ts` + `Root.tsx`; woff2 at `code/remotion/public/fonts/`) registers them — **don't re-add a per-episode loader** (the wordmark swap IS per-episode; the PIP "Janet" plate stays Inter). Mechanics: `[[reference_remotion_port_pattern]]`.
+**Brand fonts + wordmark lockup (channel-wide; 2026-06-26/29).** Face selection is § 3's token/title-face split; `phase3_outro.py` draws the Q-glyph + "Quantapix" lockup. **Never re-add a per-episode font loader** — the shared one is the only reason the faces render real. Loader seat, per-episode wordmark swap, Inter PIP plate: `[[reference_remotion_port_pattern]]` § "Brand fonts + wordmark loader".
 
 **Asset partitioning rule (Fusion-first).** Before drafting any video-asset prompt (Claude Design, HeyGen, image gen, Remotion), partition per `resolving/CLAUDE.md` § 6 — anything Fusion synthesizes natively is NOT a prompt ask; reduce the matrix first. Worked example + memory: `data/charters/explaining/specs/background-prompts-2026-05-09/SPEC.md` § 2 + `feedback_fusion_first_video_generation`.
 
@@ -125,9 +125,9 @@ ElevenLabs deferred — see `reference_janet_video_stack`. **Subtitles render fr
 
 **Prompt-iteration discipline.** Promote a richer-than-asked Claude Design read into round N+1 (`feedback_design_round_richer_than_prompt_promote`); when typography IS the deliverable, carve it out of every per-tool "no text" negative list (`feedback_image_gen_subject_matter_text_carveout`).
 
-**Janet identity — LOCKED 2026-05-11 (real-Janet production set).** Three HeyGen Photo Avatars (priority 1 hand-down / 2 hand-up / 3 tight-crop PIP), rotated per beat-archetype. Voice: one locked Design-a-Voice id (held privately); `frozen_after_acceptance=true` — any avatar_id change is a channel-rebrand. Registry, identity anchor, rotation policy, superseded-AI-master provenance: `avatar/README.md` + memory `project_explaining_subproject`.
+**Presenter identity — LOCKED 2026-05-11 (locked production set).** Three HeyGen Photo Avatars (priority 1 hand-down / 2 hand-up / 3 tight-crop PIP), rotated per beat-archetype. Voice: one locked Design-a-Voice id (held privately); `frozen_after_acceptance=true` — any avatar_id change is a channel-rebrand. Registry and rotation policy: `avatar/README.md` + memory `project_explaining_subproject`.
 
-**AI disclosure posture (locked at v3 promotion).** No visible generator marks on the channel face; disclose via the platform altered-content toggle + description text naming the stack. Stack roster + sparkle-removal technique: `feedback_gemini_sparkle_synthid_unprompiable`.
+**AI disclosure posture (locked at v3 promotion).** No visible generator marks on the channel face; upload-side disclosure is publishing-owned. Stack roster + sparkle-removal technique: `feedback_gemini_sparkle_synthid_unprompiable`.
 
 ## 5. Anchor everything
 

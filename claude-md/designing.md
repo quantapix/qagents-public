@@ -169,15 +169,11 @@ content — derive it from the hub, never write the literal. A hardcoded literal
 survives the very deploy that changes the fact it states, and the page then
 **disagrees with itself**: one section contradicting another section of the
 same page is invisible to a diff review, which only ever sees the changed
-lines. Three instances of the class to date, all cured: `/donate` Bucket 4
-named "SCOTUS" in three hardcoded strings against the `drive.buckets[3]`
-table (2026-08-07; fixed + deployed 2026-08-16 `91a069ade`/`298a6ff0a` —
-labels AND the window/channel status line now derive from `drive.json`,
-same-page consistency e2e in `site.spec.ts` guards both directions), and the
-public contact email (2026-07-24 — `donating/CLAUDE.md` § 3 records its
-three-layer shape). **Verification is a LIVE read of the rendered page,
-checked against the rest of that same page** — never a diff, never a deploy
-ID.
+lines. Cured instances of the class (`/donate` Bucket 4 "SCOTUS" literals;
+the public contact email): memory `project_designing_web` § "State as of
+2026-08-16" + `donating/CLAUDE.md` § 3. **Verification is a LIVE read of the
+rendered page, checked against the rest of that same page** — never a diff,
+never a deploy ID.
 
 ## 6. End-to-end tests (Playwright)
 

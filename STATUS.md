@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-08-28. Refreshed weekly (Fridays) during the
+_Snapshot: 2026-08-28. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the

@@ -258,10 +258,9 @@ elan shim rewrites `settings.toml` on activation, so without it lake dies
 
 ## 8. Scope boundary
 
-This subproject does not import from `analyzing/`, `trading/`, `verifying/`,
-or `designing/`. The only allowed reach is the server adapter calling
-`../accounting/scripts/...` as a subprocess (and reading
-`financial/`-namespaced parquet via the kernel, not the web shell).
+No imports from `analyzing/`, `trading/`, `verifying/`, or `designing/`. The
+only allowed reach is § 1's seam: the server adapter calling
+`../accounting/scripts/...` as a subprocess.
 
 ## 9. Financial sign-off — `evaluating/` is the constellation grantor
 
@@ -310,20 +309,14 @@ faces stay pinned RAW with false reds accepted, since a producer moves only when
 edited while a generated face moves daily (`ns:evaluating/29`). Cite SKILL.md § 8
 for the § 3.6 rules — the spec body is reaped, only `tests/` survives.
 
-**The `serving/scripts/upload-video.sh` release gate now ENFORCES THE RECORD
-(`ns:serving/82`, re-read 2026-08-10). This § has been wrong about it twice, in
-both directions — read the script, never this paragraph.** As of that read: on
-**any** `T<n>/` key, `CLEARANCE_COMMIT` must equal the `granting_commit` of a
-`CLEARED*` record under the registry-resolved `record-location` and be an
-ancestor of HEAD. Both prior mis-readings + the refusal detail:
-`[[project_signoff_framework]]` § "THE UPLOAD GATE".
-
-**This floors T1/T2** — the gate keys on the `T<n>/` prefix and never consults
-`r2-scope-map.json`, so `requiredGates: []` there no longer means "no gate at the
-push"; the standing ruling below owns the rest. The residual is the standing
-completeness caveat, not a T1/T2 one: an out-of-band `aws s3 cp` bypasses the
-chokepoint, emits no push-ledger fact, and passes nothing (`managing`'s inventory
-diff carries that half).
+**The `serving/scripts/upload-video.sh` release gate ENFORCES THE RECORD on any
+`T<n>/` key (`ns:serving/82`). This § has been wrong about it twice, in both
+directions — read the script, never a paragraph.** Enforcement shape, both prior
+mis-readings, and the out-of-band-`aws s3 cp` completeness caveat:
+`[[project_signoff_framework]]` § "THE UPLOAD GATE" + `do-signoff/SKILL.md` § 8.
+**It floors T1/T2** — the gate keys on the prefix and never consults
+`r2-scope-map.json`, so `requiredGates: []` there does not mean "no gate at the
+push"; the standing ruling below owns the rest.
 
 **Standing ruling — do NOT widen `data/publishing/r2-scope-map.json` T1/T2 to
 `["FINANCIALLY"]`** (operator 2026-08-07; re-affirmed on narrowed grounds 2026-08-10,
@@ -341,18 +334,26 @@ that weight. `requiredGates` governs the coverage proof only, where `[]` is hone
 Filing a **verified-N/A** `/do-signoff FINANCIALLY <subject>` for a non-financial
 episode (disposition CLEARED, scope "out of § 3 financial scope") is therefore now
 **how a T1/T2 episode gets released at all** through the sanctioned path — no longer
-merely good practice. The generic version of
-this machinery is **ADOPTED**: the `/do-signoff <gate> <subject>` skill
-(`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing instance,
-resolver refuses unless the session IS the grantor) over the governance-layer spec
-family `data/specs/signoff-framework-2026-06-30/`, with provable `lake build`
-verification (studying S-T10 `SignoffCoverage`). Grant a FINANCIALLY surface with
-`/do-signoff FINANCIALLY <subject>` from this session; the 4.1 record carries the
-§ 5 structured core as the worked example. See `[[project_signoff_framework]]`.
+merely good practice. Grant a FINANCIALLY surface with
+`/do-signoff FINANCIALLY <subject>` from this session
+(`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing
+instance; the resolver refuses unless the session IS the grantor; provable
+coverage via studying S-T10 `SignoffCoverage`); the 4.1 record carries the § 5
+structured core as the worked example. See `[[project_signoff_framework]]`.
 
 **Scope** (FINALIZED): Qresev surfaces + any public surface
 evaluating stocks/portfolios/options with actionable framing; internal
 artifacts and a returns-free `/donate` are out.
+
+⚠ **Limb (i) "Qresev surfaces" is UNCONDITIONAL and CONTENT-BLIND — the
+binding test is LOCATION, not content.** § 4 is the defined-risk-options
+standard and does not reach, say, a damages quantum; two rounds of the
+2026-09-10 accounting debate both reached for § 4 first and had to be
+corrected. If it renders on a Qresev surface the hook fires, whatever it is
+about. Corollary from the same rounds: **`synthetic_label_persistent`'s
+composed-surface arm governs any rendered counterfactual** — a table mixing
+filed, recomputed and counterfactual columns is that exact case, and nobody
+had applied it.
 
 **FINANCIALLY-CLEARED iff:** the criteria ride the § 4 defined-risk floor
 above (this file is their owner; registry row:
