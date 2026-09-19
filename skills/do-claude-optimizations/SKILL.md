@@ -82,7 +82,7 @@ emits the uniform footer, and writes the run summary.
 | 50 | --apply --execute | An Edit call or post-edit size assertion failed mid-run; read the FAILED marker. |
 | 51 | --digest / --plan | Malformed digest, a forbidden range-delete indicator, OR a sequential-simulation ambiguity caught BEFORE mutation; operator fixes the digest. |
 | 52 | --apply | Target plan already has an `.applied` sidecar; pick a fresh plan. |
-| 60 | --digest (SDK) | SDK lane disabled pre-activation; use the manual lane. |
+| 60 | --digest (SDK) | Programmatic lane disabled while its access is paused — unconditional, fail-closed; use the manual lane. |
 | 61 | --permit-fanout | A required allow-list pattern is missing from settings; update + commit. |
 | 20 | any | Unknown error; read log tail, surface. |
 

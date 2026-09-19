@@ -110,7 +110,10 @@ slot. Whole-repo closes fan out via the status orchestrator.
 
 `close.sh --next-steps <branch>` enforces the forward-only rule for the
 project's `next-steps` slot: when commit messages in the merge range cite
-item N, that item must be deleted from the slot file. The script scans
+item N, that item must carry retire evidence (a retire through the ledger
+verb — in the spool, the session receipts, or the store). The slot file is a
+GENERATED render and is never hand-edited; it prunes at `--finish`. The
+script scans
 `<merge-base>..HEAD` for cites of the form
 `(closes|resolves|completes) (next-steps item|ns-item) N(, M)*`
 (case-insensitive). The resolution verb is **required**: an earlier form
@@ -121,8 +124,8 @@ resolved no items, the gate skips with exit 0.
 
 | Exit | Phase | Claude action |
 |---|---|---|
-| 24 | missing-slot-file | Cites items but the slot file doesn't exist. The slot is a GENERATED render, so bootstrap it by rendering it — never by hand-authoring the file. |
-| 25 | items-not-deleted | Cited items are still live in the store. Resolve each through the ledger's resolution verb and re-render the slot. **Do not hand-edit the render**: the slot is a single-writer generated projection, and the first check this gate runs refuses a hand-edited render outright — so editing the file to satisfy the gate is the act that fires it. Survivors are never renumbered; the gaps anchor commit-message audit trails. |
+| 24 | unknown-cite | A cited item is unknown to the store, the spool, the session receipts AND the rendered slot — a typo'd number, or a slot that has never been rendered. The slot is a GENERATED render: never hand-author or hand-edit it. Check the number against the ledger's list verb; correct a typo in a follow-up commit message; if the item is genuinely new, file it through the ledger's add verb and let `--finish` render it. Re-run. |
+| 25 | still-live / slot-drift | Two causes — read the message. **(a) Slot drift, checked first and firing even with zero cites:** a generated slot render was committed on the session branch; revert it and route the change through the ledger verbs. **(b) A cited item is still live** with no retire evidence: retire it through the ledger's resolution verb and confirm by reading it back. Do not delete the item from the file by hand — that act IS cause (a). Survivors are never renumbered; the gaps anchor commit-message audit trails. Re-run. |
 
 ### 6. Commit session work (judgment writes the message)
 
@@ -162,10 +165,11 @@ the `--verify` output verbatim as the close report.
 | 19 | sentinel | dot-claude sentinel already held (likely a crashed prior close); investigate. |
 | 21 | branch-d | `git branch -d` refused (not fully merged); investigate. |
 | 22 | commit-memory | `--commit-memory` called without sentinel held — acquire it first. |
-| 24 | next-steps-missing | Cites items but the slot file doesn't exist; bootstrap from the template. |
-| 25 | next-steps-not-deleted | Cited items still present; delete them (no renumbering). |
+| 20 | target-dirty | The close-time sweep of cron-fired artifacts at the merge target was refused — in practice by a repo pre-commit hook validating content this session never touched. Read the hook's message in the log tail. Of the three remedies (discard a regenerable artifact, cure the breach, bypass the validator) an agent may take only the first, and only for an artifact it can name as regenerable; the other two are the operator's call. Surface and stop. A green sweep is evidence about that instant only. |
+| 24 | next-steps-unknown-cite | See § 5.5's row; the slot is a generated render, never bootstrapped by hand. |
+| 25 | next-steps-still-live / slot-drift | A cited item has no retire evidence (retire it through the ledger verb), or a generated render was committed on the branch (revert it) — see § 5.5. Never hand-delete from the render. |
 
-Any other exit (20): read the tail of the log, surface.
+Any other unlisted exit: read the tail of the log, surface.
 
 ## What this skill does NOT do
 

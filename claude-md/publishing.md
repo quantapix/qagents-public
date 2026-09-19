@@ -88,7 +88,11 @@ publicly without appearing in any file's bytes); each gate ships a pinned test
 `OUTPUT_BARS` (Stage 1b, asserted in `redact()`, pinned by `t_22`) refuses to
 emit a mirror still carrying a per-source barred token — the only lever that
 reaches the gate-(1e)-excluded `claude-md/` subtree, and the only one that sees a
-token arriving in a sentence no `REWRITES` rule was written for.
+token arriving in a sentence no `REWRITES` rule was written for. Its CLASS-wide
+sibling `LIVE_MATTER_BARS` (Stage 1c, `t_26`, 2026-09-18) refuses live-matter
+SHORT forms in any published CLAUDE.md — every other gate reads NAMES, so a
+green suite over `claude-md/` was a statement about names, not about matter; a
+lane over live matter publishes by SHAPE, its state in an unpublished sibling.
 
 **Two arms landed 2026-09-15 (Round 05 L-B1/L-B2, `ns:publishing/77`+`/78`).**
 (i) The content sweep reads the ONE admitted `.lean` location as well as `*.md`,
@@ -225,28 +229,24 @@ the cross-repo half of the rider byte-equality check. Gate registry:
 `.claude/skills/do-signoff/registry.tsv` (FINANCIALLY row); floor detail:
 `evaluating/CLAUDE.md` §§ 4, 9.
 
-**The hub-goldens month (2026-09-09 → the reply-brief cycle) adds a publication
-BOUND, and a gate that carries it.** The Lean axes are building kernel material
-grounded in the operator's live state appeals, so: **nothing axiomatize-shaped
-about those appeals publishes before the paired appellate panel rules** — no
-kernel module, no theorem statement or predicate spec shaped to one of the new
-frameworks, no synthetic twin cut to their shape. Captioning cures REDACTION,
-not this. The bar reads on **names**: the namespace supplies the jurisdiction,
-the public pages supply the litigant, and the module name supplies the theory,
-so a reader holding only the public artifact can infer a live appellate
-argument — which is why a content-only rule cannot close it. What MAY publish,
-on `pleading/`'s conditions: the primary-law corpus subset already carried by a
-FILED addendum (or an announced chapter taken whole from the official source),
-counts with their POPULATION stated, and a method note naming corpus units.
-Mechanism over instruction: the Stage-4 path rule admits `.lean` under an
-`examples/` segment **only** and refuses it everywhere else, so a kernel file
-nobody thought about fails CLOSED (over-refusing costs a missing file;
-under-refusing publishes an appellate theory); the content twins bar every
-Mass. App. Ct. docket form — generic, because an enumeration of live dockets
-fails open on the next one — and the axis's state-law kernel namespace. Pinned
-by `t_23`. Re-opening any of this is a publishing-convened, `pleading/`-gated
-round, not before the reply cycle closes; the standing convening record is
-`shorting/reviews/axiomatize-hub-goldens-2026-09-09/PLAN.md` § 7.2.
+**A declared hold window adds a publication BOUND, and a gate that carries
+it.** While a Lean axis builds kernel material over a jurisdiction whose
+matters are still open, nothing axiomatize-shaped about that material
+publishes until the hold lifts — no kernel module, no theorem statement or
+predicate spec shaped to a new framework, no synthetic twin cut to its shape.
+Captioning cures REDACTION, not this: the bar reads on **names**, because a
+namespace, a module name and a public page can jointly supply what no single
+one states, which is why a content-only rule cannot close it. What MAY
+publish, on `pleading/`'s conditions: primary-law corpus units taken whole
+from the official source, counts with their POPULATION stated, and a method
+note naming corpus units. Mechanism over instruction: the Stage-4 path rule
+admits `.lean` under an `examples/` segment **only** and refuses it
+everywhere else, so a kernel file nobody thought about fails CLOSED
+(over-refusing costs a missing file; under-refusing publishes a theory); the
+content twins bar a generic appellate docket form — generic, because an
+enumeration fails open on the next one — and the axis's jurisdiction kernel
+namespace. Pinned by `t_23`. Re-opening any of this is a publishing-convened,
+`pleading/`-gated round.
 
 ## 6. Write-lock & session model
 

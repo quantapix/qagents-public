@@ -31,7 +31,9 @@ case for the short).
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
   I1): § 3-class charter todos under `data/charters/<scope>/todos/`.
 - Writes **its own charter tier** — `data/charters/shorting/**` — under the
-  shared `.data-write-lock`, for ratified amendments only (the
+  shared `.data-write-lock` (line 1 `session=<branch> <purpose>`; `/close`
+  releases it — the guard floor denies `rm`, so never by errand:
+  `data/charters/CLAUDE.md` § Write-lock posture), for ratified amendments only (the
   `data/charters/CLAUDE.md` § Amendment lane: a `data/tmp/` draft, ratified
   by debate or operator ruling, applied by the owner scope's session).
   **Amending one's own charter is not "routing"** and was never covered by
@@ -149,12 +151,17 @@ shorting/
                                        dir). Either shape: § adversarial binds it (§ 2.1a), a unit
                                        writes one report and nothing else, and no ns-* write verb runs
   appeals/<docket>/                    operator-directed adversarial-brief loop (not a chartered
-                                       lane; four iterations 2026-09-05 → 09-07, CLOSED; § 4d)
+                                       lane; four iterations 2026-09-05 → 09-07, CLOSED; § 4d).
+                                       appeals/LANE.md = the lane's LIVE state (unpublished — this
+                                       file is published and registers runs by shape only);
+                                       appeals/trial-<date>/ = a staged or fired pre-filing trial
   scripts/                             status_emit.mjs; quoted_string_check.py (re-verifies every
                                        quoted record passage against its pinned page — the one check
                                        that catches a brief quoting text the filed appendix no longer
                                        shows while the pin still resolves; five triage classes in its
-                                       header, earned by five of its own bugs)
+                                       header, and a running bug ledger the header alone keeps —
+                                       read it before believing a run's population, not just its
+                                       verdicts: a PDF read can under-count silently at exit 0)
   .claude/                             settings.json; skills → ../../.claude/skills
 ```
 
@@ -209,39 +216,33 @@ run dirs land at `data/summaries/spread/<ISO>/`; the skill retired (invoke
 rendering. Adversarial review of the merged machinery is now the positions
 lane's named target (§ 2.1).
 
-### 4d. appeals lane — `shorting/appeals/<docket>/` — CLOSED 2026-09-07
+### 4d. appeals lane — `shorting/appeals/` — CLOSED 2026-09-07; bounded per-run revival
 
 Operator-directed adversarial-brief loop over the operator's own appellate
 briefs. **Not a chartered lane**: the § 2.1 legal exclusion was waived by
 explicit direction, substance is routed to `appealing/` and never filed from
-here, and the operator's `new-evidence-for-RA/` drops are not lane output.
-Four iterations ran 2026-09-05 → 09-07; the loop is CLOSED on shorting's side.
-**Bounded per-run revival, operator-ruled 2026-09-09 (P0-8 of
-`data/debates/axiomatize-hub-goldens-2026-09-09.md`; the § 4a-style
-per-run shape):** exactly two runs — (1) one v5 adversary simulation
-against the 1152 brief **as filed**
-(the private filing hub — what the
-appellees actually have). ⚠ The "every MA paper is pending, read the OPERATIVE
-set" clause is SUPERSEDED (SPEC § 3 R-2): **all 30 submissions were DOCKETED
-9/10** — 1224's #7–#9 stamped on every page, 1152's #16–#42 by manual clerk
-entry and labelled "Proposed" pending RE#16, with 0 of 214 pages stamped and no
-stamped copy that will ever arrive. So the filed PDF IS the operative text here;
-for 1152, state (ii) is the docket label on RE#16, not a document.
-**Run 1 is `harvest_lint`- and RE#16-gated, never dated** (R-3; a simulated
-appellee brief that argues from a withdrawal tests nothing), runs in
-`/open shorting` after B12 (review-lanes § 2.1a, P0-16), and is preceded by the
-operator's morning docket check. (2) The day-of their-pin verification arm
-(`scripts/quoted_string_check.py` over the REAL appellee briefs) is **keyed on
-SERVICE, never on a docketed due date**: earliest possible service 10/8, the
-clerk's due date 10/16, and RE#16's disposition can re-key it. No interview, no
-revision map, no filing; outputs under `appeals/`; substance routes to
-`appealing/` as before. The lane closes again after the 1152 reply files —
-**earliest 10/22, ≈ 10/30 on the docketed date, ≤ 11/2 if mailed**.
+here, and the operator's evidence drops are not lane output. Four iterations
+ran 2026-09-05 → 09-07; the loop is CLOSED on shorting's side. **Bounded
+per-run revival, operator-ruled 2026-09-09 (P0-8 of the Round 01 debate
+record, commit `c5d5c2caf`; the § 4a-style per-run shape):** exactly two runs —
+(1) one adversary simulation against the paper the other side actually holds,
+AS FILED, never a superseded paper and never a pre-filing candidate;
+`harvest_lint`-gated (`scripts/harvest_lint.py`, exit 32), never dated, and
+preceded by the operator's docket check; (2) the day-of their-pin verification
+arm (`scripts/quoted_string_check.py` over the papers actually served), **keyed
+on SERVICE, never on a docketed due date**. No interview, no revision map, no
+filing; outputs under `appeals/`. A pre-filing TRIAL is a separate
+operator-directed run: it spends neither bounded run and produces nothing run
+(1) may read as its own output.
+
+**This file is published. The lane's LIVE state — which paper, which matter,
+what was ruled, what is dated — lives only in `appeals/LANE.md`, which is
+not.** Register a run here by SHAPE; describe its subject there. (2026-09-18:
+the prior body of this section named all four and reached the public mirror
+with every gate green — the gates read names, and this was prose.)
 Per-iteration method and the record lessons: memory
-`project_shorting_subproject` (§§ 2026-09-05 … appeals iteration 4) +
-`project_appealing_subproject__log_2026_09`; the lane's own artifacts
-(`00-Correction-Ledger-<date>.md`, `00-Operator-Theory-<date>.md` — the
-drafting floor, `replies-v*/`, `responses-v4/`, `research-v*/`) stay in tree.
+`project_shorting_subproject` + `project_appealing_subproject__log_2026_09`;
+the lane's own artifacts stay in tree.
 
 Four standing rules bind any adversarial pass over a subject its owner is
 still writing, this lane's history being where they were earned:

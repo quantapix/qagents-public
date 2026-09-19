@@ -109,16 +109,14 @@ Memos that cannot be safely redacted are not opted in.
 
 ## Refresh cadence
 
-Quarterly batch sweep. The operator reviews the quarter's memos,
-marks the publishable ones with `<!-- publish: yes -->`, runs the
-sync script (which copies marked memos + runs the redaction sweep),
-and promotes via the push wrapper.
-
-This is the slowest cadence in the repo. The rule-set mirror refreshes
-weekly because it mirrors state that changes weekly; the memory mirror
-is allow-list pending and on no clock at all; the daily memos either
-turn out to be worth publishing or they don't, and that judgement is
-easier to make in a batch than in real time.
+None while the subtree is empty. If memos are opted in, they would move in a
+batch review rather than continuously: the operator reviews a period's
+memos, marks the publishable ones with `<!-- publish: yes -->`, and the
+release pipeline copies marked memos, runs the redaction sweep, and syncs
+them to GitHub. The rule-set mirror refreshes per release run; the memory
+mirror is allow-list pending and on no clock at all; a daily memo either
+turns out to be worth publishing or it doesn't, and that judgement is easier
+to make in a batch than in real time.
 
 ## How to read
 

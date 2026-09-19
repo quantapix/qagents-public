@@ -39,7 +39,10 @@ For each hint file in `data/claude-updates/`:
 - With every CLAUDE.md in view, decide what (if anything) to apply where.
   The same hint may translate to zero, one, or several edits; it may be
   obsolete (later sessions covered it) — skip; it may cascade into the root
-  or a sibling. "Skip with justification" is a valid outcome.
+  or a sibling. An actionable hint that is not a `CLAUDE.md` edit is
+  **routed, not dropped**: it becomes a next-steps item for the owning
+  project through the ledger's add verb (never an edit to the generated slot
+  render). "Skip with justification" remains a valid outcome.
 - **Apply edits surgically** — preserve unrelated content; when the target
   is near the cap, trim adjacent stale content as part of the edit so net
   size doesn't grow.
@@ -53,8 +56,11 @@ demonstrably false): leave it on disk, surface it in the report, continue.
 
 ### 4. Merge + teardown (mechanical)
 
-`scripts/dcu.sh --finish` verifies the worktree is clean, merges to main
-(`--ff-only` then fallback `--no-ff`), unlinks symlinks, then
+`scripts/dcu.sh --finish` verifies the worktree is clean, **refuses if the
+merge range touches an out-of-scope path** (only `CLAUDE.md` files, the hint
+queue, and the dcu run summaries may ride the lane — exit 23), refuses a run
+that grows a `CLAUDE.md` to or past the close gate's fail cap (exit 24),
+merges to main (`--ff-only` then fallback `--no-ff`), unlinks symlinks, then
 `worktree remove` + `branch -d` + `prune`, and emits the uniform footer.
 
 ### 5. Report
@@ -72,13 +78,17 @@ created; any malformed hint files left on disk.
 | 13 | --pre queue | Queue empty; clean exit. |
 | 17 | --finish merge | Merge conflict back to main (shouldn't happen given the lock); leave state, user resolves. |
 | 20 | any | Unknown error; read log tail, surface. |
+| 21 | --abort | A crashed prior run's worktree still holds work; inspect it, then `--finish` to land it or force-discard after inspection. |
+| 23 | --finish scope | The merge range touches an out-of-scope path (next-steps slots are generated renders — route the hint through the ledger verb instead); a stray write slipped onto the dcu branch — inspect and relocate it, don't merge. |
+| 24 | --finish size | A touched `CLAUDE.md` would land at or over the close gate's fail cap **and this run grew it** — past that size the owning scope's own close refuses for growth it did not author. Trim it on the dcu branch or drop the hint with a stated disposition, then re-run `--finish`. No override. A run that does not grow an already-oversized file passes by design — refusing the trim would be refusing the cure. |
 
 ## What this skill does NOT do
 
 - Does not push to a remote.
 - Does not touch agent memory (`/close` owns that).
-- Does not modify any non-CLAUDE.md file. If a hint suggests code changes,
-  mention it in the report and skip.
+- Modifies only `CLAUDE.md` files. A hint suggesting a code, spec, test or
+  data change is captured as a next-steps item for the owning session
+  through the ledger verb — never applied here, never silently skipped.
 - Does not consume hints automatically — manual invocation only.
 - Does not handle session work — that goes through `/open` + `/close`.
 

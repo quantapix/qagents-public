@@ -25,12 +25,19 @@ worktree off the parent, symlink the venv and applicable env files, hydrate
 `node_modules` if a workspace member, **briefing-read of the project's
 `next-steps` slot** (rendered as the footer's Outstanding rows; an absent
 slot falls back to `(none)`; a whole-repo open reads only the whole-repo
-slot — context-bloat prevention), and print the entry command. Full log
+slot — context-bloat prevention), and print the entry forms. Full log
 under `pending/logs/`.
 
 Surface the script's stdout — the `ok branch=… parent=… wt=…` line, the
-`cd … && claude` entry command, and the uniform `<project> open complete`
-footer block including the Outstanding table — and stop. The footer is also
+"To enter the session" block, and the uniform `<project> open complete`
+footer block including the Outstanding table — and stop. The entry block
+carries **three** forms: a CLI form (`cd … && claude`), a desktop-app form
+(open the printed project folder as a local session), and a
+terminal-multiplexer form that adopts the provisioned worktree as a
+workspace. Pass all three through verbatim; the user picks the surface. A
+multiplexer workspace is a *view* of the session, never a lock — the branch
+stays the only write-lock — and the desktop app must open the provisioned
+folder as-is rather than minting its own worktree. The footer is also
 persisted under `data/summaries/open/`.
 
 The Outstanding rows are the candidate session agenda: section A (ready
@@ -63,12 +70,15 @@ provisioning a worktree: `scripts/open.sh --next-steps <project>`.
 | 13 | Not a git repo | Configuration problem; surface and stop. |
 | 20 | Unknown error | Read the tail of the open log; surface. |
 
-On exit 0 the script has printed the `cd … && claude` entry command — pass
-it through verbatim.
+On exit 0 the script has printed the three entry forms — pass them through
+verbatim.
 
 ## What this skill does NOT do
 
-- Does not commit or push.
+- Never pushes, and never makes a standalone administrative commit on
+  `main`. The script does make two commits: a state-checkpoint sweep on
+  `main` only when canonical carries pure cron/checkpoint dirty state, and
+  the open-summary on the *session branch*.
 - Does not delete or modify existing branches.
 - Does not touch the dot-claude sentinel (that's `/close`'s job).
 - Does not do anything the script doesn't — the script is the source of

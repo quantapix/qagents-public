@@ -152,10 +152,10 @@ anything shipped, because nothing has shipped.
 ## Refresh cadence
 
 None yet — see [Status](#status--placeholder-not-yet-populated). Once
-the allow-list lands the cadence is weekly: the private auto-memory
-tree stays the source of truth and this subtree mirrors it. The sync
-script runs the redaction sweep + a never-publish path bar before each
-publish; promotion to GitHub happens through a separate push wrapper.
+the allow-list lands the subtree refreshes per release run: the private
+auto-memory tree stays the source of truth and this subtree mirrors it. The
+sync step runs the redaction sweep + a never-publish path bar before each
+publish; the release pipeline's GitHub sync is the only push path.
 
 The index changes more often than the topic files — adding a new
 entry typically means writing one new file and adding one line to

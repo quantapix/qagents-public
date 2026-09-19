@@ -119,7 +119,11 @@ allow-list reading only when a SYNTHETIC id still answers 200 beside the
 filtered listing count. Probe all four per-run routes (`POST /api/runs`,
 `/stream`, `/report`, `/graph`), never just one — they do share
 `_resolve_run_dir`, but a filtered index over an unfiltered fetch route is the
-vacuity shape. Nothing schedules that read yet (`ns:serving/108`);
+vacuity shape. The Caddy edge block was lifted 2026-09-15T18:54Z, so this
+allow-list is now the ONLY gate. Since `5f1a25ccf` `deploy-app.sh` stages
+`examples/` FROM the frozenset (an id added without a directory is a silent
+`missing=` note, not a served 404) and `RELEASE.json` survives the swap, so the
+running build is datable on-box. Nothing schedules that read yet (`ns:serving/108`);
 `api.spec.ts` carries the assertion but is `PW_BASE_URL`-gated, so it fires
 only on a human decision, which is not a running guard.
 The adapter shells `extract_facts.py --reuse-facts --build` against

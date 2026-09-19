@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-08-28. Refreshed per release run during the
+_Snapshot: 2026-09-18. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -40,7 +40,28 @@ that is a ruling, not a backlog, and it is stated in full below.
   refresh. This round most of the published set moved, several substantially;
   the commit diff is the change record.
 
-## What changed since the last refresh (2026-08-21)
+## What changed since the 2026-08-28 refresh
+
+- **The lifecycle skills stopped telling a reader to hand-edit a generated
+  file.** The forward-only next-steps slot has for some time been a render of
+  a shared ledger store, but two of the published skills still described
+  resolving an item as deleting it from the file — the one act the close gate
+  now refuses. Both skills, and the private sources they mirror, now say to
+  retire the item through the ledger verb. Four smaller stale claims in the
+  same subtree were corrected with them: the session-open entry forms, the
+  hint-flush lane's missing exit codes (including a new size gate), and one
+  exit code's history stated backwards.
+- **The redaction gate reads more than markdown now.** The one location where
+  formal-kernel source may publish is swept for barred content alongside the
+  markdown, and the path rule refuses an example whose directory name
+  identifies a live matter. Each arm catches a case the other structurally
+  cannot. A new test plants each path-prefix rewrite in both directions,
+  because only a two-polarity test can say a cure went too far.
+- **Refresh cadence is stated as it is.** This file, the org page, and two
+  subtree READMEs still said "weekly" after the runs stopped being weekly;
+  they now say "per release run".
+
+## Earlier: what changed in the 2026-08-28 refresh
 
 - **All three formal kernels finished pulling answer-shaped content out of
   their own rule-files, and one of them found the same leak on a second
@@ -114,13 +135,17 @@ failure, not a vacuous pass. The engineering content — conventions, exit-code
 contracts, hook behavior, phase ledgers — is preserved, because that is the
 methodology this repo exists to publish.
 
-Three additional bars are enforced as fail-closed pairs rather than single
-greps: a bar on one collateral docket family, a bar on session-multiplexer local
-state (which carries branch names, transcript paths, and prompt previews), and a
-bar on contact addresses. Each has a content scanner over file bytes *and* a
-path scanner over file names, because a barred token in a path renders publicly
-in the repo tree without ever appearing inside a file. All three abort the
-publish rather than silently dropping the offending file. Each ships its own
+Several additional bars are enforced as fail-closed pairs rather than single
+greps — among them a bar on one collateral docket family, a bar on
+session-multiplexer local state (which carries branch names, transcript
+paths, and prompt previews), a bar on contact addresses, and a bar on rooted
+internal paths. Each has a content scanner over file bytes *and* a path
+scanner over file names, because a barred token in a path renders publicly
+in the repo tree without ever appearing inside a file. A separate path rule
+admits formal-kernel source files only under an examples directory and
+refuses them everywhere else, so a kernel file nobody thought about fails
+closed. Every one aborts the publish rather than silently dropping the
+offending file. Each ships its own
 pinned regression test — the gates are themselves subject to the proof-of-fire
 rule described above. As of 2026-07-24 no contact email appears on any public
 surface in this organisation; the organisation page is the sole contact channel,
@@ -135,8 +160,10 @@ wrote a rule for; an assertion on the output is not.
 
 ## Cadence
 
-Weekly (Fridays) from the `CLAUDE.md` graph and the lifecycle skills + their
-specs. The memory topic-file tree and the recall memos are allow-list pending
-(see above), not on a refresh clock.
-Re-rankings, new subprojects, and new cross-subproject conventions land as ordinary
-diffs; the commit log is the change record.
+Refreshed per release run, not on a fixed schedule — gaps of two to four
+weeks have happened, and this repo's commit history is the authority on
+when it last moved. Each run re-renders the `CLAUDE.md` graph and the
+lifecycle skills + their specs. The memory topic-file tree and the recall
+memos are allow-list pending (see above), not on any refresh clock.
+Re-rankings, new subprojects, and new cross-subproject conventions land as
+ordinary diffs; the commit log is the change record.

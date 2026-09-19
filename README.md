@@ -407,7 +407,7 @@ drift, even redacted.
 | `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
 | `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images and video both live; the video engine drives cue rendering for the explainer chain) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
 | `extending/`   | Desktop-assistant extensions + adoption enablement. Ships thin stdio MCP servers that proxy the two product surfaces (allow-listed replay, kernel refusal rules mirrored, never an additional kernel consumer), packaged through the release lane. |
-| `developing/`  | Native macOS (and next iOS) SwiftUI clients for the two products. A generated-project + package-manager monorepo; never an additional kernel consumer — future live wiring rides the existing product seams. |
+| `developing/`  | Native macOS and iOS SwiftUI clients for the two products, one shared package with a thin per-platform shell. A generated-project + package-manager monorepo; never an additional kernel consumer — the clients render synthetic fixtures today, and live wiring, when it lands, rides the existing product seams. |
 | `simulating/` | Deep agent-based market simulation — a Python engine plus a local on-device LLM fit lane, with a local-only web UI that is never deployed. Reads promoted factor artifacts under a written consumer contract as the licensed second reader; the fourth consumer of the market-tape hub. Never an additional kernel consumer. Generative-descriptive by charter — it models market structure, it does not forecast and is not an alpha engine — and it carries the financial-domain signoff floor from birth. |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
@@ -425,6 +425,7 @@ the assistant has to remember without re-reading the whole codebase.
 - TypeScript for the Astro sites, the local-only analytics app, the
   market-inspection tooling, and the cloud-infrastructure definitions.
 - Python for the trading agents and the kernel drivers.
+- Swift for the native clients (`developing/` only).
 - Lean4 for the formal kernels (`proving/`, `accounting/`, `studying/`)
   — three orthogonal axes: textual (federal statutes), numerical (market
   data), operational (version-control state). All three pin the **same**
