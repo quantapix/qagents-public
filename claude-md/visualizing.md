@@ -77,7 +77,7 @@ this § 3 is authoritative.
 
 **Shared (top-level, modality-neutral):**
 
-- `extractor/` — **the highest-value deliverable** (Python, system `python3`).
+- `extractor/` — **the highest-value deliverable** (Python, stdlib — § 6).
   `usc_to_catalog.py` (legal, built); `accounting_to_catalog.py` (financial,
   built 2026-08-01 — walks `Universe/S<code>/<Axis>/` + `coverage.json`;
   the symbol→(sector,axis) coverage fold spec lives in its docstring).
@@ -315,9 +315,8 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
 - License hygiene is load-bearing: the MIT cytoscape chain is the only
   third-party surface; **nothing with Blender provenance reaches `main`**
   (`feedback_no_third_party_license_entanglement`).
-- Python: root venv by absolute path is NOT needed — the extractor uses system
-  `python3` (the `proving/`/`accounting/` convention; reads JSON/artifacts, not
-  numerics).
+- Python: the extractor + `rounds/validate_rounds.py` are stdlib-only
+  `#!/usr/bin/env python3` (homebrew, root § Python venv) — no venv needed.
 - Tokens: the kit reads tokens, never literals — add a `tokens-lattice.css`
   overlay per app (axis palette / tier ramp / agreement green-amber-red); never
   redefine base tokens. **Overlay SoT = `rendering/` for ALL THREE kits**

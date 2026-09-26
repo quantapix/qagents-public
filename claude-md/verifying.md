@@ -250,16 +250,11 @@ pane, never an error. e2e: the `navigator pane` describe in
 `[[feedback_layout_head_slot_for_per_page_links]]`.
 
 **This mount is DARK-ONLY and owes NO light overlay (operator-ruled
-2026-08-07)**, and **no `tokens-chart.css` here is deliberate** — R-T2 (§ 3)
-keeps kit canvas + overlays DARK in both legs (`theme.spec.ts` asserts
-`.zone-canvas` kernel-dark under `colorScheme: 'light'`), and charts
-self-themes via `s.tok(…) || DEFAULT_TOKENS[…]`. Copying either in would land
-a tracked file nothing links. `ns:visualizing/7` has twice listed light
-overlays as owed here; the remaining light-leg debt is **evaluating's alone**
-(correcting reciprocal `ns:visualizing/51`). Re-propose only by re-opening
-R-T2 itself — never a "for parity" copy. Full record: memory
-`project_proof_graph_kit_mount_pattern` § "verifying's mount is DARK-ONLY by
-rule (R-T2)".
+2026-08-07)**, and **no `tokens-chart.css` here is deliberate** (R-T2, § 3;
+charts self-themes). Remaining light-leg debt is **evaluating's alone**
+(`ns:visualizing/51`). Re-propose only by re-opening R-T2 itself — never a
+"for parity" copy. Full record: memory `project_proof_graph_kit_mount_pattern`
+§ "verifying's mount is DARK-ONLY by rule (R-T2)".
 
 **Re-sync from a rebuilt kit** — **the js and css copies are a lockstep pair,
 never one without the other**; after any token lift grep the mounted `kit.js`
@@ -270,11 +265,8 @@ with `grep -a` for the new token before treating the lift as landed. The full
 
 **Mechanized since 2026-08-16** at `web/tests/e2e/proof-graph.spec.ts`,
 describe `kit-token lockstep guard (per sheet + anti-vacuity)`: **per PAGE
-CLASS, not per-sheet-within-a-page** — this mount links exactly ONE overlay
-per page (`tokens-proof.css` on proof pages, `tokens-lattice.css` on
-`/lattice`), so evaluating's two-sheets-one-page shape does NOT port
-verbatim; keep the route table. Harvest-unfiltered rule, the `total > 0`
-anti-vacuity arm and the proof-of-fire: memory
+CLASS** (one overlay per page here), so evaluating's two-sheets-one-page shape
+does NOT port verbatim; keep the route table. Detail: memory
 `project_proof_graph_kit_mount_pattern` § "The per-sheet token guard does
 NOT port verbatim between mounts".
 

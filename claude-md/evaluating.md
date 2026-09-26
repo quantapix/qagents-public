@@ -90,11 +90,10 @@ SoT (distilled from `studying/thesis.md`). The shared `@qagents/web` DisclaimerC
 `disclaimer.financialRider`) renders it ADJACENT to the verdict token in
 BOTH `LiveReportZone` and the static `ReportZone`, so the concession
 travels with the verdict.
-Preserve this on any REPORT-zone edit (`app.spec.ts` asserts it). § 11.6:
-the `financialRider` is the operator/evaluating+accounting track, NOT
-pleading's gate — and as of 2026-06-24 `evaluating/` **owns** that track
-(§ 9, the FINANCIALLY-CLEARED gate). Origin: Round 03 T3 + cure 5,
-`data/debates/quantapix-thesis-public-pages-2026-06-23.md` (HELD lane).
+Preserve this on any REPORT-zone edit (`app.spec.ts` asserts it). The
+`financialRider` is evaluating's track (§ 9), never pleading's gate (messaging-debate
+§ 11.6). Origin: Round 03 T3 + cure 5,
+`data/debates/quantapix-thesis-public-pages-2026-06-23.md`.
 
 ## 4. Defined-risk options — non-negotiable
 
@@ -164,8 +163,8 @@ mode — cost-free predicate values, instant canned Bools against the committed
 manifest. The driver then invokes **real** `lake build examples.<id>.proof`
 (not `lake env lean`) so the kernel verdict is genuine. Stub values are seeded from the example's committed `facts.json`,
 keyed on `(spec, lean_call)`, whenever the adapter passes `--example-id` (it
-does) — so a replay is value-faithful to the real Opus run that produced the
-golden. If the kernel
+does) — so a replay is value-faithful to the run that produced the golden
+(its `facts.json` `model` stamp; older goldens carry none). If the kernel
 rejects, the report exposes the Lean error verbatim. Read endpoints keep
 the hybrid `_resolve_run_dir` shape
 (`server/jobs/` first, then `accounting/examples/`) so any historical
@@ -319,21 +318,15 @@ mis-readings, and the out-of-band-`aws s3 cp` completeness caveat:
 push"; the standing ruling below owns the rest.
 
 **Standing ruling — do NOT widen `data/publishing/r2-scope-map.json` T1/T2 to
-`["FINANCIALLY"]`** (operator 2026-08-07; re-affirmed on narrowed grounds 2026-08-10,
-relocated here from the retired `ns:evaluating/28` so it outlives the item). `[]` is a
-**scope** statement: T1 (proof-method) and T2 (docket-legal) content is genuinely
-outside § 3. Two reasons not to revisit it. (i) Widening would red the coverage proof
-for four already-pushed episodes — `T1/01-hallucination-tax`,
-`T1/05-negative-verification`, `T1/07-civil-rico-walkthrough`,
-`T2/01-docket-record-disagree`, none carrying a FINANCIALLY record — and back-filling
-records for shipped content violates gate-before-first-push (§ 3.5) by construction.
-Those four stay permanently uncovered; the hardening is prospective, and that is the
-right outcome, not a gap to fill. (ii) The push floor the widening was once wanted for
-now exists elsewhere: the gate keys on the `T<n>/` prefix, so the map no longer carries
-that weight. `requiredGates` governs the coverage proof only, where `[]` is honest.
-Filing a **verified-N/A** `/do-signoff FINANCIALLY <subject>` for a non-financial
-episode (disposition CLEARED, scope "out of § 3 financial scope") is therefore now
-**how a T1/T2 episode gets released at all** through the sanctioned path — no longer
+`["FINANCIALLY"]`** (operator 2026-08-07, re-affirmed 2026-08-10; relocated from the
+retired `ns:evaluating/28`). `[]` is a **scope** statement — T1 (proof-method) and T2
+(docket-legal) are outside § 3, and `requiredGates` governs the coverage proof only.
+Widening would red four already-pushed, record-less episodes; back-filling violates
+gate-before-first-push (§ 3.5), so they stay permanently uncovered — correctly. Episode
+list + derivation: `[[project_signoff_framework]]` § "R2 scope-map RATIFIED". Since the
+upload gate floors T1/T2 (above), a **verified-N/A** `/do-signoff FINANCIALLY <subject>`
+for a non-financial episode (disposition CLEARED, scope "out of § 3 financial scope")
+is **how a T1/T2 episode gets released at all** through the sanctioned path — no longer
 merely good practice. Grant a FINANCIALLY surface with
 `/do-signoff FINANCIALLY <subject>` from this session
 (`.claude/skills/do-signoff/` — FINANCIALLY-CLEARED is its first governing

@@ -89,7 +89,7 @@ entry lands or an existing one's verdict flips.
 | `status/` | status-emit | per-sub `scripts/status_emit.*` | `data/status/CLAUDE.md` |
 | `summaries/` | convention-anchor | `scripts/{close,dcu,dco}.sh` + axiomatization-lane drivers (full roster in the stub) | `data/summaries/CLAUDE.md` |
 | `tmp/` | convention-anchor | sessions (in-flight specs) | `data/tmp/CLAUDE.md` |
-| `visualizing/` | data-hub | `visualizing/extractor/*.py` (Phase 1) → `dau`/`dat` driver-emit (Phase ≥3) | `data/visualizing/CLAUDE.md` |
+| `visualizing/` | data-hub | `visualizing/extractor/*.py` (Phase 1) → `dau`/`dat` driver-emit (Phase ≥3); `code/lean_graph` (`statements.json`, assembled from the three axes' local projections by a studying session under the lock — hub-goldens Round 06 R6.1/R6.9) | `data/visualizing/CLAUDE.md` |
 
 **Promoted out:** market/trading datasets (parquet/portfolios/reports/gics)
 moved to the top-level `financial/` hub — see root `CLAUDE.md` § "Shared-data
@@ -118,3 +118,15 @@ No session ever opens `/open data` — `data/` is not a subproject; this
 file is a reference doc, not a session anchor. Editing it during any
 `/open <sub>` session is allowed when the audit table needs an entry
 flip or a new top-level kind is being added.
+
+## 7. Shared-data write-lock — `.data-write-lock` (both hubs)
+
+**Single owner** of the write-lock protocol for `data/` **and** `financial/` (one lock serializes both). Extracted verbatim from root `CLAUDE.md` § Shared-data write-lock on 2026-09-21 (operator ruling on `ns:qagents/230`(b), SPREAD-OP 2026-09-21 apply P0-1); root keeps a one-paragraph anchor.
+
+Each subproject writes (a) its own subdir freely (branch-as-write-lock) and (b) the shared `data/` **and** `financial/` hubs only while holding `<root>/.data-write-lock` (one lock serializes both).
+
+**Shared ledger store (Postgres — qred LAN primary) is the canonical mechanism for new shared ledger-like data** (single shared file, many appenders): such surfaces start as a store table + single-writer rendered git projection, never a hand-appended shared file — and a projection needs a WRITE PATH, not just a render verb. **ACK a write by READING IT BACK — with `--full`, never by arithmetic on a count**; "exactly ONE writer" is serialization in TIME, not mechanism, so two same-day closes meet on the projection as a merge conflict. Rationale, traps, reader side: `project_shared_ledger_store_postgres` + `code/ledger/`.
+
+- Cron-fired writes never touch `data/`/`financial/` directly — they stage into `pending/` (gitignored buffer mirroring canonical paths); `managing/`'s daily verifier does the lock-protected rsync. **One chartered exception:** the `analyzing:tape-refresh` lane (script-direct) writes canonical `financial/parquet/` DIRECTLY under `.data-write-lock`, never through `pending/` — owner `data/specs/analyzing-charter-2026-07-01/tape-cron-2026-08-09/` (exit contract: `data/charters/analyzing/tape-supply/CHARTER.md` § exit-contract). The verifier is a **closed-set allow-list** classifier — register a new `pending/` producer as a `managing/.claude/agents/verifier.md` GLOB row or its files land `unclassified[]`, unpromoted. **`pending/` is PER-HOST and only the SEAT's is ever drained** — off-seat the daily pass-list describes ANOTHER TREE; resolve `hostname` against `data/schedules/SEAT` before reading any `pending/` WARN as actionable (`pending/logs/` is a separate `/do-retire` lane): `project_pending_promotion_scope_fix`.
+- Everything else: fixed-path writers acquire the lock by atomic create and release it from an EXIT trap; configurable-output-path scripts acquire it **iff** the resolved target is canonical `data/`/`financial/`; a writer on the `QAGENTS_PENDING_ROOT` branch is staging, not writing canonical, and takes no lock.
+- **Decide from how the target was AIMED, never by comparing paths.** `REPO_ROOT.parent / "financial"` is right from canonical and wrong from a worktree copy (there `REPO_ROOT.parent` IS the worktree), so an explicitly `--root`-aimed worktree write is misclassified as canonical and drops a spurious lock the next writer then fails on. Explicit `--root` (branch-as-lock) and `QAGENTS_PENDING_ROOT` (staging) take NO lock; only the aim-less canonical default locks. Arm worth copying: an aimed write must neither take nor touch a stale lock file.

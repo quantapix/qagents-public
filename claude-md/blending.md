@@ -246,11 +246,9 @@ First-consumer mapping table lives in
   flow or `resolving/`'s compose-* chain.
 
 Skill catalog (motif plates + Wave-3 scene skills) is owned by
-`blending/skills/README.md` — 11 skills as of 2026-07-13; don't
-restate the roster here. All three motif bridges carry cohort-tone
-params (`film_transparent` + `*_color` RGBA), added 2026-07-10 for
-the Meridian re-skins. Skill-authoring manual-crosscheck rule (locked
-2026-05-24): `blending/skills/README.md` § Manual crosscheck.
+`blending/skills/README.md` — don't restate the roster here.
+Skill-authoring manual-crosscheck rule (locked 2026-05-24):
+`blending/skills/README.md` § Manual crosscheck.
 
 **Cohort-tone params + tinting (all bridges).** The `film_transparent`
 + `*_color` (RGBA) params sit **outside** the `RenderSpec` — hash-stable,

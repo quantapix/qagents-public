@@ -255,8 +255,7 @@ silently. Before deploying a hub-slot render: `git log HEAD..main` +
 ## 8. Scope boundary
 
 This subproject does not import from `analyzing/` or `trading/`, and vice-versa
-(root CLAUDE.md language-split rule). If we ever need shared data, follow the
-parquet-at-`./data/<name>/` pattern.
+(root CLAUDE.md language-split rule).
 
 The rule is **absolute — no temporary staging, no Phase-A code-import, no
 workspace-package-as-data-shim**: sibling state reaches designing/web only

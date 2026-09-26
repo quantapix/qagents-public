@@ -145,9 +145,8 @@ exists, not just the directory.**
 **A bare family slug is not a key — key on the relpath, or test both
 depths.** `specs-audit.sh` resolved families one level deep only, so every
 family *promoted into* a parent as a subspec became unaddressable and its
-`SPEC_LEDGER` row was skipped with no finding (measured 2026-07-26: 65 root
-vs 80 subspec families — 55 % sat at subspec depth; one row had been dark
-46 days). Promotion is the ordinary, encouraged lifecycle move, so this
+`SPEC_LEDGER` row was skipped with no finding (measured 2026-07-26: one row
+dark 46 days). Promotion is the ordinary, encouraged lifecycle move, so this
 fires on routine activity, silently, in the direction that reads like
 success. Two consequences for anything keyed on a family name — ledgers,
 audits, cross-refs, future registries: (a) the **two-level nesting cap

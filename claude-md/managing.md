@@ -67,8 +67,6 @@ cites #6, and `dco-manual` cites the checker's #7.
    (script + `checker.md` #6 + this roster land in ONE change —
    data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16 § 6.1
    for the multi-root + DEBATES/TODOS arms).
-   Arm rationale (own-failure-domain, SCHEDULE-derived input) + the 08-12/13
-   trading-chain instance: `checker.md` #6 + memory `project_trading_system`.
 
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
@@ -155,13 +153,14 @@ cites #6, and `dco-manual` cites the checker's #7.
    serving. Full row text: `checker.md` #16 (ns:managing/49). Three-file
    lockstep: the script + `checker.md` #16 + this row move in ONE change.
 
-Subagent prompts under `.claude/agents/` encode these commitments verbatim —
-keep them in sync when a threshold changes.
+§ 1.1 digests the rows `checker.md` holds (ns:managing/49): the normative copy
+of each row is the one there, and a threshold moves in ONE change — script +
+`checker.md` #N + this digest.
 
-## 2. Four subagents (three top-tier + one haiku), clean contexts each
+## 2. Four subagents (three top-tier + one classifier-tier), clean contexts each
 
 The 06:00 cron fires a single coordinator that spawns three top-tier-model subagents +
-one Haiku subagent in parallel, each with a clean context. Each subagent owns
+one classifier-tier subagent in parallel, each with a clean context. Each subagent owns
 exactly one output file and writes it directly to disk. The coordinator only
 sees their one-line completion confirmations — **no accumulated context bleed
 from their work** (its one write is the verifier-sidecar-derived
@@ -169,10 +168,10 @@ from their work** (its one write is the verifier-sidecar-derived
 
 | Subagent | Model | Output | Inputs | Notes |
 |---|---|---|---|---|
-| `checker` | opus (top tier) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`), `shorting/positions/` (adversarial findings — promote / dismiss-with-reason / ignore, per `shorting/CLAUDE.md` § 5) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
-| `planner` | opus (top tier) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
-| `reporter` | opus (top tier) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
-| `verifier` | `haiku` | `checks/<date>.pending.json` (coordinator-appended per above) | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the § 5.3 lock-protected rsync. Spec family: `data/specs/pending-promotion-scope-2026-05-28/`. |
+| `checker` | top tier (root § Model policy) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`), `shorting/positions/` (adversarial findings — promote / dismiss-with-reason / ignore, per `shorting/CLAUDE.md` § 5) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
+| `planner` | top tier (root § Model policy) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
+| `reporter` | top tier (root § Model policy) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
+| `verifier` | classifier tier, `verifier.md` frontmatter | `checks/<date>.pending.json` (coordinator-appended per above) | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the § 5.3 lock-protected rsync. Spec family: `data/specs/pending-promotion-scope-2026-05-28/`. |
 
 Each subagent's prompt (`.claude/agents/`) lists exact inputs to read and the
 exact output path to write — they never negotiate scope at runtime.
@@ -296,22 +295,16 @@ own-outputs lane), AND ONLY while holding the canonical
 The exception lives entirely inside `data/schedules/launchd/verify-pending.sh`
 — that script is the single audit surface; the fan-out itself never commits.
 The coordinator invokes it **twice**: once the moment the VERIFIER returns, and
-again after all four return (ns:managing/56 — the fan-out's 600 s ceiling
+again after all four return (ns:managing/56 — the fan-out's background ceiling (§ 7)
 TERMINATES the fire, so a commit gated on the slowest subagent inherits that
 subagent's failure rate; the script's lanes filter to new/modified files, so the
 second run is additive). Audit signal: `git log --grep "^\[managing\] verify"`.
 
-⚠ **`pending/` is PER-HOST, and only the SEAT's buffer is ever drained.** The
-path is identical on every machine but the verifier fires only on the seat
-holder (§ 7.1), so off-seat the buffer accumulates forever and a daily report's
-pass-list describes ANOTHER TREE — measured 2026-09-13: the 09-12 sidecar
-described qpur's tree while this host's buffer had been frozen since the
-2026-08-07 seat flip. **Stamp the host on the pending section exactly as the
-launchd-logs section already does**, and resolve `hostname` against
-`data/schedules/SEAT` before reading any `pending/` figure or WARN as
-actionable. `pending/logs/` is in NO host's promotion lane (it is a
-`/do-retire` lane, fed off-seat by interactive `/open`+`/close`) — a separate
-finding, never this one.
+⚠ **`pending/` is PER-HOST; only the seat's buffer drains** (§ 7.1; rule, the
+`hostname`-vs-`SEAT` check + the `pending/logs/` carve: root CLAUDE.md
+§ Shared-data write-lock). Measured 2026-09-13: the 09-12 sidecar described
+qpur's tree. **Stamp the host on the pending section exactly as the
+launchd-logs section already does.**
 
 Script mechanics — manual `--force`, `prune_stale_fails`, the S5 write-back
 + the `push_to_authority` silent-SPOF rule: `data/schedules/CLAUDE.md`
@@ -346,8 +339,8 @@ watcher's own evidence.
 Cron-fired daily at 06:00 local via the qagents launchd scheduler at
 `data/schedules/`. Registered as `com.qagents.managing-daily`; the ROUTINES
 entry `managing:daily:06:00:0,1,2,3,4,5,6` in
-`data/schedules/launchd/install.sh` is the schedule's source of truth
-(§ 3.1 owns the suppressed-finding class). The fired routine is the
+`data/schedules/launchd/install.sh` is the schedule's source of truth.
+The fired routine is the
 coordinator prompt at `managing/.claude/coordinator-prompt.txt`, piped to
 `claude --print` by `data/schedules/launchd/run_routine.sh`; it runs the
 four subagents in parallel and exits, runtime budget **≤ 25 min (ruled
@@ -363,10 +356,18 @@ the battery arm (`ns:serving/97`). A fire that stops with NO exit line is a
 ceiling or sleep kill, never a budget kill (that is *distinguishable*: exit 4
 + `Error: Exceeded USD budget` verbatim); the nine-day decomposition is in
 memory `project_managing_subproject`.
+A fire that ends on a safeguard refusal is a FOURTH class and sits on the
+OTHER side of this split: it carries an exit line and a `qagents-cost` line
+and leaves no dated artifact. Its marker is owned by `run_routine.sh` — the
+envelope's `subtype` + `stop_reason` appended to the cost line, a refusal
+reading `stop_reason=refusal`; the checker's cost-telemetry arm reads it. An
+exit-line fire with no artifacts and no such marker is UNKNOWN — never a
+clean short fire, never a kill. The CLI refusal envelope is unmeasured, so
+the first live instance re-grades the marker.
 Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`,
 paired with `routine_policy_model` so a routine's tier and its funding cannot
 drift apart — read `daily`'s figure from that function, never from a copy
-here (this line carried a stale one for five days). Never `RemoteTrigger` /
+here. Never `RemoteTrigger` /
 `CronCreate` / cloud `/schedule` (root CLAUDE.md § `data/schedules/` owns
 the rule; rationale `data/schedules/Notes.md`).
 
@@ -391,13 +392,11 @@ Three consequences that bind `managing/`:
   cannot span machines. The SEAT value is the exclusion; the lock only serializes
   writers *within* the seat holder.
 - **`managing:daily` rides the seat** (it needs the lock + the canonical repo, and
-  those travel) — a watcher on the machine that is not firing watches nothing. A
-  declared amendment to herdr's M7.
+  those travel) — a watcher on the machine that is not firing watches nothing.
 
-**Bootstrap trap:** the gate reads `SEAT` from `github/main`, never the local file.
-A merge that is not **pushed** leaves the authority without `SEAT` → every routine
-on every host refuses. Order is merge → push → verify
-`git ls-tree github/main data/schedules/SEAT` is non-empty. `/close` does not push.
+**Bootstrap trap:** the gate reads `SEAT` from `github/main`, never the local file —
+an unpushed SEAT merge refuses every routine on every host (`/close` does not
+push; merge → push → verify recipe: memory `project_mobile_cron_seat`).
 
 **Cron-EC2 lane** is dead — before triaging `pending/cron-ec2/` or any AWS drift,
 read `data/charters/serving/cloud-base/cron-ec2-lane.md`.

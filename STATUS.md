@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-09-18. Refreshed per release run during the
+_Snapshot: 2026-09-26. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -40,7 +40,47 @@ that is a ruling, not a backlog, and it is stated in full below.
   refresh. This round most of the published set moved, several substantially;
   the commit diff is the change record.
 
-## What changed since the 2026-08-28 refresh
+## What changed since the 2026-09-19 refresh
+
+- **The rule-set was audited against the model vendor's own guidance for
+  working with the assistant, and the gaps were closed at their owners.** Model
+  selection now sits in four named seats, one per lane, with effort as a
+  separate per-lane control beside each, so a tier change is a small number of
+  known edits rather than a hunt. Every script that imports a third-party
+  package pins the project interpreter at both the shebang and the call site,
+  because the system's default interpreter changed underneath the repo and an
+  import guard that probes the wrong one skips silently.
+- **The hint-flush lane can no longer grow a rule-file past its size budget.**
+  A queued hint that would push a rule-file into the soft band now needs an
+  offsetting trim in the same commit. So does a hint that restates text already
+  living in the file's documented overflow home. The session-close gate
+  re-grades the same population on whole-repo branches, so the in-session check
+  is a convenience, not the only seat.
+- **The shared-data write-lock protocol moved to the data hub's own rule-file.**
+  The root file keeps a one-paragraph anchor. One rule carried over with it:
+  decide whether a write is canonical from how its target was *aimed*, never by
+  comparing paths, because a path comparison that is right from the main
+  checkout is wrong from a worktree copy.
+- **The operational kernel's blind cells now launch outside the working tree**,
+  so they receive neither the rule-file nor the memory index. That is measured
+  by a probe on every CLI version change, never assumed. A test that must stay
+  red until a later session parks in a pending directory rather than the live
+  battery, because the close gate has no expected-red lane.
+- **A deploy is treated as a publication event.** A stale deployed build is
+  invisible to every repository-side gate, so the only evidence of what a
+  running service serves is a live read. The live probe now grades its own
+  controls, since a refusal-only record cannot fail.
+- **The trading side's scheduled routines are paused by an operator ruling**,
+  and the paused set has a single owning file with a per-routine re-arm recipe.
+  The constellation watcher also learned a fourth class of fire outcome, a
+  safeguard refusal, which it no longer confuses with a clean short run or a
+  kill.
+- **The release lane gained a gate for its own examples directory.** The one
+  location where kernel example files may publish now admits a closed set of
+  file types, content-scans every data file there, and requires a per-list
+  manifest to verify before any push phase runs.
+
+## Earlier: what changed in the 2026-09-19 refresh
 
 - **The lifecycle skills stopped telling a reader to hand-edit a generated
   file.** The forward-only next-steps slot has for some time been a render of
@@ -61,55 +101,6 @@ that is a ruling, not a backlog, and it is stated in full below.
   subtree READMEs still said "weekly" after the runs stopped being weekly;
   they now say "per release run".
 
-## Earlier: what changed in the 2026-08-28 refresh
-
-- **All three formal kernels finished pulling answer-shaped content out of
-  their own rule-files, and one of them found the same leak on a second
-  channel.** A kernel's rule-file is injected into every subagent's prompt, so
-  a sentence written there reaches a blind reviewer with no read — and no
-  blindness check grades a non-read. Each kernel's reference material now lives
-  behind a reviewer bar rather than in the injected file. What is publishable
-  is the bar and the reason a split beats a banner: a banner asks a reader not
-  to look at something it has already shown them. What is not publishable is
-  the filename, any section inside it, or an inventory of what a reader would
-  find there — this status file said too much on that last point in the
-  previous round and the sentence has been removed rather than softened.
-- **The same class turned up on a live channel, not just in a file.** The
-  financial kernel's blind-cell harness was found publishing each cell's live
-  transcript to a surface the cells were barred from, and a gate wired only
-  into the acting verb let the reading verbs route around refused state. The
-  rule that came out of it generalises past this lane: gate the read verb, not
-  only the act verb.
-- **A one-week regression proved that a render-time assertion is not a source
-  guard.** The output assertion added last round — the renderer refuses to emit
-  a mirror still carrying a barred token, naming the offending line — fired this
-  round on a rule-file that had been cured seven days earlier. An unrelated
-  maintenance pass had written the barred form back in while documenting the
-  bar, which is exactly the context the previous round identified as the
-  dangerous one. The assertion did its job and the publish stopped. The finding
-  is that the only thing standing between the two events was a weekly manual
-  run in a different scope.
-- **The hand-authored surfaces in this repo have no equivalent of that
-  assertion, and six claims were found that were true when written and are false
-  now.** A framework roster that had expanded twice; a review-fleet count that
-  had gone from three to two when one lane was absorbed into another pass; a
-  capability described as forthcoming that had shipped; a front-matter promise
-  of two subtrees this repo does not contain; a curation process described in
-  the present tense that has never once run; and a prose count of statutory
-  titles that the source kernel had ruled must never be stated as prose. None is
-  a redaction failure and no blocklist could see any of them: a blocklist tests
-  an artifact against a token list, and this class needs the artifact tested
-  against the world. All six are corrected in this round.
-- **A per-item audit measures diligence, not control of the generator.** The
-  operational kernel swept its own taxonomy this round: most members held, a
-  handful were demoted, and three escapees turned up in shapes the taxonomy has
-  no slot for. The conclusion recorded was to grade the next artifact produced
-  rather than the size of the sweep — a sweep that finds new shapes has
-  measured its author's diligence, not the generator's behaviour.
-- **The cross-subproject hint queue was flushed and a capacity-review pass ran
-  out of band**, folding queued implications back into the rule-sets that own
-  them.
-
 ## What's not populated, and why that is a ruling
 
 - **`memory/`** and **`memsearch/`** carry their READMEs and nothing else. That
@@ -127,8 +118,11 @@ routes through the femfas.net site instead.
 
 ## Redaction posture
 
-Operator home paths are genericized; AWS account / resource / device identifiers,
-case-specific example IDs, and host-specific identifiers are stripped. A live
+Operator home paths are genericized; AWS account / resource / device
+identifiers and case-specific example IDs are stripped. The short nicknames of
+the developer's own workstations do appear in the rule-set — they carry no
+network address and are kept because the multi-host scheduling rules are
+unreadable without them. A live
 markdown redaction gate sweeps every `*.md` in the candidate tree before any push —
 a HARD blocklist hit aborts the compile and push, and an empty candidate tree is a
 failure, not a vacuous pass. The engineering content — conventions, exit-code

@@ -194,11 +194,9 @@ frontier divergence (`OWN_UNIVERSE_STALE_LAG_DAYS = 0`) plus a per-symbol
 healthy leg. Informational, never a lockstep gate; the manifest step is part
 of this lane too.
 
-The 18:00 post-close cron lane and the manual/backfill recipe are the same chain in the
-same order — owner `build_steps()` (§ Batch ingest above); lane identity +
-exit contract in § History preservation below; breadth-lane detail (anchor-ETF
-exclusion, one materialized recurrence implementation, `as_of` lockstep) in
-tape-schema charter § 2.4. The
+Chain order: § Batch ingest above; lane identity + exit contract: § History
+preservation below; breadth-lane detail (anchor-ETF exclusion, one materialized
+recurrence implementation, `as_of` lockstep): tape-schema charter § 2.4. The
 manifest step rewrites `financial/parquet/manifest.json` (freshness
 sidecar — see `financial/parquet/CLAUDE.md` § "Freshness sidecar") and,
 given `--refresh-summary`, emits the P8 provenance events. Batch mode
@@ -231,13 +229,11 @@ deletion; the forensics (the closed lost-DATE set, the 61-of-100 re-fetch, the
 `late_fire` session window (§ exit-contract) and INV-H's `reconciled` tier
 (§ inv-h). DEPLOYED on both seat hosts 2026-08-25 and the fetch-time hypothesis
 CONFIRMED: the first post-close fire wrote 523 clean, `blocked[]` runs 2–3/fire
-since. The residue is individual symbol facts, watched at `ns:analyzing/50`
-(EQR vendor degradation; ^VIX3M re-frozen 888→1 since ≤08-21 — a true vendor
-outage this time, not our artifact; reads arm 2026-09-08). EA is
+since. The residue is individual symbol facts (EQR, ^VIX3M vendor outages),
+watched at `ns:analyzing/50`. EA is
 retired-in-place (`sp500-retired.txt`) — its 08-04 frontier is expected. Watch
 `behind_frontier.count` and the warn-level `reconciled[]` bucket: a tape whose
-gaps are papered over daily must not read as clean. `ns:analyzing/43` retired
-2026-08-25.
+gaps are papered over daily must not read as clean.
 
 ## Web viewer — `analyzing/web/` (P4 host, role (b))
 

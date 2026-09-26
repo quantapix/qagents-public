@@ -59,8 +59,8 @@ the standard examples in `hub/theorem_proving_in_lean4` and
   9-cond + NO-MANUAL-PROVING 4-cond). The machinery roster AND the two biting
   invariants are the SPEC's — don't mirror them here: R2 (state-key = digest of the
   extractor input snapshot, never HEAD) at SPEC § 6; R15 (machine-context seam,
-  `monitoring/` sole consumer, non-precedential) at SPEC § inv-5. Mid-migration to
-  a `qx` shim (`ns:studying/39`).
+  `monitoring/` sole consumer, non-precedential) at SPEC § inv-5. `qx` shim
+  landed; oracle retirement at `ns:studying/39`.
   Ledger privacy: § 5.1.2(c) path-blocklist carries (committed-but-never-published
   — the `studying_entailment_ledger` Stage-4 rule in
   `publishing/scripts/sync_mirror.py`).
@@ -139,9 +139,10 @@ rule — permanent, and not conditional on any assessment of whether cells recei
 this file: nothing answer-shaped goes in here.** No example identifiers, no round
 history or agendas, no per-example findings, no adjudication figures, and no path
 to any orchestrator-facing document. Route all of it to the ns slot or to those
-documents. Whether `/dao` cells actually receive this file remains `owed: assess`
-and is not claimed either way — the split removes the payload, so the answer no
-longer gates a round.
+documents. An Agent-tool cell receives this file. A seat-lane cell, launched outside the
+repo by `scripts/dao_seat.py` (the default since 2026-09-26, `ns:studying/232`),
+receives neither it nor the memory index. That is measured by `dao_seat.py probe`,
+never assumed; re-probe on any CLI bump.
 
 **ORCHESTRATOR-FACING DOCTRINE — paths deliberately unnamed, the same C5
 discipline § 2 applies to the H0 roster; find the set by behaviour.** Every such
@@ -166,24 +167,19 @@ after editing any of the three.** It reports no conflict today. It cannot see th
 system-context payload, which is why the authoring rule above is a discipline and
 not a gate.
 
-**Daily unit = the SENTINEL, seated at `studying:dao-state` 07:45 daily**
-(`ns:studying/91`). 07:45 is ORDERED — arm (e) reads managing's 06:00 report,
-the opposite ordering from `proving:axiom-state` 05:10, whose output managing
-scans. LIVE on qpur; qyel still awaits `install.sh --enable` — studying's
-archives are host-split, so one seat enabled leaves the other's rounds
-un-surveilled; row in `data/schedules/pending-enable.md`. **The per-axis
-sentinel class is SEAT-EXEMPT** (a sentinel reads host-LOCAL archives, so a
-seat-holder fire cannot see the peer's rounds); the `run_routine.sh`
+**Daily unit = the SENTINEL, seated at `studying:dao-state` 07:45 daily.**
+07:45 is ORDERED — arm (e) reads managing's 06:00 report, the opposite ordering
+from `proving:axiom-state` 05:10, whose output managing scans. LIVE on qpur; the
+qyel enable is awaited and its ONLY home is the `studying:dao-state` row of
+`data/schedules/pending-enable.md` (archives are host-split, so one seat leaves
+the other's rounds un-surveilled). **The per-axis sentinel class is
+SEAT-EXEMPT** (a sentinel reads host-LOCAL archives); the `run_routine.sh`
 sentinel-class carve is landed (witness `t_32`) and `dao_state_check.sh` stamps
-`host=` on every emit, so that enable is now sufficient on its own. Standing
-conditions: an unstamped sentinel emit is inadmissible, and no sentinel emit
-may claim a class-wide number — exempting the gate multiplies the seats, it
-does not merge them (`ns:studying/91`). **Read the fire evidence at
-`data/schedules/launchd/logs/`, never `pending/logs/`, and never off `runs`**
-(`project_mobile_cron_seat`: `runs=0` is not a tell) — both wrong places to look
-report a live lane as dark. The host-relative census arm that held this enable
-back measured GREEN (`ns:studying/154`); its doctrine, mechanism and measurement
-live in the orchestrator-facing evidence-archive document, not here.
+`host=` on every emit. Standing conditions: an unstamped sentinel emit is
+inadmissible, and no sentinel emit may claim a class-wide number — exempting
+the gate multiplies the seats, it does not merge them. **Read the fire evidence
+at `data/schedules/launchd/logs/`, never `pending/logs/`, and never off `runs`**
+(`project_mobile_cron_seat`) — both wrong places report a live lane as dark.
 
 ## 4. Guide-rails — `hub/` governance
 
@@ -261,7 +257,11 @@ guard on its coherence** — a case asserting that two surfaces agree ships a
 POSITIVE control (the coherent amendment must PASS) beside its negatives, or
 the suite cannot distinguish "these disagree" from "this arm refuses
 everything", and the amendment it was built to protect reds on arrival.
-**A tests/lib symlink is RELATIVE, never absolute:** an absolute one commits the
+**A RED-FIRST witness never sits in `tests/cases/` across a close.** The close
+gate runs the whole battery and has no expected-red lane, so a case that must stay
+red until a LATER session parks in its family's `tests/pending/`, committed and
+runnable, and the fixing commit moves it into `cases/` green (operator direction
+2026-09-25). **A tests/lib symlink is RELATIVE, never absolute:** an absolute one commits the
 minting worktree's path, dangles everywhere else, and dangles SILENTLY because
 `run.sh`'s own `ln -sf` recreates it correctly wherever it next runs while the
 committed artifact stays broken. Sweep with `find data/charters/studying/specs

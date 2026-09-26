@@ -61,8 +61,8 @@ Each subproject has its own `CLAUDE.md`. That file carries:
 - **Core competencies** — the rules + invariants + caveats only this
   subproject's authors should care about. Where the canonical OHLCV
   parquet lives. How the Lean kernel composes. Which defined-risk
-  options strategies are allowed. Which docket the current motion
-  lands in.
+  options strategies are allowed. Which court's rules a draft is
+  checked against.
 - **Boundary surfaces** — the seams this subproject exposes outward.
   A status JSON slot, a JSON schema, a kit-mount contract. What
   other subprojects can rely on; what they cannot.
@@ -151,13 +151,13 @@ central scheduler, no lock server, no message bus. There is one rule:
   the stack.
 - A second sentinel — `.data-write-lock` at the repo root, atomic
   create / `rm` on exit-trap — serialises writes to the shared-data
-  hub across sessions. Only `/close` and `/do-claude-updates` hold
-  it.
-- The cron lane (SDK routines fired by a launchd scheduler) never
-  touches the canonical data hub directly. It stages into a
+  hub across sessions. Session close, the hint-flush lane, and every
+  fixed-path writer take it; nothing writes the hub without it.
+- The cron lane (routines fired by a launchd scheduler) stages into a
   gitignored buffer mirroring the canonical path layout; a daily
-  verifier holds the lock once a day and rsyncs the buffer into
-  canonical.
+  verifier takes the lock once a day and rsyncs the buffer into
+  canonical. One chartered exception — the market-tape refresh lane —
+  writes the canonical tape directly, under the same lock.
 
 Parallelism in practice: up to one whole-repo session and N
 non-overlapping subproject sessions concurrently, each in its own
@@ -385,7 +385,7 @@ drift, even redacted.
 | Subproject     | Role                                                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `analyzing/`   | **Market-inspection tooling (TypeScript), local-only viewer** — DuckDB + Parquet, charting, ingest from public OHLCV sources.                       |
-| `trading/`     | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines. |
+| `trading/`     | Python portfolio-management agents — three PMs (aggressive / moderate / conservative) on a paper-trading broker, orchestrated by AI-assisted routines (the scheduled routines are currently paused by operator ruling; the published rule-set carries the state). |
 | `monitoring/`  | Local-only Astro Node-SSR web app for AI-assistant token analytics (was a VSCode extension, retired). TypeScript throughout; SQLite store. Consumes the operational Lean4 axis. |
 | `appealing/`   | Pro se federal appellate drafting. Markdown drafts; rendered PDFs flow to a private filing hub.                                                        |
 | `pleading/`    | Sibling of `appealing/` — trial-court / status-affidavit / addendum drafting.                                                                          |

@@ -208,5 +208,4 @@ Producer `resolving/scripts/status_emit.mjs` writes
 `data/status/resolving.json` per the root § "Status hub" contract
 (placeholder shape — counts SKILL.md files under `skills/`; no
 production-lifecycle diagram yet). Pinned to `@qagents/diagram-kit`
-KIT_VERSION; sweep in lockstep on kit bumps. Spec family:
-`data/specs/data-status-rename-2026-05-17/`.
+KIT_VERSION; sweep in lockstep on kit bumps.
