@@ -239,33 +239,11 @@ textual-axis work (anatomy: `reference_lean_isolation_probe_full_path_imports`).
 Always `lake env` from the package root, or `elan run leanprover/lean4:<pin> lean`. A
 file-in-the-root is not a pin for any process whose cwd is elsewhere.
 
-**SUITE AUTHORING — the assertion libs are NOT interchangeable, and the wrong one
-FAILS OPEN (measured 2026-08-26).** The lean4-charter family lib
-(`specs/lean4-charter-2026-06-10/tests/lib/lib.sh`) exports an ABORTING `_fail`
-and defines no `fail`; the `signoff-verification` suite exports a COUNTING
-`fail`/`pass` pair. Write `fail` in a family-lib case and bash prints
-`command not found`, returns non-zero from a statement whose value nothing reads,
-and the case runs on to its `echo OK` and **exits 0 — the suite reports PASS over
-a failed assertion.** Read which lib a case sources before writing its failure
-call. Three standing consequences: every new case carries a proof-of-fire arm that
-reds if its own matcher stops being able to fail (charter inv proof-of-fire, and
-this is the cheapest instance of it); prose assertions over a wrapped
-markdown subject normalise the file to one whitespace-collapsed line first — a
-line-based grep reads a required phrase split across a line break as ABSENT;
-and **an arm that can only ever REJECT is a bar on the change it guards, not a
-guard on its coherence** — a case asserting that two surfaces agree ships a
-POSITIVE control (the coherent amendment must PASS) beside its negatives, or
-the suite cannot distinguish "these disagree" from "this arm refuses
-everything", and the amendment it was built to protect reds on arrival.
-**A RED-FIRST witness never sits in `tests/cases/` across a close.** The close
-gate runs the whole battery and has no expected-red lane, so a case that must stay
-red until a LATER session parks in its family's `tests/pending/`, committed and
-runnable, and the fixing commit moves it into `cases/` green (operator direction
-2026-09-25). **A tests/lib symlink is RELATIVE, never absolute:** an absolute one commits the
-minting worktree's path, dangles everywhere else, and dangles SILENTLY because
-`run.sh`'s own `ln -sf` recreates it correctly wherever it next runs while the
-committed artifact stays broken. Sweep with `find data/charters/studying/specs
--type l ! -exec test -e {} \; -print` after any spec-tree work.
+**SUITE AUTHORING — read the family lib's header before writing a case.** The
+traps live on the lib they govern, `specs/lean4-charter-2026-06-10/tests/lib/lib.sh`:
+the `_fail`/`fail` fail-open, the proof-of-fire arm, whitespace-collapse before prose
+greps, the positive control, RED-first parking in `tests/pending/`, and relative
+`tests/lib` symlinks.
 
 ## 6. Source authority
 

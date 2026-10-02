@@ -81,6 +81,8 @@ created; any malformed hint files left on disk.
 | 21 | --abort | A crashed prior run's worktree still holds work; inspect it, then `--finish` to land it or force-discard after inspection. |
 | 23 | --finish scope | The merge range touches an out-of-scope path (next-steps slots are generated renders — route the hint through the ledger verb instead); a stray write slipped onto the dcu branch — inspect and relocate it, don't merge. |
 | 24 | --finish size | A touched `CLAUDE.md` would land at or over the close gate's fail cap **and this run grew it** — past that size the owning scope's own close refuses for growth it did not author. Trim it on the dcu branch or drop the hint with a stated disposition, then re-run `--finish`. No override. A run that does not grow an already-oversized file passes by design — refusing the trim would be refusing the cure. |
+| 25 | --finish / inflow grade | Inflow rung: a write grows a `CLAUDE.md` into the soft band with no hot-rule commit trailer, or into the warn band (no override). Offset it with a trim in the same commit, demote the rule to a home the refusal lists, or — soft band only, for a genuinely hot rule — carry the trailer. A file the run nets ≤ 0 is exempt. |
+| 26 | --finish / inflow grade | The write's added text already lives in a demotion home the target file points to. Replace the restatement with a pointer, or drop it. No override. |
 
 ## What this skill does NOT do
 

@@ -364,7 +364,9 @@ staging sibling 2026-07-07 (content de-dup deferred). Records: debate record
   + `tokens-proof.css` as its LOCKSTEP token overlay + `kit.css`; authored
   `hero-graph.json` (never regenerated) is the landing state,
   `method-{legal,financial}.json` are wholesale re-copies of
-  `data/visualizing/` siblings (drill-down states); `loader.js` is the
+  `data/visualizing/` siblings (drill-down states) — every visualizing regen
+  of either is a PUBLIC face change at the next deploy, and the financial one
+  needs a FINANCIALLY record (`ns:designing/30`); `loader.js` is the
   app-owned never-fold side-car. Chrome strings in `copy.ts thesis.methodGraph`
   (claim-free vocabulary). E2e: `interactivity.spec.ts` "Method DAG" block
   incl. the per-sheet token guard.

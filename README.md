@@ -259,13 +259,13 @@ assistants inspecting each other's work:
 5. **An adversarial sibling** runs on demand in two shapes. The first
    is the per-target positions lane: one subagent per target produces
    ten numbered findings written from the position of someone who
-   *wants* the system to fail. The second is a pair of chartered
-   review fleets — one that pressures the charter and spec corpus for
-   coherency and concision, one that reviews the formal-kernel program
-   across all three axes for shared machinery and cross-axis learnings.
-   Both are observe-only: each writes a blueprint and an action prompt,
-   and the actual edits happen out of band in a session that holds the
-   write-lock. A third lane, the counterweight to the shrink pass —
+   *wants* the system to fail. The second is a chartered
+   review fleet over the formal-kernel program across all three axes. It
+   recognizes machinery already exercised on two or more axes, makes it
+   uniform, and invents nothing. It writes a blueprint and an action
+   prompt, and the edits happen out of band in a session that holds the
+   write-lock. A sibling fleet that pressured the charter and spec corpus
+   for coherency and concision ran through mid-2026 and is retired. A third lane, the counterweight to the shrink pass —
    before anything is trimmed, its content must be *spread* down the
    disclosure ladder rather than discarded — was absorbed into the
    optimization pass itself, where it now fires inside the same run
@@ -363,7 +363,7 @@ qagents-public/
       data.md / specs.md / tmp.md
   skills/                         session-lifecycle + optimization skills
     open/close/do-claude-updates/do-claude-optimizations/SKILL.md
-    specs/                        the adopted specs those skills cite
+    specs/                        condensed renders of the two charters those skills cite
   memory/                         (README only — see STATUS.md)
   memsearch/                      (README only — see STATUS.md)
   specs/                          condensed public-safe renderings of adopted specs
@@ -401,14 +401,14 @@ drift, even redacted.
 | `resolving/`   | DaVinci Resolve production-assistance — typed Python wrapper + Fusion authoring skills. Stage 5 of `explaining/`.                                      |
 | `blending/`    | Blender + Geometry Nodes production-assistance — typed Python wrapper. Background plates consumed by `resolving/`.                                     |
 | `serving/`     | AWS cloud-base. Single source of truth for every AWS resource.                                                                                         |
-| `managing/`    | Daily watcher over the constellation. Observe-only — no commits, no deploys, no mutations.                                                             |
+| `managing/`    | Daily watcher over the constellation. Observe-only in the sense that matters — no deploys, no edits to any subproject's working tree. It commits only its own dated reports and the verified promotions from the cron staging buffer, under a lock (theme 7). |
 | `shorting/`    | Adversarial sibling of `managing/`. Pressure-tests the system from a hostile vantage; observe-only; findings route into the watcher.                   |
 | `donating/`    | The six-month public donation drive backing the framework (2026-06-01 → 2026-12-01).                                                                   |
 | `publishing/`  | The open-source release subproject — owns the public-org staging tree and the `/publish` pipeline (sweep → redact → compile → push). Produces these repos. |
 | `rendering/`   | In-house render engine + brand source of truth — the single owner of pre-rasterized brand artifacts (images and video both live; the video engine drives cue rendering for the explainer chain) consumed across the constellation; multiple consumers live (site share-cards, channel art, the kernel-lattice graph). |
 | `extending/`   | Desktop-assistant extensions + adoption enablement. Ships thin stdio MCP servers that proxy the two product surfaces (allow-listed replay, kernel refusal rules mirrored, never an additional kernel consumer), packaged through the release lane. |
 | `developing/`  | Native macOS and iOS SwiftUI clients for the two products, one shared package with a thin per-platform shell. A generated-project + package-manager monorepo; never an additional kernel consumer — the clients render synthetic fixtures today, and live wiring, when it lands, rides the existing product seams. |
-| `simulating/` | Deep agent-based market simulation — a Python engine plus a local on-device LLM fit lane, with a local-only web UI that is never deployed. Reads promoted factor artifacts under a written consumer contract as the licensed second reader; the fourth consumer of the market-tape hub. Never an additional kernel consumer. Generative-descriptive by charter — it models market structure, it does not forecast and is not an alpha engine — and it carries the financial-domain signoff floor from birth. |
+| `simulating/` | Deep agent-based market simulation — a Python engine with a Lean4 driver layer plus a local on-device LLM fit lane, with a local-only web UI that is never deployed. Reads promoted factor artifacts under a written consumer contract as the licensed second reader; the fourth consumer of the market-tape hub. Never an additional kernel consumer. Generative-descriptive by charter — it models market structure, it does not forecast and is not an alpha engine — and it carries the financial-domain signoff floor from birth. |
 
 The `appealing/` and `pleading/` rows describe the private subprojects
 that exist in the working tree; their `CLAUDE.md`s do **not** publish
@@ -431,7 +431,9 @@ the assistant has to remember without re-reading the whole codebase.
   data), operational (version-control state). All three pin the **same**
   Lean toolchain version in lockstep — a single current-stable release —
   so a shared cloud build image serves them with no per-build toolchain
-  switch.
+  switch. A separate ruling admits Lean4 as a general-purpose language
+  inside `simulating/` only, for its driver layer, on a follower toolchain
+  pin. It never serves as a kernel, template or corpus for the three axes.
 - A Python microservice is allowed as an escape hatch for heavy
   numerics. Never reach across: trading Python does not import from
   analyzing TypeScript; analyzing TS does not import from trading.

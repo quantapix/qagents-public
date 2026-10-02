@@ -127,6 +127,48 @@ resolved no items, the gate skips with exit 0.
 | 24 | unknown-cite | A cited item is unknown to the store, the spool, the session receipts AND the rendered slot — a typo'd number, or a slot that has never been rendered. The slot is a GENERATED render: never hand-author or hand-edit it. Check the number against the ledger's list verb; correct a typo in a follow-up commit message; if the item is genuinely new, file it through the ledger's add verb and let `--finish` render it. Re-run. |
 | 25 | still-live / slot-drift | Two causes — read the message. **(a) Slot drift, checked first and firing even with zero cites:** a generated slot render was committed on the session branch; revert it and route the change through the ledger verbs. **(b) A cited item is still live** with no retire evidence: retire it through the ledger's resolution verb and confirm by reading it back. Do not delete the item from the file by hand — that act IS cause (a). Survivors are never renumbered; the gaps anchor commit-message audit trails. Re-run. |
 
+### 5.52. Spec/charter linter gate (mechanical)
+
+`close.sh --lint-specs <branch>` runs the single-owner structure linter over
+every spec or charter file the session touched. A session that touched none
+skips with exit 0.
+
+| Exit | Phase | Claude action |
+|---|---|---|
+| 45 | lint-specs | A touched spec or charter fails the structure linter: header lines, size cap, parent rule, absorption marker, or spec vocabulary inside a charter. Fix the flagged file and never weaken the linter. A shape that is genuinely ruled exempt gets a cited carve-out row. Re-run. |
+
+### 5.53. Flow-lint gate (mechanical)
+
+`close.sh --flow-lint <branch>` lints the dependency clauses on every
+next-steps slot the session touched. A session that touched none skips
+with exit 0.
+
+| Exit | Phase | Claude action |
+|---|---|---|
+| 48 | flow-lint | A touched slot has a hard finding: an item with no parseable dependency clause, a kind outside the closed set, a target that does not resolve, a barred-token hit in a free-text slug or headline, or a hard near-duplicate. Fix the slot per the grammar owner and never weaken the linter. Re-run. |
+
+### 5.55. Context-surface gate (mechanical; no-op outside its pilot scope)
+
+The operational axis injects a manifest of kernel-verified facts at session
+start. This gate keeps that manifest fresh and keeps raw kernel symbols out
+of always-loaded context. It is a no-op except on the operational-axis and
+whole-repo branches.
+
+| Exit | Phase | Claude action |
+|---|---|---|
+| 46 | manifest-drift | The injected facts manifest is stale against a fresh render: a kernel cell or ledger row changed without the emitter re-running. Re-run the live check, confirm it passes, and re-run the gate. |
+| 47 | scan-hit | Formal-kernel symbols reached a context surface: the manifest render, or the session's new summaries or recall memos. Rewrite the offending text as concept tokens per the axis's privacy rule. Re-stage and re-run. |
+
+### 5.6. Debate-namespacing gate (mechanical)
+
+`close.sh --debate-namespacing <branch>` refuses any party-authored input in
+a touched debate directory that is not prefixed with its party name, so two
+parties cannot silently overwrite each other at the merge.
+
+| Exit | Phase | Claude action |
+|---|---|---|
+| 26 | debate-namespacing | Rename each flagged file to `<party>-<kind>.md`, where `<party>` matches a `<party>-position.md` in the directory, or add that party's missing position brief. Re-stage and re-run. |
+
 ### 6. Commit session work (judgment writes the message)
 
 Write the commit message to an in-repo temp file, then `close.sh --commit
@@ -168,6 +210,11 @@ the `--verify` output verbatim as the close report.
 | 20 | target-dirty | The close-time sweep of cron-fired artifacts at the merge target was refused — in practice by a repo pre-commit hook validating content this session never touched. Read the hook's message in the log tail. Of the three remedies (discard a regenerable artifact, cure the breach, bypass the validator) an agent may take only the first, and only for an artifact it can name as regenerable; the other two are the operator's call. Surface and stop. A green sweep is evidence about that instant only. |
 | 24 | next-steps-unknown-cite | See § 5.5's row; the slot is a generated render, never bootstrapped by hand. |
 | 25 | next-steps-still-live / slot-drift | A cited item has no retire evidence (retire it through the ledger verb), or a generated render was committed on the branch (revert it) — see § 5.5. Never hand-delete from the render. |
+| 26 | debate-namespacing | See § 5.6. |
+| 45 | lint-specs | See § 5.52. |
+| 46 | manifest-drift | See § 5.55. |
+| 47 | scan-hit | See § 5.55. |
+| 48 | flow-lint | See § 5.53. |
 
 Any other unlisted exit: read the tail of the log, surface.
 

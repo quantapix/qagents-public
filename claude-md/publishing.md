@@ -84,7 +84,10 @@ any contact email — sole public contact `https://github.com/quantapix`,
 `resume/` exempt / **rooted internal paths**); rules **(D)**/**(D2)**/**(E)**/**(E2)**
 in `sync_mirror.py` `path_blocklist_hit` are their PATH twins (a filename renders
 publicly without appearing in any file's bytes); each gate ships a pinned test
-(`t_17`–`t_21`). A third kind sits INSIDE the renderer: `sync_mirror.py`
+(`t_17`–`t_21`). Two path rules have no content twin: interpreter bytecode (it
+carries host paths), and a staged render of an execution-register spec family
+for work over open matters — by shape here; the slugs live in the rule (`t_29`,
+`t_30`). A third kind sits INSIDE the renderer: `sync_mirror.py`
 `OUTPUT_BARS` (Stage 1b, asserted in `redact()`, pinned by `t_22`) refuses to
 emit a mirror still carrying a per-source barred token — the only lever that
 reaches the gate-(1e)-excluded `claude-md/` subtree, and the only one that sees a
@@ -95,9 +98,9 @@ green suite over `claude-md/` was a statement about names, not about matter; a
 lane over live matter publishes by SHAPE, its state in an unpublished sibling.
 
 **Two arms landed 2026-09-15 (Round 05 L-B1/L-B2, `ns:publishing/77`+`/78`).**
-(i) The content sweep reads the ONE admitted `.lean` location as well as `*.md`,
-and the path rule bars a live-matter example id in the path — each catches a
-case the other structurally cannot. `t_23`. (ii) Stage 2's prefix rules scrub
+(i) The path rule bars a live-matter example id in the path and the content
+sweep reads the admitted `.lean` bytes — each catches a case the other cannot.
+`t_23`. (ii) Stage 2's prefix rules scrub
 the BARE form for the private-hub family and KEEP it for the subproject /
 public-hub names; the keep set is declared, so an unconsidered new prefix
 defaults private (`sync_mirror.py --check-path-subs`, both polarities, `t_24`).
@@ -150,7 +153,9 @@ class is a claim **true when written**, falsified later by private-tree work,
 clean under every gate on every prior run. It needs the artifact tested against
 the *world* — `ns:publishing/57`'s post-push cold read (population re-measured
 per run, never a pinned count); first arm `scripts/cold_read.sh` +
-`cold-read-claims.tsv` (2026-09-15), semantic rows still hand reads.
+`cold-read-claims.tsv` (2026-09-15), semantic rows still hand reads. Its
+PRE-push twin is gate (6): `scripts/claim_check.py` over `staged-claims.tsv`
+(`t_32`) — rows earned by a claim found false, never a drift detector for prose.
 Commit **metadata** stays outside every content gate
 (`feedback_gate_covers_payload_not_envelope`) — closed for `github_meta.py`
 2026-07-31 (explicit noreply identity override, `t_20`).
@@ -174,19 +179,23 @@ edge); the converse is `feedback_graphical_redaction_failure_modes`. **Neither
 check sees the other's case** — raster and look, or state the gate covers text
 only.
 
-**The candidate tree is markdown, so the gate scans markdown.**
-`publishing/scripts/sync_mirror.py` Stage 3 applies the blocklist patterns as
-it renders each CLAUDE.md / memory mirror. `publish.sh` runs
-`sync_mirror.py --scan-tree <tree>` as the PRIMARY gate — a HARD-only sweep
-(the markdown gate's SOFT class is empty: every pattern aborts) over **every `*.md`** under the candidate tree (the hand-authored READMEs,
-`STATUS.md` files, and the `skills/` subtree included), and it *refuses to pass
-over an empty tree*. It skips `CLAUDE.md`-named files (staging governance — not
-pushed; `github_meta.py sync` excludes them) and carves out the
-developer's own public name via `sync_mirror.py` `ALLOW_PHRASES` while keeping
-the litigation linkage HARD-blocked. The `check_redactions.py --tree` PDF gate
-stays wired after it as defense-in-depth (stray `*.pdf`). The resume tree
-(`publishing/resume/`) is gated by the same sweep. Gate-before-push ordering is
-pinned by `t_10_publish_gate.sh`.
+**The gate scans the push set, not a file type (2026-09-30).** Stage 3 of
+`sync_mirror.py` applies the blocklist as it renders each mirror; `publish.sh`
+runs `sync_mirror.py --scan-tree <tree>` as the PRIMARY gate — HARD-only (the
+SOFT class is empty) over **every file the push carries, whatever its
+extension** (it was `*.md`-scoped). A binary is refused — the allow-set is EMPTY
+and grows only by a named register row, **so a dated resume PDF needs its row
+before it can ride a push** — bytecode is refused by path, and *zero files
+scanned is a failure*. It skips exactly the two names `github_meta.py sync`
+excludes (`CLAUDE.md` staging governance; the metadata manifest, gated by
+`github_meta.py scan`) and carves out the developer's own public name via
+`ALLOW_PHRASES`. **One bar is surface-scoped** (operator, 2026-09-30): the drive
+repo may carry the one federal docket number its ledger reports on; every other
+repo, the rule-file mirrors, the metadata gate and every file NAME still refuse
+it (`SURFACE_EXEMPT`; an unlisted repo is exempt from nothing; `t_31`, both
+directions). The `check_redactions.py --tree` PDF gate stays wired after it; the
+resume tree (`publishing/resume/`) rides the same sweep. Pinned: ordering
+`t_10_publish_gate.sh`, population `t_29`.
 
 **`gh` does all GitHub work (2026-06-23).** `scripts/github_meta.py` is the single
 gh-centric arm — `sync` / `ensure` / `apply` (metadata `gh repo edit`) /
@@ -223,6 +232,14 @@ content twins bar a generic appellate docket form — generic, because an
 enumeration fails open on the next one — and the axis's jurisdiction kernel
 namespace. Pinned by `t_23`. Re-opening any of this is a publishing-convened,
 `pleading/`-gated round.
+
+**The synthetic scope re-opens separately, one file list at a time.** A
+synthetic example carrying no open-matter id, and no framework whose real
+example is one, may publish under the one admitted location on a concrete,
+hashed file list that `pleading/` clears in its own round record — a list with
+no such clearance, a clearance written into another lane's record, or a list
+changed after the clearance fails the push closed (`hub_goldens_list.py`,
+`t_27`/`t_28`).
 
 ## 6. Write-lock & session model
 
@@ -273,7 +290,8 @@ per-list manifests for the synthetic public track (never published; own
 README). `scripts/`:
 `publish.sh` · `github_meta.py` · `iga_verify.py` ·
 `sync_mirror.py`/`sync-mirror.sh` · `status_emit.mjs` · `videos_emit.mjs` ·
-`youtube_{auth,upload,sync,manifest}.py` · `hub_goldens_list.py`.
+`youtube_{auth,upload,sync,manifest}.py` · `hub_goldens_list.py` ·
+`claim_check.py`.
 
 ## 9. Messaging-hardening debate (publishing/ convenes)
 
@@ -282,8 +300,8 @@ structured multi-agent pass that makes the public surfaces (quantapix.com,
 femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
 adversarial read. **Instance one** of the generic debate framework
 (`data/charters/qagents/debate/CHARTER.md` — owns staffing, record naming, lane);
-family `data/specs/messaging-hardening-debate-2026-06-06/`; gate standard
-`data/charters/pleading/messaging-gate/litigation-safety-standard.md`.
+gate standard `data/charters/pleading/messaging-gate/litigation-safety-standard.md`
+(family spec reaped; body at `84ffbf546^:data/specs/messaging-hardening-debate-2026-06-06/SPEC.md`).
 
 - **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model
   subagent per vector); vector-owner subprojects defend; `managing/` judges;

@@ -44,7 +44,7 @@ Spec: `data/charters/proving/specs/axiomatize-uscode-2026-05-29/SPEC.md`. Extend
 
 - **Ground truth:** full USC markdown at the canonical USC text mirror (gitignored, ~65.7k sections, `tools/corpus_build.py --all`) + the canonical USC text mirror. `corpus/` + `xml/` are symlinked into every worktree via the canonical USC text mirror.
 - **Naming / Lean-shapes / predicate-shapes** frozen in spec §§ 3–5 (authoring contract: `predicates/README.md` § "USC-program authoring contract"); per-(title,axis) namespace `Proving.USC.T<NN>.<Axis>`; shared cross-title predicates collapse to `Proving.USC.Common` (guarded by an equivalence Bridge). Code: `Proving/USC/Common/` + `predicates/usc/_axes/<axis>.md` (10 axis briefings) + the `ProvingUSC` lean_lib.
-- **§ 1962(c) calibration anchor (hand-built, kernel-green):** all 6 axes under `Proving/USC/T18/<Axis>/` + `Bridge.lean` + `Reconciled/T18.lean` (`Bridge.s1962c_tierA` = spec § 8.3 Tier-A). The template cell-agents mirror and the fan-out's scoring reference.
+- **§ 1962(c) calibration anchor (hand-built, kernel-green):** all 6 axes under `Proving/USC/T18/<Axis>/` + `Bridge.lean` + `Reconciled/T18.lean` (`Bridge.s1962c_tierA` = spec § 8.3 Tier-A). The fan-out's scoring reference — NOT the cells' template: since 2026-10-01 every axis briefing teaches on one non-golden federal provision, and `dau.sh` bars that provision's chapter as a target (exit 31).
 - **Calibration metric is BRIDGE-BASED** — **golden-bridges** (`Proving/USC/T{18,42}/GoldenBridge.lean`: the blind composite implies the golden one under declared correspondence axioms, sorry-free; mechanics + tier ladder: spec §§ 4.6/8/9.4). Score ONLY via the shared G2 guard `code/lean_tools/score_bridge.py --lexicon agreement --root proving`; `scripts/calibrate_golden.py` = hand-built name-matched cells ONLY (exact-string is unwinnable for blind agents).
 - **Lane:** manual-interactive via the **`/dau-manual`** skill (`.claude/skills/dau-manual/`; mirrors `/dco-manual`) — the SDK batch lane is paused (root CLAUDE.md § Programmatic Claude). Mechanics, targeting gate, re-earn backlog, wave archive/backup: spec § 7.5 + § 10.1 + the SKILL; tests `data/charters/proving/specs/axiomatize-uscode-2026-05-29/tests/`.
 - **Wave-planning authority is the UNION of every seat's archives.** `proving/waves/` is gitignored canonical-only, mirrored **per source host**, so it is a PARTIAL view on every workstation and `remediation_census.py` reads a wave this seat cannot see as backlog. **Pre-wave peer-sync + census, the `proving:axiom-state` sentinel read, backlog direction, blindness-classifier rules → `.claude/skills/dau-manual/SKILL.md` § Pre-wave** — read it BEFORE any roster regen, re-slice, or classifier edit. Normative: spec § 10.1; rationale: `feedback_per_host_ground_truth_is_a_partial_view`.
@@ -75,17 +75,7 @@ The driver prints one `· <spec> ... <value>  (<uncertainty>)` line per predicat
 
 ## Per-run artefacts (`examples/<id>/`)
 
-When invoked with `--build`, the driver emits:
-
-| file | what | consumer |
-|---|---|---|
-| `facts.json` | per-predicate `{value, evidence, uncertainty}` records — the audit trail | reviewer; `report.json` builder |
-| `Facts.lean` | the framework's generated axioms; also written to `Proving/<Framework>/Facts.lean` | `lake build` |
-| `report.json` | full run record: predicates + kernel verdict + per-error locus (intro-rule + field). Schema in propagation spec § 2.1 | `verifying/web/`'s `/api/runs/<id>/report`; status-emit aggregator |
-| `graph.json` | proof DAG (node kinds + `applies`/`composes`/`inhabits`/`disjunctionCase` edges + `failures[]`; shape = propagation spec § 2.3) | graphs kit `/proof-graph/run/<id>/` via `verifying/web/public/graphs/loader.js` |
-| `loci.json` | single `DiagramEmit` rendering the kernel's intro-rule shape with verdict-coloured slots | `data/status/proving.json` `diagrams[1]` |
-
-`report.json` joins via `kernel.errors[].axiomName` ↔ `predicates[].axiomName` so a UI can light up the failing predicate row red.
+With `--build` the driver emits `facts.json` · `Facts.lean` · `report.json` · `graph.json` · `loci.json` per run. What each holds, who consumes it, and the `axiomName` join → `data/charters/proving/results-propagation/schema-of-record.md` § "Per-run artefacts" (moved 2026-10-01, seed A-6).
 
 **Schema is locked at the consumer boundary** — any `graph.json` field-name or `kind` change is a **two-sided edit**: bump `data/charters/proving/results-propagation/schema-of-record.md` and update BOTH readers (`verifying/web/public/graphs/loader.js`, `visualizing/graphs/src/adapters/proof.ts` `fromProof`) together.
 

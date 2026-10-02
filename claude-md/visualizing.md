@@ -244,6 +244,12 @@ byte-equality.
   live matter.
   Provenance, regeneration and the adopt-a-refusing-synthetic exit:
   `graphs/README.md` § "Test / typecheck / gates".
+- **Mounts are LAZY; unconsumed wire keys ride `attrs.wire`** (2026-09-29). No
+  `mount*` paints until the host awaits `m.render()` (an unrendered mount exports
+  an empty SVG — verifying mistook it for a collapse bug). `fromNodeLink` copies
+  every key it does not consume onto `attrs.wire` verbatim (absent when empty,
+  never styled) — a profile's vocabulary reaches the graph there, never by
+  widening a typed attr. Detail: `graphs/README.md` § M0.
 - **Cluster-naming contract (W3) — a producer obligation that FAILS SILENTLY.** A
   method wire's LLM compound MUST end in `.LLM` and its kernel compound in `.Kernel`
   (suffix-matched; `LLM_SUFFIX`/`KERNEL_SUFFIX`/`isLlmCluster` in `core/method.ts`).

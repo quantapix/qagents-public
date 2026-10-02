@@ -80,17 +80,18 @@ cites #6, and `dco-manual` cites the checker's #7.
    with the other two green). `premise UNKNOWN` is always a finding, never
    clean. Full row text: `checker.md` #8 (ns:managing/49) + memory
    `feedback_two_token_mirrors_ship_two_palettes`.
-9. **Cron-seat capability + roster + posture + flip + peer-dark + unloaded +
+9. **Cron-seat capability + roster + flip + peer-dark + unloaded +
    pending-enable.** `scripts/seat-drift.sh` is the source of truth (wraps
    `data/schedules/launchd/seat_preflight.sh`; bit-field exit 1=capability,
-   2=roster). SEVEN facts, classes only here: `capability=GAPS` **on the seat
+   2=roster). SIX facts, classes only here: `capability=GAPS` **on the seat
    holder**, `unloaded=UNLOADED` (peer's `declared − loaded` non-empty) and
    `flip=STALE-UNACCEPTED` → **functionality**; `roster=DRIFT` (**the checker
    only sees what FIRES; this is the one check that looks at what didn't**),
-   `posture=OFF-POSTURE-STALE` (≥ 7d), `peerdark=DARK` (one per NAMED entry),
+   `peerdark=DARK` (one per NAMED entry),
    `pending-enable=<n>-AGED` (≥ 7d) → **correctness**; every `UNKNOWN` /
    `no-peer` is tally-only but **never** reads clean, and `PEER-AGE` is graded
-   every compare. managing REPORTS these rows, never edits them. Full row
+   every compare. Posture A is RETIRED (operator 2026-09-29): `posture=RETIRED`
+   prints, never a finding. managing REPORTS these rows, never edits them. Full row
    text: `checker.md` #9 (ns:managing/49), the copy the daily fleet reads.
    Memory `project_mobile_cron_seat`; spec family
    `data/specs/node-return-lane-2026-07-14/`. Three-file lockstep: script +
@@ -318,7 +319,7 @@ pool, § 4) · `scripts/` (mechanical bash-3.2-portable fact-emitters +
 owner of the specs-audit `owner` column + `--owner`) · `.claude/` (the
 standard subproject shape per root CLAUDE.md § "Subproject `.claude/` shape";
 `agents/` holds `checker.md` / `planner.md` / `reporter.md` / `verifier.md`) ·
-`checks/` + `tasks/` + `reports/` (the three dated outputs, § 1).
+`checks/` + `tasks/` + `reports/` (the three dated outputs, § 1) · `metrics/` (the golden-thread daily metrics, promoted from `pending/` by the verifier; producer `scripts/gt_metrics.py`, routine `managing:gt-metrics`).
 
 `checks/`, `tasks/`, `reports/` are committed (markdown is the source of
 truth and lets future sessions reconstruct multi-day trajectories).

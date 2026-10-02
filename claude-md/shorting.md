@@ -25,7 +25,9 @@ case for the short).
   `lib/` + `legal/`).
 - Writes only its own subtree — `shorting/positions/`, `shorting/shorten/`
   (RETIRED, § 4a), `shorting/share/` (the sole live do-* lane, § 4b) and
-  `shorting/spread/` (FROZEN history, § 4c) — plus the status-hub
+  `shorting/spread/` (FROZEN history, § 4c), and the operator-directed
+  `shorting/reviews/` and `shorting/appeals/` trees (§ 4 layout, § 2.1)
+  — plus the status-hub
   emit (`scripts/status_emit.mjs`, root-conventions pending lane) and the
   ONE chartered parent-session-only ROUTING exception
   (`data/charters/shorting/review-lanes/CHARTER.md` § common, invariant
@@ -37,15 +39,15 @@ case for the short).
   `data/charters/CLAUDE.md` § Amendment lane: a `data/tmp/` draft, ratified
   by debate or operator ruling, applied by the owner scope's session).
   **Amending one's own charter is not "routing"** and was never covered by
-  the exception above: LEDGER 15 landed this way on 2026-09-10 and LEDGER 16
-  on 2026-09-15 before anyone noticed the enumeration did not name the
-  surface. Operator ruling 2026-09-15. Observe-only is unchanged — this is a
-  write to shorting's OWN governance, never to a target's.
+  the exception above (operator ruling 2026-09-15). Observe-only is
+  unchanged — this is a write to shorting's OWN governance, never to a
+  target's.
   Warn-cap `spread-review owed` items now file to the **qagents** slot
   (session-lifecycle § 2.8 E4 as re-pointed; shorting sessions are no
   longer the warn-cap scribe). A debate this subproject convenes
-  writes its record to `data/debates/` (2026-07-14 precedent; the
-  `/close` lift lane handles the foreign write).
+  writes its record to `data/debates/` (2026-07-14 precedent) under
+  `.data-write-lock`; `data/**` is never foreign to a lane (exit 14 does
+  not apply).
 - Never `git push`, `git commit`, `git add`, deploys, or mutates code in
   other subprojects.
 - Never edits another subproject's `CLAUDE.md` to "respond to" a
@@ -98,6 +100,10 @@ guardrails. Opt-in by naming the target explicitly
 (`/open shorting appealing`); the parent session asks for confirmation
 before dispatching a subagent at an excluded target.
 
+A court filing enters scope only as a named opt-in target; its live state
+lives only in the lane's unpublished state file;
+`data/charters/shorting/review-lanes/CHARTER.md` § 2.1a binds every such run.
+
 ## 3. Adversarial brief (subagent prompt template)
 
 Each subagent receives the same brief, parameterized only by target:
@@ -125,8 +131,23 @@ Avoid easy targets: typos, missing tests for low-stakes code, "could
 be more documented." A position must be specific to `<target>`'s
 design, not generic advice.
 
-Write to `shorting/positions/<target>/<date>.md`. No other output.
+One claim per sentence, literal over metaphor; no ALL-CAPS emphasis,
+no filler. The parent is not watching; a question ends your run as
+your report; stop only on a denied write.
+
+Write to `shorting/positions/<target>/<date>.md`. Return one line: the
+file path and the position count.
 ```
+
+<example>
+Target `acme-cache` (fictitious). Position 3 — the eviction clock trusts
+the host's wall time, so a backward NTP step pins stale keys forever.
+Paragraph: TTLs compare `now()` against a stored wall-clock stamp; a clock
+that steps back makes every key look younger than it is. Reproduction:
+`faketime '-1h' acme-cache --selftest ttl` and read the survivor count.
+Falsifier: the TTL path reads a monotonic clock, or the selftest's
+survivor count is 0 after the step.
+</example>
 
 The voice override (hostile-but-precise) is session-scoped to
 `shorting/` only — same pattern as the YouTube voice override for
@@ -142,26 +163,27 @@ shorting/
   share/<YYYY-MM-DD>/                  do-share lane (§ 4b)
   spread/<YYYY-MM-DD>/                 FROZEN do-spread history (§ 4c; live lane: data/summaries/spread/)
   reviews/<slug>-<YYYY-MM-DD>/         operator-directed one-off review reports (not a chartered
-                                       lane). Two shapes so far. (a) RATIFIED: pairs with a
+                                       lane). Three shapes. (a) RATIFIED: pairs with a
                                        data/debates/<slug>-<date>.md record — 2026-08-21 three-axis
-                                       overhaul reviews (v2-post-debate is the standing artifact),
-                                       2026-09-09 hub-goldens plan. (b) PROGRESS: units + FINDINGS.md
-                                       of rulable recommendations, no debate — 2026-09-15 hub-goldens
-                                       (rulings taken in-session, recorded at RULINGS.md in the run
-                                       dir). Either shape: § adversarial binds it (§ 2.1a), a unit
-                                       writes one report and nothing else, and no ns-* write verb runs
-  appeals/<docket>/                    operator-directed adversarial-brief loop (not a chartered
-                                       lane; four iterations 2026-09-05 → 09-07, CLOSED; § 4d).
-                                       appeals/LANE.md = the lane's LIVE state (unpublished — this
-                                       file is published and registers runs by shape only);
-                                       appeals/trial-<date>/ = a staged or fired pre-filing trial
-  scripts/                             status_emit.mjs; quoted_string_check.py (re-verifies every
-                                       quoted record passage against its pinned page — the one check
-                                       that catches a brief quoting text the filed appendix no longer
-                                       shows while the pin still resolves; five triage classes in its
-                                       header, and a running bug ledger the header alone keeps —
-                                       read it before believing a run's population, not just its
-                                       verdicts: a PDF read can under-count silently at exit 0)
+                                       overhaul reviews (v2-post-debate is the standing artifact).
+                                       (b) PROGRESS: units + FINDINGS.md of rulable recommendations,
+                                       no debate (rulings taken in-session, recorded at RULINGS.md in
+                                       the run dir). (c) DEBATED: units + FINDINGS.md + a same-day
+                                       data/debates/<slug>-<date>.md round record with party positions
+                                       filed in the run dir's debate/ — 2026-09-22 Claude-guides
+                                       conformance (the standing do-not-adopt set for the next
+                                       model-page review lives in that record's R19). Any shape:
+                                       § adversarial binds it (§ 2.1a), a unit writes one report and
+                                       nothing else, and no ns-* write verb runs inside a unit
+  reviews/program-short/               the weekly program short's ONE output home (standing cadence,
+                                       § 4d's spec § 2.4; never under positions/). One
+                                       `<YYYY-MM-DD>.md` per run, ≤ 10 positions; a unit file sits
+                                       beside it as `<YYYY-MM-DD>-<unit>.md`. The date-led filename is
+                                       the contract: the cadence metric reads the newest one
+  appeals/                             the filing-short run home (§ 2.1, opt-in only) + frozen
+                                       simulation history; live state only in the lane's
+                                       unpublished state file — this file registers by shape
+  scripts/                             status_emit.mjs
   .claude/                             settings.json; skills → ../../.claude/skills
 ```
 
@@ -192,7 +214,10 @@ anchor `data/charters/shorting/specs/do-shorten-2026-07-02/SPEC.md`.
 Cross-axis sharing + learnings review of the axiomatize program
 (proving/dau · accounting/dat · studying/dao; first run 2026-07-04): one
 investigator per axis + a cross-axis unit over specs AND implementations
-AND tests; emits per-unit reports, `BLUEPRINT.md`, `apply-share.md`. The
+AND tests; emits per-unit reports, `BLUEPRINT.md`, `apply-share.md`.
+Sharing never limits an axis: it recognizes patterns already exercised on
+≥ 2 axes and makes them uniform, and invents nothing (§ lane-share
+Non-limitation). The
 apply sessions it prompts maintain the `axiomatize-shared` subspec, the
 cross-axis LEARNINGS ledger, and the G1–G7 conformance matrix. Since
 2026-08-23 the lane also re-grades the **overhaul-compliance matrix**
@@ -213,49 +238,11 @@ run dirs land at `data/summaries/spread/<ISO>/`; the skill retired (invoke
 `/dco-manual spread`). `shorting/spread/` stays frozen where it landed
 (registry-retired, never reaped); the absorbed anchor
 `data/charters/shorting/specs/do-spread-2026-07-04/SPEC.md` is the history
-rendering. Adversarial review of the merged machinery is now the positions
-lane's named target (§ 2.1).
+rendering.
 
-### 4d. appeals lane — `shorting/appeals/` — CLOSED 2026-09-07; bounded per-run revival
+### 4d. Retired to a pointer (2026-09-27)
 
-Operator-directed adversarial-brief loop over the operator's own appellate
-briefs. **Not a chartered lane**: the § 2.1 legal exclusion was waived by
-explicit direction, substance is routed to `appealing/` and never filed from
-here, and the operator's evidence drops are not lane output. Four iterations
-ran 2026-09-05 → 09-07; the loop is CLOSED on shorting's side. **Bounded
-per-run revival, operator-ruled 2026-09-09 (P0-8 of the Round 01 debate
-record, commit `c5d5c2caf`; the § 4a-style per-run shape):** exactly two runs —
-(1) one adversary simulation against the paper the other side actually holds,
-AS FILED, never a superseded paper and never a pre-filing candidate;
-`harvest_lint`-gated (`scripts/harvest_lint.py`, exit 32), never dated, and
-preceded by the operator's docket check; (2) the day-of their-pin verification
-arm (`scripts/quoted_string_check.py` over the papers actually served), **keyed
-on SERVICE, never on a docketed due date**. No interview, no revision map, no
-filing; outputs under `appeals/`. A pre-filing TRIAL is a separate
-operator-directed run: it spends neither bounded run and produces nothing run
-(1) may read as its own output.
-
-**This file is published. The lane's LIVE state — which paper, which matter,
-what was ruled, what is dated — lives only in `appeals/LANE.md`, which is
-not.** Register a run here by SHAPE; describe its subject there. (2026-09-18:
-the prior body of this section named all four and reached the public mirror
-with every gate green — the gates read names, and this was prose.)
-Per-iteration method and the record lessons: memory
-`project_shorting_subproject` + `project_appealing_subproject__log_2026_09`;
-the lane's own artifacts stay in tree.
-
-Four standing rules bind any adversarial pass over a subject its owner is
-still writing, this lane's history being where they were earned:
-**`data/charters/shorting/review-lanes/CHARTER.md` § 2.1a (§ adversarial)**
-— the ratchet (a finding demands RESTATEMENT; only the owner withdraws an
-assertion), symmetric verification (audit from iteration 1; grade the
-argument, not the pin count), one copy with history as a git lookup, and the
-extract rule. Granted 2026-09-15 as LEDGER 16 on operator ruling P0-16, which
-also ruled the section binds the **positions** lane. The charter is the sole
-copy; this § registers the lane and does not restate the rules. The
-per-iteration method and the record lessons stay at memory
-`project_shorting_subproject` (§§ 2026-09-05 … appeals iteration 4) +
-`project_appealing_subproject__log_2026_09`.
+That program left this subproject under its own spec; the filing-short scope is § 2.1, bound by review-lanes § 2.1a.
 
 ## 5. Hand-off to `managing/`
 
@@ -295,7 +282,7 @@ Promote AND land the substance somewhere that survives.
 This subproject does not import from `analyzing/`, `trading/`,
 `proving/`, etc., and they do not import from here. The only outbound
 dependency is *content* — adversarial findings that flow into
-`managing/`'s daily watch.
+`managing/`'s daily watch. This lane never writes another subtree.
 
 ## 7. Refresh cadence
 
