@@ -220,17 +220,11 @@ contract, INV-U's monotone membership + the THREE-step universe lane + ∅-held
 `ingest.py` write paths, accepting a rewrite, or diagnosing an exit 3. Exit
 codes: `0` all written · `1` all failed · `3` ≥ 1 symbol blocked by the guard.
 
-**Vendor-attrition class — RULED 2026-08-18, CLOSED 2026-08-25.** `blocked[]`
-climbed 1 → 100 over the 08-11..08-18 fires and most of it was FETCH TIME, not
-deletion; the forensics (the closed lost-DATE set, the 61-of-100 re-fetch, the
-425-of-527 NaN frontier that `as_of` and `lockstep` both read healthy) are in
-`data/summaries/close/2026-08-18T1731-analyzing.md`. Both rulings it produced
-(`c41c31457`) are charter content now — the post-close 18:00 ET lane with its
-`late_fire` session window (§ exit-contract) and INV-H's `reconciled` tier
-(§ inv-h). DEPLOYED on both seat hosts 2026-08-25 and the fetch-time hypothesis
-CONFIRMED: the first post-close fire wrote 523 clean, `blocked[]` runs 2–3/fire
-since. The residue is individual symbol facts (EQR, ^VIX3M vendor outages),
-watched at `ns:analyzing/50`. EA is
+**Vendor-attrition class — CLOSED 2026-08-25** (fetch time, not deletion;
+forensics: `data/summaries/close/2026-08-18T1731-analyzing.md`). Both rulings
+(`c41c31457`) are charter content — the post-close lane's `late_fire` window
+(§ exit-contract) and INV-H's `reconciled` tier (§ inv-h). Residue is per-symbol
+vendor outages (EQR, ^VIX3M), watched at `ns:analyzing/50`. EA is
 retired-in-place (`sp500-retired.txt`) — its 08-04 frontier is expected. Watch
 `behind_frontier.count` and the warn-level `reconciled[]` bucket: a tape whose
 gaps are papered over daily must not read as clean.

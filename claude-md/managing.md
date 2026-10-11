@@ -10,7 +10,7 @@ re-litigate those.
 once a day (06:00 local, top-tier model, cron-fired) and produces three dated artifacts:
 
 - `checks/YYYY-MM-DD.md` — top **5** issues across consistency / correctness /
-  functionality. **Functionality is always highest priority.** A failed live
+  functionality, then every further finding listed one line each. **Functionality is always highest priority.** A failed live
   probe outranks any consistency or correctness finding regardless of source
   count.
 - `tasks/YYYY-MM-DD.md` — the **10** most pressing items for that day, ranked
@@ -52,21 +52,15 @@ cites #6, and `dco-manual` cites the checker's #7.
    `qnarre|qresev.quantapix.com` are live — never a check to fake). Full row
    text lives ONLY in `checker.md` #5, the normative carrier (ns:managing/49).
 6. **Spec hygiene + phase tally.** `scripts/specs-audit.sh` is the single
-   source of truth (eight sections; COHERENCY is commitment 15's surface, not
-   this one's). Every non-tally row is a **correctness** finding; `*-tally`
-   rows are tally-only. **Four labeled ARMS ride this commitment, same
-   number** (folded from the retired standalone cron-lane slot, 2026-07-25):
-   cron-lane health, **watcher-liveness** (the only arm that can report the
-   daily fire ITSELF stopped — `scripts/watcher-liveness.sh`), S5-scan
-   (verifier FINDING lines + per-axis `coverage-diff`, REPORT-only), and
-   memsearch Stop-hook health; their hits rank **functionality**, not
-   spec-hygiene correctness. Full row text: `checker.md` #6 (ns:managing/49)
-   + memory `project_managing_subproject` commitment 6.
-   Thresholds mirror `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
-   `data/charters/qagents/spec-lifecycle/CHARTER.md` and move in lockstep
-   (script + `checker.md` #6 + this roster land in ONE change —
-   data-charters-2026-07-16 § 3.4 AUDIT-C1; charter-scopes-2026-07-16 § 6.1
-   for the multi-root + DEBATES/TODOS arms).
+   source of truth (eight sections; COHERENCY is #15's). Every non-tally row
+   is a **correctness** finding; `*-tally` rows are tally-only. **Four
+   labeled ARMS ride this number**, each ranking its own findings per
+   `checker.md` #6: cron-lane health, **watcher-liveness** (the only arm that
+   can report the daily fire ITSELF stopped), S5-scan, and memsearch
+   Stop-hook health. Full row text: `checker.md` #6 + memory
+   `project_managing_subproject` commitment 6. Thresholds mirror
+   `data/specs/CLAUDE.md` + `data/tmp/CLAUDE.md` +
+   `data/charters/qagents/spec-lifecycle/CHARTER.md`.
 
 7. **Claude permission-settings drift.** `scripts/settings-drift.sh` is the
    source of truth; `drift=YES` or `lint=ERRORS` is a **correctness** finding
@@ -83,19 +77,14 @@ cites #6, and `dco-manual` cites the checker's #7.
 9. **Cron-seat capability + roster + flip + peer-dark + unloaded +
    pending-enable.** `scripts/seat-drift.sh` is the source of truth (wraps
    `data/schedules/launchd/seat_preflight.sh`; bit-field exit 1=capability,
-   2=roster). SIX facts, classes only here: `capability=GAPS` **on the seat
-   holder**, `unloaded=UNLOADED` (peer's `declared − loaded` non-empty) and
-   `flip=STALE-UNACCEPTED` → **functionality**; `roster=DRIFT` (**the checker
-   only sees what FIRES; this is the one check that looks at what didn't**),
-   `peerdark=DARK` (one per NAMED entry),
-   `pending-enable=<n>-AGED` (≥ 7d) → **correctness**; every `UNKNOWN` /
-   `no-peer` is tally-only but **never** reads clean, and `PEER-AGE` is graded
-   every compare. Posture A is RETIRED (operator 2026-09-29): `posture=RETIRED`
-   prints, never a finding. managing REPORTS these rows, never edits them. Full row
-   text: `checker.md` #9 (ns:managing/49), the copy the daily fleet reads.
-   Memory `project_mobile_cron_seat`; spec family
-   `data/specs/node-return-lane-2026-07-14/`. Three-file lockstep: script +
-   `checker.md` #9 + this row move in ONE change.
+   2=roster). Classes only here: `capability=GAPS` **on the seat holder**,
+   `unloaded=UNLOADED` and `flip=STALE-UNACCEPTED` → **functionality**;
+   `roster=DRIFT` (**the checker only sees what FIRES; this is the one check
+   that looks at what didn't**), `peerdark=DARK`, `pending-enable=<n>-AGED`
+   (≥ 7d) → **correctness**; every `UNKNOWN` / `no-peer` is tally-only but
+   **never** reads clean. managing REPORTS these rows, never edits them. Full
+   row text: `checker.md` #9, the copy the daily fleet reads; memory
+   `project_mobile_cron_seat`; spec family `data/specs/node-return-lane-2026-07-14/`.
 10. **Node-PR staleness.** `scripts/node-pr-staleness.sh` is the source of
    truth (observe-only; never fetches). `stale=YES` (unmerged node PR > 7d) →
    **consistency** — a waiting contributor, not a broken system; everything
@@ -135,24 +124,20 @@ cites #6, and `dco-manual` cites the checker's #7.
 15. **Coherency arms — the deterministic half of the § 3 daily mandate.**
    `scripts/specs-audit.sh --section coherency` is the source of truth
    (operator ruling 2026-08-05 = do-retire R-18 + reap-boundary R1: an
-   EXECUTION gap closed, not new ownership; § 3 already charters the
-   mandate). Four arms: exit-46 citation existence; declared-pair value
-   checks; the absorbed-body freeze detector (drift REPORT-ONLY per
-   ns:managing/30, but exit 2 is a **correctness** finding — a dead matcher
-   must never read as clean); and the warn-cap fleet byte-sweep cross-checked
-   against filed `spread-review owed` items in `data/next-steps/qagents.md`.
-   Any `coherency` row → **correctness**; `coherency-report` rows are
-   report-only echo; UNKNOWN is always a finding, never clean. Full row text
-   lives ONLY in `checker.md` #15 (ns:managing/49). Three-file lockstep: the
-   script section + `checker.md` #15 + this row move in ONE change.
+   EXECUTION gap closed, not new ownership). Four arms: exit-46 citation
+   existence; declared-pair value checks; the absorbed-body freeze detector
+   (drift REPORT-ONLY, but exit 2 is **correctness** — a dead matcher never
+   reads as clean); the warn-cap byte-sweep against filed `spread-review
+   owed` items. Any `coherency` row → **correctness**; `coherency-report`
+   rows are report-only; UNKNOWN is always a finding, never clean. Full row
+   text lives ONLY in `checker.md` #15.
 
 16. **Node-backup per-arm verdict diff.** `scripts/backup-arm-drift.sh` is the
    source of truth; `serving:node-backup`'s aggregate exit code is a saturated
    channel and this is the fire-to-fire DIFF that replaces it. Classes:
    `NEW-RED` → **functionality**; `COVERAGE-REGRESSION` → **correctness**;
    `UNKNOWN` → tally-only but **never green**. Observe-only; route fixes to
-   serving. Full row text: `checker.md` #16 (ns:managing/49). Three-file
-   lockstep: the script + `checker.md` #16 + this row move in ONE change.
+   serving. Full row text: `checker.md` #16.
 
 § 1.1 digests the rows `checker.md` holds (ns:managing/49): the normative copy
 of each row is the one there, and a threshold moves in ONE change — script +
@@ -169,7 +154,7 @@ from their work** (its one write is the verifier-sidecar-derived
 
 | Subagent | Model | Output | Inputs | Notes |
 |---|---|---|---|---|
-| `checker` | top tier (root § Model policy) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`), `shorting/positions/` (adversarial findings — promote / dismiss-with-reason / ignore, per `shorting/CLAUDE.md` § 5) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first. |
+| `checker` | top tier (root § Model policy) | `checks/<date>.md` | All subprojects (read-only), live websites (WebFetch), public GitHub repos (`gh`), `shorting/positions/` (adversarial findings — promote / dismiss-with-reason / ignore, per `shorting/CLAUDE.md` § 5) | Three categories: consistency, correctness, functionality. Top 5 total, ranked, functionality first; every further finding listed one line each. |
 | `planner` | top tier (root § Model policy) | `tasks/<date>.md` | Today's `checks/<date>.md`, yesterday's `tasks/`, recent git log, PLAN.md / Memory.md across subprojects | 10 ranked items. May draw from today's checks, yesterday's untackled, or backlog. |
 | `reporter` | top tier (root § Model policy) | `reports/<date>.md` | Yesterday's `checks/` + `tasks/`, `git log --since=yesterday` across all subprojects, deploy logs | % completion mapped from commits / new files / closed issues. Distinguishes done / in progress / not touched. |
 | `verifier` | classifier tier, `verifier.md` frontmatter | `checks/<date>.pending.json` (coordinator-appended per above) | All files under `pending/`; rules table embedded in agent prompt | Closed-set allow-list classifier (default-skip); emits `passes[]` + `internal[]` + `unclassified[]`. Only `passes[]` drives the § 5.3 lock-protected rsync. Spec family: `data/specs/pending-promotion-scope-2026-05-28/`. |
@@ -206,7 +191,8 @@ pinned commitments (§ 1.1) carry the rest.
 
 A functionality failure is the day's top issue, full stop. Consistency and
 correctness fill the remaining 4 slots, ranked by blast radius (legal-record
-files > shipped websites > internal docs > backlog).
+files > shipped websites > internal docs > backlog). Every further finding is
+listed one line each below the five, unscored.
 
 ### 3.1 Suppressed-finding class — Agent SDK (operator directive 2026-06-30)
 
@@ -357,14 +343,17 @@ the battery arm (`ns:serving/97`). A fire that stops with NO exit line is a
 ceiling or sleep kill, never a budget kill (that is *distinguishable*: exit 4
 + `Error: Exceeded USD budget` verbatim); the nine-day decomposition is in
 memory `project_managing_subproject`.
-A fire that ends on a safeguard refusal is a FOURTH class and sits on the
-OTHER side of this split: it carries an exit line and a `qagents-cost` line
-and leaves no dated artifact. Its marker is owned by `run_routine.sh` — the
-envelope's `subtype` + `stop_reason` appended to the cost line, a refusal
-reading `stop_reason=refusal`; the checker's cost-telemetry arm reads it. An
-exit-line fire with no artifacts and no such marker is UNKNOWN — never a
-clean short fire, never a kill. The CLI refusal envelope is unmeasured, so
-the first live instance re-grades the marker.
+A safeguard-refusal fire is a FOURTH class, on the OTHER side of this split:
+an exit line + a `qagents-cost` line carrying `stop_reason=refusal` (marker
+owned by `run_routine.sh`), no dated artifact; `checker.md` #6's
+cost-telemetry arm grades it, and an exit-line fire with no artifacts and no
+marker is UNKNOWN. The CLI refusal envelope is unmeasured — the first live
+instance re-grades the marker.
+An `exit=77` fire is a FIFTH class: the child exited 0 at `end_turn`, but a
+declared artifact is absent or still a template token — `run_routine.sh`'s
+separate `qagents-fire complete=0 missing=…` line names it (map:
+`data/schedules/launchd/lib/artifacts.sh`); `checker.md` #6 grades it.
+Unmeasured until the first live instance.
 Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`,
 paired with `routine_policy_model` so a routine's tier and its funding cannot
 drift apart — read `daily`'s figure from that function, never from a copy

@@ -16,7 +16,7 @@ Each `<sub>/CLAUDE.md` is the single owner of its own mechanics + spec path; the
 - `verifying/` — Astro+React shell + FastAPI server for **Qnarre**, the legal-complaint verifier UI; streams `proving/` over SSE.
 - `evaluating/` — sibling of `verifying/` for **Qresev**, the portfolio evaluator UI; streams `accounting/` over SSE. Sole grantor of the **FINANCIALLY-CLEARED** gate (`accounting/` advises).
 - `visualizing/` — graphing surface for the `proving/` + `accounting/` axiomatizations; mounts into Qnarre + Qresev (§ Kit-mount pattern).
-- `studying/` — **operational** Lean4 axis; neutral steward of the cross-axis research + the `hub/` guide-rails. Consumer `monitoring/`.
+- `studying/` — **operational** Lean4 axis; consumer `monitoring/`; cross-axis steward is qagents.
 - `explaining/` — video-explainer arc for Quantapix outreach; output is scripts, whose stage 5 consumes `resolving/`.
 - `resolving/` — DaVinci Resolve production-assistance; stage 5 of `explaining/`.
 - `blending/` — Blender + Geometry Nodes background plates for `explaining/` → `resolving/`.
@@ -97,7 +97,7 @@ Sessions start with `/open <project>`, end with `/close [--to-main]`. `/do-claud
 
 ## Model policy — LLM model selection
 
-Complex, long-running work (fan-outs, axiomatization, watchers, debates, overnight research) runs the **top-tier model**; this file never writes the alias. **Four seats hold the value:** interactive — `~/.claude/settings.json` `model` (the client's session picker overrides it); axiomatization — `code/lean_tools/model_floor.py` (one seat, three axes); cron — `run_routine.sh` `routine_policy_model`; lesser-tier sub-agents — their own frontmatter `model:`. Review/optimization fleets carry **no `model:` pins** (they inherit the orchestrator's) — except an out-of-repo `claude -p --add-dir <WT>` seat, which inherits neither the model nor any CLAUDE.md/MEMORY.md, so its caller passes `--model` from the lane's seat (`studying/scripts/dao_seat.py`). A bump edits those seats and re-keys the two value-pinning tests (`t_share_05_model_switch.sh`, `test_model_floor.py`). A budget-killed top-tier routine is **widened, never downgraded** to a lesser tier. Lesser models only where flagged: `sonnet` for bounded cron routines, `haiku` for mechanical closed-set classification and smoke runs. The unit is subscription quota, never API dollars; a lesser tier is a quota choice, not a measured quality floor. **Effort** is a per-lane control (`claude --effort`; the session control interactively), seated beside each lane's model seat; prefer top tier at lower effort to a lesser tier once the lane's own CLAUDE.md records the sweep. **Always bare tier aliases — never a pinned minor, never an older tier.** **Capability floor:** haiku is forbidden for any retained axiomatization artifact. Mechanism detail: memory `project_model_policy_latest_top_tier` + `feedback_predicate_model_opus_not_haiku`.
+Complex, long-running work (fan-outs, axiomatization, watchers, debates, overnight research) runs the **top-tier model**; this file never writes the alias. **Four seats hold the value:** interactive — `~/.claude/settings.json` `model` (the client's session picker overrides it); axiomatization — `code/lean_tools/model_floor.py` (one seat, three axes); cron — `run_routine.sh` `routine_policy_model`; lesser-tier sub-agents — their own frontmatter `model:`. Review/optimization fleets carry **no `model:` pins** (they inherit the orchestrator's) — except an out-of-repo `claude -p --add-dir <WT>` seat, which inherits neither the model nor any CLAUDE.md/MEMORY.md, so its caller passes `--model` from the lane's seat (`studying/scripts/dao_seat.py`). A bump edits those seats and re-keys the two value-pinning tests (`t_share_05_model_switch.sh`, `test_model_floor.py`). A budget-killed top-tier routine is **widened, never downgraded** to a lesser tier. Lesser models only where flagged: `sonnet` for bounded cron routines, `haiku` for mechanical closed-set classification and smoke runs. The unit is subscription quota, never API dollars; a lesser tier is a quota choice, not a measured quality floor. **Effort** is a per-lane control (`claude --effort`; the session control interactively), seated beside each lane's model seat; an empty seat means the model's own default, which moves when the alias does, so a stamp records the seat value with the resolved model id, never a bare `default`. Prefer top tier at lower effort to a lesser tier once the lane's own CLAUDE.md records the sweep. **Always bare tier aliases — never a pinned minor, never an older tier.** **Capability floor:** haiku is forbidden for any retained axiomatization artifact. Mechanism detail: memory `project_model_policy_latest_top_tier` + `feedback_predicate_model_opus_not_haiku`.
 
 ## Programmatic Claude — Agent SDK lane
 
@@ -136,7 +136,7 @@ self-reporting.
 
 ## memsearch — semantic memory across qagents sessions
 
-Vendored Claude Code plugin at `lib/memsearch/`; Markdown is the source of truth. Install, version, `qagents patch`es, backend + retained invariants: `lib/memsearch/CLAUDE.md` § "qagents integration". Recall: `memsearch:memory-recall`.
+Vendored Claude Code plugin at `lib/memsearch/`; Markdown is the source of truth. Since the 2026-10-08 flip the `memsearch` binary is the `qx mem` shim (`code/context/`); the plugin's bash hooks are unchanged. Install, version, `qagents patch`es, backend + retained invariants: `lib/memsearch/CLAUDE.md` § "qagents integration". Recall: `memsearch:memory-recall`.
 
 ## MCP servers — scoped to subproject via `<sub>/.mcp.json`
 
@@ -161,7 +161,7 @@ Sibling-of-Lean-kernel rendering kits ship as vanilla JS into `<sub>/web/public/
 
 ## Lean4 axes — three kernels, one architecture
 
-Three orthogonal axes, never sharing domain/ground-truth/consumer: **textual** `proving/` (`legal/uscode/` + the MA primary-law corpus (private mirror); plaintiff v. defendant; → `verifying/`), **numerical** `accounting/` (`financial/parquet/`; bulls v. bears; → `evaluating/`), **operational** `studying/` (git first; `hub/git`; coding v. testing; → `monitoring/`, local-only). Standing rules (i)–(iv) — MECHANIZED names a CALL SITE; a gate change lands only where the graded artifact is AUTHORED; ABSENT needs a failable ENUMERATION; a SEATED ruling buys COMPLIANCE, never corroboration: `project_lean4_three_axis_charter` § "Standing rules for all three axes". Lean 4 is a lesser-known language to the model: axis cell prompts give the cell the Lean 4 language reference (the guide-rail rows). Chief invariant: **no human proof-driving, ever**; the other seven (incl. **proof-of-fire** — every mechanical gate ships a committed known-bad witness): `project_lean4_three_axis_charter`. Spec `data/charters/studying/specs/lean4-charter-2026-06-10/SPEC.md` § 4 + `axiomatize-shared-2026-07-04/`. **Per-axis scope charters:** `data/charters/{studying/operational-axis,proving/textual-axis,accounting/numerical-axis}/CHARTER.md` (studying = neutral steward).
+Three orthogonal axes, never sharing domain/ground-truth/consumer: **textual** `proving/` (`legal/uscode/` + the MA primary-law corpus (private mirror); plaintiff v. defendant; → `verifying/`), **numerical** `accounting/` (`financial/parquet/`; bulls v. bears; → `evaluating/`), **operational** `studying/` (git first; `hub/git`; coding v. testing; → `monitoring/`, local-only). Standing rules (i)–(iv) — MECHANIZED names a CALL SITE; a gate change lands only where the graded artifact is AUTHORED; ABSENT needs a failable ENUMERATION; a SEATED ruling buys COMPLIANCE, never corroboration: `project_lean4_three_axis_charter` § "Standing rules for all three axes". Lean 4 is a lesser-known language to the model: axis cell prompts give the cell the Lean 4 language reference (the guide-rail rows). Chief invariant: **no human proof-driving, ever**; the other seven (incl. **proof-of-fire** — every mechanical gate ships a committed known-bad witness): `project_lean4_three_axis_charter`. Spec `data/charters/studying/specs/lean4-charter-2026-06-10/SPEC.md` § 4 + `axiomatize-shared-2026-07-04/`. **Per-axis scope charters:** `data/charters/{studying/operational-axis,proving/textual-axis,accounting/numerical-axis}/CHARTER.md`; steward: qagents (`qagents/axiomatize-steward`).
 
 ## Defined-risk options — cross-project rule
 
@@ -173,15 +173,12 @@ S3 + CloudFront Astro deploys and the `git push-all` multi-remote setup live in 
 
 ## Language split
 
-- Rust — exactly two in-repo authoring surfaces: `code/substrate/`
-  (`qagents-substrate`, bin `qs`) is the session-lifecycle mechanics layer
-  (charter `data/charters/qagents/session-lifecycle/`); `code/context/`
-  (`qagents-context`, bin `qx`) is context injection (PCI mechanism layer —
-  contract owner stays the PCI spec family), output shortening, and the
-  memsearch replacement (specs `rust-context-2026-07-22` +
-  `rust-memsearch-2026-07-22`). Per-crate detail: `code/CLAUDE.md`. New Rust
-  surfaces need their own charter-lane ruling; external Rust CLIs
-  (rtk/herdr/worktrunk) stay arm's-length binaries, never workspace members.
+- Rust — exactly two in-repo authoring surfaces: `code/substrate/` (bin `qs`,
+  session-lifecycle mechanics) and `code/context/` (bin `qx`, context injection,
+  output shortening, the memsearch replacement); per-crate detail + specs:
+  `code/CLAUDE.md`. New Rust surfaces need their own charter-lane ruling;
+  external Rust CLIs (rtk/herdr/worktrunk) stay arm's-length binaries, never
+  workspace members.
 - Lean4 is the three axes' kernel language (§ Lean4 axes) **plus**, since the
   2026-08-09 drivers adoption, a general-purpose language for `simulating/`
   only (`simulating/driver/`, follower toolchain pin). The carve does not widen

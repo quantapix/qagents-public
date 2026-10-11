@@ -68,8 +68,8 @@ pages/components.
 
 **Voice.** Engineer-debugging-a-system register, same as femfas.net. No
 marketing-fluff present-tense — describe system state factually, not as a
-pitch. Qnarre + Qresev went live 2026-06-01; copy is present-tense for live
-surfaces and future-modal only for genuinely unshipped ones.
+pitch. Copy is present-tense for live surfaces, future-modal only for
+genuinely unshipped ones, and asserts no launch date.
 
 **Per-route OG metadata.** `OG_META: Record<route, OGMeta>` in
 `content/copy.ts` is the share-card source of truth; `Layout.astro`
@@ -250,7 +250,11 @@ read the **worktree's** `data/<topic>/*.json`, not canonical, so a
 `designing` branch opened before a sibling's `/close` ships a stale slot
 silently. Before deploying a hub-slot render: `git log HEAD..main` +
 `git merge main` if the sibling's close is missing. See memory
-`feedback_merge_main_before_deploying_hub_backed_surface`.
+`feedback_merge_main_before_deploying_hub_backed_surface`. The converse also
+bites: a deploy publishes **every** sibling slot change committed since the
+previous deploy, so after the merge compare the built hub-backed pages against
+prod and confirm each new financial face has a FINANCIALLY record before
+deploying (a red `status.spec.ts` fixture is the usual tell).
 
 ## 8. Scope boundary
 
@@ -363,10 +367,9 @@ staging sibling 2026-07-07 (content de-dup deferred). Records: debate record
   `visualizing/graphs/dist/kit-graphs.js` (rebuild dist first, grade by hash)
   + `tokens-proof.css` as its LOCKSTEP token overlay + `kit.css`; authored
   `hero-graph.json` (never regenerated) is the landing state,
-  `method-{legal,financial}.json` are wholesale re-copies of
-  `data/visualizing/` siblings (drill-down states) — every visualizing regen
-  of either is a PUBLIC face change at the next deploy, and the financial one
-  needs a FINANCIALLY record (`ns:designing/30`); `loader.js` is the
+  `method-legal.json` is a wholesale re-copy of its
+  `data/visualizing/` sibling (drill-down state) — every visualizing regen
+  is a PUBLIC face change at the next deploy. `loader.js` is the
   app-owned never-fold side-car. Chrome strings in `copy.ts thesis.methodGraph`
   (claim-free vocabulary). E2e: `interactivity.spec.ts` "Method DAG" block
   incl. the per-sheet token guard.

@@ -63,6 +63,10 @@ on real work), inspects what's being merged (commits + diffstat to the log),
 runs hub-overlap + cross-subproject scans, runs the gitignored-binary rescue
 scan, and runs the CLAUDE.md size check on every CLAUDE.md the merge
 touches. Exit 0 → proceed; non-zero → handle per the table below.
+The size check refuses only past the hard cap. A touched rule-file that
+lands within a fixed margin of its warn cap, or over it, files — or cites,
+if one is open — a review item routing it to the relocation pass, and each
+rule-file the session grew gets a report-only before/after line.
 
 ### 2. Write the session summary (judgment)
 
@@ -70,6 +74,13 @@ Save under `data/summaries/close/` (local time, minute precision; never
 overwrite). Synthesize what was done, why, and what was learned — not a
 transcript. The mechanical footer table is appended below your narrative by
 `--finish` at Phase 7.
+
+Every summary carries exactly one `## Lessons` section; the commit step
+refuses a summary without it (exit 31). Its block holds a cite into the
+shared learning ledger for each lesson worth carrying across the kernel
+lanes, or a `declined: <reason>` line, or a bare `none` when the session
+produced no lesson. Lessons written under any other heading are not read by
+the gate, so put them here.
 
 ### 3. Update agent memory (judgment)
 
@@ -211,6 +222,7 @@ the `--verify` output verbatim as the close report.
 | 24 | next-steps-unknown-cite | See § 5.5's row; the slot is a generated render, never bootstrapped by hand. |
 | 25 | next-steps-still-live / slot-drift | A cited item has no retire evidence (retire it through the ledger verb), or a generated render was committed on the branch (revert it) — see § 5.5. Never hand-delete from the render. |
 | 26 | debate-namespacing | See § 5.6. |
+| 31 | mint-or-decline | The summary has no `## Lessons` section, or its block carries neither a learning-ledger cite, a `declined: <reason>` line, nor a bare `none`. Add the section and re-run. |
 | 45 | lint-specs | See § 5.52. |
 | 46 | manifest-drift | See § 5.55. |
 | 47 | scan-hit | See § 5.55. |

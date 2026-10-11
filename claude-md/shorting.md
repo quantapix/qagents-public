@@ -180,6 +180,15 @@ shorting/
                                        `<YYYY-MM-DD>.md` per run, ≤ 10 positions; a unit file sits
                                        beside it as `<YYYY-MM-DD>-<unit>.md`. The date-led filename is
                                        the contract: the cadence metric reads the newest one
+  reviews/prosecution-seat/            the outside prosecution seat (standing duty, operator ruling
+                                       2026-09-30): another lane's clearance over a public-bound file
+                                       list needs a seat that lane neither briefs nor runs. Called by
+                                       an ns item naming the file list + shas. This session writes the
+                                       brief itself from the list and the comparison set, never from
+                                       the caller's findings; one clean-context seat; one
+                                       `<YYYY-MM-DD>-<slug>.md` record — verdict, population compared,
+                                       what was not looked at. The caller rules on it; this lane
+                                       never clears
   appeals/                             the filing-short run home (§ 2.1, opt-in only) + frozen
                                        simulation history; live state only in the lane's
                                        unpublished state file — this file registers by shape

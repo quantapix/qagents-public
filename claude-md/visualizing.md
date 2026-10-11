@@ -88,6 +88,10 @@ this § 3 is authoritative.
   FAILED-renders-`diverge` invariant, the no-artifact fallback, gates:
   SPEC § 11.0a (verbatim there — do not re-state here).
   Stays top-level: `catalog.json` feeds **every** modality, not just `graphs/`.
+  **Held set (hub-goldens MT-10):** `usc_to_catalog.py` drops every cell dir /
+  `*Bridge.lean` at or under a key of proving's `framework_set.NON_PUBLISHED`
+  (`Proving/`-relative; read as an ast literal, never imported; a missing roster
+  REFUSES). Known-bad + identity arm: `extractor/test_usc_held.py`.
 - `rounds/` — the **qrounds/1 two-sided rounds contract** (custody ruled to
   visualizing, do-share P0-8 2026-07-18): `qrounds.schema.json` +
   `qrounds-standing.schema.json` + the `qblindness{,-corrected}.schema.json`
@@ -119,8 +123,8 @@ panel, charts-2026-07-02 § 7.1 →
 kit.js`) + `dist/kit-charts.js` (charts-only SVG surface, no DAG/LW/fromReport
 — so no C8 framework-union leg; the supported mount class for charts-only
 consumers, first `simulating/web/public/charts/kit.js`; depth-2026-08-12 § 5.2
-made the R12 alternative a supported class). designing is a `kit-graphs.js`
-consumer again — `/thesis` method-DAG mount landed 2026-08-16 (`91a069ade`).
+made the R12 alternative a supported class). designing `/thesis` mounts
+`kit-graphs.js` (method-DAG, `91a069ade`).
 `fromFlow`/`mountFlow` (constellation flow graph, kit-graphs bundle ONLY;
 Option-B fold, renderer computes nothing, the kit never reads
 `graph.bottlenecks[]`) — spec `flow-adapter-2026-07-16/SPEC.md`.
@@ -164,7 +168,7 @@ the charts SPEC's ledger** — trust the SPEC rows, not this line.
   Phase 5). Frame capture rides the cytoscape kit (headless Playwright —
   `sandbox/serve.mjs` + `__CY__.png()`/`exportSVG`).
 
-**M0 node-link reader (2026-06-17).** Adapter internals (`fromNodeLink`/`mountNodeLink`; monitoring mounts live, verifying uscode = M2) → `graphs/README.md` § "M0 node-link reader" (relocated apply-spread 2026-07-28).
+**M0 node-link reader (2026-06-17).** Adapter internals (`fromNodeLink`/`mountNodeLink`; monitoring mounts live, verifying uscode = M2) → `graphs/README.md` § "M0 node-link reader".
 
 **Method-DAG hero (designing `/thesis`).** An authored interactive INDUCTIVE DAG
 over three general, byte-compat node-link capabilities. Encoding, the standing
@@ -174,8 +178,7 @@ graph-def grammar and the W7 constraint mechanism live in **parent SPEC § 15**
 render** — one cytoscape-fcose source (`hero-graph.json` + `loader.js`) serves
 both the silent hero video and designing's `/thesis` mount; 7-chapter animation
 contract `…/visualizing-2026-06-03/thesis-hero-2026-07-07/SPEC.md`, capture
-bundle `scenes/thesis-hero/`; open work = items 9/15 (W8 discharged 2026-08-01;
-the MP4-deferral premise is dead). **W6 method-projection producer SHIPPED
+bundle `scenes/thesis-hero/`; open work = items 9/15. **W6 method-projection producer SHIPPED
 2026-08-06**: `extractor/method_projection.py` + `validate_method.py` emit + gate
 `data/visualizing/method-{legal,financial}.json` (hero NEVER regenerated; zero
 kit changes). Build record, G1–G5, the 10 known-bad witnesses, the § 6 amendment
@@ -365,7 +368,7 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
 
 ## 7. rendering/ seam (rendering-spec debate, Round 01 — 2026-06-09)
 
-Standing bounds VZ1–VZ5 + T10 → `data/charters/visualizing/graphing-surface/CHARTER.md` § rendering-seam (relocated apply-spread 2026-07-28); the one bullet a non-seam session can trip stays here: **overlay VALUE changes are ATOMIC ⇒ lift-UP to `qagents`** — SoT change + kit re-copy + headless map in ONE whole-repo commit, never separate `/close`s (mirrors rendering/CLAUDE.md § 4b; net-new overlays may land SoT-first).
+Standing bounds VZ1–VZ5 + T10 → `data/charters/visualizing/graphing-surface/CHARTER.md` § rendering-seam; the one bullet a non-seam session can trip stays here: **overlay VALUE changes are ATOMIC ⇒ lift-UP to `qagents`** — SoT change + kit re-copy + headless map in ONE whole-repo commit, never separate `/close`s (mirrors rendering/CLAUDE.md § 4b; net-new overlays may land SoT-first).
 
 ## 8. Status slot
 
@@ -374,6 +377,4 @@ Standing bounds VZ1–VZ5 + T10 → `data/charters/visualizing/graphing-surface/
 **hidden from the `/status` index** — the kit's mounted surfaces live inside
 Qnarre/Qresev/monitoring, not on a quantapix.com surface, so the card stays
 hidden until designing rules otherwise; the deep page `/status/visualizing/`
-still builds. Reverse the hide by adding
-`visualizing` to a `STATUS_GROUPS` member array in `designing/web/src/content/
-copy.ts` plus the e2e sweep in `tests/e2e/status.spec.ts`.
+still builds. Reversal recipe: `designing/CLAUDE.md` "Hidden cards (reversible)".

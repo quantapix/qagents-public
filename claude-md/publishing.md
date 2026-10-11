@@ -1,8 +1,6 @@
 # CLAUDE.md — publishing/
 
-Project-specific rules for the qagents open-source release subproject. Assumes
-Claude Code's default guidance and the repo-root `qagents/CLAUDE.md`. Don't
-re-litigate those.
+Project-specific rules for the qagents open-source release subproject.
 
 ## 1. Purpose
 
@@ -23,9 +21,8 @@ redaction-clean gate before any push; the **@Quantapix YouTube channel**
 material (`publishing/youtube/` — channel-page copy, brand/thumbnail/motion
 prompts, upload specs). The channel-vs-content split (channel face here, the
 50-video 5×10 arc in `explaining/`) is owned by `publishing/youtube/README.md`
-§ Scope. The Janet identity master + voice config
-stay in `explaining/avatar/` + `explaining/voice/` (HeyGen narration is
-`explaining/`'s job); `youtube/` cites them, does not own them. The channel
+§ Scope; the Janet identity + voice (`explaining/avatar/`, `explaining/voice/`)
+are cited, never owned. The channel
 *design sources* (JSX harnesses + canvas bundles) live at
 `rendering/designs/publishing-youtube/` and the rendered deliverables at
 `data/renders/publishing/`; request
@@ -84,10 +81,13 @@ any contact email — sole public contact `https://github.com/quantapix`,
 `resume/` exempt / **rooted internal paths**); rules **(D)**/**(D2)**/**(E)**/**(E2)**
 in `sync_mirror.py` `path_blocklist_hit` are their PATH twins (a filename renders
 publicly without appearing in any file's bytes); each gate ships a pinned test
-(`t_17`–`t_21`). Two path rules have no content twin: interpreter bytecode (it
+(`t_17`–`t_21`). Three path rules have no content twin: interpreter bytecode (it
 carries host paths), and a staged render of an execution-register spec family
 for work over open matters — by shape here; the slugs live in the rule (`t_29`,
-`t_30`). A third kind sits INSIDE the renderer: `sync_mirror.py`
+`t_30`). The newest (2026-10-03) refuses a held kernel
+subtree as a path PREFIX, spec side or kernel side, under any segment —
+keyed on the tree, never a module name, so it outlives any one framework's
+release (`t_33`, whose drift arm reads the live module dirs). A third kind sits INSIDE the renderer: `sync_mirror.py`
 `OUTPUT_BARS` (Stage 1b, asserted in `redact()`, pinned by `t_22`) refuses to
 emit a mirror still carrying a per-source barred token — the only lever that
 reaches the gate-(1e)-excluded `claude-md/` subtree, and the only one that sees a
@@ -97,16 +97,8 @@ SHORT forms in any published CLAUDE.md — every other gate reads NAMES, so a
 green suite over `claude-md/` was a statement about names, not about matter; a
 lane over live matter publishes by SHAPE, its state in an unpublished sibling.
 
-**Two arms landed 2026-09-15 (Round 05 L-B1/L-B2, `ns:publishing/77`+`/78`).**
-(i) The path rule bars a live-matter example id in the path and the content
-sweep reads the admitted `.lean` bytes — each catches a case the other cannot.
-`t_23`. (ii) Stage 2's prefix rules scrub
-the BARE form for the private-hub family and KEEP it for the subproject /
-public-hub names; the keep set is declared, so an unconsidered new prefix
-defaults private (`sync_mirror.py --check-path-subs`, both polarities, `t_24`).
-**Only a two-polarity test can say a cure went too far.** The collateral-docket
-bar also gained a generic form arm, still narrow to that family. Measurements:
-`project_publishing_subproject` (2026-09-15).
+**Two arms landed 2026-09-15** (`t_23`, `t_24`): detail in the forensics file
+below. **Only a two-polarity test can say a cure went too far.**
 
 **Gate (1e) — the SCOPE is the guard (2026-08-14).** Two measured narrowings
 (PATH scope excludes `claude-md/` + `github-metadata.json`; REGEX scope is
@@ -179,23 +171,10 @@ edge); the converse is `feedback_graphical_redaction_failure_modes`. **Neither
 check sees the other's case** — raster and look, or state the gate covers text
 only.
 
-**The gate scans the push set, not a file type (2026-09-30).** Stage 3 of
-`sync_mirror.py` applies the blocklist as it renders each mirror; `publish.sh`
-runs `sync_mirror.py --scan-tree <tree>` as the PRIMARY gate — HARD-only (the
-SOFT class is empty) over **every file the push carries, whatever its
-extension** (it was `*.md`-scoped). A binary is refused — the allow-set is EMPTY
-and grows only by a named register row, **so a dated resume PDF needs its row
-before it can ride a push** — bytecode is refused by path, and *zero files
-scanned is a failure*. It skips exactly the two names `github_meta.py sync`
-excludes (`CLAUDE.md` staging governance; the metadata manifest, gated by
-`github_meta.py scan`) and carves out the developer's own public name via
-`ALLOW_PHRASES`. **One bar is surface-scoped** (operator, 2026-09-30): the drive
-repo may carry the one federal docket number its ledger reports on; every other
-repo, the rule-file mirrors, the metadata gate and every file NAME still refuse
-it (`SURFACE_EXEMPT`; an unlisted repo is exempt from nothing; `t_31`, both
-directions). The `check_redactions.py --tree` PDF gate stays wired after it; the
-resume tree (`publishing/resume/`) rides the same sweep. Pinned: ordering
-`t_10_publish_gate.sh`, population `t_29`.
+**The gate scans the push set, not a file type (2026-09-30).** `publish.sh`'s
+PRIMARY gate is `sync_mirror.py --scan-tree` over every file the push carries,
+whatever its extension; zero files scanned fails; **a dated resume PDF needs its
+register row before it can ride a push**. Mechanics: the forensics file above.
 
 **`gh` does all GitHub work (2026-06-23).** `scripts/github_meta.py` is the single
 gh-centric arm — `sync` / `ensure` / `apply` (metadata `gh repo edit`) /
@@ -239,7 +218,8 @@ example is one, may publish under the one admitted location on a concrete,
 hashed file list that `pleading/` clears in its own round record — a list with
 no such clearance, a clearance written into another lane's record, or a list
 changed after the clearance fails the push closed (`hub_goldens_list.py`,
-`t_27`/`t_28`).
+`t_27`/`t_28`). Every staged example dir also runs pleading's G-6 guard by
+subprocess, and any non-zero aborts (gate (5b), `g6_tree_gate.sh`, `t_34`).
 
 ## 6. Write-lock & session model
 
@@ -247,10 +227,9 @@ changed after the clearance fails the push closed (`hub_goldens_list.py`,
   `<root>-wt/publishing/`. Every Edit/Write `file_path` begins
   with that worktree root (canonical-edit hook,
   `data/charters/qagents/session-lifecycle/CHARTER.md` § 2.3).
-- **`data/status/publishing.json`** is written by `scripts/status_emit.mjs`, a
-  fixed-path producer under `data/` — it acquires `.data-write-lock` per the
-  universal manual-writer rule (root CLAUDE.md § "Shared-data write-lock") when
-  writing canonical.
+- **`data/status/publishing.json`** is written by `scripts/status_emit.mjs`
+  (§ 7), which takes no lock in-script — `/close` holds `.data-write-lock`
+  around the session commit (`data/publishing/CLAUDE.md` § Write-lock posture).
 - **The external push** (`git push-quantapix`) is not a qagents-repo write — no
   qagents lock involved; its scratch clones live outside the tree.
 - **`pending/publish-digests/`** is a gitignored, fork-internal buffer — **at the
@@ -291,7 +270,7 @@ README). `scripts/`:
 `publish.sh` · `github_meta.py` · `iga_verify.py` ·
 `sync_mirror.py`/`sync-mirror.sh` · `status_emit.mjs` · `videos_emit.mjs` ·
 `youtube_{auth,upload,sync,manifest}.py` · `hub_goldens_list.py` ·
-`claim_check.py`.
+`g6_tree_gate.sh` · `claim_check.py`.
 
 ## 9. Messaging-hardening debate (publishing/ convenes)
 
@@ -301,7 +280,7 @@ femfas.net, the GitHub org, the @Quantapix channel) defensible against a cold,
 adversarial read. **Instance one** of the generic debate framework
 (`data/charters/qagents/debate/CHARTER.md` — owns staffing, record naming, lane);
 gate standard `data/charters/pleading/messaging-gate/litigation-safety-standard.md`
-(family spec reaped; body at `84ffbf546^:data/specs/messaging-hardening-debate-2026-06-06/SPEC.md`).
+(the reaped family spec's git rev: debate charter).
 
 - **Roles:** `publishing/` convenes; `shorting/` prosecutes (one top-tier-model
   subagent per vector); vector-owner subprojects defend; `managing/` judges;
@@ -359,16 +338,13 @@ in Studio; `youtube_sync.py` diffs and `videos.update`s drift. Skill:
 `publishing/scripts/youtube_{sync,upload,auth}.py`; deps in the root `[publishing]`
 extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
 
-- **Two hard gates.** (1) **Signoff gates** (signoff-framework § 7): an entry's scope is
-  the **R2 union — committed class floor ∪ per-entry flags** (`in_scope_gates()`): the
-  floor from `data/publishing/r2-scope-map.json` keyed by the manifest `key`'s topic
-  prefix (structurally mandatory, so it cannot be forgotten); flags widen only, never
-  narrow; an **unregistered class fails closed** (an ungated default is the R2 vacuity
-  attack). Schema, readers, R9, per-asset classes: `data/publishing/CLAUDE.md`.
-  `signoff_blocker()` then refuses push/adopt-over/upload unless every in-scope gate's
-  `signoffs[<gate-id>]` names a record on disk — a promoted
-  `data/messaging-rulings/<date>.md` (pleading grants; the same § 11.2 floor the upload
-  sheets ride) or a `data/signoffs/FINANCIALLY/` record (evaluating grants, accounting
+- **Two hard gates.** (1) **Signoff gates** (signoff-framework § 7): scope is the
+  **R2 union** (`in_scope_gates()`; an unregistered class fails closed), and
+  `signoff_blocker()` refuses push/adopt-over/upload unless every in-scope gate's
+  `signoffs[<gate-id>]` names a record on disk — scope map, flag semantics, R9:
+  `data/publishing/CLAUDE.md`. A record is a promoted
+  `data/messaging-rulings/<date>.md` (pleading grants) or a
+  `data/signoffs/FINANCIALLY/` record (evaluating grants, accounting
   advises). publishing never self-grants. **IGA enforcement (R7):** inline-operator
   grants get `iga_verify.py`'s three refuse checks — contract, wiring, test:
   spec § 5.5. Owed: `github_meta.py` repo-content binding (needs the
@@ -386,7 +362,7 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   `CLEARED*` FINANCIALLY record (registry-resolved; missing registry ⇒ refuse; then
   ancestor of HEAD) — so a `verified-N/A` grant for a non-financial episode is
   **mechanically required**. **This paragraph has been wrong in BOTH directions
-  across three corrections — read the script, not this paragraph.** Ancestry-only-era
-  history: `ns:publishing/46`. Contract family `data/specs/serving-2026-05-26/`
+  across three corrections — read the script, not this paragraph.** Contract
+  family `data/specs/serving-2026-05-26/`
   (serving owns script + gate); this bullet is the publishing-side pointer the
   script's error message cites.

@@ -295,8 +295,9 @@ the loop:
 - **The cron wrapper fails closed on billing.** It refuses to run
   against an API key unless an explicit override is set, and it refuses
   the highest-cost model tier outright with no override at all. Model
-  selection uses bare tier aliases, never pinned minor versions, so a
-  tier sweep is one edit. Budget caps are widened, never traded for a
+  selection uses bare tier aliases, never pinned minor versions, and each
+  lane's value sits in one named seat, so a tier change is a short list of
+  known edits rather than a hunt. Budget caps are widened, never traded for a
   weaker model.
 - Three audited LLM-call lanes ride the donation drive's primary
   subscription line:
@@ -579,8 +580,8 @@ payment channel. The monthly ledger reports $0 inflow for the documented
 reason. The bucket structure, the amounts, and the floor are unchanged —
 what is presently impossible is *receipt*, not the drive's definition. The
 drive's work — the open-source repos, the statutory axiomatization, the
-weekly and monthly accountability cadence — began 2026-06-01 and continues
-on schedule. Details, monthly ledgers, and weekly digests are in the
+weekly and monthly accountability cadence — began 2026-06-01 and continues.
+Details, monthly ledgers, and weekly digests are in the
 sibling repo `qdonating-public`.
 
 **Open to outside contributors.** The U.S. Code axiomatization program

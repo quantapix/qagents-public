@@ -60,7 +60,7 @@ the standard examples in `hub/theorem_proving_in_lean4` and
   invariants are the SPEC's — don't mirror them here: R2 (state-key = digest of the
   extractor input snapshot, never HEAD) at SPEC § 6; R15 (machine-context seam,
   `monitoring/` sole consumer, non-precedential) at SPEC § inv-5. `qx` shim
-  landed; oracle retirement at `ns:studying/39`.
+  landed; oracle deletion at `ns:qagents/129`.
   Ledger privacy: § 5.1.2(c) path-blocklist carries (committed-but-never-published
   — the `studying_entailment_ledger` Stage-4 rule in
   `publishing/scripts/sync_mirror.py`).
@@ -185,9 +185,11 @@ at `data/schedules/launchd/logs/`, never `pending/logs/`, and never off `runs`**
 
 `studying/guide-rails.md` is the committed manifest over the five Lean4
 guide-rail clones in root-level `hub/` (root CLAUDE.md § Shared-code hubs owns
-the hub's read-only + gitignored posture). Refresh is manual from an
-`/open studying` session via `studying/scripts/hub_refresh.sh` (`--check` = the
-charter's P0 test; read the docs-vs-pin skew note at each refresh). Adding a
+the hub's read-only + gitignored posture). Refresh runs from an
+`/open qagents` session under a steward-disposals licence (steward row M10 since
+the 2026-10-04 cutover; a studying-branch run reds at exit 14) via
+`studying/scripts/hub_refresh.sh` (`--check` = the charter's P0 test, runnable
+from any session; read the docs-vs-pin skew note at each refresh). Adding a
 row is a manifest + script + spec amendment. lean4 source citations use
 upstream GitHub URLs (side-clone convention retired, charter D3).
 
@@ -195,8 +197,10 @@ upstream GitHub URLs (side-clone convention retired, charter D3).
 
 `studying/lean-toolchain` is pinned in lockstep with `proving/lean-toolchain` +
 `accounting/lean-toolchain` (the pin value is the file itself + the `guide-rails.md`
-skew note — not restated here). Any bump moves all three and replays each kernel's
-example proofs (`feedback_lean_toolchain_bump_verify_example_proofs`). **Studying
+skew note — not restated here). A bump lands as ONE qagents commit under a class-(i)
+lockstep licence covering every pin (steward row M10 since 2026-10-04) and each
+axis then replays its own example proofs
+(`feedback_lean_toolchain_bump_verify_example_proofs`). **Studying
 carries TWO pins**, not one: `studying/lean-toolchain` *and*
 `studying/Operating/lean-toolchain` (the Operating package is the actual kernel) —
 both move together or `elan` resolves differently depending on cwd. **The two pins
@@ -225,12 +229,12 @@ falsify its own currency; proving's filter is the KERNEL TREE `Proving/`, which
 excludes its emit by construction, so the identical-sounding claim is FALSE there
 (measured 2026-08-26, `ns:studying/190`). Before calling any drift arm
 self-poisoning, resolve its PATHSPEC — one level of root separates the two
-outcomes. Consequence for the steward:
+outcomes. Consequence for the steward (qagents, row M19 since 2026-10-04):
 **changing the digest algorithm now reds a consumer's suite on another axis** —
-intended, and a fourth site to move. **"One commit"
-is not always achievable — record the deviation:** when each axis is held by its
-own open session the bump lands one commit per branch, in lockstep in time, each
-independently verified. Say so; never let the three drift across a day.
+intended, and a fourth site to move. **Before the cutover "one commit"
+was not always achievable and the deviation was recorded** (one commit per branch,
+in lockstep in time, each independently verified); under M10 the single qagents
+commit is the form, and the three never drift across a day.
 
 **The pin is CWD-DEPENDENT (2026-07-14).** `elan` reads `lean-toolchain` from the
 *current directory*, so a bare `lean` run anywhere without a pin file (a sandbox probe
