@@ -169,10 +169,10 @@ not a gate.
 
 **Daily unit = the SENTINEL, seated at `studying:dao-state` 07:45 daily.**
 07:45 is ORDERED — arm (e) reads managing's 06:00 report, the opposite ordering
-from `proving:axiom-state` 05:10, whose output managing scans. LIVE on qpur; the
-qyel enable is awaited and its ONLY home is the `studying:dao-state` row of
-`data/schedules/pending-enable.md` (archives are host-split, so one seat leaves
-the other's rounds un-surveilled). **The per-axis sentinel class is
+from `proving:axiom-state` 05:10, whose output managing scans. LIVE on BOTH
+seats (qyel measured firing daily 2026-10-14, `host=qyel exit=0`; its
+`pending-enable.md` row deleted to Events) — archives are host-split, so each
+seat surveils only its own rounds. **The per-axis sentinel class is
 SEAT-EXEMPT** (a sentinel reads host-LOCAL archives); the `run_routine.sh`
 sentinel-class carve is landed (witness `t_32`) and `dao_state_check.sh` stamps
 `host=` on every emit. Standing conditions: an unstamped sentinel emit is

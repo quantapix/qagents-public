@@ -63,10 +63,11 @@ on real work), inspects what's being merged (commits + diffstat to the log),
 runs hub-overlap + cross-subproject scans, runs the gitignored-binary rescue
 scan, and runs the CLAUDE.md size check on every CLAUDE.md the merge
 touches. Exit 0 → proceed; non-zero → handle per the table below.
-The size check refuses only past the hard cap. A touched rule-file that
-lands within a fixed margin of its warn cap, or over it, files — or cites,
-if one is open — a review item routing it to the relocation pass, and each
-rule-file the session grew gets a report-only before/after line.
+The size check refuses only past the hard cap. A rule-file the session grew
+that lands within a fixed margin of its warn cap, or over it, files (or cites,
+if one is open) a review item routing it to the relocation pass; that item is
+retired by the session that applies the relocation, never by the close. Each
+rule-file the session grew also gets a report-only before/after line.
 
 ### 2. Write the session summary (judgment)
 

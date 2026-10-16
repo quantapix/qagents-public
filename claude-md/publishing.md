@@ -87,7 +87,10 @@ for work over open matters — by shape here; the slugs live in the rule (`t_29`
 `t_30`). The newest (2026-10-03) refuses a held kernel
 subtree as a path PREFIX, spec side or kernel side, under any segment —
 keyed on the tree, never a module name, so it outlives any one framework's
-release (`t_33`, whose drift arm reads the live module dirs). A third kind sits INSIDE the renderer: `sync_mirror.py`
+release (`t_33`, whose drift arm reads the live module dirs). Rule (I) (2026-10-16)
+refuses the standing operator briefs' basename class and their glossary wherever
+either sits, and the collector contract names the class as never-a-source — its
+exposure channel is the collector, which a dry mirror render cannot see (`t_36`). A third kind sits INSIDE the renderer: `sync_mirror.py`
 `OUTPUT_BARS` (Stage 1b, asserted in `redact()`, pinned by `t_22`) refuses to
 emit a mirror still carrying a per-source barred token — the only lever that
 reaches the gate-(1e)-excluded `claude-md/` subtree, and the only one that sees a

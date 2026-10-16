@@ -283,13 +283,11 @@ a prompt; subagents fan out from there). A growing fraction is
 programmatic — cron-fired routines that don't have an operator in
 the loop:
 
-- The programmatic lane is **parked**. The separately funded SDK credit
-  pool was withdrawn, the opt-in fleet reverted, and every cron routine
-  now runs the default non-interactive print lane against the
-  interactive subscription. The wrapper, the ledger, the routine
-  definitions and their tests are all retained as-is; nothing has been
-  deleted, and a single suffix restores the lane if access returns.
-  Until then it is treated as an external blocker with a registry
+- The programmatic lane is **parked**. By design, cron routines run the
+  default non-interactive print lane and share the interactive lane's
+  quota. The wrapper, the ledger, the routine definitions and their tests
+  are all retained as-is; nothing has been deleted, and a single suffix
+  re-enables the lane. Until then it is treated as an external blocker with a registry
   entry, deliberately excluded from every bottleneck metric so a parked
   dependency cannot distort the dependency graph.
 - **The cron wrapper fails closed on billing.** It refuses to run
@@ -299,16 +297,14 @@ the loop:
   lane's value sits in one named seat, so a tier change is a short list of
   known edits rather than a hunt. Budget caps are widened, never traded for a
   weaker model.
-- Three audited LLM-call lanes ride the donation drive's primary
-  subscription line:
+- Three audited LLM-call lanes are defined:
   - **Tier A** — interactive assistant sessions. Operator at the
     keyboard.
-  - **Tier B** — programmatic SDK routines. These currently draw the
-    same Claude Max 20× subscription limits as the interactive lane; a
-    separately funded SDK credit pool was funded, then withdrawn — the
-    lane is parked, not planned. Cron-fired routines ride this.
-  - **Tier C** — optional API-rate overage. Default off; stays
-    inside the AI-assistant bucket if enabled. Cross-bucket use is
+  - **Tier B** — programmatic routines. By design they share one quota
+    with the interactive lane; there is no separate credit pool. The SDK
+    lane is parked, not planned. Cron-fired routines are assigned to this
+    tier.
+  - **Tier C** — optional API-rate overage. Default off. Cross-bucket use is
     forbidden — the donation drive's JSON manifest pins the
     enforcement flag.
 - An adoption ledger tracks per-routine migration notes, token-cost

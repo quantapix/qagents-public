@@ -24,10 +24,9 @@ history — and the apply tool enforces the boundary at parse time.
 
 ## Lane contract
 
-- **The interactive lane is the standing lane.** The main session
-  orchestrates the fan-out via subagents, billing the interactive
-  subscription; the operator is in the loop at every phase and approves the
-  apply.
+- **The interactive lane is the standing lane by design;** the main
+  session orchestrates the fan-out via subagents; the operator is in the
+  loop at every phase and approves the apply.
 - **The scheduled/programmatic lane is parked**, fail-closed behind an
   unconditional refusal gate with its schedule entry commented out.
   Restoring it is a future amendment, not a flag flip.

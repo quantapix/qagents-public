@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-10-11. Refreshed per release run during the
+_Snapshot: 2026-10-16. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -40,7 +40,47 @@ that is a ruling, not a backlog, and it is stated in full below.
   refresh. This round most of the published set moved, several substantially;
   the commit diff is the change record.
 
-## What changed since the 2026-09-26 refresh
+## What changed since the 2026-10-11 refresh
+
+- **A size-review item is filed only for growth.** The close step's size
+  check used to file (or cite) a review item for any rule-file the session
+  touched that sat within a fixed margin of its warn cap. It now does so only
+  for a file the session itself grew into that margin. A session that edits a
+  file already near the cap without growing it is no longer charged with the
+  file's history.
+- **The session that applies a relocation retires the review item.** Such an
+  item used to clear as soon as any relocation run dated after the crossing
+  existed, whether or not its moves were applied. It is now retired by the
+  session that applies that run's moves, after the apply merges, and only
+  when every listed file has a disposition. The run's own record names the
+  item it opened and records the retirement; a test refuses an apply log on
+  its own as evidence.
+- **Unconsumed relocation work ages by the calendar as well.** An apply left
+  unconsumed escalated after two later optimization passes, so during a
+  stretch with no pass it never aged. It now also ages one interval per seven
+  days without a pass, and a move made by the file's own owner counts as
+  consumed.
+- **The always-loaded cost is measured as injected bytes.** The context
+  metric now ranks each rule-file by its size times the number of times it is
+  injected, nested rule-files included, beside its on-disk size. A small file
+  loaded into every session can cost more than a large one loaded once.
+- **Two more report-only readings.** Every memory commit logs the net row
+  change in the memory index, and below the soft cap the size helper prints
+  the largest byte deltas since the last optimization anchor. Neither refuses
+  anything or starts a pass; they exist so growth is measured between passes.
+- **The operational kernel's daily sentinel now runs on both workstations.**
+  Each copy reads only its own host's archived rounds, so with one seat the
+  other host's rounds went unwatched.
+- **The market-data hub gained a reference-series directory**, beside the
+  bar, portfolio, report, universe, sector and factor directories.
+- **The release lane refuses one more class of internal file by name.** A
+  path rule now rejects a class of standing orchestrator-facing documents,
+  and the glossary that travels with them, wherever either sits in a staged
+  tree. The release collector's contract also lists the class as never a
+  source: the collector is the channel through which such a document would
+  reach a draft, and a dry render of the mirror cannot see that channel.
+
+## Earlier: what changed in the 2026-10-11 refresh
 
 - **Every session summary has one fixed place for its lessons.** The close
   gate used to accept any heading that mentioned learning; it now reads
@@ -104,47 +144,6 @@ that is a ruling, not a backlog, and it is stated in full below.
   corrected on three rows (the watcher's commit posture, the retired review
   fleet, the market simulator's Lean carve), and the published close and
   hint-flush skills gained the exit rows they lacked.
-
-## Earlier: what changed in the 2026-09-26 refresh
-
-- **The rule-set was audited against the model vendor's own guidance for
-  working with the assistant, and the gaps were closed at their owners.** Model
-  selection now sits in four named seats, one per lane, each with an effort
-  seat beside it; an empty effort seat means the model's own default, which
-  moves when the model alias does. A tier change is therefore a small number
-  of known edits rather than a hunt. Every script that imports a third-party
-  package pins the project interpreter at both the shebang and the call site,
-  because the system's default interpreter changed underneath the repo and an
-  import guard that probes the wrong one skips silently.
-- **The hint-flush lane can no longer grow a rule-file past its size budget.**
-  A queued hint that would push a rule-file into the soft band now needs an
-  offsetting trim in the same commit. So does a hint that restates text already
-  living in the file's documented overflow home. The session-close gate
-  re-grades the same population on whole-repo branches, so the in-session check
-  is a convenience, not the only seat.
-- **The shared-data write-lock protocol moved to the data hub's own rule-file.**
-  The root file keeps a one-paragraph anchor. One rule carried over with it:
-  decide whether a write is canonical from how its target was *aimed*, never by
-  comparing paths, because a path comparison that is right from the main
-  checkout is wrong from a worktree copy.
-- **The operational kernel's blind cells now launch outside the working tree**,
-  so they receive neither the rule-file nor the memory index. That is measured
-  by a probe on every CLI version change, never assumed. A test that must stay
-  red until a later session parks in a pending directory rather than the live
-  battery, because the close gate has no expected-red lane.
-- **A deploy is treated as a publication event.** A stale deployed build is
-  invisible to every repository-side gate, so the only evidence of what a
-  running service serves is a live read. The live probe now grades its own
-  controls, since a refusal-only record cannot fail.
-- **The trading side's scheduled routines are paused by an operator ruling**,
-  and the paused set has a single owning file with a per-routine re-arm recipe.
-  The constellation watcher also learned a fourth class of fire outcome, a
-  safeguard refusal, which it no longer confuses with a clean short run or a
-  kill.
-- **The release lane gained a gate for its own examples directory.** The one
-  location where kernel example files may publish now admits a closed set of
-  file types, content-scans every data file there, and requires a per-list
-  manifest to verify before any push phase runs.
 
 ## What's not populated, and why that is a ruling
 
