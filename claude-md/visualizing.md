@@ -88,7 +88,7 @@ this § 3 is authoritative.
   FAILED-renders-`diverge` invariant, the no-artifact fallback, gates:
   SPEC § 11.0a (verbatim there — do not re-state here).
   Stays top-level: `catalog.json` feeds **every** modality, not just `graphs/`.
-  **Held set (hub-goldens MT-10):** `usc_to_catalog.py` drops every cell dir /
+  **Held set:** `usc_to_catalog.py` drops every cell dir /
   `*Bridge.lean` at or under a key of proving's `framework_set.NON_PUBLISHED`
   (`Proving/`-relative; read as an ast literal, never imported; a missing roster
   REFUSES). Known-bad + identity arm: `extractor/test_usc_held.py`.
@@ -168,8 +168,6 @@ the charts SPEC's ledger** — trust the SPEC rows, not this line.
   Phase 5). Frame capture rides the cytoscape kit (headless Playwright —
   `sandbox/serve.mjs` + `__CY__.png()`/`exportSVG`).
 
-**M0 node-link reader (2026-06-17).** Adapter internals (`fromNodeLink`/`mountNodeLink`; monitoring mounts live, verifying uscode = M2) → `graphs/README.md` § "M0 node-link reader".
-
 **Method-DAG hero (designing `/thesis`).** An authored interactive INDUCTIVE DAG
 over three general, byte-compat node-link capabilities. Encoding, the standing
 graph-def grammar and the W7 constraint mechanism live in **parent SPEC § 15**
@@ -181,22 +179,19 @@ contract `…/visualizing-2026-06-03/thesis-hero-2026-07-07/SPEC.md`, capture
 bundle `scenes/thesis-hero/`; open work = items 9/15. **W6 method-projection producer SHIPPED
 2026-08-06**: `extractor/method_projection.py` + `validate_method.py` emit + gate
 `data/visualizing/method-{legal,financial}.json` (hero NEVER regenerated; zero
-kit changes). Build record, G1–G5, the 10 known-bad witnesses, the § 6 amendment
-and the one standing finding it left (the TOKEN-based financial directional
-gate; the nested-merge-group hardening landed `9b8e1b0fc`, `core/merge.ts`):
-`…/visualizing-2026-06-03/method-projection-2026-08-06/SPEC.md`.
+kit changes). Build record + its one standing finding (the TOKEN-based financial
+directional gate; the nested-merge-group hardening landed `9b8e1b0fc`,
+`core/merge.ts`): `…/visualizing-2026-06-03/method-projection-2026-08-06/SPEC.md`.
 
 **Constellation modality (M) + cluster-lens.** studying's SECOND operational
-input — the qagents monorepo + `~/.claude` memory as one non-hierarchical graph
-(`graph.kind="constellation"`; producer `studying/scripts/extract_constellation.py`,
-golden `studying/Operating/emits/constellation/golden.json`). Scoped kinds ride
-the open attrs bag under § 1's no-widening rule (Option B; Option C re-opens
-R2's held-open veto). Constellation is **dark-only**
+input (`graph.kind="constellation"`; producer, golden + privacy: spec
+`data/charters/studying/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md`).
+Scoped kinds ride the open attrs bag under § 1's no-widening rule (Option B;
+Option C re-opens R2's held-open veto). Constellation is **dark-only**
 (`tokens-constellation.css` DARK SoT, no light twin); monitoring owns
 `/constellation` + the mechanical kit-dist re-host-copy (item 21). Adapter/mount
 mechanics, the cluster-lens ring + SoT, the M1 picture-floor knobs:
-`graphs/README.md` § "Constellation (M) + the M1 picture floor". Spec:
-`data/charters/studying/specs/lean4-charter-2026-06-10/constellation-graph-2026-06-17/SPEC.md` § 8.
+`graphs/README.md` § "Constellation (M) + the M1 picture floor".
 
 ## 4. Phased roadmap (spec § 12)
 

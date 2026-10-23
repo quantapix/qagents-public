@@ -5,7 +5,7 @@ subproject. Assumes Claude Code's default guidance and the repo-root
 `qagents/CLAUDE.md`. Don't re-litigate those.
 
 Status emit: real producer at `blending/scripts/status_emit.py`
-(stdlib Python, runs from system `python3`, NOT Blender's bundled
+(stdlib Python, runs from bare `python3`, NOT Blender's bundled
 interpreter — it only reads the filesystem). Emits motif-registry
 readiness + the explaining/ consumer roster + render-cache counts per
 the root § "Status hub" contract.

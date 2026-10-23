@@ -107,20 +107,14 @@ PATH, and the path-token screen sees prose with no path. **A gate here must
 never be built: it would convict every COMPLIANT cell for a mandated read** —
 the cure is briefing surgery plus a rephrased-briefings probe. It was found by
 reading a wave's frozen transcripts by hand, looking for something else
-(`ns:proving/221`, seq 341; third recorded member of the family). A seventh leak
-channel of a DIFFERENT predicate is also measured and unowned: the harness
-itself publishes every blind cell's LIVE transcript into a directory the
-firewall's own `DEFAULT_SHARED_GLOBS` bans — for each `Agent` spawn a symlink at
-`/private/tmp/claude-<uid>/<slug>/<session>/tasks/<agent-id>.output` resolving to
-that subagent's canonical JSONL, readable WHILE written — measured mid-fan-out,
-figures at `ns:studying/200`.
-Channels (a)–(f) grade a READ BY AN AGENT; this one is about the surface being
-POPULATED BY CONSTRUCTION, so it may warrant its own class rather than a (g)
-bullet. **It voids no archived wave — but it changes what a verdict attests:
-`certified_blind` means no cell was OBSERVED to take the channel, never that the
-channel was closed.** Amending § 4a of `axiomatize-shared-2026-07-04/SPEC.md` is
-the steward's call (`ns:accounting/175`, seq 338, all three axes owed); the
-channel COUNT is the part that goes stale, so state the sentence, not a number.
+(`ns:proving/221`, seq 341; third recorded member of the family). The
+HARNESS-POPULATED surfaces (the per-`Agent`-spawn `tasks/<agent-id>.output`
+symlink to a sibling's live JSONL; the system-context git-status snapshot) reach
+a blind cell BY CONSTRUCTION — an attestation-scope rule, not a new channel,
+owned by `lean4-charter-2026-06-10/blindness-firewall-2026-07-25/SPEC.md` § 1d
+(Agent-tool fallback only; falsifier read `ns:studying/200`). **It voids no
+archived wave — but `certified_blind` means no cell was OBSERVED to take the
+channel, never that the channel was closed.**
 ⚠ Those entries are SYMLINKS, so an orchestrator hygiene `rm` on the shared root
 removes only the link — accounting's breached-wave evidence survived one. **Do
 not generalise that:** had they been real files the same sweep would have
@@ -203,7 +197,12 @@ axis then replays its own example proofs
 (`feedback_lean_toolchain_bump_verify_example_proofs`). **Studying
 carries TWO pins**, not one: `studying/lean-toolchain` *and*
 `studying/Operating/lean-toolchain` (the Operating package is the actual kernel) —
-both move together or `elan` resolves differently depending on cwd. **The two pins
+both move together or `elan` resolves differently depending on cwd. **A bump's
+attack-corpus half is graded by the JUDGE, never the lib build** (v4.35.0 deleted
+`Lean.ofReduceBool` / `ofReduceNat` / `trustCompiler`, which eleven committed
+fixtures named; maintained under licence at `7d9f18797`): drive the real
+`_judge_attack_file` over every attack file (`DAO_SOURCE_ONLY=1 . dao.sh`) on BOTH
+toolchains and compare file for file. **The two pins
 also DISAMBIGUATE a coordinate, and getting that wrong cost a ratified close gate
 its whole life (2026-08-25).** Anything that hashes "the kernel" — the lean_graph
 `input_digest` and every reader of it — is rooted at the LAKE PACKAGE
@@ -231,10 +230,7 @@ excludes its emit by construction, so the identical-sounding claim is FALSE ther
 self-poisoning, resolve its PATHSPEC — one level of root separates the two
 outcomes. Consequence for the steward (qagents, row M19 since 2026-10-04):
 **changing the digest algorithm now reds a consumer's suite on another axis** —
-intended, and a fourth site to move. **Before the cutover "one commit"
-was not always achievable and the deviation was recorded** (one commit per branch,
-in lockstep in time, each independently verified); under M10 the single qagents
-commit is the form, and the three never drift across a day.
+intended, and a fourth site to move. The three pins never drift across a day.
 
 **The pin is CWD-DEPENDENT (2026-07-14).** `elan` reads `lean-toolchain` from the
 *current directory*, so a bare `lean` run anywhere without a pin file (a sandbox probe

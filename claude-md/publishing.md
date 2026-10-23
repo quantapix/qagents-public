@@ -100,8 +100,8 @@ SHORT forms in any published CLAUDE.md — every other gate reads NAMES, so a
 green suite over `claude-md/` was a statement about names, not about matter; a
 lane over live matter publishes by SHAPE, its state in an unpublished sibling.
 
-**Two arms landed 2026-09-15** (`t_23`, `t_24`): detail in the forensics file
-below. **Only a two-polarity test can say a cure went too far.**
+**Only a two-polarity test can say a cure went too far** (`t_23`, `t_24`;
+forensics file below).
 
 **Gate (1e) — the SCOPE is the guard (2026-08-14).** Two measured narrowings
 (PATH scope excludes `claude-md/` + `github-metadata.json`; REGEX scope is
@@ -117,10 +117,8 @@ ships whatever the source says, and documenting a bar is exactly the context in
 which a barred file gets named. A source that acquires such a mention needs its
 own `OUTPUT_BARS` key: keying the bar to one source made it a guard narrower
 than its grant (2026-08-21), and a REWRITES rule alone is silent against a NEW
-unruled sentence. A third source was keyed 2026-09-15 (`ns:publishing/78`) after
-its claim rode at least three pushes unseen — the 2026-08-21 widening had added
-the one source that had been CAUGHT, not the class, which is the same defect one
-level up. **When the bar protects a person rather than a file, bar the COUPLING
+unruled sentence — key the CLASS of source, never only the one caught.
+**When the bar protects a person rather than a file, bar the COUPLING
 and not the name**: a deliberately public name must SURVIVE the render, so the
 pinning test (`t_25`) asserts both directions and an over-broad cure reds.
 
@@ -273,7 +271,7 @@ README). `scripts/`:
 `publish.sh` · `github_meta.py` · `iga_verify.py` ·
 `sync_mirror.py`/`sync-mirror.sh` · `status_emit.mjs` · `videos_emit.mjs` ·
 `youtube_{auth,upload,sync,manifest}.py` · `hub_goldens_list.py` ·
-`g6_tree_gate.sh` · `claim_check.py`.
+`g6_tree_gate.sh` · `claim_check.py` · `cold_read.sh`.
 
 ## 9. Messaging-hardening debate (publishing/ convenes)
 
@@ -341,20 +339,16 @@ in Studio; `youtube_sync.py` diffs and `videos.update`s drift. Skill:
 `publishing/scripts/youtube_{sync,upload,auth}.py`; deps in the root `[publishing]`
 extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
 
-- **Two hard gates.** (1) **Signoff gates** (signoff-framework § 7): scope is the
-  **R2 union** (`in_scope_gates()`; an unregistered class fails closed), and
-  `signoff_blocker()` refuses push/adopt-over/upload unless every in-scope gate's
-  `signoffs[<gate-id>]` names a record on disk — scope map, flag semantics, R9:
-  `data/publishing/CLAUDE.md`. A record is a promoted
-  `data/messaging-rulings/<date>.md` (pleading grants) or a
-  `data/signoffs/FINANCIALLY/` record (evaluating grants, accounting
-  advises). publishing never self-grants. **IGA enforcement (R7):** inline-operator
-  grants get `iga_verify.py`'s three refuse checks — contract, wiring, test:
-  spec § 5.5. Owed: `github_meta.py` repo-content binding (needs the
-  evaluating-owned FINANCIALLY `LEDGER.md`, R1). (2) The synthetic-content
-  **altered-content disclosure has no API field** — it stays a manual Studio toggle
-  per upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete on
-  its own. A redaction/verb scan over `descriptions/` runs before any push.
+- **Two hard gates.** (1) **Signoff gates:** `signoff_blocker()` refuses
+  push/adopt-over/upload unless every in-scope gate (the **R2 union**; an
+  unregistered class fails closed) names a record on disk; publishing never
+  self-grants. Record kinds + flags: the skill's § Gate / refusal; scope map, R9:
+  `data/publishing/CLAUDE.md`. **IGA (R7):** inline-operator grants get
+  `iga_verify.py`'s three refuse checks (spec § 5.5). Owed: `github_meta.py`
+  repo-content binding (needs the evaluating-owned FINANCIALLY `LEDGER.md`, R1).
+  (2) **Altered-content disclosure has no API field** — a manual Studio toggle per
+  upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete. A
+  redaction/verb scan over `descriptions/` runs before any push.
 - **Banner ↔ channel-info land together** (same PR) — `youtube/README.md` § Banner ↔ channel-info lockstep.
 - **First run = `--mode adopt`** (baselines the SoT from live so the diff is real),
   then `check` → resolve → `push`; `--mode stats` writes

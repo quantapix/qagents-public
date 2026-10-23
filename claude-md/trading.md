@@ -14,11 +14,11 @@ Cross-project conventions live in the repo root `qagents/CLAUDE.md`. The canonic
 6. **Journal before quitting.** A routine that places or modifies a position must append the reasoning to `journal/YYYY-MM-DD.md` before exiting. If journaling fails, treat the run as failed. **In the `--print` cron lane the way this rule breaks is silent, and it is not a budget kill: the lane does not wait for work that yields the foreground turn — a backgrounded sub-agent, a timer, "I'll wait for the task notification" — nor does it re-prompt a turn that ends on a text-only status or progress message while the routine's section is still unappended (nothing is pending, so the lane exits at once, no ceiling involved) — and the fire still reports `exit=0`, `is_error=False`, well under budget (mechanism + ceiling: the cron-lane owner, `data/schedules/CLAUDE.md` + `run_routine.sh`).** Two consequences, both mandatory. (a) **Foreground every write the exit depends on** — dispatch `journal-writer` and `performance-reporter` inline, never in the background. (b) **Never express a gate as a wait** — evaluate the clock read yourself and proceed, re-aim the ticket at the next fire that is legitimately past the gate, or use a price condition instead of a time condition. Three measured artifact losses on this rule, all `exit=0`: aggressive + moderate `close-journal` 2026-09-02 (both `## Close` sections, background sub-agents) and aggressive `open-execution` 2026-09-04 (`## Morning Execution`, a 10:05 ET time gate). **No cost-anchored or error-anchored detector sees this class** — the fires are neither errored nor expensive; only section enumeration against the schedule finds them. Do not conclude from a clean `is_error` sweep that a day is complete.
 7. **Stop-losses on every equity buy**, per each PM's `risk_policy.md`. Use bracket orders. **Coverage is a claim about the BROKER, not about the ticket** — `midday-review` verifies it every day via `python -m shared.lib.risk coverage --account <pm> --orders-file <orders> --orders-status all`, which compares held quantity against live sell-stop quantity. **Fetch with `--status all`, and `--orders-status` is required** (2026-08-07): a bracket's stop leg hangs off its parent, the parent is terminal once the entry fills, so `--status open` omits both and every bracket-protected position reads naked. Under any other fetch a naked reading is `verdict: unknown`, never a breach. On a real breach the remedy is NOT "submit the stop NOW" — a duplicate stop against a resting bracket cancels the live legs via OCO — and **if the broker refuses, stop and re-verify rather than improvise around the refusal**. `portfolio.json`'s `bracket.stop_loss` is the stop the PM *intended*, never evidence of coverage. Incident detail (the 08-05 OCO destruction, moderate's 6h33m naked QQQ): memory `project_trading_system` § Gate defects.
 8. **`risk_policy.md` is edited only during `monthly-retro`**, with the change justified in `retros/YYYY-MM.md`. **The retro fires INSIDE `close-journal` on the month's last session and nowhere else** — decide month-end with `python -m shared.lib.performance next-session` (`is_last_session_of_month`), never by a weekday proxy, and never defer to "tonight's retro": there is no such fire, and July 2026's moderate retro was lost exactly that way.
-9. **Concentration caps are enforced at TICKET time; a held position can drift THROUGH its cap without ever being shown a gate**. `max_single_position_pct` / `max_sector_pct` gate a *proposed* ticket via `risk-analyzer` — moderate closed 2026-08-19 at XLV **8.042%** against an 8.00% cap having correctly cleared 7.79% that same morning (+3.44% price move, qty unchanged all day). **Do not read "the book cleared risk-analyzer" as "the book is in policy."** Since 2026-08-27 `close-journal` step 7 runs `python -m shared.lib.portfolios validate --slug <slug>` right after `sync-managed` (which WRITES the managed form and never grades it) and puts any `valid: false` into that day's `## Owed` block for the next `premarket-brief` step 0c to discharge. **That arm REPORTS; it does not cure** — a cap breach is fixed by a ticket at the next open, never by a close-time trade. Second-order, still unresolved: the pre-commit hook validates the whole `financial/portfolios/*.md` set, so a breaching book **freezes the hub mirror** — `analyzing/`/`accounting/`/`simulating/` keep reading the last in-policy snapshot and cannot see the breach (open ruling: `ns:trading/33`). Rule numbers are append-only: they are cited by number across the journal/research record, so never renumber.
+9. **Concentration caps are enforced at TICKET time; a held position can drift THROUGH its cap without ever being shown a gate**. `max_single_position_pct` / `max_sector_pct` gate a *proposed* ticket via `risk-analyzer` — moderate closed 2026-08-19 at XLV **8.042%** against an 8.00% cap having correctly cleared 7.79% that same morning (+3.44% price move, qty unchanged all day). **Do not read "the book cleared risk-analyzer" as "the book is in policy."** Since 2026-08-27 `close-journal` step 7 runs `python -m shared.lib.portfolios validate --slug <slug>` right after `sync-managed` (which WRITES the managed form and never grades it) and puts any `valid: false` into that day's `## Owed` block for the next `premarket-brief` step 0c to discharge. **That arm REPORTS; it does not cure** — a cap breach is fixed by a ticket at the next open, never by a close-time trade. Second-order, still unresolved: a breaching book **freezes the `financial/portfolios/` hub mirror** (the pre-commit hook validates the whole set, so consumers keep reading the last in-policy snapshot) — open ruling `ns:trading/33`. Rule numbers are append-only: they are cited by number across the journal/research record, so never renumber.
 
 ## Model assignment
 
-Tiers are root `qagents/CLAUDE.md` § Model policy's: PM-level reasoning (strategy, trade selection, retros) on the model each cron routine's seat assigns — `routine_policy_model` in `data/schedules/launchd/run_routine.sh` is the single owner, read it there, never restate it here; sub-agents (data pulls, order placement, risk math, journaling, news triage) on the lesser tiers pinned in their own `.claude/agents/<name>.md` frontmatter — a subscription-quota choice, not a measured quality tier; no eval of the split exists. Never re-tier a sub-agent without an effort/cost sweep first (root § Model policy names the lever), then the frontmatter edit with the reason stated in the definition.
+Tiers are root `qagents/CLAUDE.md` § Model policy's: PM-level reasoning (strategy, trade selection, retros) on the model each cron routine's seat assigns — `routine_policy_model` in `data/schedules/launchd/run_routine.sh` is the single owner, read it there, never restate it here; sub-agents (data pulls, order placement, risk math, journaling, news triage) on the lesser tiers pinned in their own `.claude/agents/<name>.md` frontmatter — a quota choice, not a measured quality tier; no eval of the split exists. Never re-tier a sub-agent without an effort/cost sweep first (root § Model policy names the lever), then the frontmatter edit with the reason stated in the definition.
 
 Sub-agent roster — defined once at the project level in `.claude/agents/`, shared by
 every PM (each PM's charter notes only its own usage emphasis): `market-data-fetcher`
@@ -84,7 +84,7 @@ Options tickets add a `legs` array with `strike`, `expiry`, `option_type`, `side
 
 ## Leg-pairing id + fills ledger (portfolio-schema v-next)
 
-Built 2026-08-06/07 under `op:fills-ledger-ruling`. Requirements R1–R5 are the
+Requirements R1–R5 are the
 consumer's, not ours — `accounting/predicates/hedging/BOUND-schema-requirements.md`
 (consumers: `put_spread_band_ok`, `collar_bounds_computable`,
 `hedge_cost_budget_leq`); read it before changing any field here.
@@ -108,11 +108,10 @@ malformed row makes `read_fills` **raise, not skip** (a skipped row lowers a
 spend figure, and a spend quietly too low clears a budget that was breached).
 Corrections are compensating rows, never edits.
 
-**Hub projection (built 2026-08-18):** `fills project
---account <pm>` renders `financial/portfolios/fills/<fund>.jsonl` — header row
-(same-pass `shares_by_underlying`, R4) + every ledger row verbatim (R3 one
-layer up). Fired from `close-journal` step 7.5 after reconciliation.
-Governance + lock posture: `financial/portfolios/CLAUDE.md` § fills/.
+**Hub projection:** `fills project --account <pm>` renders
+`financial/portfolios/fills/<fund>.jsonl`, fired from `close-journal` step 7.5
+after reconciliation. Shape (R3/R4 header row), governance + lock posture:
+`financial/portfolios/CLAUDE.md` § fills/.
 
 ## Journal entry schema
 
@@ -221,8 +220,8 @@ runbook at `data/schedules/Notes.md`.
 traffic, no producer (`managing/.claude/agents/verifier.md` L37). Do not re-add
 them. State files (`portfolio.json`, `watchlist.md`) stay canonical in both
 lanes — read by the next same-day cron fire, they can't stage behind the
-once-daily verifier (`data/specs/data-conventions-2026-05-06/`). Contract: root
-`qagents/CLAUDE.md` § "Shared-data write-lock".
+once-daily verifier (`data/specs/data-conventions-2026-05-06/`). Contract:
+`data/CLAUDE.md` § 7 (the write-lock's single owner).
 
 **Cron-lane path discipline (load-bearing).** A cron fire runs
 `run_routine.sh` → `claude --print "/<routine>"` with cwd already at the
@@ -252,8 +251,8 @@ driver, the dissolved Linux-target gates and the herdr design record: memory
   (§ Scheduled routines above — the CONTINUITY invariant). Between the push
   and 21:00 the lane is DARK and loud (`CHANGEOVER-DEFERRED`, `exit=75`).
 - **Session ↔ cron overlap is FENCED (2026-08-02) — and the fence points at
-  you.** § 12 covered host↔host handover only; SESSION-EXCLUSION (§ 12.2.2) is
-  the same-host half. While an `/open trading` session holds the write-lock,
+  you.** SESSION-EXCLUSION is the same-host half of CONTINUITY. While an
+  `/open trading` session holds the write-lock,
   every trading cron fire on that host **refuses**: `qagents-session-fence
   REFUSED`, `exit=76`, nothing spent. The lock it reads is the session BRANCH
   itself (`trading` / `trading-N` / `qagents`), so it releases when you
@@ -287,10 +286,8 @@ Run-bucket doctrine (the three log-derived buckets, `missing_runs`/`pending_runs
 
 ## Status emit (`data/status/trading.json`)
 
-Producer: `trading/scripts/status_emit.py` (`/usr/bin/env python3` → homebrew, no venv;
-`KIT_VERSION` pinned in-script — sweep with all pins on kit bumps,
-never restate the literal in prose): per-PM NAV + snapshot count +
-portfolio.json age + total NAV + leaderboard age, plus a `pm-cohort`
-diagram. `live.status` flips OK / DEGRADED / NOT_YET_LIVE on
-portfolio.json freshness (<72 h). Honors `QAGENTS_PENDING_ROOT` for the
-cron lane. Contract: root `qagents/CLAUDE.md` § "Status hub".
+Producer: `trading/scripts/status_emit.py` (stdlib-only, bare `python3`, no venv;
+`KIT_VERSION` pinned in-script — sweep with all pins on kit bumps, never
+restate the literal in prose). The emitted fields, the OK / DEGRADED /
+NOT_YET_LIVE freshness rule and the `QAGENTS_PENDING_ROOT` cron-lane aim are
+the script's own. Contract: root `qagents/CLAUDE.md` § "Status hub".

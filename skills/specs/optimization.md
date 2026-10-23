@@ -46,6 +46,22 @@ edit, because dropping a per-project block that holds the only copy of an
 edit would destroy it. No digester carries a model pin; the fleet inherits
 the model the orchestrator was invoked with.
 
+## Relocation review
+
+The pass carries its own counterweight. Before a capped surface is trimmed,
+its content is spread down the disclosure ladder (always loaded, loaded per
+open, loaded on demand) and never discarded into history alone. The review
+half runs inside the pass when one of a fixed set of trigger arms fires,
+among them the memory index nearing its cap, a rule-file over or approaching
+a cap, owed review items, and a long gap since the last review. It writes a
+blueprint with an aging register and an apply prompt, and files a routing
+item. The moves themselves run in one separate whole-repo session, after the
+operator rules on the blueprint's priority items. That session's apply log
+takes one item per row, with a disposition from a closed set: cured,
+consumed, owner-done, struck or dropped. The first three must cite a commit
+or the row keeps aging. Work left unconsumed escalates after two later
+passes, or by one interval per seven days when no pass runs.
+
 ## License
 
 MIT — see `../../LICENSE-MIT` at the umbrella root.

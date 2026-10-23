@@ -83,8 +83,7 @@ cites #6, and `dco-manual` cites the checker's #7.
    that looks at what didn't**), `peerdark=DARK`, `pending-enable=<n>-AGED`
    (≥ 7d) → **correctness**; every `UNKNOWN` / `no-peer` is tally-only but
    **never** reads clean. managing REPORTS these rows, never edits them. Full
-   row text: `checker.md` #9, the copy the daily fleet reads; memory
-   `project_mobile_cron_seat`; spec family `data/specs/node-return-lane-2026-07-14/`.
+   row text: `checker.md` #9; seat context: § 7.1.
 10. **Node-PR staleness.** `scripts/node-pr-staleness.sh` is the source of
    truth (observe-only; never fetches). `stale=YES` (unmerged node PR > 7d) →
    **consistency** — a waiting contributor, not a broken system; everything
@@ -122,13 +121,9 @@ cites #6, and `dco-manual` cites the checker's #7.
    (`feedback_blind_fanout_oracle_channels`). `withheld` is the correct
    posture, never a finding. Detail: `checker.md` #14 (ns:managing/49).
 15. **Coherency arms — the deterministic half of the § 3 daily mandate.**
-   `scripts/specs-audit.sh --section coherency` is the source of truth
-   (operator ruling 2026-08-05 = do-retire R-18 + reap-boundary R1: an
-   EXECUTION gap closed, not new ownership). Four arms: exit-46 citation
-   existence; declared-pair value checks; the absorbed-body freeze detector
-   (drift REPORT-ONLY, but exit 2 is **correctness** — a dead matcher never
-   reads as clean); the warn-cap byte-sweep against filed `spread-review
-   owed` items. Any `coherency` row → **correctness**; `coherency-report`
+   `scripts/specs-audit.sh --section coherency` is the source of truth (four
+   arms; authority do-retire R-18 + reap-boundary R1). Any `coherency` row →
+   **correctness**, a dead freeze matcher (exit 2) included; `coherency-report`
    rows are report-only; UNKNOWN is always a finding, never clean. Full row
    text lives ONLY in `checker.md` #15.
 
@@ -288,10 +283,9 @@ subagent's failure rate; the script's lanes filter to new/modified files, so the
 second run is additive). Audit signal: `git log --grep "^\[managing\] verify"`.
 
 ⚠ **`pending/` is PER-HOST; only the seat's buffer drains** (§ 7.1; rule, the
-`hostname`-vs-`SEAT` check + the `pending/logs/` carve: root CLAUDE.md
-§ Shared-data write-lock). Measured 2026-09-13: the 09-12 sidecar described
-qpur's tree. **Stamp the host on the pending section exactly as the
-launchd-logs section already does.**
+`hostname`-vs-`SEAT` check + the `pending/logs/` carve: `data/CLAUDE.md` § 7).
+**Stamp the host on the pending section exactly as the launchd-logs section
+already does.**
 
 Script mechanics — manual `--force`, `prune_stale_fails`, the S5 write-back
 + the `push_to_authority` silent-SPOF rule: `data/schedules/CLAUDE.md`
@@ -353,7 +347,6 @@ An `exit=77` fire is a FIFTH class: the child exited 0 at `end_turn`, but a
 declared artifact is absent or still a template token — `run_routine.sh`'s
 separate `qagents-fire complete=0 missing=…` line names it (map:
 `data/schedules/launchd/lib/artifacts.sh`); `checker.md` #6 grades it.
-Unmeasured until the first live instance.
 Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`,
 paired with `routine_policy_model` so a routine's tier and its funding cannot
 drift apart — read `daily`'s figure from that function, never from a copy
@@ -365,12 +358,12 @@ the rule; rationale `data/schedules/Notes.md`).
 
 Spec family: `data/specs/node-return-lane-2026-07-14/`; memory
 `project_mobile_cron_seat`. The lane runs on **exactly one laptop at a time** —
-`qyel` or `qpur`, the only two hosts with a "head" (headless boxes cannot hold a
-Claude subscription seat). `data/schedules/SEAT` names the holder;
+`qyel` or `qpur`, the only two hosts with a "head" (headless boxes cannot hold an
+interactive Claude seat). `data/schedules/SEAT` names the holder;
 `run_routine.sh :: assert_seat_holder` **freshly reads it from the `github`
 authority before every fire** and refuses otherwise.
 
-Three consequences that bind `managing/`:
+Four consequences that bind `managing/`:
 
 - **A non-holder logs `exit=0 skipped=not-seat-holder`.** That is a no-op, **not a
   failure** — the checker's non-zero-exit scan must never score it as one.

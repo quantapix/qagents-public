@@ -552,7 +552,7 @@ the public-repo roster, or the contact channel changes.
 
 The framework's six-month public donation drive runs 2026-06-01 →
 2026-12-01, with Open Source Collective as the intended fiscal sponsor.
-Four exclusive-use buckets: the AI-assistant subscription, a third-party
+Four exclusive-use buckets: AI-assistant usage, a third-party
 service line, cloud hosting, and a court-fee bucket.
 
 **The channel is not receiving funds, and the reason is upstream of the

@@ -108,9 +108,9 @@ dirs.
 Janet HeyGen renders ship at 9:16 only — no native-aspect 16:9 take
 arrives. The long-form 16:9 timeline (S2
 `assemble-talking-head-with-broll`) imports the keyed-from-chroma 9:16
-take and routes through a Fusion comp that places Janet on a 16:9
-canvas (corner-PIP, lower-third, or split-screen against a 16:9 brand
-plate). S3 `assemble-shorts-vertical` is unchanged — 9:16 take direct
+take and places Janet on a 16:9 canvas (corner-PIP, lower-third, or
+split-screen against a 16:9 brand plate); the PIP decoration bakes
+off-Resolve per § 5.5. S3 `assemble-shorts-vertical` is unchanged — 9:16 take direct
 to V1. Per-episode `phase*_*.py` drivers source from `takes/9x16/`,
 never `takes/16x9/`. Same dual-aspect pattern as
 `reference_resolve_dual_aspect_two_timelines`.
@@ -150,23 +150,19 @@ manual Fusion-authoring steps, verify each named node, parameter, and
 apply-mode against `/Applications/DaVinci Resolve/DaVinci Resolve
 Manual.pdf` (or the extracts under `resolving/davinci/docs/manuals/`).
 Treat the manual as ground truth — not memory, not the v1 catalog's
-existing prose. The 2026-05-24 audit caught copy-paste-consistent
-hallucinations across all eight v1-catalog files (wrong node kinds,
-invented properties, dead design-token paths — token SoT is
-`rendering/` brand tokens, never a hardcoded path in skill prose).
-Pinned in `feedback_fusion_skill_authoring_manual_crosscheck`.
+existing prose. Token SoT is `rendering/` brand tokens — never a
+hardcoded path in skill prose. Audit provenance + the error classes:
+`feedback_fusion_skill_authoring_manual_crosscheck`.
 
 **Runtime introspection is the final authority over the manual.** The
 2026-05-29 golden capture caught `Glow` input-name errors that survived
 the manual crosscheck — the real inputs are `XGlowSize`/`YGlowSize` (no
 `GlowSize`) and `Red/Green/BlueScale` (no `*ColorScale`). Before trusting
 a recipe's `set_input` names, dump the live tool's `GetInputList()` (or
-capture a golden `.setting`) on the installed build. Same lesson for
-capability claims: `SubtitleTrack.import_srt()` exists in source but
-returns falsy at runtime (SRT-import-as-subtitle-track is unavailable via
-scripting) — so `burn_in()` reads the SRT *file* directly. Verify against
-a running Resolve, not the manual or `docs/api.md`. See
-`reference_resolve_scripting_gotchas` § 4.
+capture a golden `.setting`) on the installed build. Same for capability
+claims (present in source ≠ works at runtime — the `import_srt`
+instance): verify against a running Resolve, not the manual or
+`docs/api.md`. See `reference_resolve_scripting_gotchas` § 4.
 
 **Full-frame overlays bake to transparent ProRes, never host on a clip
 (live-verified 2026-06-03).** A Fusion comp renders its output ONLY on a

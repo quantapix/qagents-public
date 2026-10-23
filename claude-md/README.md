@@ -127,7 +127,10 @@ private content stripped. The redaction rules:
   addresses, no docket numbers.** The private blocklist that
   enforces this lives outside this repo so this repo itself stays
   safe to mirror.
-- **No internal hostnames, no IAM identifiers, no per-host paths.**
+- **No network addresses, no IAM identifiers, no per-host paths.** The
+  short nicknames of the developer's own workstations do appear: they carry
+  no address, and the multi-host scheduling rules are unreadable without
+  them.
 - **Engineer-debugging voice throughout.** No activism, no
   exhortations, no rhetorical questions, no marketing exclamations.
 
@@ -136,8 +139,9 @@ Litigation-domain files fall in that bucket.
 
 ## Refresh cadence
 
-Weekly. The private working tree is the source of truth; this subtree
-mirrors. A sync script runs the redaction sweep + diff before each
+Per release run, not on a fixed schedule — this repo's commit history is
+the authority on when it last moved. The private working tree is the source
+of truth; this subtree mirrors. A sync script runs the redaction sweep + diff before each
 publish; promotion to GitHub happens through a separate push wrapper.
 
 Re-rankings, new subprojects, and new cross-subproject conventions

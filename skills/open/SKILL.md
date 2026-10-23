@@ -40,6 +40,17 @@ stays the only write-lock — and the desktop app must open the provisioned
 folder as-is rather than minting its own worktree. The footer is also
 persisted under `data/summaries/open/`.
 
+**Side-session.** If the script prints a side-session notice, this open ran
+from inside another session's worktree, and this session is now bound to the
+new lock. The hooks refuse its file writes and its history-writing git
+(`commit`, `merge`, `rebase`, `cherry-pick`, `revert`, `reset`, `stash`,
+`am`, `checkout`, `switch`) in any other lock's worktree. Before any write,
+move the session's working directory to the printed project folder. Until
+the move takes effect, use absolute paths under the new worktree and point
+git at it explicitly. From the old directory, a relative write or commit
+lands on the parent session's branch. An open launched from the canonical
+checkout binds nothing.
+
 The Outstanding rows are the candidate session agenda: section A (ready
 now) is highest priority; section B (gated on external) blocks unless the
 gate cleared. There is no third section — cross-cutting items live in the

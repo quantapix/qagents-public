@@ -107,8 +107,7 @@ streams must stay synthetic (no live-matter predicates) and carry a visible
 guard both directions. Binding record:
 `data/specs/publishing-2026-05-31/quantapix-thesis-github-2026-06-23/PLEADING-GATE-DECISION-2026-06-23.md`.
 `pleading/` owes the § 11.7 post-deploy cold-read after every deploy that
-changes messaging (incl. the promotion deploy's R6 — naive-reader test on
-the corrected figures + membrane).
+changes messaging.
 
 **Barred-token guard (live 2026-07-31, ns designing/15 (c)):** `bash
 web/scripts/barred-tokens.sh` — run before **every deploy**. An invocation of
@@ -316,11 +315,10 @@ The Status page is the canonical surface for the engineer-debugging voice
 
 `designing/web/` IS the adopted Claude Design "LOUD" treatment (dark,
 statistic-forward home; live membrane hero), promoted from the `web-next/`
-staging sibling 2026-07-07 (content de-dup deferred). Records: debate record
+staging sibling 2026-07-07. Records: debate record
 `web-next-promotion-2026-07-07` (`data/debates/`, HELD lane; R1–R6) + pleading re-clear
 `data/messaging-rulings/2026-07-07.md`. Package `quantapix-web`; e2e port
-4322. Specs: `data/specs/designing-loud-redesign-2026-06-19/` (family),
-`data/charters/designing/specs/designing-hero-membrane-2026-07-06/SPEC.md`.
+4322. Spec: `data/charters/designing/specs/designing-hero-membrane-2026-07-06/SPEC.md`.
 
 - **Home-hero messaging gate (BINDING, pleading-signed 2026-07-07).**
   *The home hero — whatever artifact occupies it — MUST hold a current
@@ -358,6 +356,10 @@ staging sibling 2026-07-07 (content de-dup deferred). Records: debate record
   loosened expectation. Add a public axis here only if its producer already
   emits both counts; a new emit field is strictly riskier than reading one that
   ships (root § Status hub whole-slot failure trap).
+  **Slot-3 is hub-fed since 2026-10-19** — `src/lib/framework-count.ts` sums
+  proving + accounting `frameworkCount` (both must report; typed counts are
+  gate-BLOCKED); the e2e reads the hub JSON, never a literal. The strip's
+  resting DOM is the final value (no-JS e2e); the run-up is JS-only.
 - **Thesis-steps animation (`/thesis`).** Touching `/thesis` or
   `public/thesis-steps/` → read memory `project_designing_web`
   § "Thesis-steps delivery module" (floors + byte-exact contract).

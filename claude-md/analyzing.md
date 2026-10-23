@@ -52,7 +52,7 @@ absorbed subspecs:**
   driver for every chart-like (`qchart`) presentation capability** — new
   capabilities prove on analyzing's real-tape mount (or record an explicit
   skip) before public mounts adopt them; driver ≠ owner — kits stay
-  `visualizing/`'s (`web-ui-trio-2026-07-11/`).
+  `visualizing/`'s.
 
 **Invariants audited each close** (detail: spec §§ 1.1, 2.3, 3.5):
 
@@ -80,21 +80,11 @@ behavior** — the live GICS reader is `web/src/lib/gics.ts`, never
 
 ## Batch ingest + ta_reference
 
-`scripts/ingest.py` and `scripts/ta_reference.py` both have an additive
-batch mode alongside the original single-symbol form, plus a `--flat`
-mode added by the `data/specs/data-charter-2026-05-17/` family for writing
-into the canonical `financial/parquet/` hub:
-
-- Legacy per-symbol-subdir layout (no `--flat`): `ingest.py` writes
-  `<DIR>/<SYM>/<SYM>.parquet`; `ta_reference.py --in-dir DIR` reads it and
-  writes `<DIR>/<SYM>/ta_reference.parquet` in place.
-- `ingest.py --symbols A,B,C --out-dir financial/parquet/ohlcv-equities --flat`
-  — one yfinance multi-symbol download (MultiIndex split via
-  `df.xs(sym, axis=1, level=1)`), writes `<DIR>/<SYM>.parquet`; per-symbol
-  failures isolated into the summary `failed[]`. Post-charter canonical form.
-- `ta_reference.py --in-dir financial/parquet/ohlcv-equities --out-dir financial/parquet/ta-reference --symbols A,B,C --flat`
-  — reads `<in-dir>/<SYM>.parquet`, writes `<out-dir>/<SYM>.parquet`;
-  `--flat` requires explicit `--out-dir`. Symbol case normalized at argparse.
+CLI shape of `scripts/ingest.py` + `scripts/ta_reference.py` (single vs
+batch, `--symbols` / `--symbols-file`, legacy per-symbol-subdir vs `--flat`
+canonical layout, `CHUNK` fetch batching, per-symbol/per-chunk `failed[]`
+isolation): each script's module docstring — single owner. Per-dataset
+producer invocations: `financial/parquet/CLAUDE.md` § Datasets.
 
 The parquet hub is gitignored ground truth in the canonical checkout —
 worktrees symlink to it, S3-backed (see `financial/parquet/CLAUDE.md`).
@@ -106,14 +96,7 @@ for a worktree-local file, silently leaving canonical stale. When running
 the manifest step from a worktree, point it at the canonical root:
 `--parquet-root <root>/financial/parquet`.
 
-Both batch scripts also accept `--symbols-file FILE` (one symbol per
-line; `#` comments + blank lines skipped; deduped) in place of the
-`--symbols` comma list — the path for driving the full S&P 500 universe.
-The canonical universe is committed at `financial/universe/sp500.txt`
-(S&P 500 constituents ∪ anchor ETFs incl the 11 sector SPDRs; see
-`financial/universe/CLAUDE.md`). `ingest.py` chunks the yfinance fetch
-at `CHUNK = 64` symbols/request and isolates per-chunk download failures
-into `failed[]`, so a 500-symbol run never rides one giant download.
+Universe: `financial/universe/sp500.txt` (`financial/universe/CLAUDE.md`).
 **There is exactly ONE refresh chain, and this file does not own its
 length.** Cron and manual/backfill run the same steps in the same order; the
 single owner is `scripts/tape_refresh.py build_steps()` (rendered as the
@@ -138,34 +121,20 @@ canon's warm-up and semantics are daily-calibrated, so `rsi14` over minute
 bars silently means something else.
 
 **INV-W: an intraday request must lie inside the vendor's retention window on
-both axes** — span (per request) and lookback. Measured live, not copied from
-docs: 1m = 8d/30d (7d→1950 bars, 8d→2340, 9d→empty), 5m+15m = 60/60, 1h =
-730/730; the bound is INCLUSIVE (an earlier 7d guess was a false refusal of a
-servable window). It exists because the vendor answers an out-of-window
-sub-daily request with an **empty frame**, which `ingest.py` reads as
-`failed[] frozen=True` — a coverage regression blaming the vendor for a window
-we chose, at exit 3. The tell does not look like the cause, so the window is
-checked before the fetch and the refusal carries its own arithmetic.
-
-`--rolling` computes a servable window (`ROLLING_SPAN_DAYS`, deliberately below
-the hard limit so a wake-coalesced late fire still lands in-window); its
-ANCHOR is the chain's `resolve_end` via `--rolling-anchor` (b71c79064) —
-without it every post-close fire stopped one session short (vendor
-end-exclusive) and the dataset-uniform lag read green on every arm. **The
-retention wall bounds the REQUEST, not the tape:** INV-H's merge leaves bars
-older than `--start` as `E_out`, so a repeatedly-fired lane accumulates
-indefinitely — verified live (two runs, 08-03..08-06 then 08-05..08-10 → 5
-trading days × 390 RTH bars/symbol, no duplicates). It can never *backfill*
-behind the wall, so coverage begins the day the lane starts firing.
-
-`history_guard` is resolution-aware via a `tf` argument defaulting to `1d`
-(daily behaviour byte-identical): the `volume_settle` frontier conjunct
-tightens from 10d to 2d (10 days of minute bars is ~3,900 bars — wide enough
-to invert the arm from fail-closed to fail-open), and evidence labels
-(`lost_first`/`restated_first`/…) keep time-of-day, because `tape_refresh`'s
-expected-blocked signature keys on them and date-truncated labels let two
-different same-day gaps share one key. Tests: `scripts/test_intraday_guard.py`
-(the four load-bearing arms each observed RED via sabotage).
+both axes** — span (per request) and lookback; the bound is INCLUSIVE. Out of
+window the vendor answers with an **empty frame**, which `ingest.py` reads as
+`failed[] frozen=True` at exit 3 — a coverage regression blaming the vendor
+for a window we chose — so the guard refuses BEFORE the fetch, with its
+arithmetic. **The retention wall bounds the REQUEST, not the tape:** INV-H's
+merge keeps bars older than `--start`, so the lane accumulates forward but can
+never *backfill* — coverage begins the day the lane starts firing. Single
+owners (code comments): measured per-interval limits + `ROLLING_SPAN_DAYS` →
+`scripts/intraday_guard.py` docstring + `VENDOR_LIMITS`; the `--rolling-anchor`
+end-exclusive trap → `tape_refresh.py` `build_steps()` intraday-step comment;
+`history_guard`'s `tf` arm (2-day sub-daily frontier conjunct, time-of-day
+evidence labels) → `FRONTIER_LAG_INTRADAY_DAYS` / `INTRADAY_TFS` comments.
+Tests: `scripts/test_intraday_guard.py` (the four load-bearing arms each
+observed RED via sabotage).
 
 **SHIPPED 2026-08-10** (operator ruling; named consumer **`simulating/`**, in
 flight — the ruling to land ahead of it is recorded in the tape-schema charter
