@@ -9,9 +9,10 @@ A regularly refreshed window into how a sole developer plus an expert AI
 assistant collaborate inside a single monorepo of sibling subprojects
 (the roster is the table below). The artifact this repo publishes is *not* the
 implementation code — that lives in the per-subproject public repos.
-It is the **rule set** the assistant reads at every session start,
-the topic files it loads on demand, and the daily engineering memos
-curated alongside.
+It is the **rule set** the assistant reads at every session start and the
+lifecycle skills that execute it. The topic files it loads on demand and the
+daily engineering memos are chartered here and unpopulated, by ruling (see
+[STATUS.md](./STATUS.md)).
 
 - Parent organisation: <https://github.com/quantapix>
 - Engineering output: <https://quantapix.com>
@@ -53,8 +54,10 @@ this repo publishes.
 
 The private repo runs **every one of its sibling subprojects** under a single
 root. They share a venv, a pnpm workspace, a Lean toolchain, and a
-Git tree — but they explicitly do *not* share code. The boundary rule
-("No cross-subproject imports — ever") is load-bearing.
+Git tree — but no subproject imports another's code. That boundary is
+load-bearing. Code two subprojects both need lives in a shared-code hub owned
+by no subproject and reaches them as a declared workspace dependency; data
+crosses through the data hubs.
 
 Each subproject has its own `CLAUDE.md`. That file carries:
 
@@ -125,9 +128,7 @@ Each phase has a different actor:
 Two further details:
 
 - **AI checking AI is the rule, not the exception.** A spec reviewed
-  only by the proposer is treated as unreviewed. Code changed
-  without a code-review pass or a cloud-review invocation is flagged
-  at session close.
+  only by the proposer is treated as unreviewed.
 - **The debate is auditable.** Every spec carries its rejected
   alternatives in-band ("considered X, dropped because Y");
   twin-plan Appendix-A entries name the loser. The audit trail is
@@ -139,11 +140,11 @@ The coordination primitive in qagents is **git itself**. There is no
 central scheduler, no lock server, no message bus. There is one rule:
 **branch presence IS the write-lock.**
 
-- `/open <project>` creates a branch named `<project>` (or
-  `<project>-N` if `<project>-N-1` already exists — stacked) AND a
-  worktree. A second session attempting `/open <project>` blocks
-  because the branch already exists. A whole-repo open blocks if any
-  subproject session is open.
+- `/open <project>` creates a branch named `<project>` AND a worktree. If that
+  branch already exists, the new session stacks on the smallest free
+  `<project>-N`, branched from its predecessor. A whole-repo open blocks if any
+  subproject session is open, and a subproject open blocks while a whole-repo
+  session holds the lock.
 - `/close` summarises the session, applies the immediate `CLAUDE.md`
   edits to the project's own surface, queues cross-subproject hints
   into a deferred file (picked up later by `/do-claude-updates`
@@ -163,7 +164,10 @@ Parallelism in practice: up to one whole-repo session and N
 non-overlapping subproject sessions concurrently, each in its own
 worktree, each with its own `CLAUDE.md` graph loaded. Cross-cutting
 work serialises through the branch-lock; within-subproject work
-parallelises freely. A single laptop, no external coordinator.
+parallelises freely. Several workstations take part. Sessions on one machine are coordinated by a
+local terminal multiplexer, and work moves between machines as topic branches
+through LAN mirrors, with one hub as the sole merge point. The lock itself
+needs no coordinator service.
 
 ### 5. Context-window optimisation
 
@@ -208,17 +212,18 @@ concern, on the same level as test coverage:
   session's window. The daily memos themselves are markdown
   source-of-truth; the vector index is regeneratable cache.
 
-The publishable shape of this — the snapshots in `claude-md/`,
-`memory/`, `memsearch/` (see "Layout" below) — is the *result* of
-these disciplines, not their description. This README explains the
-disciplines; the snapshots show what they produce.
+The publishable shape of this — the snapshots in `claude-md/` and `skills/`
+(see "Layout" below) — is the *result* of these disciplines, not their
+description. This README explains the disciplines; the snapshots show what
+they produce. `memory/` and `memsearch/` carry no snapshots, by ruling.
 
 ### 6. Coordination primitives — what crosses, what doesn't
 
 The boundaries that aren't `CLAUDE.md` text but are still
 load-bearing — data hubs, sentinel write-locks, scoped MCP servers —
 get the full treatment in the "Cross-subproject conventions" section
-below. The asymmetry is: code is per-subproject; data hubs cross.
+below. The asymmetry is: a subproject's code stays its own, shared code lives in a
+hub no subproject owns, and data hubs cross.
 
 A third primitive crosses the same way a data hub does: the **kit-mount**
 pattern. Domain-neutral rendering kits ship as vanilla JS into the product
@@ -237,8 +242,7 @@ assistants inspecting each other's work:
    read-only architecture planning, diff-correctness review, the
    constellation-wide context-optimisation fan-out, plus per-subproject
    sub-agents (e.g. a runtime defined-risk enforcement agent for the
-   trading side; a coordinator + ten volume agents for federal
-   record-appendix assembly).
+   trading side).
 2. **Test loops with clean-context subagents.** Each iteration of
    the five-iteration test loop runs in a fresh subagent, so prior
    iterations' false framings don't carry forward.
@@ -286,8 +290,8 @@ the loop:
 - The programmatic lane is **parked**. By design, cron routines run the
   default non-interactive print lane and share the interactive lane's
   quota. The wrapper, the ledger, the routine definitions and their tests
-  are all retained as-is; nothing has been deleted, and a single suffix
-  re-enables the lane. Until then it is treated as an external blocker with a registry
+  are all retained as-is; nothing has been deleted, and a short recorded
+  recipe re-enables the lane. Until then it is treated as an external blocker with a registry
   entry, deliberately excluded from every bottleneck metric so a parked
   dependency cannot distort the dependency graph.
 - **The cron wrapper fails closed on billing.** It refuses to run
@@ -351,8 +355,9 @@ kernels themselves live in the per-product public repos.
 ```
 qagents-public/
   README.md                       this file
+  STATUS.md                       release-narrative status
   LICENSE                         Apache 2.0 — code lane (Lean axioms, drivers, TS/Python)
-  LICENSE-MIT                     MIT — prose + AI-agentic workflows (the three subtrees below)
+  LICENSE-MIT                     MIT — prose + AI-agentic workflows (the prose subtrees below)
   claude-md/                      redacted CLAUDE.md graph
     root.md                       redacted root CLAUDE.md
     <sub>.md                      one per included subproject (see table below)
@@ -474,14 +479,14 @@ import each other's code. Examples:
 The shared-data hub is governed by a five-kind closed-set charter
 (`data-hub` / `convention-anchor` / `render-cache` / `status-emit` /
 `letter-binding`) plus a three-question gate (kind, producer-of-record,
-consumers). Two subprojects reaching for the same code module rather
-than a data hub is flagged by the daily watcher.
+consumers).
 
 ### Session lifecycle
 
 Sessions start with `/open <project>` and end with `/close`. The
-branch presence IS the write-lock; conflicting parallel sessions on
-the same scope are blocked by branch existence. Cross-subproject
+branch presence IS the write-lock; a whole-repo session and a subproject
+session exclude each other, and a second session on one project stacks on a
+numbered branch. Cross-subproject
 edits queue as deferred hints picked up later by
 `/do-claude-updates`.
 
@@ -532,9 +537,11 @@ session's window.
 
 Refreshed per release run from three private sources:
 
-- The root + per-subproject `CLAUDE.md` graph → `claude-md/`.
+- The root + per-subproject `CLAUDE.md` graph, less any mirror held for
+  review → `claude-md/`.
 - The `open` / `close` / `do-claude-updates` / `do-claude-optimizations`
-  skill bodies + their adopted specs → `skills/`. These are the
+  skill bodies + condensed renders of the two charters
+  they cite → `skills/`. These are the
   executable shape of the session-lifecycle (theme 4) and
   context-optimisation (theme 5) disciplines this README describes.
 - Condensed renderings of adopted specs cleared for this repo →
@@ -545,7 +552,7 @@ Two further subtrees are chartered but unpopulated by ruling — see
 
 Re-rankings, new subprojects, and new cross-subproject conventions
 are committed as ordinary diffs — the commit log is the change
-record. The README itself changes monthly when the team, the thesis,
+record. The README itself changes when the team, the thesis,
 the public-repo roster, or the contact channel changes.
 
 ## Donation drive
@@ -608,8 +615,7 @@ in the org. Answered in public; there is no contact email.
 
 ## License
 
-Two-license pair, mirroring the convention across the `qagents-*`
-public repos:
+Two-license pair, the one dual-license repo in the organisation:
 
 - **`LICENSE`** — Apache 2.0. Covers any code lane (Lean axioms,
   predicate stubs, drivers, TypeScript / Python utilities reused

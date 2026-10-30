@@ -63,6 +63,16 @@ import subprocess
 import sys
 import tempfile
 
+# The build precondition is a sibling module; put this file's own dir on the
+# path, so a caller that loads this seat by FILE PATH (rather than by import)
+# resolves it too.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from build_precondition import require_built  # noqa: E402
+from stdout_channel import (  # noqa: E402
+    PRINT_AXIOMS_RECORD_RE, ForgedChannel, check_records, extract_window,
+    marker_commands, mint_nonce, reject_outside,
+)
+
 # The three standard Lean axioms — always allowed (soundness-preserving).
 STANDARD_AXIOMS = ("Classical.choice", "propext", "Quot.sound")
 
@@ -258,20 +268,43 @@ def discover_declared_axioms(root: pathlib.Path) -> set[str]:
 # `#print axioms` output parsing + closure classification.
 
 # `'Thm' depends on axioms: [a, b.c, sorryAx]`  /  `'Thm' does not depend on any axioms`
-_DEPENDS = re.compile(r"'([^']+)' depends on axioms:\s*\[([^\]]*)\]")
-_NO_DEPENDS = re.compile(r"'([^']+)' does not depend on any axioms")
+# — one regex for both shapes, shared with score_bridge (stdout_channel.py).
+_RECORD = PRINT_AXIOMS_RECORD_RE
 
 
-def parse_axiom_closure(output: str) -> dict[str, set[str]]:
+def parse_axiom_closure(
+    output: str, *, expected: list[str] | None = None, nonce: str | None = None,
+) -> dict[str, set[str]]:
     """Parse `#print axioms` stdout into {theorem_name: {axiom, …}}. A theorem
     that "does not depend on any axioms" maps to an empty set. Toolchain-free —
-    this is the unit the pure-python test exercises against synthetic output."""
+    this is the unit the pure-python test exercises against synthetic output.
+
+    THE STDOUT CHANNEL IS CHECKED, NOT TRUSTED (note 355; the doctrine
+    and the four-channel table are `stdout_channel.py`'s docstring). Until
+    2026-10-24 the two shapes were read in two loops — NO_DEPENDS first, then
+    DEPENDS overwriting — so an import-time forged line was beaten only by
+    ORDER (the real line printed later and won the dict write): a NO_DEPENDS
+    loop placed after the DEPENDS loop would have let a forged "does not
+    depend" line erase a sorryAx. Now: records are read in ONE ordered pass,
+    a duplicate name convicts in either order, and with `expected` + `nonce`
+    (what `main` passes) only the reader's own nonce window is parsed, a
+    record outside it convicts, every requested theorem must have exactly one
+    record, and the END count is recomputed. Raises `ForgedChannel`.
+
+    `nonce=None` is the legacy reading for a SAVED dump (accounting
+    `refutation_attest.py --axioms-output`): a window, if present, must still
+    be unique and well-formed; without one the whole text is parsed."""
+    win = extract_window(output, nonce, required=nonce is not None)
+    body = output if win is None else win.body
+    if win is not None:
+        reject_outside(win, _RECORD, "theorem")
+    records = list(_RECORD.finditer(body))
+    check_records([m.group(1) for m in records], expected,
+                  None if win is None else win.declared)
     closure: dict[str, set[str]] = {}
-    for m in _NO_DEPENDS.finditer(output):
-        closure.setdefault(m.group(1), set())
-    for m in _DEPENDS.finditer(output):
-        axioms = {tok.strip() for tok in m.group(2).split(",") if tok.strip()}
-        closure[m.group(1)] = axioms
+    for m in records:
+        closure[m.group(1)] = {
+            tok.strip() for tok in (m.group(2) or "").split(",") if tok.strip()}
     return closure
 
 
@@ -306,13 +339,38 @@ def unexpected_axioms(
 # ---------------------------------------------------------------------------
 # Lake invocation (reuses score_bridge.py's temp-file shape).
 
+class BuildPreconditionUnmet(RuntimeError):
+    """`print_axioms` refused: the modules do not `lake build` (the message is
+    `require_built`'s). Raised, never returned as output — a refusal string
+    parsed as `#print axioms` output reads as an EMPTY, i.e. clean, closure."""
+
+
 def print_axioms(
-    modules: list[str], theorems: list[str], root: pathlib.Path
+    modules: list[str], theorems: list[str], root: pathlib.Path,
+    *, prebuilt: bool = False, nonce: str | None = None,
 ) -> tuple[str, int]:
     """Elaborate `import <module>…` + a `#print axioms` per theorem; return
-    (stdout+stderr, returncode). The modules must already `lake build`."""
-    body = [f"import {m}" for m in modules] + [""]
+    (stdout+stderr, returncode).
+
+    The `#print axioms` commands are bracketed by the reader's nonce window
+    (`stdout_channel.marker_commands`; note 355) so `parse_axiom_closure`
+    can tell the reader's own records from an import-time print. Pass the
+    nonce you will parse with; a caller that omits it gets a window under a
+    nonce it cannot check (legacy saved-dump path only).
+
+    The build precondition runs HERE unless the caller already ran
+    `require_built` itself (`prebuilt=True`), and an unmet build raises
+    `BuildPreconditionUnmet` (note 331 (3)(a)): library callers bypassed
+    `main()`'s check twice (accounting `refutation_attest.py`, studying
+    `concession_shape.py`), each re-cured lane-side."""
+    if not prebuilt:
+        unbuilt = require_built(modules, root)
+        if unbuilt is not None:
+            raise BuildPreconditionUnmet(unbuilt)
+    begin, end = marker_commands(nonce or mint_nonce(), len(theorems))
+    body = [f"import {m}" for m in modules] + ["", begin]
     body += [f"#print axioms {t}" for t in theorems]
+    body.append(end)
     with tempfile.NamedTemporaryFile(
         "w", suffix=".lean", dir=root, delete=False
     ) as fh:
@@ -418,14 +476,28 @@ def main(argv: list[str] | None = None) -> int:
     if args.allow_declared:
         allowed.update(discover_declared_axioms(root))
 
-    out, rc = print_axioms(modules, theorems, root)
+    # note 290 220(a): a red tree must refuse here, before an import
+    # resolves the last-built olean and grades the old state clean.
+    unbuilt = require_built(modules, root)
+    if unbuilt is not None:
+        print(f"error: {unbuilt}", file=sys.stderr)
+        return 3
+
+    nonce = mint_nonce()
+    out, rc = print_axioms(modules, theorems, root, prebuilt=True, nonce=nonce)
     low = out.lower()
     if rc != 0 or "error:" in low or "unknown" in low:
         print(f"error: elaboration/resolution failed (rc {rc}) for "
               f"modules {modules}\n{out}", file=sys.stderr)
         return 3
 
-    closure = parse_axiom_closure(out)
+    try:
+        closure = parse_axiom_closure(out, expected=theorems, nonce=nonce)
+    except ForgedChannel as e:
+        # A finding, not a could-not-look: an import wrote into the channel
+        # this attestation reads (note 355). G7-fail code, never 3.
+        print(f"FAIL: FORGED CHANNEL — {e}\n{out}", file=sys.stderr)
+        return 2
     if not closure:
         print(f"error: no `#print axioms` closure parsed from output:\n{out}",
               file=sys.stderr)

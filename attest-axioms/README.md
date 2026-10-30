@@ -6,8 +6,8 @@ will tell you, one theorem at a time, if you ask with `#print axioms`. This
 tool asks for every theorem in a module or a directory, compares each answer
 with an allowed set, and exits non-zero when any theorem escapes it.
 
-It is one Python file with no dependencies beyond the standard library. It
-needs `lake` on PATH and a package that already builds.
+It is written in Python with no dependencies beyond the standard library. It
+needs `lake` on PATH, and it builds the package before it checks anything.
 
 ## Use
 
@@ -26,7 +26,7 @@ The allowed set is the three standard axioms (`Classical.choice`, `propext`,
 |---|---|
 | 0 | Every attested theorem's closure is inside the allowed set. |
 | 2 | Finding: some closure holds `sorryAx`, a `native_decide` axiom, or an axiom outside the allowed set. |
-| 3 | Could not look: the module did not elaborate, a name did not resolve, or no target was found. |
+| 3 | Could not look: the package did not build, the module did not elaborate, a name did not resolve, or no target was found. |
 
 Keep 2 and 3 apart at the call site. Exit 3 says nothing about soundness
 either way.
@@ -36,6 +36,13 @@ like a `native_decide` axiom are refused even if you allow-list them.
 
 ## What a clean exit does not mean
 
+- **A clean exit holds for the package as it builds now, unless you skip the
+  build.** Lean imports a module from its last compiled copy, so a module
+  whose source no longer compiles can still be imported as it was before it
+  broke, and a broken tree checked that way could read clean. The tool
+  therefore runs `lake build` on the target modules first and exits 3 if that
+  fails. If you call its Python functions yourself with `prebuilt=True`, you
+  are telling it the build already passed, and that check is yours.
 - **It attests the closure, not the statement.** A theorem that proves the
   wrong thing from declared axioms passes.
 - **`--allow-declared` trusts every declared axiom.** An inconsistent or
@@ -69,7 +76,7 @@ Lean behaviour is then not exercised by this copy.
 
 ## Provenance
 
-This is a staged copy of a file maintained in a private repository, where it
+This is a staged copy of code maintained in a private repository, where it
 gates three Lean 4 packages. The comments keep their dated notes about the
 defects that shaped each rule; module names in examples and tests were
 replaced with neutral ones. The licence is the one at the root of this

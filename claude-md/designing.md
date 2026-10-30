@@ -371,7 +371,11 @@ staging sibling 2026-07-07. Records: debate record
   `hero-graph.json` (never regenerated) is the landing state,
   `method-legal.json` is a wholesale re-copy of its
   `data/visualizing/` sibling (drill-down state) — every visualizing regen
-  is a PUBLIC face change at the next deploy. `loader.js` is the
+  is a PUBLIC face change at the next deploy. `/thesis` ships one method
+  graph, the legal one. A financial method-graph tab (tab, loader row, host
+  copy) is not part of the page: adding one requires a FINANCIALLY record
+  (`ns:designing/30`), and an e2e test asserting the tab's absence guards
+  that; `loader.js` is the
   app-owned never-fold side-car. Chrome strings in `copy.ts thesis.methodGraph`
   (claim-free vocabulary). E2e: `interactivity.spec.ts` "Method DAG" block
   incl. the per-sheet token guard.

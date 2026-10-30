@@ -6,7 +6,7 @@ published `CLAUDE.md`, refreshed per release run from the private source.
 
 See the [umbrella README](../README.md) for the broader thesis.
 Sibling subtrees: [`skills/`](../skills/) (the session-lifecycle + optimization
-skill bodies + their adopted specs), [`memory/`](../memory/),
+skill bodies + the charter renders they cite), [`memory/`](../memory/),
 [`memsearch/`](../memsearch/), [`specs/`](../specs/).
 
 ## What a `CLAUDE.md` is
@@ -142,7 +142,7 @@ Litigation-domain files fall in that bucket.
 Per release run, not on a fixed schedule — this repo's commit history is
 the authority on when it last moved. The private working tree is the source
 of truth; this subtree mirrors. A sync script runs the redaction sweep + diff before each
-publish; promotion to GitHub happens through a separate push wrapper.
+publish; promotion to GitHub happens through the release lane's `gh` push step.
 
 Re-rankings, new subprojects, and new cross-subproject conventions
 land as ordinary diffs — the commit log is the change record.

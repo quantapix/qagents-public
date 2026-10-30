@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-10-23. Refreshed per release run during the
+_Snapshot: 2026-10-30. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -27,20 +27,60 @@ that is a ruling, not a backlog, and it is stated in full below.
   subprojects publish and which are deferred.
 - **`skills/`** — the four session-lifecycle + optimization skills (`open`,
   `close`, `do-claude-updates`, `do-claude-optimizations`) as redacted SKILL.md
-  bodies, plus the adopted specs they implement. These are the executable shape of
+  bodies, plus condensed renders of the charters they implement. These are the executable shape of
   the worktree-as-lock discipline (theme 4) and the context-window-optimization
   discipline (theme 5) the README describes.
 - The `claude-md/` graph widened on the 2026-07-20 refresh from the
   product-focused core to the full publishable set: the local-only analytics
   app, the operational-axis kernel, both public sites' authoring surfaces, the
   video-production chain, and the adversarial sibling all now publish their
-  rule-sets. Three subprojects remain deferred and one is an open editorial
-  call; the subtree README names each and why.
-- The `claude-md/` graph re-renders from the private rule-sets on every
-  refresh. This round most of the published set moved, several substantially;
-  the commit diff is the change record.
+  rule-sets. Two subprojects remain deferred, one is an open editorial call, and three
+  have not been assessed; the subtree README names each and why.
+- The `claude-md/` graph re-renders from the private rule-sets on refresh. This
+  round a small part of the published set moved; the commit diff is the change
+  record.
 
-## What changed since the 2026-10-16 refresh
+## What changed since the 2026-10-23 refresh
+
+- **A regex `git grep` is now refused in sessions.** On the macOS workstations
+  a regex `git grep` scans every tracked binary through the system regex
+  library. Peak memory reached tens of gigabytes, and this accounted for most
+  of one workstation's recorded pressure events over three weeks. A session
+  hook now denies a `git grep` call that lacks a flag skipping binaries or
+  changing the matcher. The hook fails open, and it does not cover script call
+  sites or sessions running outside the repo; the rule-set states both limits
+  beside the rule.
+- **Kernel builds run under a per-host governor.** Concurrent Lean runs had
+  rebooted the laptops. The kernel lanes now enter Lean through a wrapper that
+  takes a host-wide mutex, caps threads and priority, and refuses to start
+  under memory-compressor pressure. The first pressure threshold sat below one
+  laptop's idle reading and refused every start, so the default was raised
+  after measurement. A later fix stops a governed job's child processes from
+  outliving it.
+- **A kernel job can run remotely under a hard memory cap.** A job ships whole
+  to a LAN node and runs under a 24 GB cgroup limit the laptops cannot give.
+  Two measured corrections came out of the witnesses. A soft memory band with
+  swap disabled throttled a runaway 30 GB allocation for more than ten minutes,
+  where the hard limit alone killed it in 13 seconds, so the soft band defaults
+  to zero. The default out-of-memory policy turned the kernel's kill into an
+  ordinary termination code with an empty record, so the scope now stays up
+  long enough for the job to record its own memory events. A cold build ran
+  about 2.5 times slower remotely, inside the expected range.
+- **The recall watcher releases its model when idle.** It now unloads the
+  embedding model after two idle minutes and reloads on the next file event.
+  Measured on one workstation: 1.8 GB loaded, 162 MB after the first unload,
+  220 to 800 MB after later reloads. The in-process target of under 150 MB was
+  not met. Separately, the close step's orphan-watcher sweep had matched only
+  the process form from before the recall migration, so for twenty days it
+  reaped nothing while exiting 0. It matches the current form now.
+- **The memory-index entry cap grades the whole entry.** The 150-character
+  limit now reads one length definition across the entry.
+- **The release lane's pre-push read covers the static site shell.** The probe
+  read the replay API only. The shell is a different surface with a different
+  failure path, so the push step now chains both, and a test fails if the shell
+  argument is dropped.
+
+## Earlier: what changed in the 2026-10-23 refresh
 
 - **A session opened from inside another session is bound to its new lock.**
   When a session provisions a second project from inside its own worktree,
@@ -86,46 +126,6 @@ that is a ruling, not a backlog, and it is stated in full below.
 - **Two retired spec renders were removed from `skills/specs/`.** The charter
   renders replaced them earlier; the release sync now also deletes files that
   exist only on the public side.
-
-## Earlier: what changed in the 2026-10-16 refresh
-
-- **A size-review item is filed only for growth.** The close step's size
-  check used to file (or cite) a review item for any rule-file the session
-  touched that sat within a fixed margin of its warn cap. It now does so only
-  for a file the session itself grew into that margin. A session that edits a
-  file already near the cap without growing it is no longer charged with the
-  file's history.
-- **The session that applies a relocation retires the review item.** Such an
-  item used to clear as soon as any relocation run dated after the crossing
-  existed, whether or not its moves were applied. It is now retired by the
-  session that applies that run's moves, after the apply merges, and only
-  when every listed file has a disposition. The run's own record names the
-  item it opened and records the retirement; a test refuses an apply log on
-  its own as evidence.
-- **Unconsumed relocation work ages by the calendar as well.** An apply left
-  unconsumed escalated after two later optimization passes, so during a
-  stretch with no pass it never aged. It now also ages one interval per seven
-  days without a pass, and a move made by the file's own owner counts as
-  consumed.
-- **The always-loaded cost is measured as injected bytes.** The context
-  metric now ranks each rule-file by its size times the number of times it is
-  injected, nested rule-files included, beside its on-disk size. A small file
-  loaded into every session can cost more than a large one loaded once.
-- **Two more report-only readings.** Every memory commit logs the net row
-  change in the memory index, and below the soft cap the size helper prints
-  the largest byte deltas since the last optimization anchor. Neither refuses
-  anything or starts a pass; they exist so growth is measured between passes.
-- **The operational kernel's daily sentinel now runs on both workstations.**
-  Each copy reads only its own host's archived rounds, so with one seat the
-  other host's rounds went unwatched.
-- **The market-data hub gained a reference-series directory**, beside the
-  bar, portfolio, report, universe, sector and factor directories.
-- **The release lane refuses one more class of internal file by name.** A
-  path rule now rejects a class of standing orchestrator-facing documents,
-  and the glossary that travels with them, wherever either sits in a staged
-  tree. The release collector's contract also lists the class as never a
-  source: the collector is the channel through which such a document would
-  reach a draft, and a dry render of the mirror cannot see that channel.
 
 Earlier refreshes are recorded in this repo's commit history.
 
@@ -184,7 +184,8 @@ wrote a rule for; an assertion on the output is not.
 
 Refreshed per release run, not on a fixed schedule — gaps of two to four
 weeks have happened, and this repo's commit history is the authority on
-when it last moved. Each run re-renders the `CLAUDE.md` graph and the
+when it last moved. Each run re-renders the `CLAUDE.md` graph, less any
+mirror held for review, and the
 lifecycle skills + their specs. The memory topic-file tree and the recall
 memos are allow-list pending (see above), not on any refresh clock.
 Re-rankings, new subprojects, and new cross-subproject conventions land as

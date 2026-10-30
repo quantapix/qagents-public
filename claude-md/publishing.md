@@ -176,6 +176,9 @@ only.
 PRIMARY gate is `sync_mirror.py --scan-tree` over every file the push carries,
 whatever its extension; zero files scanned fails; **a dated resume PDF needs its
 register row before it can ride a push**. Mechanics: the forensics file above.
+**Its blind spot is the live tree's set difference:** a file the live repo holds
+and staging does not is graded by nothing, so `github_meta.py sync` removes
+every such file except its keep-list (2026-10-23, `t_37`; three were live).
 
 **`gh` does all GitHub work (2026-06-23).** `scripts/github_meta.py` is the single
 gh-centric arm — `sync` / `ensure` / `apply` (metadata `gh repo edit`) /
@@ -216,7 +219,8 @@ namespace. Pinned by `t_23`. Re-opening any of this is a publishing-convened,
 **The synthetic scope re-opens separately, one file list at a time.** A
 synthetic example carrying no open-matter id, and no framework whose real
 example is one, may publish under the one admitted location on a concrete,
-hashed file list that `pleading/` clears in its own round record — a list with
+hashed file list that `pleading/` clears in its own round record, after a
+prosecution seat run from another lane has read that list — a list with
 no such clearance, a clearance written into another lane's record, or a list
 changed after the clearance fails the push closed (`hub_goldens_list.py`,
 `t_27`/`t_28`). Every staged example dir also runs pleading's G-6 guard by
