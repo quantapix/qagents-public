@@ -152,7 +152,7 @@ running `--blindness-audit`, freezing or verifying a round's evidence, landing
 anything under `code/lean_tools/`, or quoting any adjudication figure anywhere
 public. **Neither those documents nor any path they name may appear in a blind
 cell's brief** — a rule that is enforceable for the first time now that this file
-no longer supplies the paths. Per-round state stays `ns:studying/60`; the round
+no longer supplies the paths. The round
 scoping, the mechanical breach-refusal and the `--round-close` step order are
 SKILL mechanics (`.claude/skills/dao-manual/SKILL.md`).
 
@@ -164,8 +164,7 @@ not a gate.
 **Daily unit = the SENTINEL, seated at `studying:dao-state` 07:45 daily.**
 07:45 is ORDERED — arm (e) reads managing's 06:00 report, the opposite ordering
 from `proving:axiom-state` 05:10, whose output managing scans. LIVE on BOTH
-seats (qyel measured firing daily 2026-10-14, `host=qyel exit=0`; its
-`pending-enable.md` row deleted to Events) — archives are host-split, so each
+seats — archives are host-split, so each
 seat surveils only its own rounds. **The per-axis sentinel class is
 SEAT-EXEMPT** (a sentinel reads host-LOCAL archives); the `run_routine.sh`
 sentinel-class carve is landed (witness `t_32`) and `dao_state_check.sh` stamps
@@ -213,22 +212,14 @@ other pin, so the recompute can never equal the stamp and every `/dao` round mov
 it. The writer's config is the authority (`code/lean_graph/.../axes.py`, whose own
 doc-comment says "Rel-to-root (studying/Operating)"); derive the population from
 it, never by re-spelling the paths. **FOUR call sites must agree, and the fourth
-is not ours** (2026-08-26, `ns:studying/190`):
-`code/lean_graph/.../extract.py::input_digest` (writes the stamp),
-`code/substrate/src/close/studying_gate.rs` (close exit 32),
-`studying/scripts/lean_graph_freshness.mjs` (the `/status` reader) and
-`proving/scripts/status_emit.py::_live_input_digest` — a byte-for-byte
-re-implementation on the TEXTUAL axis (its emitter runs system `python3` with no
-venv while the writer's package pulls networkx), pinned to a live recompute by
-`proving/scripts/test_status_emit_digest.py`. **The same coordinate governs the
-DRIFT arm, and it is why studying's was self-poisoning where proving's was not:**
-a `git diff <rev>..HEAD` filtered to the LAKE ROOT `Operating/` contains the
-emit's own outputs at `Operating/emits/lean_graph/`, so a description could not
-falsify its own currency; proving's filter is the KERNEL TREE `Proving/`, which
-excludes its emit by construction, so the identical-sounding claim is FALSE there
-(measured 2026-08-26, `ns:studying/190`). Before calling any drift arm
-self-poisoning, resolve its PATHSPEC — one level of root separates the two
-outcomes. Consequence for the steward (qagents, row M19 since 2026-10-04):
+is not ours** — the TEXTUAL axis re-implements the digest byte-for-byte (its
+emitter runs system `python3` with no venv while the writer's package pulls
+networkx); the four sites and their pins are enumerated in the header of
+`studying/scripts/lean_graph_freshness.mjs`, whose header also carries the
+self-poisoning DRIFT-arm anatomy. **The same coordinate is why proving's drift arm
+is NOT self-poisoning** (its filter is the KERNEL TREE `Proving/`, which excludes
+its emit; `ns:studying/190`) — resolve a drift arm's PATHSPEC before calling it
+self-poisoning. Consequence for the steward (qagents, row M19 since 2026-10-04):
 **changing the digest algorithm now reds a consumer's suite on another axis** —
 intended, and a fourth site to move. The three pins never drift across a day.
 

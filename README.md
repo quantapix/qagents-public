@@ -291,9 +291,11 @@ the loop:
   default non-interactive print lane and share the interactive lane's
   quota. The wrapper, the ledger, the routine definitions and their tests
   are all retained as-is; nothing has been deleted, and a short recorded
-  recipe re-enables the lane. Until then it is treated as an external blocker with a registry
-  entry, deliberately excluded from every bottleneck metric so a parked
-  dependency cannot distort the dependency graph.
+  recipe re-enables the lane. It was held as an external blocker with a
+  registry entry, deliberately excluded from every bottleneck metric so a
+  parked dependency could not distort the dependency graph; the external
+  condition has since cleared, and re-enabling the lane is now an operator
+  decision that has not been taken.
 - **The cron wrapper fails closed on billing.** It refuses to run
   against an API key unless an explicit override is set, and it refuses
   the highest-cost model tier outright with no override at all. Model
@@ -583,7 +585,9 @@ payment channel. The monthly ledger reports $0 inflow for the documented
 reason. The bucket structure, the amounts, and the floor are unchanged —
 what is presently impossible is *receipt*, not the drive's definition. The
 drive's work — the open-source repos, the statutory axiomatization, the
-weekly and monthly accountability cadence — began 2026-06-01 and continues.
+weekly and monthly accountability cadence — began 2026-06-01. The October
+ledger posted late and one weekly digest was missed; both are disclosed in the
+drive repo's 2026-W46 digest.
 Details, monthly ledgers, and weekly digests are in the
 sibling repo `qdonating-public`.
 

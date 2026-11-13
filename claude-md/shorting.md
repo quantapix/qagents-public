@@ -42,9 +42,7 @@ case for the short).
   the exception above (operator ruling 2026-09-15). Observe-only is
   unchanged — this is a write to shorting's OWN governance, never to a
   target's.
-  Warn-cap `spread-review owed` items now file to the **qagents** slot
-  (session-lifecycle § 2.8 E4 as re-pointed; shorting sessions are no
-  longer the warn-cap scribe). A debate this subproject convenes
+  A debate this subproject convenes
   writes its record to `data/debates/` (2026-07-14 precedent) under
   `.data-write-lock`; `data/**` is never foreign to a lane (exit 14 does
   not apply).
@@ -206,15 +204,14 @@ per run, likewise never overwritten.
 **Not a live lane.** Retired by `/do-retire` ruling **R-3**; R-4 purged the
 run artifacts. Rationale, Exhibit A, and the R-18 confirmation:
 `data/specs/do-retire-2026-07-26/` + memory `project_do_retire_spec.md`
-(whose § 5.4-vs-§ 4a disposition is a CONTESTED operator REQUEST). The skill
+(operator ruling 2026-08-08: leave for P5). The skill
 and charter § lane-shorten survive on disk **until P5 fires**. An operator
 may still direct a scoped run of the charter shape while the artifacts
 exist (2026-08-08 precedent), but that is an explicit per-run revival, not
 a standing offer.
 
 Lane mechanism is not restated here — normative:
-`data/charters/shorting/review-lanes/CHARTER.md` § lane-shorten (subject,
-scope, partition, reviewer brief, output layout, skill contract, gotchas).
+`data/charters/shorting/review-lanes/CHARTER.md` § lane-shorten.
 Same observe-only governance + managing-routing as `positions/`; absorbed
 anchor `data/charters/shorting/specs/do-shorten-2026-07-02/SPEC.md`.
 
@@ -228,12 +225,7 @@ Sharing never limits an axis: it recognizes patterns already exercised on
 ≥ 2 axes and makes them uniform, and invents nothing (§ lane-share
 Non-limitation). The
 apply sessions it prompts maintain the `axiomatize-shared` subspec, the
-cross-axis LEARNINGS ledger, and the G1–G7 conformance matrix. Since
-2026-08-23 the lane also re-grades the **overhaul-compliance matrix**
-(needs × axes, seeded from the three 2026-08-21 v2 overhaul reports) every
-run, pins an adjudication snapshot at step 1, and treats ratified
-reviews/debates since the prior run as primary intake — all normative at
-§ lane-share. Same
+cross-axis LEARNINGS ledger, and the G1–G7 conformance matrix. Same
 governance as 4a. Skill `/do-share`. Normative: § lane-share; absorbed
 anchor `data/charters/shorting/specs/do-share-2026-07-04/SPEC.md`.
 

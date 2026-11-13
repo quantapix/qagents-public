@@ -90,15 +90,25 @@ keyed on the tree, never a module name, so it outlives any one framework's
 release (`t_33`, whose drift arm reads the live module dirs). Rule (I) (2026-10-16)
 refuses the standing operator briefs' basename class and their glossary wherever
 either sits, and the collector contract names the class as never-a-source — its
-exposure channel is the collector, which a dry mirror render cannot see (`t_36`). A third kind sits INSIDE the renderer: `sync_mirror.py`
+exposure channel is the collector, which a dry mirror render cannot see (`t_36`).
+The 2026-11-13 set closes four enumerations that had failed open. A GENERIC
+federal-appellate docket form joins the HARD keys. It is surface-scoped exactly
+like the earlier federal number, and its path twin (D3) is unscoped (`t_31`).
+Rule (G)'s parent-dropped arm now DERIVES its slugs from the program families'
+own dated subdirs, and a drift arm reads the same listing (`t_30`). A Stage-2
+arm (backticked and bare) and path rule (J) hold a private working tree that
+no roster listed, which until then stayed local by that absence alone (`t_24`, `t_30`).
+`--shape-census` is the privacy triple's third arm: read-only, it prints its
+population and fails on a shape in a render or a status slot (`t_39`). The list
+tool refuses any file whose provenance ties it to held work, and an absent
+provenance record refuses too (`t_40`). A third kind sits INSIDE the renderer: `sync_mirror.py`
 `OUTPUT_BARS` (Stage 1b, asserted in `redact()`, pinned by `t_22`) refuses to
 emit a mirror still carrying a per-source barred token — the only lever that
 reaches the gate-(1e)-excluded `claude-md/` subtree, and the only one that sees a
 token arriving in a sentence no `REWRITES` rule was written for. Its CLASS-wide
 sibling `LIVE_MATTER_BARS` (Stage 1c, `t_26`, 2026-09-18) refuses live-matter
 SHORT forms in any published CLAUDE.md — every other gate reads NAMES, so a
-green suite over `claude-md/` was a statement about names, not about matter; a
-lane over live matter publishes by SHAPE, its state in an unpublished sibling.
+green suite over `claude-md/` was a statement about names, not about matter.
 
 **Only a two-polarity test can say a cure went too far** (`t_23`, `t_24`;
 forensics file below).
@@ -228,10 +238,8 @@ subprocess, and any non-zero aborts (gate (5b), `g6_tree_gate.sh`, `t_34`).
 
 ## 6. Write-lock & session model
 
-- **Branch-as-lock.** `/open publishing` creates branch `publishing` + worktree
-  `<root>-wt/publishing/`. Every Edit/Write `file_path` begins
-  with that worktree root (canonical-edit hook,
-  `data/charters/qagents/session-lifecycle/CHARTER.md` § 2.3).
+- **Branch-as-lock** — branch + worktree `publishing`; path discipline: root
+  § Session lifecycle (session-lifecycle charter § 2.3).
 - **`data/status/publishing.json`** is written by `scripts/status_emit.mjs`
   (§ 7), which takes no lock in-script — `/close` holds `.data-write-lock`
   around the session commit (`data/publishing/CLAUDE.md` § Write-lock posture).
@@ -318,7 +326,7 @@ CLAUDE.md language split).
   Thumbnails live at `designing/web/public/video-thumbs/<id>.png`.
 - **Boundary (§ 3):** the consumer files are `designing/`-owned. publishing
   authors them but **lifts-across** to the `designing` worktree
-  (`data/specs/open-close-dcu-2026-05-26/lift-encapsulated-fixes-2026-06-08/`, Mode A) for the
+  (`scripts/lift.sh`, Mode A; `feedback_cross_subproject_writes_lift_recipe`) for the
   designing session to verify + commit — publishing never closes carrying a
   sibling tree's hunks. The `data/publishing/*` hub + the emitter stay on the
   publishing branch (allowlisted shared hub, not foreign).
@@ -359,11 +367,8 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   `data/publishing/youtube-stats.json`. `youtube_sync` does NOT touch `videos.json`
   — the /videos live-flip stays the `videos_emit.mjs` edit (§ 10).
 - **CDN release gate (`CLEARANCE_COMMIT`).** `serving/scripts/upload-video.sh` refuses
-  any `T<n>/` catalog key unless `CLEARANCE_COMMIT` equals the `granting_commit` of a
-  `CLEARED*` FINANCIALLY record (registry-resolved; missing registry ⇒ refuse; then
-  ancestor of HEAD) — so a `verified-N/A` grant for a non-financial episode is
-  **mechanically required**. **This paragraph has been wrong in BOTH directions
-  across three corrections — read the script, not this paragraph.** Contract
-  family `data/specs/serving-2026-05-26/`
-  (serving owns script + gate); this bullet is the publishing-side pointer the
-  script's error message cites.
+  any `T<n>/` catalog key without a cleared FINANCIALLY record's `granting_commit` —
+  so a `verified-N/A` grant for a non-financial episode is **mechanically required**.
+  **Read the script, never a paragraph about it** (this one was wrong in BOTH
+  directions three times); serving owns script + gate (`data/specs/serving-2026-05-26/`).
+  The script's refusal cites § 10 — keep that number stable.

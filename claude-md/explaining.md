@@ -145,5 +145,3 @@ Edit `outline.md` here; the next `/publish` picks it up. See
 ## Status emit (`data/status/explaining.json`)
 
 `explaining/scripts/status_emit.mjs` participates in the qagents-wide Status page contract (KIT_VERSION pinned in the producer — re-sweep on every kit bump). Status pill is permanently `NOT_YET_LIVE` in v1 — explaining is a script repo; rendering happens downstream. Schema: `@qagents/diagram-kit`; contract: `qagents/CLAUDE.md` § "Status hub". Self-contained — no sibling-subproject imports.
-
-Summary diagram + 5×10 arc-matrix (from `outline.md` + on-disk per-episode artifacts): the producer's own code.

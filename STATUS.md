@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-10-30. Refreshed per release run during the
+_Snapshot: 2026-11-13. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -37,10 +37,55 @@ that is a ruling, not a backlog, and it is stated in full below.
   rule-sets. Two subprojects remain deferred, one is an open editorial call, and three
   have not been assessed; the subtree README names each and why.
 - The `claude-md/` graph re-renders from the private rule-sets on refresh. This
-  round a small part of the published set moved; the commit diff is the change
-  record.
+  round fifteen of the twenty-one published rule-files changed, most of them
+  shortened by two optimization passes; the commit diff is the change record.
 
-## What changed since the 2026-10-23 refresh
+## What changed since the 2026-10-30 refresh
+
+- **Two earlier statements here were wrong, and are corrected rather than
+  edited in place.** The 2026-10-23 entry said a session bound to a new lock
+  has its file writes refused anywhere in another lock's worktree. That holds
+  for the assistant's own file tools only. A write made through a shell
+  command (an in-place edit, a redirect, a copy or a move) is not seen by the
+  hook, which reads the command text and not its targets; it surfaces only at
+  the close gate. The operator accepted that gap by ruling, and the open skill
+  now states it beside the rule, together with a second one: stale bindings
+  are never swept, and are inert once their worktree is gone. The same entry
+  said the context metric splits injected rule text into root, index,
+  per-lane and remainder parts. The per-lane part read zero in every
+  population, by construction: per-lane rule-files reach a session as a
+  different record type from the class being split. The row now reads that
+  record type, and a census line prints the population it measured.
+- **The relocation review's growth trigger fires on growth only.** A surface
+  at or over the size threshold that has not grown since the anchor is now
+  recorded as evidence, not a hit. The anchor itself moves only on an apply
+  session's commits on the main line, so a later booking by a subproject
+  cannot reset it. The runway readout also prints a 72-hour growth rate
+  beside the whole-window mean, after a two-day burst sat unseen under a slow
+  nine-day average. Firing still uses the window rate.
+- **The review's apply log closed two more holes.** A dropped item is
+  terminal and carries only its reason. A hand-back consumed by the shrink
+  pass is booked as its own row, because the reader honours rows only and
+  twelve such hand-backs had been named in prose. The digesters also read the
+  newest run that holds an apply log, so a pass fired before its own review's
+  apply no longer loses the previous run's carries.
+- **A second watcher reaper had the same stale match.** The session-end stop
+  hook looked for the pre-migration process form, so it found nothing while
+  exiting 0, the same hole the close-time sweep had until the last refresh. It
+  is the only reaper that reaches a duplicate watcher on a directory that
+  still exists. One such duplicate held about a gigabyte of compressed memory
+  against under 3 MB resident, which counts against the kernel governor's
+  memory-pressure gate while a resident-size survey shows nothing. A witness
+  test fails on the old line.
+- **The kernel governor's thread cap on the laptops went from four to
+  eight.** A cold build of the legal-domain kernel ran 17–24 % faster on two
+  laptops with memory-compressor occupancy flat. The four-core LAN nodes keep
+  four.
+- **The programmatic lane's external blocker has cleared.** The vendor-side
+  change the parked lane was waiting on has landed. The lane stays parked
+  until the operator flips it; nothing in the cron fleet changed this round.
+
+## Earlier: what changed in the 2026-10-30 refresh
 
 - **A regex `git grep` is now refused in sessions.** On the macOS workstations
   a regex `git grep` scans every tracked binary through the system regex
@@ -79,55 +124,6 @@ that is a ruling, not a backlog, and it is stated in full below.
   read the replay API only. The shell is a different surface with a different
   failure path, so the push step now chains both, and a test fails if the shell
   argument is dropped.
-
-## Earlier: what changed in the 2026-10-23 refresh
-
-- **A session opened from inside another session is bound to its new lock.**
-  When a session provisions a second project from inside its own worktree,
-  the new session is now recorded against the new lock. Two hooks then refuse
-  its file writes, and its history-writing git commands (commit, merge,
-  rebase, reset, checkout and the rest), anywhere in another lock's worktree.
-  Each refuses only on positive evidence, and a session launched from the
-  canonical checkout binds nothing. The open skill tells a bound session to
-  move its working directory before any write: from the old directory, a
-  relative write or commit lands on the other session's branch.
-- **The three formal kernels moved to Lean v4.35.0 together**, with the
-  market simulator's driver layer following. The release removed three
-  trusted-evaluation constants that eleven of the operational kernel's
-  committed attack fixtures named, so the fixtures were maintained in the
-  same change. The rule-set now states that a toolchain bump's attack-corpus
-  half is graded by the kernel's own attack judge over every fixture on both
-  toolchains, compared file for file, and never by whether the library
-  builds.
-- **An optimization pass trimmed sixteen rule-files on 2026-10-18.** All
-  sixteen are in the published set, and most mirrors in this cut are shorter
-  for it.
-- **The relocation review's apply log has a closed grammar.** Each row now
-  names exactly one review item and a disposition from a fixed set: cured,
-  consumed, owner-done, struck or dropped. The first three must cite a
-  commit, or the reader prints a finding and the row keeps aging. The session
-  that applies the moves also retires each owed review item the blueprint
-  dispositioned, and records that beside the routing item's retirement.
-- **The context metric attributes injected rule text by surface.** Its
-  report-only output now splits the injected-instructions class into the
-  root rule-file, the memory index, the per-lane rule-files and an
-  unattributed remainder. Attribution goes by the injected file's own header,
-  not its path, and the parts sum to the class total. Separately, the
-  over-long index-hook check now has one definition shared by the close-time
-  warning and the sweep, and the sweep no longer reads a deadline date as the
-  date of a fact.
-- **The shared ledger store no longer has a cloud database.** The managed
-  instance it was migrated off was destroyed on 2026-10-19. The store runs on
-  a LAN primary, with a second workstation as backup and restore-verify peer.
-- **The site's framework-count figure reads the status hub.** Since
-  2026-10-19 the quantapix.com statistic strip sums the two product kernels'
-  own reported framework counts, and its test reads the hub rather than a
-  literal.
-- **Two retired spec renders were removed from `skills/specs/`.** The charter
-  renders replaced them earlier; the release sync now also deletes files that
-  exist only on the public side.
-
-Earlier refreshes are recorded in this repo's commit history.
 
 ## What's not populated, and why that is a ruling
 

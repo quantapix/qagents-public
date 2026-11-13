@@ -50,6 +50,12 @@ the move takes effect, use absolute paths under the new worktree and point
 git at it explicitly. From the old directory, a relative write or commit
 lands on the parent session's branch. An open launched from the canonical
 checkout binds nothing.
+Two gaps are accepted by operator ruling and stated here rather than left to
+be discovered. A file write made through a shell command — an in-place edit,
+a redirect, a copy or a move — into another lock's worktree is not refused:
+the hook sees the command text, not its targets, and the close gate's
+pre-check surfaces it only at close. And bindings are never swept; a stale
+one is inert once its lock's worktree is gone.
 
 The Outstanding rows are the candidate session agenda: section A (ready
 now) is highest priority; section B (gated on external) blocks unless the

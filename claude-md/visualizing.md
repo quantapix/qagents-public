@@ -92,10 +92,10 @@ this § 3 is authoritative.
   `*Bridge.lean` at or under a key of proving's `framework_set.NON_PUBLISHED`
   (`Proving/`-relative; read as an ast literal, never imported; a missing roster
   REFUSES). Known-bad + identity arm: `extractor/test_usc_held.py`.
-- `rounds/` — the **qrounds/1 two-sided rounds contract** (custody ruled to
-  visualizing, do-share P0-8 2026-07-18): `qrounds.schema.json` +
+- `rounds/` — the **qrounds/1 two-sided rounds contract** (custody:
+  visualizing): `qrounds.schema.json` +
   `qrounds-standing.schema.json` + the `qblindness{,-corrected}.schema.json`
-  pair (do-share run 7 R-3, 2026-08-04) + `validate_rounds.py` (stdlib,
+  pair + `validate_rounds.py` (stdlib,
   exit-coded 0/2/4/5) over each axis's `…/examples/*/rounds/`. Owner amendments
   extend the record optional-additively and REFUSE the committed-enum widening
   their filings propose. The two invariants a session must not break (a
@@ -122,8 +122,7 @@ panel, charts-2026-07-02 § 7.1 →
 `dist/kit-graphs.js` (domain-neutral node-link → `monitoring/web/public/graphs/
 kit.js`) + `dist/kit-charts.js` (charts-only SVG surface, no DAG/LW/fromReport
 — so no C8 framework-union leg; the supported mount class for charts-only
-consumers, first `simulating/web/public/charts/kit.js`; depth-2026-08-12 § 5.2
-made the R12 alternative a supported class). designing `/thesis` mounts
+consumers, first `simulating/web/public/charts/kit.js`). designing `/thesis` mounts
 `kit-graphs.js` (method-DAG, `91a069ade`).
 `fromFlow`/`mountFlow` (constellation flow graph, kit-graphs bundle ONLY;
 Option-B fold, renderer computes nothing, the kit never reads
@@ -140,7 +139,7 @@ aggregate rollups · `fromReport` per-framework overlays + `predicate-selected`
 OHLCV `sideView`) with the **defined-risk REFUSED enforced at the `fromReport`
 boundary**, not just visually; five vanilla-SVG emitters (strict-CSP-clean +
 byte-stable export for `explaining/`) + a lightweight-charts v5 backend behind
-one `ChartBackend` interface. Phase-2 routing mount into Qresev shipped (§ 5.1).
+one `ChartBackend` interface (Qresev mount: § 5.1).
 The `qcatalog-trend/1` append-only trend seam + `fromCatalogTrend` and
 `projected?` ghost bars — whose `hasProjected()` probe is the FINANCIALLY
 face-change trigger (public mount ⇒ re-scan + signoff) — are that SPEC's
@@ -195,10 +194,8 @@ mechanics, the cluster-lens ring + SoT, the M1 picture-floor knobs:
 
 ## 4. Phased roadmap (spec § 12)
 
-Phases 0–3 ✅; **Phase 4 RE-SCOPED → built from scratch as the kit** (G0–G6 DONE
-+ gated + MOUNTED; single cytoscape-fcose backend, § 3 +
-`graphs-2026-07-02/SPEC.md`). Implementation/gate detail lives in
-`graphs/README.md` + `project_visualizing_subproject`.
+Phases 0–3 ✅; Phase 4 re-scoped → the kit, DONE + MOUNTED (§ 3;
+`graphs-2026-07-02/SPEC.md`, `graphs/README.md`).
 **Phase 5** (next): the `scenes/` replay + frame export of § 3 — settle-based
 determinism (seeded fcose + constraints); raster acceptance = SSIM, never
 byte-equality.
@@ -323,15 +320,13 @@ by decision (L4) — **not** promoted to root `CLAUDE.md`.
   `#!/usr/bin/env python3` (homebrew, root § Python venv) — no venv needed.
 - Tokens: the kit reads tokens, never literals — add a `tokens-lattice.css`
   overlay per app (axis palette / tier ramp / agreement green-amber-red); never
-  redefine base tokens. **Overlay SoT = `rendering/` for ALL THREE kits**
-  (graphs since 2026-06-16, brand-polishing § 3b variant A; charts + mixed3d
-  since the 2026-07-14 re-point). Every `{graphs,charts,mixed3d}/kit/tokens-*.css`
+  redefine base tokens. **Overlay SoT = `rendering/` for ALL THREE kits**:
+  every `{graphs,charts,mixed3d}/kit/tokens-*.css`
   is a **byte-identical mirror** of
   `rendering/brand/tokens/quantapix/overlay/{lattice,proof,chart,thesis}-{dark,light}.css`
   + `q3d-dark.css` — DO NOT edit in-kit; edit the SoT then re-copy. A mount
   wanting the step lens (`colorLens:'step'`, the `--step-1..7` chapter class)
-  MUST load `tokens-thesis*.css` — proof/lattice alone gives an inert lens (SoT
-  since 2026-07-07, kit mirror since 2026-08-16). graphs +
+  MUST load `tokens-thesis*.css` — proof/lattice alone gives an inert lens. graphs +
   charts carry dark+light kit-side; **mixed3d is dark-only** (rendering mints the
   pair at M2, and the mirror-test loop gains the light tuple back then); theme
   selection is at the app's mount-dir copy

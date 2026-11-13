@@ -21,12 +21,11 @@ absorbed subspecs:**
   2026-08-18 a2 ruling): `data/charters/analyzing/tape-supply/CHARTER.md` —
   INV-H (incl. the `reconciled` tier + the CLOSED-at-five partition), INV-U,
   the P2 freshness manifest, P8 provenance, the refresh lane's exit contract.
-  ⚠ **The tape's ~3.6-year floor is OUR line, not a vendor limit** —
+  ⚠ **The tape's floor is OUR line, not a vendor limit** —
   `scripts/tape_refresh.py:84` `START = "2023-01-01"` (520 of 527 symbols start
   2023-01-03; the other 7 later, never earlier). Its comment calls that a
-  "full-history window, never rolling", which it is not. Two separate sessions
-  have now reasoned from "the tape cannot reach 2011" as if it were imposed;
-  moving the floor is a decision, not a request to a vendor.
+  "full-history window, never rolling", which it is not. Moving the floor is a
+  decision, not a request to a vendor.
   ⚠ **INV-H does not generalise to a coverage floor:** it is monotone in
   coverage — a relation between successive writes — so a two-row series passes
   it forever. An external-floor refusal ("the series must reach date D") needs
@@ -89,12 +88,10 @@ producer invocations: `financial/parquet/CLAUDE.md` § Datasets.
 The parquet hub is gitignored ground truth in the canonical checkout —
 worktrees symlink to it, S3-backed (see `financial/parquet/CLAUDE.md`).
 Run full refreshes from canonical so writes land in the real store.
-**Worktree caveat (bit 2026-07-12):** the per-*dataset* symlinked dirs pass
-writes through to canonical, but the hub-root `manifest.json` is a symlinked
-*file* — `tape_manifest.py`'s atomic `os.replace` swaps the symlink itself
-for a worktree-local file, silently leaving canonical stale. When running
-the manifest step from a worktree, point it at the canonical root:
-`--parquet-root <root>/financial/parquet`.
+**Worktree caveat:** from a worktree, run the manifest step with
+`--parquet-root <root>/financial/parquet` — else
+`os.replace` swaps the symlinked `manifest.json` for a worktree-local file and
+canonical silently stays stale (tape-supply charter § 2.3).
 
 Universe: `financial/universe/sp500.txt` (`financial/universe/CLAUDE.md`).
 **There is exactly ONE refresh chain, and this file does not own its
@@ -102,9 +99,8 @@ length.** Cron and manual/backfill run the same steps in the same order; the
 single owner is `scripts/tape_refresh.py build_steps()` (rendered as the
 `tape-cron-2026-08-09/` family's § 3 step table). Today it is **six** — equities
 ingest → ta_reference → breadth → indices ingest → intraday ingest →
-manifest+provenance — but read the count off `build_steps()`, never off prose:
-this file restated it twice and BOTH went stale ("five" here, "four" below) the
-day intraday-ingest landed. One exception to the chain's window discipline:
+manifest+provenance — but read the count off `build_steps()`, never off prose.
+One exception to the chain's window discipline:
 **intraday ingest rides `--rolling`, every other step rides `START`** (INV-W).
 
 ## Sub-daily tape — INV-W (`scripts/intraday_guard.py`)
@@ -145,23 +141,16 @@ and invisible to the orphan gate): `.worktree-links` + `parquet/.gitignore`
 rows, `OWN_UNIVERSE_DATASETS` entry with its lockstep arm in lockstep, an
 `intraday-ingest` step in the `tape_refresh.py` chain (between indices and
 manifest) riding `--rolling` never `START`, **and the `scripts/sync-ground-truth.sh`
-tape roster**. Note the fourth arm is only *emitted* when the dataset dir
-exists, so an unregistered-or-absent dataset reads `lockstep.ok: true` on every
-host that lacks it. Sub-daily staleness is judged on the **session**,
-not the bar (`SUBDAILY_DATASETS` → `dataset_snapshot(stale_on_date=True)`):
-with the 0-day own-universe threshold, a symbol whose last bar is one minute
-behind the frontier would otherwise report `lag_days: 0` — noise dressed as a
-finding. That branch is defensive and still VACUOUS on live data (every
-shipped symbol shared one last-bar timestamp again on 08-16), so it carries a
-hermetic witness rather than living untested.
+tape roster**. The lockstep arm is only *emitted* when the dataset dir exists,
+so an absent dataset reads `lockstep.ok: true` (tape-supply charter § 2.3).
+Sub-daily staleness is judged on the **session**, not the bar — rationale +
+hermetic witness: `tape_manifest.py` `SUBDAILY_DATASETS` comment.
 
-The volatility-index lane refreshes separately (own cadence, own universe —
-tape-schema charter § 2.4; INV-H applies; NEVER run ta_reference against it).
-Own-universe lanes carry a tighter staleness surface: the manifest flags ANY
-frontier divergence (`OWN_UNIVERSE_STALE_LAG_DAYS = 0`) plus a per-symbol
-`frontiers` map, because an `as_of` of MAX hides a frozen sibling behind a
-healthy leg. Informational, never a lockstep gate; the manifest step is part
-of this lane too.
+The volatility-index lane (`indices-ingest`, step 4 of the same chain) rides
+its own universe (tape-schema charter § 2.4; INV-H applies; NEVER run
+ta_reference against it — `build_steps()` keeps that a tested property).
+Own-universe lanes carry a tighter staleness surface (threshold 0 + a
+per-symbol `frontiers` map): tape-supply charter § 2.3.
 
 Chain order: § Batch ingest above; lane identity + exit contract: § History
 preservation below; breadth-lane detail (anchor-ETF exclusion, one materialized

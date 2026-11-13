@@ -98,14 +98,10 @@ cites #6, and `dco-manual` cites the checker's #7.
    cannot see. Advisories + the summary are tally-only. Observe-only: route
    fixes to the citing slot's owner session. Detail: `checker.md` #11
    (ns:managing/49).
-12. **Spread review-lane hand-offs + D-4 escalation — LIVE (dco SPREAD-OP,
-   spread-merge-2026-08-09).** `scripts/spread-runway.sh` is the source of
-   truth; the lane is absorbed into `/dco-manual` as the SPREAD-OP
-   (optimization charter § 2.12). `sla=ESCALATE`, the § 5.6 `ESCALATE
-   dco-spread apply item …` rows, the R6 `STALE no shrink pass …` row, and
-   `fail_headroom min < 2500` B (distance-to-fail, graded instead of the
-   breach count — I-7) are **correctness** findings; UNKNOWN rows are
-   findings, never clean. Triage routes to `data/next-steps/qagents.md`.
+12. **Spread review-lane hand-offs + D-4 escalation (the `/dco-manual`
+   SPREAD-OP, optimization charter § 2.12).** `scripts/spread-runway.sh` is
+   the source of truth; `sla=ESCALATE`, the ESCALATE / R6 `STALE` rows and
+   `fail_headroom min < 2500` B are **correctness**, UNKNOWN never clean.
    Full row text: `checker.md` #12 (ns:managing/49).
 13. **Spec-family test-battery health.** `scripts/spec-battery.sh` is the
    source of truth — the tree-wide aggregating runner over every spec-family /
@@ -178,7 +174,6 @@ exact output path to write — they never negotiate scope at runtime.
   `kitVersion` drift.
 - TS / Lean / Python typecheck regressions from `pnpm verify` / `lake build` /
   `pyright` exit codes — read the most recent CI / commit log; never run them.
-- Spec hygiene — § 1.1 commitment 6 (`scripts/specs-audit.sh` finding set).
 
 **Functionality** (live system state, *highest priority*) — the weighted probe
 pool, owned by `managing/probes.md` (P1..P7; § 4) and never restated here; the
@@ -191,7 +186,7 @@ listed one line each below the five, unscored.
 
 ### 3.1 Suppressed-finding class — Agent SDK (operator directive 2026-06-30)
 
-The SDK lane is parked — root CLAUDE.md § Agent SDK lane owns status +
+The SDK lane is parked — root CLAUDE.md § Programmatic Claude owns status +
 restore path. Until it returns, **all four subagents must NOT surface any
 SDK-related finding** (ledger failure stages, SDK-lane fires, SDK spec-phase
 stalls / OVER-CAP, credit references, and `pending/data/agent-sdk-ledger/**`
@@ -337,16 +332,13 @@ the battery arm (`ns:serving/97`). A fire that stops with NO exit line is a
 ceiling or sleep kill, never a budget kill (that is *distinguishable*: exit 4
 + `Error: Exceeded USD budget` verbatim); the nine-day decomposition is in
 memory `project_managing_subproject`.
-A safeguard-refusal fire is a FOURTH class, on the OTHER side of this split:
-an exit line + a `qagents-cost` line carrying `stop_reason=refusal` (marker
-owned by `run_routine.sh`), no dated artifact; `checker.md` #6's
-cost-telemetry arm grades it, and an exit-line fire with no artifacts and no
-marker is UNKNOWN. The CLI refusal envelope is unmeasured — the first live
-instance re-grades the marker.
-An `exit=77` fire is a FIFTH class: the child exited 0 at `end_turn`, but a
-declared artifact is absent or still a template token — `run_routine.sh`'s
-separate `qagents-fire complete=0 missing=…` line names it (map:
-`data/schedules/launchd/lib/artifacts.sh`); `checker.md` #6 grades it.
+Two exit-line classes sit on the OTHER side of that split, both graded by
+`checker.md` #6's cost-telemetry arm: a safeguard REFUSAL (a `qagents-cost`
+line carrying `stop_reason=refusal`, marker owned by `run_routine.sh`; the CLI
+refusal envelope is unmeasured — the first live instance re-grades the marker)
+and `exit=77` FIRE-INCOMPLETE (a declared artifact absent or still a template
+token, named by the `qagents-fire complete=0 missing=…` line; map:
+`data/schedules/launchd/lib/artifacts.sh`).
 Per-run cost caps come from `run_routine.sh`'s `routine_policy_budget()`,
 paired with `routine_policy_model` so a routine's tier and its funding cannot
 drift apart — read `daily`'s figure from that function, never from a copy

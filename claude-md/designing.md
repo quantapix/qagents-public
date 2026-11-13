@@ -109,7 +109,7 @@ guard both directions. Binding record:
 `pleading/` owes the § 11.7 post-deploy cold-read after every deploy that
 changes messaging.
 
-**Barred-token guard (live 2026-07-31, ns designing/15 (c)):** `bash
+**Barred-token guard (live 2026-07-31):** `bash
 web/scripts/barred-tokens.sh` — run before **every deploy**. An invocation of
 documenting's path-agnostic `barred_tokens_guard.py` (canonical path — the
 venv's pymupdf lives there), never a second implementation: it scans the
@@ -212,11 +212,6 @@ single owner `serving/CLAUDE.md` § 8 (`upload-video.sh`,
 `large media URLs` block HEADs the CDN URL unconditionally (no skip-on-404,
 no `PW_BASE_URL`).
 
-Scripts under `web/scripts/` (per-site, kept here):
-
-- `setup-bucket-hardening.sh` — per-site bucket hardening (serving § 8;
-  one-shot, idempotent).
-
 Token-boundary lint (`pnpm lint`) is **composed over the shared base**
 `code/web/scripts/lint-tokens.sh` (web-unification R-T5 / M5b, adopted
 2026-07-22) — `pnpm lint` = `bash ../../code/web/scripts/lint-tokens.sh
@@ -280,8 +275,8 @@ memory `project_designing_web` § "Status panels + producer contract".
 - **Schema** (kit-owned): `@qagents/diagram-kit` — root `qagents/CLAUDE.md`
   § "Status hub" owns the contract; `src/lib/status-loader.ts` carries the
   live `PRESENT_KIT_VERSION` + `ACCEPTED_KIT_VERSIONS` (SoT — never
-  re-enumerate elsewhere). Closed display-mode set + 3-layer model: spec
-  family `data/specs/display-modes-2026-05-07/`.
+  re-enumerate elsewhere). Closed display-mode set:
+  `serving/diagrams/kit/README.md` § "Emit-kind contract".
 - **Thematic groups (adopted 2026-05-06).** `/status` renders 3 group
   sections in fixed order: **Quantapix** (umbrella; neutral accent) →
   **Qnarre** (verifying ← proving; teal accent; depends-on serving) →

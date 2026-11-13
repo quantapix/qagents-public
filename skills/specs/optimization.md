@@ -61,6 +61,15 @@ takes one item per row, with a disposition from a closed set: cured,
 consumed, owner-done, struck or dropped. The first three must cite a commit
 or the row keeps aging. Work left unconsumed escalates after two later
 passes, or by one interval per seven days when no pass runs.
+The growth trigger fires only on growth: a surface over the size threshold
+that has not grown since the anchor is recorded as evidence, never as a hit.
+The anchor moves only on an apply session's commits on the main line, so a
+subproject's later booking in the apply log cannot reset it, and the runway
+readout prints a recent 72-hour rate beside the whole-window mean so a burst
+is visible under a slow average — firing still reads the window rate. A
+dropped row is terminal and carries its reason only; a hand-back the shrink
+pass consumed is booked as its own row, because the reader honours rows,
+not prose.
 
 ## License
 
