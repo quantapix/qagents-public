@@ -7,8 +7,7 @@
 
 A regularly refreshed window into how a sole developer plus an expert AI
 assistant collaborate inside a single monorepo of sibling subprojects
-(the roster is the table below). The artifact this repo publishes is *not* the
-implementation code — that lives in the per-subproject public repos.
+(the roster is the table below).
 It is the **rule set** the assistant reads at every session start and the
 lifecycle skills that execute it. The topic files it loads on demand and the
 daily engineering memos are chartered here and unpopulated, by ruling (see
@@ -24,8 +23,7 @@ The 2026 bet: what is worth publishing is no longer the implementation
 code (LLMs commodify that). It is the **`CLAUDE.md` rule-set + memory + recall** 
 that lets a sole developer collaborate with an AI
 assistant across a constellation of non-overlapping subprojects without
-contradicting itself. Eight themes carry that bet; a founding case
-study closes the section.
+contradicting itself. Eight themes carry that bet.
 
 ### 1. The asymmetry qagents exploits
 
@@ -316,14 +314,10 @@ the loop:
 - An adoption ledger tracks per-routine migration notes, token-cost
   deltas, and regression catches.
 
-### Founding case study: federal-record-as-spec
+### Kernels and predicates
 
-The first non-trivial system specced in qagents was a federal
-civil-rights case. The case is the proof-of-concept for the entire
-architecture: a system that *refuses to let you cheat* — every
-factual claim has to reduce to a verifiable predicate; every
-predicate has to be backed by a quoted source; every theorem is
-checked by a kernel that does no I/O. Lean4 enforces this for the
+Predicates return a Boolean with evidence. Lean4 checks that the result
+follows from those Booleans, not that they are true. Lean4 enforces this for the
 legal-domain kernel; the same pattern enforces it for the
 financial-domain kernel over a chartered framework roster. A third kernel
 now applies the same
@@ -341,16 +335,12 @@ shown to fire is not evidence, however green it reads — the measure is
 reachability, not pass count.
 
 The two products ship the same kernel against different statutes and
-different OHLCV. The public verifier endpoints accept **redacted
-input only**; no real names, dockets, account numbers, or PII flow
-to the servers or the assistants. The donation drive carries a hard
-privacy floor on this.
+different OHLCV.
 
 The publishable mirror in this repo carries the *methodology* that
 produced those kernels — the `CLAUDE.md` graph that encoded the
 predicates, the memory entries that tracked the debates, the
-memsearch memos that recovered the rejected alternatives. The
-kernels themselves live in the per-product public repos.
+memsearch memos that recovered the rejected alternatives.
 
 ## Layout
 
@@ -527,9 +517,6 @@ session's window.
 
 - The private working tree itself (every subproject, the filing
   hub, the redacted legal drafts).
-- Per-subproject implementation code — that lives in the
-  per-subproject public repos (`qnarre-public`, `qresev-public`,
-  `qstudying-public`, `qexplaining-public`, `qdonating-public`).
 - Anything tied to ongoing litigation that has not already entered
   the federal-court public record.
 - The redaction blocklist — that file is private by design, so this
@@ -593,7 +580,7 @@ sibling repo `qdonating-public`.
 
 **Open to outside contributors.** The U.S. Code axiomatization program
 — Lean4 theorems backed by LLM-evaluated predicates over the full Code,
-every non-appendix title of the U.S. Code — the denominator is derived from the categorization data, never restated as prose here — is open to collaborators. It works
+every non-appendix title of the U.S. Code — is open to collaborators. It works
 over public federal statutes only, so it carries no privacy-floor
 surface; it is the natural place to build the project in the open. The
 project today is a single developer working with AI assistance, now

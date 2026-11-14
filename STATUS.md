@@ -36,9 +36,7 @@ that is a ruling, not a backlog, and it is stated in full below.
   video-production chain, and the adversarial sibling all now publish their
   rule-sets. Two subprojects remain deferred, one is an open editorial call, and three
   have not been assessed; the subtree README names each and why.
-- The `claude-md/` graph re-renders from the private rule-sets on refresh. This
-  round fifteen of the twenty-one published rule-files changed, most of them
-  shortened by two optimization passes; the commit diff is the change record.
+- The `claude-md/` graph re-renders from the private rule-sets on refresh; the commit diff is the change record.
 
 ## What changed since the 2026-10-30 refresh
 
