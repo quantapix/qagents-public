@@ -98,8 +98,8 @@ guardrails. Opt-in by naming the target explicitly
 (`/open shorting appealing`); the parent session asks for confirmation
 before dispatching a subagent at an excluded target.
 
-A court filing enters scope only as a named opt-in target; its live state
-lives only in the lane's unpublished state file;
+The filing short's live state lives
+only in the lane's unpublished state file, and
 `data/charters/shorting/review-lanes/CHARTER.md` § 2.1a binds every such run.
 
 ## 3. Adversarial brief (subagent prompt template)
@@ -187,7 +187,7 @@ shorting/
                                        `<YYYY-MM-DD>-<slug>.md` record — verdict, population compared,
                                        what was not looked at. The caller rules on it; this lane
                                        never clears
-  appeals/                             the filing-short run home (§ 2.1, opt-in only) + frozen
+  appeals/                             the filing-short run home (§ 2.1) + frozen
                                        simulation history; live state only in the lane's
                                        unpublished state file — this file registers by shape
   scripts/                             status_emit.mjs

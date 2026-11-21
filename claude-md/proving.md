@@ -124,11 +124,13 @@ A predicate sub-agent MAY invoke the `memory-recall` skill (itself `context: for
 ## Dated narratives are ARMED ephemeral lanes (since 2026-08-06)
 
 `AUDIT-*.md` / `BATCH-*.md` / `reviews/*.md` / `DOSTEPS-*.md` / `PLAN-*.md` are
-reaped on the ttls in `data/specs/do-retire-2026-07-26/lanes.tsv` (never a
-remembered figure). Freeze a narrative's verdict into its wave record /
-`waves/<id>/audit/` / a CLAUDE.md standing section and promote sole-copy
-evidence via `scripts/retire-evidence-promote.sh` **before** anything relies
-on it — the file is not the retention.
+reaped on `data/specs/do-retire-2026-07-26/lanes.tsv` ttls (never a remembered
+figure) after the reaper archives the blob and runs the citation gate: never
+remove one by hand, mark it SUPERSEDED. Freeze a verdict (wave record /
+`waves/<id>/audit/` / a standing section) and promote sole-copy evidence
+(`scripts/retire-evidence-promote.sh`) before relying on it. No blind roster
+walls them: a next-session handoff goes in the standing brief's family
+(`ns:qagents/413` (10)(a)).
 
 ## Status emit (`data/status/proving.json`)
 

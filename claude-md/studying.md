@@ -206,7 +206,8 @@ also DISAMBIGUATE a coordinate, and getting that wrong cost a ratified close gat
 its whole life (2026-08-25).** Anything that hashes "the kernel" — the lean_graph
 `input_digest` and every reader of it — is rooted at the LAKE PACKAGE
 `studying/Operating`, so its population is `Operating/**/*.lean` *relative to that
-root* plus the PACKAGE's pin. Rooting one level up at `studying/` instead sweeps
+root* (git-TRACKED files only inside a work tree, ruling 2026-11-18) plus the
+PACKAGE's pin. Rooting one level up at `studying/` instead sweeps
 every `Operating/examples/**` debate artifact into the population AND reads the
 other pin, so the recompute can never equal the stamp and every `/dao` round moves
 it. The writer's config is the authority (`code/lean_graph/.../axes.py`, whose own

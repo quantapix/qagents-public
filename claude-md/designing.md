@@ -154,6 +154,9 @@ substantive content in the hub JSON and reduce `copy.ts` to chrome
   dockets/judges) — never hard-code a row count or expect state rows;
   the `contingencies` block is post-drive, outside the four buckets —
   render with that framing or omit, never as a drive-window expense.
+  The window three-state is the drive owner's ET date (M8.2(1)): every
+  build-path and browser read goes through `src/lib/drive-window.ts`,
+  never an inline `new Date(...'T00:00:00Z')` comparison.
 
 This keeps the marketing surface trackable against external sources of
 truth (`drive.md` rides the cross-filed § 1746 affidavit; status emits
@@ -208,9 +211,9 @@ AWS S3 + CloudFront, mirroring `documenting/web/` exactly:
 **Large binary media.** Serve from the CDN, keep a local backup mirror —
 single owner `serving/CLAUDE.md` § 8 (`upload-video.sh`,
 `videos.quantapix.com`, <5 MB `public/` rule, gitignored local mirror via
-`designing/web/.worktree-links`). Designing e2e: `tests/e2e/site.spec.ts`'s
-`large media URLs` block HEADs the CDN URL unconditionally (no skip-on-404,
-no `PW_BASE_URL`).
+`designing/web/.worktree-links`). No page embeds CDN video today, so the old `large media URLs` HEAD block was
+retired — a
+new embed re-adds a HEAD check against its absolute CDN URL.
 
 Token-boundary lint (`pnpm lint`) is **composed over the shared base**
 `code/web/scripts/lint-tokens.sh` (web-unification R-T5 / M5b, adopted

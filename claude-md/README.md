@@ -156,8 +156,7 @@ conventions it has to honour, the subproject file for its own rules.
 The data subdirectory pins the seams: where shared state lives, who
 produces it, who consumes it.
 
-This is the *rule set*, not the implementation. Implementation lives
-in the per-subproject public repos.
+This is the *rule set*, not the implementation.
 
 ## License
 

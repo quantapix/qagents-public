@@ -296,6 +296,15 @@ standard subproject shape per root CLAUDE.md § "Subproject `.claude/` shape";
 `agents/` holds `checker.md` / `planner.md` / `reporter.md` / `verifier.md`) ·
 `checks/` + `tasks/` + `reports/` (the three dated outputs, § 1) · `metrics/` (the golden-thread daily metrics, promoted from `pending/` by the verifier; producer `scripts/gt_metrics.py`, routine `managing:gt-metrics`).
 
+**Ready-queue fact keys (per instance).** `scripts/ready-queue-falsifiers.tsv`
+keys a `@start` / `@out` fact by row. An instance's own line —
+`<KEY> [SYN-0001]@start`, `<KEY> [SYN-0001]@out` — is read first and serves
+that instance alone; the bare `<KEY>@start` serves only instances with no line
+of their own, so file a bare start line only when every instance shares its
+fact; a docket's `@out` line also covers its per-paper instances
+`<KEY> [SYN-0001/<stem>]`. (`SYN-0001` is a placeholder, never a docket shape
+the reader parses; the full grammar is the reader's own header.)
+
 `checks/`, `tasks/`, `reports/` are committed (markdown is the source of
 truth and lets future sessions reconstruct multi-day trajectories).
 `/do-retire` P2 lane 4 reaps them on a registry TTL — **operator-fired, so

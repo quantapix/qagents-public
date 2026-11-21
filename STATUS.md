@@ -1,6 +1,6 @@
 # qagents-public — status
 
-_Snapshot: 2026-11-13. Refreshed per release run during the
+_Snapshot: 2026-11-21. Refreshed per release run during the
 2026-06-01 → 2026-12-01 drive window._
 
 This is the release-narrative status of the umbrella methodology repo: what the
@@ -38,7 +38,22 @@ that is a ruling, not a backlog, and it is stated in full below.
   have not been assessed; the subtree README names each and why.
 - The `claude-md/` graph re-renders from the private rule-sets on refresh; the commit diff is the change record.
 
-## What changed since the 2026-10-30 refresh
+## What changed since the 2026-11-13 refresh
+
+- **The operational kernel's fingerprint counts tracked files only.** Inside a
+  work tree, the file population that hashes the kernel is now the
+  version-controlled sources under the kernel package. A file the version-control
+  system does not track no longer enters the hash, so it cannot move the
+  fingerprint away from its recorded stamp.
+- **Dated review narratives are never removed by hand.** The reaper archives each
+  one and runs a citation check before it goes. A narrative whose verdict has been
+  overtaken is marked superseded in place instead of being deleted.
+- **The watcher's ready queue reads facts per instance first.** An instance's own
+  start or outcome line serves that instance alone. A shared line serves only the
+  instances that carry none of their own, so it is filed only when every instance
+  shares the fact.
+
+## Earlier: what changed in the 2026-11-13 refresh
 
 - **Two earlier statements here were wrong, and are corrected rather than
   edited in place.** The 2026-10-23 entry said a session bound to a new lock
@@ -82,46 +97,6 @@ that is a ruling, not a backlog, and it is stated in full below.
 - **The programmatic lane's external blocker has cleared.** The vendor-side
   change the parked lane was waiting on has landed. The lane stays parked
   until the operator flips it; nothing in the cron fleet changed this round.
-
-## Earlier: what changed in the 2026-10-30 refresh
-
-- **A regex `git grep` is now refused in sessions.** On the macOS workstations
-  a regex `git grep` scans every tracked binary through the system regex
-  library. Peak memory reached tens of gigabytes, and this accounted for most
-  of one workstation's recorded pressure events over three weeks. A session
-  hook now denies a `git grep` call that lacks a flag skipping binaries or
-  changing the matcher. The hook fails open, and it does not cover script call
-  sites or sessions running outside the repo; the rule-set states both limits
-  beside the rule.
-- **Kernel builds run under a per-host governor.** Concurrent Lean runs had
-  rebooted the laptops. The kernel lanes now enter Lean through a wrapper that
-  takes a host-wide mutex, caps threads and priority, and refuses to start
-  under memory-compressor pressure. The first pressure threshold sat below one
-  laptop's idle reading and refused every start, so the default was raised
-  after measurement. A later fix stops a governed job's child processes from
-  outliving it.
-- **A kernel job can run remotely under a hard memory cap.** A job ships whole
-  to a LAN node and runs under a 24 GB cgroup limit the laptops cannot give.
-  Two measured corrections came out of the witnesses. A soft memory band with
-  swap disabled throttled a runaway 30 GB allocation for more than ten minutes,
-  where the hard limit alone killed it in 13 seconds, so the soft band defaults
-  to zero. The default out-of-memory policy turned the kernel's kill into an
-  ordinary termination code with an empty record, so the scope now stays up
-  long enough for the job to record its own memory events. A cold build ran
-  about 2.5 times slower remotely, inside the expected range.
-- **The recall watcher releases its model when idle.** It now unloads the
-  embedding model after two idle minutes and reloads on the next file event.
-  Measured on one workstation: 1.8 GB loaded, 162 MB after the first unload,
-  220 to 800 MB after later reloads. The in-process target of under 150 MB was
-  not met. Separately, the close step's orphan-watcher sweep had matched only
-  the process form from before the recall migration, so for twenty days it
-  reaped nothing while exiting 0. It matches the current form now.
-- **The memory-index entry cap grades the whole entry.** The 150-character
-  limit now reads one length definition across the entry.
-- **The release lane's pre-push read covers the static site shell.** The probe
-  read the replay API only. The shell is a different surface with a different
-  failure path, so the push step now chains both, and a test fails if the shell
-  argument is dropped.
 
 ## What's not populated, and why that is a ruling
 
