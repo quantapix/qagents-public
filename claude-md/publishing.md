@@ -218,8 +218,9 @@ one states, which is why a content-only rule cannot close it. What MAY
 publish, on `pleading/`'s conditions: primary-law corpus units taken whole
 from the official source, counts with their POPULATION stated, and a method
 note naming corpus units. Mechanism over instruction: the Stage-4 path rule
-admits `.lean` under an `examples/` segment **only** and refuses it
-everywhere else, so a kernel file nobody thought about fails CLOSED
+admits `.lean` under an `examples/` segment, and elsewhere only as a row of
+a `pleading/`-CLEARED file-list manifest at its sha256 (`t_41`); it refuses
+it everywhere else, so a kernel file nobody thought about fails CLOSED
 (over-refusing costs a missing file; under-refusing publishes a theory); the
 content twins bar a generic appellate docket form — generic, because an
 enumeration fails open on the next one — and the axis's jurisdiction kernel
@@ -238,22 +239,20 @@ subprocess, and any non-zero aborts (gate (5b), `g6_tree_gate.sh`, `t_34`).
 
 ## 6. Write-lock & session model
 
-- **Branch-as-lock** — branch + worktree `publishing`; path discipline: root
-  § Session lifecycle (session-lifecycle charter § 2.3).
+
 - **`data/status/publishing.json`** is written by `scripts/status_emit.mjs`
   (§ 7), which takes no lock in-script — `/close` holds `.data-write-lock`
   around the session commit (`data/publishing/CLAUDE.md` § Write-lock posture).
-- **The external push** (`git push-quantapix`) is not a qagents-repo write — no
-  qagents lock involved; its scratch clones live outside the tree.
+- **The external push** is not a qagents-repo write — no qagents lock involved;
+  its scratch clones live outside the tree.
 - **`pending/publish-digests/`** is a gitignored, fork-internal buffer — **at the
   worktree ROOT only** (`publishing/.gitignore` carries `pending/`,
   `ns:publishing/62`); **never** promoted by managing's verifier (internal-set +
-  `verify-pending.sh` `require_not_internal_pattern`). It is **not** in the close
-  rescue-scan skip set, so every `/publish` session hits `--pre` exit 15 on these
-  files — one deliberate pass, not a reflex delete: a digest's section (a)
-  carries findings the run did not apply (deferred enrichment, cross-subproject
-  owed fixes). Extract them into the close summary or a next-step **first**,
-  then delete.
+  `verify-pending.sh` `require_not_internal_pattern`). It IS in the close
+  rescue-scan skip set (`RESCUE_SKIP_DIRS`), so `/close` wipes it with no
+  prompt — and a digest's section (a) carries findings the run did not apply
+  (deferred enrichment, cross-subproject owed fixes). Extract them into the
+  close summary or a next-step **before** `/close`.
 
 ## 7. Status emit (`data/status/publishing.json`)
 
@@ -272,18 +271,18 @@ resolves from the tracked one-line state file `publishing/.publish-state`
 ## 8. Layout
 
 `quantapix/` public-org staging tree (own CLAUDE.md) · `youtube/` channel
-material (index `youtube/README.md`) · `resume/` the out-of-roster
-github.com/quantapix/resume source · `inbox/` gitignored private receipt/usage
+material (index `youtube/README.md`) · `inbox/` gitignored private receipt/usage
 PDFs, never published · `pending/messaging-debate/` GITIGNORED pre-gate debate
 buffer, wiped at `/close` (§ 9; the tracked round record carries anything load-bearing) · `.publish-state` tracked one-line pill (§ 7) ·
 `.worktree-links` canonical-backed gitignored links (inbox + resume PDFs) ·
 `.claude/` settings + skills symlink + `publish-collector` · `hub-goldens/`
 per-list manifests for the synthetic public track (never published; own
-README). `scripts/`:
+README) · `source-drop/` the source drop's list specs, manifests and
+generated roots (never published; own README). `scripts/`:
 `publish.sh` · `github_meta.py` · `iga_verify.py` ·
 `sync_mirror.py`/`sync-mirror.sh` · `status_emit.mjs` · `videos_emit.mjs` ·
 `youtube_{auth,upload,sync,manifest}.py` · `hub_goldens_list.py` ·
-`g6_tree_gate.sh` · `claim_check.py` · `cold_read.sh`.
+`g6_tree_gate.sh` · `claim_check.py` · `cold_read.sh` · `source_drop.py`.
 
 ## 9. Messaging-hardening debate (publishing/ convenes)
 
@@ -316,14 +315,10 @@ gate standard `data/charters/pleading/messaging-gate/litigation-safety-standard.
 CLAUDE.md language split).
 
 - **Producer:** `publishing/scripts/videos_emit.mjs` → `data/publishing/videos.json`
-  (schema + governance: `data/publishing/CLAUDE.md`). The 5×10 roster (titles +
-  profile tags) tracks `explaining/outline.md`; the per-video **release state**
-  (status `live`/`upcoming`, `cdnUrl`, `youtubeUrl`, `thumb`) is publishing's own
-  state, edited in the emitter. Atomic write; the `.data-write-lock` is held by
-  `/close` (matching `status_emit.mjs` / donating's emitter).
+  (schema + governance: `data/publishing/CLAUDE.md`). Atomic write; the
+  `.data-write-lock` is held by `/close`.
 - **Consumer:** `designing/web/src/lib/videos-loader.ts` → `src/pages/videos.astro`
-  (collapsible chapters + @Quantapix channel hint + featured preview/latest).
-  Thumbnails live at `designing/web/public/video-thumbs/<id>.png`.
+  (`designing/CLAUDE.md` § 4).
 - **Boundary (§ 3):** the consumer files are `designing/`-owned. publishing
   authors them but **lifts-across** to the `designing` worktree
   (`scripts/lift.sh`, Mode A; `feedback_cross_subproject_writes_lift_recipe`) for the
@@ -362,10 +357,7 @@ extra; OAuth one-time per `youtube/API-UPLOAD-SETUP.md`.
   upload (`CHANNEL-INFO.md` § 9); an API upload is never compliance-complete. A
   redaction/verb scan over `descriptions/` runs before any push.
 - **Banner ↔ channel-info land together** (same PR) — `youtube/README.md` § Banner ↔ channel-info lockstep.
-- **First run = `--mode adopt`** (baselines the SoT from live so the diff is real),
-  then `check` → resolve → `push`; `--mode stats` writes
-  `data/publishing/youtube-stats.json`. `youtube_sync` does NOT touch `videos.json`
-  — the /videos live-flip stays the `videos_emit.mjs` edit (§ 10).
+
 - **CDN release gate (`CLEARANCE_COMMIT`).** `serving/scripts/upload-video.sh` refuses
   any `T<n>/` catalog key without a cleared FINANCIALLY record's `granting_commit` —
   so a `verified-N/A` grant for a non-financial episode is **mechanically required**.

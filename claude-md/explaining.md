@@ -65,7 +65,7 @@ explaining/
     <slug>/long/{takes,auditions,cuts,cues,captions}/  per-episode long binaries (mp4/mov/wav/srt gitignored)
     <slug>/long/markers.{csv,md}                       tracked word-boundary ground truth (under the variant dir)
     <slug>/short/{takes,cuts,captions}/                dedicated short binaries (takes/short/ = the 9:16 short take)
-  avatar/                   locked HeyGen presenter set (LOCKED 2026-05-11): README.md registry (image ↔ avatar_id cross-link + pose-rotation policy) — detail in § "Presenter identity" below
+  avatar/                   locked HeyGen presenter set (LOCKED 2026-05-11): README.md registry
   voice/                    superseded AI-generated masters kept for provenance (build chain v2 → v3 → v3.1 incl. Gemini/Firefly audit trail; lineage in voice/janet/master-meta.json)
     janet/                  channel-wide voice config (master-meta.json § lineage + heygen-config.md)
 ```
@@ -83,7 +83,7 @@ The `.mp4`/`.mov`/`.wav`/`.srt` patterns under `videos/*/{long,short}/{takes,aud
 | 1. Script | Claude (`script.md`) | this subproject |
 | 2. Per-video Design bundle | Claude Design (`design.md` → `artifacts/<slug>/`) | this subproject |
 | 3. B-roll — authored, assembled, quality-gated | Remotion (locked 2026-05-07) — React + brand tokens (+ Blender plate lane where declared) | `@qagents/remotion` workspace pkg at `code/remotion/`; per-video components at `explaining/artifacts/<slug>/components/`; cue render per the cue-render contract below (rendering-owned manifest engine → per-cue ProRes 4444) |
-| 4. Janet narration + lipsync — fires ONLY after the stage-3 gate | HeyGen Photo Avatar IV / V | `mcp__heygen__*` via `.mcp.json` + `.claude/skills/heygen-{avatar,video}` |
+| 4. Janet narration + lipsync — fires ONLY after the stage-3 gate | HeyGen | `mcp__heygen__*` via `.mcp.json` + `.claude/skills/heygen-{avatar,video}` |
 | 5. Composition + subtitles + loudness + render | DaVinci Resolve Studio | Per-video drivers consuming `resolving/` (wrapper `resolving/davinci/` + skills S1..S10); driver shape + spec per § 4 deliverable shape. |
 | 6. Publish | `s3://qagents-videos/<topic>/<file>.mp4` → `https://videos.quantapix.com/<topic>/<file>.mp4` (immutable) | `aws-vault exec qagents-deploy -- bash serving/scripts/upload-video.sh <local> <topic>/<file>.mp4` |
 
@@ -119,13 +119,9 @@ ElevenLabs deferred — see `reference_janet_video_stack`. **Subtitles render fr
 
 **HeyGen take handles — MANDATORY, fail-closed (channel-locked 2026-06-02; gated 2026-06-25).** Every take MUST fire with the § 0.1 silence-handles: `script` wrapped `Start clip. 🕐 <verbatim narration> 🕐 End clip.` (recipe in each `heygen-aroll.md` § 0.1) — an UNPADDED take is unusable (HeyGen trims the silence, silently breaking `_anchor.anchor_trim`, seg-strip, and phase1 PIP dissolves). Gate before firing (`check_clip_handles.py --aroll`) and after download (`--srt videos/<slug>/long/takes/9x16`); `phase0_preflight.py` runs the same check. Recipe + incident: `reference_heygen_silence_handle_recipe`.
 
-**Avatar engine.** Photo Avatar IV vs V is a **fidelity tier, not a gate**; channel routes by cost/fidelity per take. Engine + `digital_twin` detail: `reference_heygen_avatar_iv_v_engine_pivot`.
-
 **MCP + Resolve preconditions.** HeyGen MCP at `explaining/.mcp.json` (subproject-scoped; allow-list + Chrome-OAuth caveat: root `CLAUDE.md` § MCP servers + `reference_mcp_subproject_scoped_via_file_location`). Resolve scripting goes through `resolving/davinci/` (no MCP); requires Resolve Studio running with External scripting = Local on first connect.
 
 **Prompt-iteration discipline.** Promote a richer-than-asked Claude Design read into round N+1 (`feedback_design_round_richer_than_prompt_promote`); when typography IS the deliverable, carve it out of every per-tool "no text" negative list (`feedback_image_gen_subject_matter_text_carveout`).
-
-**Presenter identity — LOCKED 2026-05-11 (locked production set).** Three HeyGen Photo Avatars (priority 1 hand-down / 2 hand-up / 3 tight-crop PIP), rotated per beat-archetype. Voice: one locked Design-a-Voice id (held privately); `frozen_after_acceptance=true` — any avatar_id change is a channel-rebrand. Registry and rotation policy: `avatar/README.md` + memory `project_explaining_subproject`.
 
 **AI disclosure posture (locked at v3 promotion).** No visible generator marks on the channel face; upload-side disclosure is publishing-owned. Stack roster + sparkle-removal technique: `feedback_gemini_sparkle_synthid_unprompiable`.
 

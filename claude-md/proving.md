@@ -1,6 +1,6 @@
 # proving — Lean4 axiomatic theorem-proving with LLM-backed predicates
 
-Cross-project rules: `../CLAUDE.md`. The **textual axis** of the three-kernel Lean4 architecture (root CLAUDE.md § "Lean4 axes"; `data/charters/studying/specs/lean4-charter-2026-06-10/SPEC.md` § 4) — `/dau` is the textual-axis instance of invariant 3: proofs driven by top-tier LLMs in parallel, never manual. Scope charter: `data/charters/proving/textual-axis/CHARTER.md` (the `axiomatize-uscode-2026-05-29` family is scope-resident there; domain-vs-mechanism carve in its § 3).
+Cross-project rules: `../CLAUDE.md`. The **textual axis** of the three-kernel Lean4 architecture (root CLAUDE.md § "Lean4 axes", which cites the charter spec) — `/dau` is the textual-axis instance of invariant 3: proofs driven by top-tier LLMs in parallel, never manual. Scope charter: `data/charters/proving/textual-axis/CHARTER.md` (the `axiomatize-uscode-2026-05-29` family is scope-resident there; domain-vs-mechanism carve in its § 3).
 
 ## The split
 
@@ -14,13 +14,13 @@ The whole point of this subproject is **strict jurisdictional separation** betwe
 
 The Lean kernel never reads natural language. The predicate sub-agents never write Lean. The driver is a thin coordinator with no legal reasoning of its own. The verifiable proof IS the Lean elaboration trace produced by `lake build`.
 
-The normative kernel↔predicate↔driver workflow representation the `/dau` lane is pointed at is `../studying/representation.md` (studying owns the operational-axis kernel + the cross-axis representation research; charter P1 gate).
+A fourth layer is ruled, not built: an LLM seat writes a JSON file, never Lean; a deterministic generator writes the Lean; no blind role reads either.
+
+The normative kernel↔predicate↔driver workflow representation the `/dau` lane is pointed at is `../studying/representation.md` (charter P1 gate).
 
 Why it works: a predicate's output domain is one Bool per call, so it fits inside a forked sub-agent; and once each predicate fact is an axiom, the validity theorem is a pure structure-introduction proof — type-checking guarantees the result *given the predicate truths*.
 
 ## Frameworks
-
-Each framework lives under `Proving/<Framework>/` (kernel) + `predicates/<framework>/` (specs).
 
 The per-framework roster (kernel · specs · source guide · statutory text for every golden — set = **every dir under `Proving/` holding a `Types.lean`**, minus `USC/`, never a prose count; ns-181) lives in memory `reference_proving_doctrine_pins` § "Frameworks roster", which also carries the case-law doctrine pins and the top-level inductive shapes. **Those shape names are answer-shaped and are NOT restated here** (§ Golden SHAPES below).
 
@@ -30,7 +30,7 @@ The per-framework roster (kernel · specs · source guide · statutory text for 
 
 **Scope (operator S-6, 2026-10-16):** since 2026-09-26 blind Slice cells launch on the out-of-repo SEAT lane (`scripts/dau_seat.py`), which receives neither this file nor the memory index, so for a seat-lane wave this channel is CLOSED for the cells; it stays OPEN for every Agent-lane subagent (the cell fallback and the licensed reconciler/cross passes), and `dau_seat.py probe --guard` is what keeps the seat half true. Every rule here stays in force.
 
-**This file is also PUBLISHED, and `publishing/scripts/sync_mirror.py` `REWRITES` matches sentences here BYTE-EXACT** (today the golden-roster filename and the field-count pointer) — rewording one unmatches its rule and the mirror refuses to render at `/publish` time; run `sync_mirror.py --check-rewrites` after any edit. ⛔ **A dropped sentence is safe; a RE-ADDED one is not** — if a party roster ever returns here, tell publishing first: `Imre Kifor` is carved out of the HARD blocklist by `ALLOW_PHRASES` and has no backstop. Root CLAUDE.md § Subproject `.claude/` shape reader (3).
+**This file is also PUBLISHED, and `publishing/scripts/sync_mirror.py` `REWRITES` matches sentences here BYTE-EXACT** — a reword fails `/publish` closed; the rule + `--check-rewrites`: root CLAUDE.md § Subproject `.claude/` shape reader (3). ⛔ If a party roster ever returns here, tell publishing first: `Imre Kifor` is carved out of the HARD blocklist by `ALLOW_PHRASES` and has no backstop.
 
 **AND THE INJECTED BLOCK IS SNAPSHOTTED AT SESSION START — FIXING THIS FILE DOES NOT FIX THE RUNNING SESSION (ledger seq 279).** **(a)** Never slice a wave — nor convene any fan-out whose cells must not see a roster, **a DEBATE ROUND included** — in a session that started before the cure was COMMITTED; open a fresh one. **(b)** Verify the TREE with `grep`; the context half only from a fresh session (an in-session probe measures the snapshot, not the file). Measurement + falsifier: `feedback_blind_fanout_oracle_channels` § "The injected block is SNAPSHOTTED"; the two-object `blindness_precheck` manifest field: `.claude/skills/dau-manual/SKILL.md`.
 
@@ -51,16 +51,15 @@ Spec: `data/charters/proving/specs/axiomatize-uscode-2026-05-29/SPEC.md`. Extend
 - **Lane:** manual-interactive via the **`/dau-manual`** skill (`.claude/skills/dau-manual/`; mirrors `/dco-manual`) — the SDK batch lane is paused (root CLAUDE.md § Programmatic Claude). Mechanics, targeting gate, re-earn backlog, wave archive/backup: spec § 7.5 + § 10.1 + the SKILL; tests `data/charters/proving/specs/axiomatize-uscode-2026-05-29/tests/`.
 - **Wave-planning authority is the UNION of every seat's archives.** `proving/waves/` is gitignored canonical-only, mirrored **per source host**, so it is a PARTIAL view on every workstation and `remediation_census.py` reads a wave this seat cannot see as backlog. **Pre-wave peer-sync + census, the `proving:axiom-state` sentinel read, backlog direction, blindness-classifier rules, pre-spawn arms, roster-field definitions, `check_olean_closure` polarity → `.claude/skills/dau-manual/SKILL.md` § Pre-wave** — read it BEFORE any wave, roster regen, re-slice, or classifier edit. Normative: spec § 10.1; rationale: `feedback_per_host_ground_truth_is_a_partial_view`.
 - **Wave backup: LAN-primary, never wave-blocking** (operator ruling L-122); wave-end mechanics, queue-non-debt, verify verbs + verdict ladder: spec § 10.1 (→ artifact-archive spec § 2).
-- **Status · authoritative build + olean-closure gates · G3b · the hierarchical oracle-guard exit ladder → `proving/gates.md`** (moved verbatim, spread 2026-08-27 S-1). Orchestrator read — open it before promoting a wave, running the authoritative build, diagnosing a `score_bridge.py` exit (4/6/7), or reading a G3b refusal (exit 8); a blind cell's brief never names it.
-
+- **Status · authoritative build + olean-closure gates · G3b · the hierarchical oracle-guard exit ladder → `proving/gates.md`**. Orchestrator read — open it before promoting a wave, running the authoritative build, diagnosing a `score_bridge.py` exit (4/6/7), or reading a G3b refusal (exit 8); a blind cell's brief never names it.
 
 ## Layout (essentials)
 
-`Proving.lean` (root module) · `lakefile.toml` · `lean-toolchain` (pinned — § Toolchain notes) · `Proving/<Framework>/{Types,Predicates,Statute,Theorems}.lean` (+ generated, gitignored `Facts.lean`) · `predicates/<framework>/` (one spec per opaque predicate) · `examples/<id>/` (per-run artefacts, below). `scripts/`: `extract_facts.py` (driver) · `lake_trace.py` (two error-line orderings, 4.29 vs 4.30+) · `lean_parse.py` (regex proof-file parser) · `uscode.py` (path/text/list lookup) · `uscode_graph.py` (Axis-5 §-citation graph; `--cite-graph` → `qgraph-wire/1`: `graph-projections-2026-06-14/SPEC.md` § 4.2).
+`Proving.lean` (root module) · `lakefile.toml` · `lean-toolchain` (pinned — § Toolchain notes) · `Proving/<Framework>/{Types,Predicates,Statute,Theorems}.lean` (+ generated, gitignored `Facts.lean`) · `predicates/<framework>/` (one spec per opaque predicate) · `examples/<id>/` (per-run artefacts, below). `scripts/`: `extract_facts.py` (driver) · `lake_trace.py` (two error-line orderings, 4.29 vs 4.30+) · `lean_parse.py` (regex proof-file parser) · `uscode.py` (path/text/list lookup) · `uscode_graph.py` (Axis-5 §-citation graph).
 
 ## Workflow
 
-1. **Author the formal framework** (Lean) — for a new framework, add `Proving/<NewFramework>/{Types,Predicates,Statute,Theorems}.lean` and import from `Proving.lean`.
+1. **Author the formal framework** (Lean) — recipe (kernel quartet → `Proving.lean` wire → predicate specs → sample → `LociRoster` registration → roster update): `predicates/README.md` § "Adding a new framework — authoring contract".
 2. **Author predicate specs** under `predicates/<newframework>/`. Spec format is fixed (see `predicates/README.md`).
 3. **Run the driver**:
    ```
@@ -73,7 +72,7 @@ Spec: `data/charters/proving/specs/axiomatize-uscode-2026-05-29/SPEC.md`. Extend
 
 The driver prints one `· <spec> ... <value>  (<uncertainty>)` line per predicate in **all three modes** (`--stub`/`--reuse-facts`/production); adapters (`verifying/server/adapters/proving.py._classify`) rely on that shape being identical across modes.
 
-**`--stub` caveat for REJECTED examples.** `--stub` defaults every predicate to `True` (synthetic ACCEPTED; never reads `manifest.inputs.*`), so a committed (non-`--sandbox-out`) `--stub` run against a `REJECTED` example **refuses** (exit 2, L-030) unless `--force-stub` — replay a REJECTED run with `--reuse-facts`. Timeouts preserve paid work (retry + `facts.partial.json`). Tests: `scripts/test_driver_hardening.py`; `feedback_proving_stub_defaults_true`.
+**`--stub` caveat for REJECTED examples.** `--stub` defaults every predicate to `True` (synthetic ACCEPTED; never reads `manifest.inputs.*`), so a committed (non-`--sandbox-out`) `--stub` run against a `REJECTED` example **refuses** (exit 2, L-030) unless `--force-stub` — replay a REJECTED run with `--reuse-facts`. Timeouts preserve work (retry + `facts.partial.json`). Tests: `scripts/test_driver_hardening.py`; `feedback_proving_stub_defaults_true`.
 
 ## Per-run artefacts (`examples/<id>/`)
 
@@ -84,8 +83,6 @@ With `--build` the driver emits `facts.json` · `Facts.lean` · `report.json` ·
 Enforcing tests: the propagation suite at **`data/specs/proving-results-propagation-2026-05-09/tests/`** plus `verifying/web/tests/e2e/proof-graph.spec.ts` and `visualizing/graphs/test/proof-conformance.test.ts`. **Never cite case numbers here — derive them from that `cases/` dir** (F25). The suite **no longer mutates the tree** (mutating cases redirect via `--sandbox-out`/`QAGENTS_PENDING_ROOT`; **`git status` must be clean after a run**), so **a failure there IS yours.** Before repointing any assertion read that suite's `README.md` § "Suite health": three cases guard privacy floors and must never be satisfied by widening an allow-list.
 
 **Sibling parity with `accounting/`.** Before any **cross-tree lockstep patch** over the proving↔accounting shared internals (diff-check, never mirror; a shim over `code/lean_tools/` is patched in the shared module) → read `…/axiomatize-shared-2026-07-04/matrix.md` § 7.
-
-**Adding a new statute / framework.** Authoring recipe (kernel quartet → `Proving.lean` wire → predicate specs → sample → `LociRoster` registration → roster update): `predicates/README.md` § "Adding a new framework — authoring contract".
 
 ## Hard rules — DO NOT violate
 
@@ -101,13 +98,13 @@ Enforcing tests: the propagation suite at **`data/specs/proving-results-propagat
 
 ## Predicate sub-agent memsearch use
 
-A predicate sub-agent MAY invoke the `memory-recall` skill (itself `context: fork`) — **except in a `--hermetic` driver run**, whose cells have no tools, skills, memory or files: their whole world is the spec body plus the inlined payload (a spec carrying `hermetic: true` is written for that run; the licence below does not reach it). Prior decisions live in `.memsearch/memory/YYYY-MM-DD.md` (predicate names preserved verbatim; per-subproject collection: `lib/memsearch/CLAUDE.md`).
+A predicate sub-agent MAY invoke the `memory-recall` skill (itself `context: fork`) — **except in a `--hermetic` driver run**, whose cells have no tools, skills, memory or files: their whole world is the spec body plus the inlined payload. Prior decisions live in `.memsearch/memory/YYYY-MM-DD.md` (predicate names preserved verbatim; per-subproject collection: `lib/memsearch/CLAUDE.md`).
 
 ## Toolchain notes
 
-- **Lean** pinned via `lean-toolchain` — **read the pin from that FILE, never from prose.** Lockstep with `accounting/` + `studying/` per root CLAUDE.md § Lean4 axes inv-4. Sibling pins, the replay recipe (ACCEPTED **and** REJECTED proofs on every axis at every bump; a generated-`Facts`-olean trap mimics a toolchain break), the per-branch deviation: `feedback_lean_toolchain_bump_verify_example_proofs`.
+- **Lean** pinned via `lean-toolchain` — **read the pin from that FILE, never from prose.** Lockstep with `accounting/` + `studying/` per root CLAUDE.md § Lean4 axes inv-4. Sibling pins, the replay recipe and the per-branch deviation: `feedback_lean_toolchain_bump_verify_example_proofs`.
 - **No Mathlib dependency; core-only tactic substrate** at `Proving/USC/Common/Tactic.lean` (`prove_element`; `@[doctrine]` = `@[grind →]` intro rules; `aesop` struck). A lift is a **gated per-axis opt-in, never global**; rulings R4/R7 + rationale: `…/hierarchical-predicates-2026-06-20/SPEC.md` § 13.
-- **Python ≥ 3.10** for the driver (PATH `python3`, stdlib-only; helpers importing `qagents.*` pin the root venv); **Claude CLI** on `$PATH`. Predicate sub-agents are text-reasoning-only today; derive the live `-p` flag set from `extract_facts.py` `_run_claude`, never from prose.
+- **Python ≥ 3.10** for the driver (PATH `python3`, stdlib-only); **Claude CLI** on `$PATH`. Predicate sub-agents are text-reasoning-only today; derive the live `-p` flag set from `extract_facts.py` `_run_claude`, never from prose.
 - **Model is top-tier, hard-enforced (not a cost choice).** Production (predicate-invoking) runs of `extract_facts.py` **hard-fail (exit 3)** on any non-top-tier token unless `--allow-smoke-model`; `--stub`/`--reuse-facts` are exempt. Accepted set + default = the shared seat `code/lean_tools/model_floor.py`, **never enumerated here**; `dau` USC agents carry no frontmatter pins (they inherit the orchestrator's). Policy: root CLAUDE.md § Model policy. `invoke_predicate` guards **A** (genuineness) + **B** (uncertainty band-then-FLAG), and why accounting's must not be blind-copied: `feedback_predicate_model_opus_not_haiku`; pinned by `scripts/test_predicate_guard.py`.
 - **Extraction effort is seated per axis** in the same shared seat (a row is added only after that axis's own sweep, never inherited by the other two axes or by the cell class). Proving's row, its pre-registered rule and its limits are recorded unpublished under `hermetic/sweeps/`. Read the value from the seat, never from prose.
 
@@ -130,7 +127,7 @@ remove one by hand, mark it SUPERSEDED. Freeze a verdict (wave record /
 `waves/<id>/audit/` / a standing section) and promote sole-copy evidence
 (`scripts/retire-evidence-promote.sh`) before relying on it. No blind roster
 walls them: a next-session handoff goes in the standing brief's family
-(`ns:qagents/413` (10)(a)).
+(`ns:proving/422` (4)).
 
 ## Status emit (`data/status/proving.json`)
 
